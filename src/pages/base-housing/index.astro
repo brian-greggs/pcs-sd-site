@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import ExtLink from '../../components/ExtLink.astro';
 import { baseHousingAreas, INDEX_GROUPS } from '../../lib/baseHousing';
+import BedroomRules from '../../components/sections/BedroomRules.astro';
 
 const { areas, month, pdfs, verifiedOn } = await baseHousingAreas();
 const listName = (g: string) => (g === 'officer' ? 'Officer' : 'Enlisted');
@@ -28,6 +29,8 @@ const unplaced = areas.filter((a) => !a.has_page);
   <ul class="links">
     {pdfs.map((p) => <li><ExtLink href={p.source_url} incentive={p.incentive} text={`${month} ${listName(p.rank_group)} wait-time list (PDF)`} /></li>)}
   </ul>
+
+  <BedroomRules />
 
   {INDEX_GROUPS.map((g) => {
     const rows = areas.filter((a) => a.has_page && a.base_group === g.key);

@@ -1,0 +1,23 @@
+---
+// CNIC's bedroom-entitlement rule, quoted exactly (src/data/housing_rules.json,
+// extracted verbatim by the export from the saved CNIC Applying for Housing page).
+// Sits above the wait tables: it decides which bedroom row applies.
+import { getEntry } from 'astro:content';
+import FactBlock from '../FactBlock.astro';
+import ExtLink from '../ExtLink.astro';
+
+interface Props { navyOnlyNote?: boolean }
+const { navyOnlyNote = false } = Astro.props;
+const rule = (await getEntry('housingRules', 'bedroom-entitlement'))!.data;
+---
+
+<FactBlock id="bedrooms" title="Navy Housing guidelines for enlisted personnel (E1–E6)" asOf={`Rule: CNIC Applying for Housing page, retrieved ${rule.verified_on} (copied by hand from a browser)`} source="CNIC Navy Housing">
+  <blockquote class="quote">
+    <p>“{rule.intro}”</p>
+    <ul>{rule.guidelines.map((g) => <li>“{g}”</li>)}</ul>
+  </blockquote>
+  <p class="note">Quoted from <ExtLink id={rule.link_id} text="CNIC, Applying for Housing" />.</p>
+  {rule.officer_section_empty && <p>CNIC's page lists no bedroom standard for officers and senior enlisted; ask the Housing Service Center.</p>}
+  {navyOnlyNote && <p class="note">This source is a Navy Housing page. Camp Pendleton's own terms aren't in our material.</p>}
+  <p>This decides which bedroom row applies to you.</p>
+</FactBlock>

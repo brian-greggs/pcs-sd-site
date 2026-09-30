@@ -14,6 +14,7 @@ import Access from '../../components/sections/Access.astro';
 import Climate from '../../components/sections/Climate.astro';
 import Hazards from '../../components/sections/Hazards.astro';
 import Notes from '../../components/sections/Notes.astro';
+import BedroomRules from '../../components/sections/BedroomRules.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
 import { baseHousingAreas } from '../../lib/baseHousing';
 import { tidyRange } from '../../lib/format';
@@ -73,6 +74,7 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
 
   <ul class="jump">
     <li><a href="#communities">Communities</a></li>
+    <li><a href="#bedrooms">Bedrooms</a></li>
     <li><a href="#wait-times">Wait times</a></li>
     <li><a href="#apply">How to apply</a></li>
     <li><a href="#cost">Cost</a></li>
@@ -105,6 +107,8 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
     </div>
     <p class="gap">LMH doesn't publish which grades can apply to each community. {askOffice}.{!isPendleton && ' The grades column is what the wait list prints.'}</p>
   </FactBlock>
+
+  <BedroomRules navyOnlyNote={isPendleton} />
 
   <FactBlock id="wait-times" title="Wait times" asOf={isPendleton ? `LMH pages ${area.members[0].vintage}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH monthly wait-time lists (PDF)">
     {waits.length > 0 ? (

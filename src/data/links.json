@@ -27,12 +27,13 @@
  },
  {
   "id": "cnic-applying-for-housing",
-  "title": "Applying for Navy Housing (CNIC)",
+  "title": "Applying for Housing (Navy Housing)",
   "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
-  "agency": "CNIC Fleet & Family Readiness",
+  "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
   "decision_area": "housing",
   "phases": [
-   "90_60_30"
+   "90_60_30",
+   "arrival"
   ],
   "incentive": "Government: no commercial interest",
   "vintage": "2026-09-30",

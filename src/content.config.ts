@@ -291,6 +291,18 @@ const links = defineCollection({
   }),
 });
 
+// CNIC's bedroom-entitlement rule, quoted verbatim by the export from the saved page.
+const housingRules = defineCollection({
+  loader: strictJson('housing_rules'),
+  schema: z.object({
+    intro: z.string().min(1),
+    guidelines: z.array(z.string().min(1)).min(1),
+    officer_section_empty: z.boolean(),
+    link_id: z.string(),
+    ...dated,
+  }),
+});
+
 const provenance = defineCollection({
   loader: strictJson('provenance'),
   schema: z.object({
@@ -345,6 +357,6 @@ const changelog = defineCollection({
 
 export const collections = {
   communities, bases, commute, rent, rentToBah, ownership, schools, districts, childcare,
-  baseHousing, baseHousingWaits, baseHousingAreas, militaryAccess, climate, hazards, links, provenance, sources,
+  baseHousing, baseHousingWaits, baseHousingAreas, housingRules, militaryAccess, climate, hazards, links, provenance, sources,
   communityNotes, baseHousingNotes, changelog,
 };
