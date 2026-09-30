@@ -1,0 +1,110 @@
+[
+ {
+  "id": "commute",
+  "title": "Commute at 0700",
+  "source_name": "Google Maps directions (Tuesday 0700 predicted), rounded; OSRM/OpenStreetMap road miles",
+  "source_url": "",
+  "license": "Google: display and cite only; OSRM: ODbL",
+  "vintage": "Sep 2026",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "rent",
+  "title": "Rent reference",
+  "source_name": "HUD FY2027 Small Area Fair Market Rents; US Census ACS 5-year 2020–2024",
+  "source_url": "https://www.huduser.gov/portal/datasets/fmr/smallarea/index.html",
+  "license": "Public domain",
+  "vintage": "FY2027; ACS 2020–2024",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "rent_to_bah",
+  "title": "Rent-to-BAH ratio",
+  "source_name": "HUD FY2027 SAFMR ÷ DTMO 2026 BAH (with dependents); ratio only",
+  "source_url": "https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/",
+  "license": "Public domain (derived)",
+  "vintage": "FY2027 / 2026",
+  "verified_on": "2026-09-17"
+ },
+ {
+  "id": "ownership",
+  "title": "Mello-Roos status",
+  "source_name": "SD County Auditor & Controller — Active Mello-Roos Districts FY2025-26",
+  "source_url": "https://www.sandiegocounty.gov/content/dam/sdc/auditor/pdf/cfd.pdf",
+  "license": "Public government data",
+  "vintage": "FY2025-26",
+  "verified_on": "2026-09-22"
+ },
+ {
+  "id": "schools",
+  "title": "Schools",
+  "source_name": "CDE Public Schools directory; CA School Dashboard 2025; CAASPP 2024-25 research file",
+  "source_url": "https://www.cde.ca.gov/schooldirectory/report?rid=dl1&tp=txt | https://www.cde.ca.gov/ta/ac/cm/acaddatafiles.asp | https://caaspp-elpac.ets.org/caaspp/researchfiles/sb_ca2025_1_csv_v1.zip",
+  "license": "CDE/ETS public data; GreatSchools link only",
+  "vintage": "directory 2026-09-18; Dashboard 2025; CAASPP 2024-25",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "districts",
+  "title": "School districts",
+  "source_name": "CDE Public Schools directory (district rows); district websites",
+  "source_url": "https://www.cde.ca.gov/schooldirectory/report?rid=dl1&tp=txt",
+  "license": "CDE/ETS public data; GreatSchools link only",
+  "vintage": "2026-09-18",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "childcare",
+  "title": "Licensed child care",
+  "source_name": "CDSS Community Care Licensing Division — Transparency download (Child Care Centers)",
+  "source_url": "https://www.ccld.dss.ca.gov/carefacilitysearch/?rewrite=downloaddata",
+  "license": "CA public records; business name, license number, address only",
+  "vintage": "2026-09-18",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "base_housing",
+  "title": "Base housing communities",
+  "source_name": "Liberty Military Housing community pages; US Census Geocoder (school districts)",
+  "source_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/admiral-hartman/",
+  "license": "facts stated on LMH public pages; Census geocoder public domain",
+  "vintage": "2026-09-18",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "base_housing_waits",
+  "title": "Base housing wait times",
+  "source_name": "NAVBASE San Diego Housing Service Center / LMH, monthly PPV approximate waiting periods (PDF)",
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "license": "US federal government work (public domain)",
+  "vintage": "2026-07 and 2026-10 lists",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "military_access",
+  "title": "Military access distances",
+  "source_name": "OSRM demo server table service (free-flow car profile) on OpenStreetMap roads",
+  "source_url": "https://router.project-osrm.org/table/v1/driving/",
+  "license": "OSRM demo results on ODbL OSM data (© OpenStreetMap contributors); demo server usage policy: light, non-commercial use",
+  "vintage": "OSRM demo (OSM road data as served 2026-09-30); free-flow, no traffic",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "climate",
+  "title": "Climate",
+  "source_name": "NOAA NCEI U.S. Climate Normals 1991-2020 (station); USGS 3DEP EPQS; CEC Building Climate Zones (2015) x TIGER 2023 ZCTA5",
+  "source_url": "https://www.ncei.noaa.gov/data/normals-annualseasonal/1991-2020/access/ | https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/ | https://epqs.nationalmap.gov/v1/json | https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/2023_gaz_place_06.txt | https://services3.arcgis.com/bWPjFyq029ChCGur/ArcGIS/rest/services/BuildingClimateZones_CEC_2015/FeatureServer/0",
+  "license": "NOAA/USGS/Census public domain; CEC data under CEC conditions of use (https://www.energy.ca.gov/conditions-of-use), public-domain state data",
+  "vintage": "Normals 1991-2020; CEC zones 2015 layer; ZCTA 2023; Census 2023 places; EPQS as of retrieval",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "hazards",
+  "title": "Hazards",
+  "source_name": "TIGER 2023 ZCTA5 + AREAWATER; FEMA NFHL (06073C); SANDAG ALUCP noise contours (Miramar); CAL FIRE FHSZ (blocked)",
+  "source_url": "https://www2.census.gov/geo/tiger/TIGER2023/ZCTA520/tl_2023_us_zcta520.zip | https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28 | https://geo.sandag.org/server/rest/services/Hosted/Airport_Noise_Contours/FeatureServer/0",
+  "license": "Census/FEMA public domain; SANDAG/SanGIS data subject to SanGIS legal notice",
+  "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis)",
+  "verified_on": "2026-09-18"
+ }
+]

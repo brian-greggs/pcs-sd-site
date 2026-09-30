@@ -1,0 +1,23 @@
+{
+  "name": "pcs-sd-site",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/check_principles.mjs source",
+    "build": "astro build",
+    "postbuild": "node scripts/check_principles.mjs dist",
+    "check": "node scripts/check_principles.mjs source && node scripts/check_principles.mjs dist",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^7.3.5"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}

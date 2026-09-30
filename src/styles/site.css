@@ -1,0 +1,81 @@
+/* Plain CSS, mobile first. System fonts only (no third-party fonts). */
+:root {
+  --ink: #1d232a;
+  --muted: #5b6570;
+  --line: #d9dee3;
+  --panel: #f5f7f9;
+  --accent: #1f5f8b;
+  --warn-bg: #fff6e0;
+  --warn-line: #e3b341;
+  --bg: #ffffff;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e6e9ec;
+    --muted: #a3adb8;
+    --line: #38414a;
+    --panel: #1c2228;
+    --accent: #7cb7e3;
+    --warn-bg: #3a3017;
+    --warn-line: #9c7a1f;
+    --bg: #12171c;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main, .site-header, .site-footer { max-width: 46rem; margin: 0 auto; padding: 0 16px; }
+a { color: var(--accent); }
+h1 { font-size: 1.7rem; line-height: 1.2; margin: 1.2rem 0 0.4rem; }
+h2 { font-size: 1.25rem; margin: 0 0 0.6rem; }
+h3 { font-size: 1.02rem; margin: 1rem 0 0.4rem; }
+
+.site-header { padding-top: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.site-name { font-weight: 700; text-decoration: none; color: var(--ink); }
+.beta { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--muted); margin-left: 4px; }
+.unofficial { margin: 2px 0 0; font-size: 0.85rem; color: var(--muted); }
+.site-footer { margin-top: 2.5rem; padding-top: 12px; padding-bottom: 24px; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--muted); }
+.site-footer nav { display: flex; gap: 16px; }
+
+.kicker { color: var(--muted); margin: 0 0 1rem; }
+.jump { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.92rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+
+.fact { border-top: 1px solid var(--line); padding: 1.2rem 0 0.6rem; }
+.asof { font-size: 0.82rem; color: var(--muted); margin: 0.6rem 0 0; }
+.note { font-size: 0.92rem; color: var(--muted); }
+.gap { border-left: 3px solid var(--warn-line); background: var(--warn-bg); padding: 8px 12px; margin: 0.8rem 0; font-size: 0.95rem; }
+.placeholder { border: 2px dashed var(--warn-line); background: var(--warn-bg); padding: 10px 12px; margin: 1rem 0; }
+.placeholder::before { content: "PLACEHOLDER — Brian writes this"; display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 4px; }
+
+/* Tables scroll inside their own box so the page never scrolls sideways. */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.4rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; background: var(--panel); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+caption { text-align: left; font-size: 0.85rem; color: var(--muted); padding-bottom: 4px; }
+
+dl.facts { display: grid; grid-template-columns: 1fr; gap: 2px 12px; margin: 0.4rem 0; }
+dl.facts dt { font-weight: 600; margin-top: 8px; }
+dl.facts dd { margin: 0; }
+@media (min-width: 560px) {
+  dl.facts { grid-template-columns: 14rem 1fr; }
+  dl.facts dt { margin-top: 0; }
+  h1 { font-size: 2rem; }
+}
+
+.ext small.incentive { font-size: 0.75rem; color: var(--muted); }
+.ext small.incentive::before { content: "("; }
+.ext small.incentive::after { content: ")"; }
+ul.links { padding-left: 1.1rem; }
+ul.links li { margin: 4px 0; }
+ul.communities { columns: 2; column-gap: 24px; padding-left: 1.1rem; }
+ul.communities li { break-inside: avoid; }
+.muted { color: var(--muted); }

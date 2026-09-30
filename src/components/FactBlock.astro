@@ -1,0 +1,18 @@
+---
+// A section of facts. The date line is required (Principle 2), and
+// scripts/check_principles.mjs fails the build if a block renders without it.
+interface Props {
+  id: string;
+  title: string;
+  asOf: string; // e.g. "HUD FY2027 · verified 2026-09-18"
+  source: string;
+}
+const { id, title, asOf, source } = Astro.props;
+if (!asOf.trim()) throw new Error(`FactBlock "${id}" has no date`);
+---
+
+<section class="fact" id={id} data-fact={id}>
+  <h2>{title}</h2>
+  <slot />
+  <p class="asof" data-asof>{asOf}. Source: {source}.</p>
+</section>

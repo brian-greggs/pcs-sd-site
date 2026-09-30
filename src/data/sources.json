@@ -1,0 +1,202 @@
+[
+ {
+  "id": "d1-bah-2026",
+  "layer": "D1 BAH 2026",
+  "source": "DTMO 2026 BAH ASCII tables",
+  "vintage": "2026",
+  "retrieved": "2026-09-17",
+  "license": "Public domain",
+  "published_as": "Not published. Rent-to-BAH ratios by pay band only (F10).",
+  "verified_on": "2026-09-17"
+ },
+ {
+  "id": "d2-zillow-rent-zori",
+  "layer": "D2 Zillow rent (ZORI)",
+  "source": "Zillow Research",
+  "vintage": "through Aug 2026",
+  "retrieved": "2026-09-17",
+  "license": "Free with attribution",
+  "published_as": "Link only (see QUESTIONS.md).",
+  "verified_on": "2026-09-17"
+ },
+ {
+  "id": "d3-zillow-home-value-zhvi",
+  "layer": "D3 Zillow home value (ZHVI)",
+  "source": "Zillow Research",
+  "vintage": "through Aug 2026",
+  "retrieved": "2026-09-17",
+  "license": "Free with attribution",
+  "published_as": "Link only (see QUESTIONS.md).",
+  "verified_on": "2026-09-17"
+ },
+ {
+  "id": "d4-hud-small-area-fmr",
+  "layer": "D4 HUD Small Area FMR",
+  "source": "HUD FY2027 Small Area Fair Market Rents",
+  "vintage": "FY2027",
+  "retrieved": "2026-09-17",
+  "license": "Public domain",
+  "published_as": "Values: 40th-percentile rent by bedroom count.",
+  "verified_on": "2026-09-17"
+ },
+ {
+  "id": "d5-commute-at-0700",
+  "layer": "D5 Commute at 0700",
+  "source": "Google Maps directions, Tuesday 0700 predicted",
+  "vintage": "Sep 2026",
+  "retrieved": "2026-09-18",
+  "license": "Display and cite only",
+  "published_as": "Rounded peak-AM minutes and typical range only, attributed.",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "d6-free-flow-drive-time",
+  "layer": "D6 Free-flow drive time",
+  "source": "OSRM on OpenStreetMap",
+  "vintage": "Sep 2026",
+  "retrieved": "2026-09-18",
+  "license": "ODbL",
+  "published_as": "Values (miles, free-flow minutes), attributed.",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "t11-communities",
+  "layer": "T11 communities",
+  "source": "same",
+  "vintage": "2026-09",
+  "retrieved": "2026-09-18",
+  "license": "Derived",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "zip-index",
+  "layer": "zip index",
+  "source": "+ DTMO sorted_zipmha26.txt MHA rule (per Brian)",
+  "vintage": "2026",
+  "retrieved": "2026-09-18",
+  "license": "Derived",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "t1-schools",
+  "layer": "T1 schools",
+  "source": "same as T1",
+  "vintage": "same",
+  "retrieved": "2026-09-18",
+  "license": "same",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "t2-childcare",
+  "layer": "T2 childcare",
+  "source": "same as T2",
+  "vintage": "CDSS 2026-09-18; CCAoA 2024 (2025 CA sheet not found, 3 attempts)",
+  "retrieved": "2026-09-18",
+  "license": "same",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "t3-base-housing",
+  "layer": "T3 base housing",
+  "source": "same",
+  "vintage": "2026-09-18",
+  "retrieved": "2026-09-18",
+  "license": "same",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "t9-acs",
+  "layer": "T9 ACS",
+  "source": "US Census ACS 5-year 2020–2024 API (https://api.census.gov/data/2024/acs/acs5; B23025_001/006, B25064, B25077, B25071, B25003_001/003; all ZCTAs, filtered)",
+  "vintage": "ACS 2020–2024",
+  "retrieved": "2026-09-18",
+  "license": "Census public domain",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "t5-hazards",
+  "layer": "T5 hazards",
+  "source": "same; NFHL layer https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28 queried 2026-09-18",
+  "vintage": "same",
+  "retrieved": "2026-09-18",
+  "license": "same",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "t4-ownership-costs",
+  "layer": "T4 ownership costs",
+  "source": "Curated by hand from SD County Auditor & Controller tax-rate/CFD lists and city CFD administration pages (per row source_url)",
+  "vintage": "2026-09",
+  "retrieved": "2026-09-22",
+  "license": "Public government data (store)",
+  "published_as": "Status per subarea; low-confidence rows shown as unknown",
+  "verified_on": "2026-09-22"
+ },
+ {
+  "id": "t7-military-access-costco",
+  "layer": "T7 military access + Costco",
+  "source": "Hand-typed installation seed + Census Geocoder / Nominatim; OSM Overpass (Costco warehouses + Costco fuel; used instead of hand-typing from costco.com); OSRM demo table (router.project-osrm.org, free-flow)",
+  "vintage": "OSM/OSRM as served 2026-09-30",
+  "retrieved": "2026-09-30",
+  "license": "OSM ODbL (points, attribution); OSRM derived minutes/miles",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "t8-admin-content",
+  "layer": "T8 admin content",
+  "source": "Hand-fetched by Cowork in a browser: cde.ca.gov ×2, ffr.cnic.navy.mil Southwest + NAVBASE San Diego, msepjobs.militaryonesource.mil",
+  "vintage": "2026-09-30",
+  "retrieved": "2026-09-30",
+  "license": "federal verbatim / CA lightly cleaned (individual names omitted)",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "t12-climate",
+  "layer": "T12 climate",
+  "source": "same as rev 2",
+  "vintage": "Normals 1991–2020",
+  "retrieved": "2026-09-30",
+  "license": "same",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "zip-origins-t7-t12",
+  "layer": "zip origins (T7/T12)",
+  "source": "TIGER 2023 ZCTA5 internal point (zip_index_sd.csv); Census 2023 Gazetteer Places CA (https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/2023_gaz_place_06.txt)",
+  "vintage": "Census 2023",
+  "retrieved": "2026-09-30",
+  "license": "Census public domain",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "t7-military-access",
+  "layer": "T7 military access",
+  "source": "MCCS Camp Pendleton \"Marine Marts, MCX24, & Fuel Stations\" page (https://pendleton.usmc-mccs.org/shopping/marine-marts-package-wine-stores; hand-fetched by Cowork, building numbers only); OSM Overpass amenity=fuel + named area features on MCB Camp Pendleton (camp-area proximity match)",
+  "vintage": "2026-09-30",
+  "retrieved": "2026-09-30",
+  "license": "MCCS facts (store); OSM ODbL",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "t3b-base-housing-wait-times",
+  "layer": "T3b base-housing wait times",
+  "source": "same PDFs",
+  "vintage": "Jul 2026, Oct 2026",
+  "retrieved": "2026-09-30",
+  "license": "same",
+  "published_as": "Wait times as printed; rent text not published",
+  "verified_on": "2026-09-30"
+ }
+]

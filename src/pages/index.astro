@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const communities = (await getCollection('communities')).map((c) => c.data).sort((a, b) => a.name.localeCompare(b.name));
+const written = new Set((await getCollection('communityNotes')).map((n) => n.id));
+const corridors = [...new Set(communities.map((c) => c.corridor))].sort();
+---
+
+<Base title="Home">
+  <h1>Moving to San Diego on orders</h1>
+  <p>
+    A guide for military families with orders to San Diego, built from dated public data and from what
+    families who just made this move wish they had known. Each community page puts the facts side by side:
+    what rent costs against your housing allowance, how long the drive to each base takes at 0700, which schools
+    and child care are nearby, and what to watch for. There are no scores or rankings, and nobody pays to be listed.
+  </p>
+
+  <h2>Communities</h2>
+  <p class="note">Only Rancho Bernardo is written so far. The rest are coming.</p>
+  {corridors.map((corridor) => (
+    <>
+      <h3>{corridor}</h3>
+      <ul class="communities">
+        {communities.filter((c) => c.corridor === corridor).map((c) => (
+          <li>{written.has(c.slug) ? <a href={`/communities/${c.slug}/`}>{c.name}</a> : <span class="muted">{c.name}</span>}</li>
+        ))}
+      </ul>
+    </>
+  ))}
+</Base>

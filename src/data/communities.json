@@ -1,0 +1,439 @@
+[
+ {
+  "slug": "rancho-bernardo",
+  "name": "Rancho Bernardo",
+  "zips": [
+   "92128"
+  ],
+  "corridor": "I-15",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "4s-ranch",
+  "name": "4S Ranch / Del Sur",
+  "zips": [
+   "92127"
+  ],
+  "corridor": "I-15",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "poway",
+  "name": "Poway",
+  "zips": [
+   "92064"
+  ],
+  "corridor": "I-15",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "scripps-ranch",
+  "name": "Scripps Ranch",
+  "zips": [
+   "92131"
+  ],
+  "corridor": "I-15",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "mira-mesa",
+  "name": "Mira Mesa",
+  "zips": [
+   "92126"
+  ],
+  "corridor": "I-15",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "tierrasanta",
+  "name": "Tierrasanta",
+  "zips": [
+   "92124"
+  ],
+  "corridor": "SR-52/125",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "clairemont",
+  "name": "Clairemont",
+  "zips": [
+   "92117",
+   "92110"
+  ],
+  "corridor": "I-805",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "point-loma",
+  "name": "Point Loma / Ocean Beach",
+  "zips": [
+   "92106",
+   "92107"
+  ],
+  "corridor": "I-5",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "coronado",
+  "name": "Coronado",
+  "zips": [
+   "92118"
+  ],
+  "corridor": "Coronado bridge",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "imperial-beach",
+  "name": "Imperial Beach",
+  "zips": [
+   "91932"
+  ],
+  "corridor": "South Bay",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "chula-vista-west",
+  "name": "Chula Vista (west)",
+  "zips": [
+   "91910",
+   "91911"
+  ],
+  "corridor": "South Bay",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "eastlake-otay-ranch",
+  "name": "Chula Vista East (Eastlake / Otay Ranch)",
+  "zips": [
+   "91913",
+   "91914",
+   "91915"
+  ],
+  "corridor": "South Bay",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "bonita",
+  "name": "Bonita",
+  "zips": [
+   "91902"
+  ],
+  "corridor": "South Bay",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "national-city",
+  "name": "National City",
+  "zips": [
+   "91950"
+  ],
+  "corridor": "South Bay",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "la-mesa",
+  "name": "La Mesa",
+  "zips": [
+   "91941",
+   "91942"
+  ],
+  "corridor": "East County",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "santee",
+  "name": "Santee",
+  "zips": [
+   "92071"
+  ],
+  "corridor": "SR-52/125",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "el-cajon",
+  "name": "El Cajon",
+  "zips": [
+   "92019",
+   "92020",
+   "92021"
+  ],
+  "corridor": "East County",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "lakeside",
+  "name": "Lakeside",
+  "zips": [
+   "92040"
+  ],
+  "corridor": "East County",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "alpine",
+  "name": "Alpine",
+  "zips": [
+   "91901"
+  ],
+  "corridor": "East County",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "north-park-normal-heights",
+  "name": "North Park / Normal Heights",
+  "zips": [
+   "92104",
+   "92116",
+   "92105"
+  ],
+  "corridor": "I-805",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "mission-valley",
+  "name": "Mission Valley",
+  "zips": [
+   "92108"
+  ],
+  "corridor": "I-805",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "university-city-utc",
+  "name": "University City / UTC",
+  "zips": [
+   "92122",
+   "92121"
+  ],
+  "corridor": "I-5",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "carmel-valley",
+  "name": "Carmel Valley",
+  "zips": [
+   "92130"
+  ],
+  "corridor": "I-5",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "del-mar-solana-beach",
+  "name": "Del Mar / Solana Beach",
+  "zips": [
+   "92014",
+   "92075"
+  ],
+  "corridor": "North County coastal",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "encinitas",
+  "name": "Encinitas",
+  "zips": [
+   "92007",
+   "92024"
+  ],
+  "corridor": "North County coastal",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "carlsbad",
+  "name": "Carlsbad",
+  "zips": [
+   "92008",
+   "92009",
+   "92010",
+   "92011"
+  ],
+  "corridor": "North County coastal",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "oceanside",
+  "name": "Oceanside",
+  "zips": [
+   "92054",
+   "92056",
+   "92057",
+   "92058"
+  ],
+  "corridor": "North County coastal",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "san-marcos",
+  "name": "San Marcos",
+  "zips": [
+   "92069",
+   "92078"
+  ],
+  "corridor": "North County inland",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "vista",
+  "name": "Vista",
+  "zips": [
+   "92081",
+   "92083",
+   "92084"
+  ],
+  "corridor": "North County inland",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "escondido",
+  "name": "Escondido",
+  "zips": [
+   "92025",
+   "92026",
+   "92027",
+   "92029"
+  ],
+  "corridor": "North County inland",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "fallbrook-bonsall",
+  "name": "Fallbrook / Bonsall",
+  "zips": [
+   "92028",
+   "92003"
+  ],
+  "corridor": "North County inland",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "serra-mesa-kearny-mesa",
+  "name": "Serra Mesa / Kearny Mesa",
+  "zips": [
+   "92123",
+   "92111"
+  ],
+  "corridor": "I-805",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "college-san-carlos-del-cerro",
+  "name": "College Area / San Carlos / Del Cerro",
+  "zips": [
+   "92115",
+   "92119",
+   "92120"
+  ],
+  "corridor": "I-8",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "spring-valley-lemon-grove",
+  "name": "Spring Valley / Lemon Grove",
+  "zips": [
+   "91977",
+   "91978",
+   "91945"
+  ],
+  "corridor": "I-8",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "rancho-penasquitos",
+  "name": "Rancho Peñasquitos",
+  "zips": [
+   "92129"
+  ],
+  "corridor": "I-15",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "otay-mesa-san-ysidro",
+  "name": "Otay Mesa / San Ysidro",
+  "zips": [
+   "92154",
+   "92173"
+  ],
+  "corridor": "South Bay",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "downtown-uptown",
+  "name": "Downtown / Uptown",
+  "zips": [
+   "92101",
+   "92103"
+  ],
+  "corridor": "I-5",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "pacific-beach-la-jolla",
+  "name": "Pacific Beach / La Jolla",
+  "zips": [
+   "92109",
+   "92037"
+  ],
+  "corridor": "I-5",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "ramona",
+  "name": "Ramona",
+  "zips": [
+   "92065"
+  ],
+  "corridor": "East County",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "slug": "southeastern-paradise-hills",
+  "name": "Southeastern San Diego / Paradise Hills",
+  "zips": [
+   "92102",
+   "92113",
+   "92114",
+   "92139"
+  ],
+  "corridor": "I-805",
+  "vintage": "2026-09",
+  "verified_on": "2026-09-18"
+ }
+]

@@ -1,0 +1,38 @@
+---
+// Generated from EAP_Data_Source_Log.md (latest row per layer) via the export.
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const sources = (await getCollection('sources')).map((s) => s.data);
+const labels = [...new Set((await getCollection('links')).map((l) => l.data.incentive))].sort();
+---
+
+<Base title="Sources">
+  <h1>Sources</h1>
+  <p>
+    Every number on this site comes from one of the sources below, with the date it was published and the date we
+    pulled it. Some sources let us show their numbers; others only let us link to them. The last column says which.
+  </p>
+
+  <section class="fact" data-fact="sources">
+    <h2>Data sources</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Layer</th><th>Source</th><th>Vintage</th><th>Retrieved</th><th>License</th><th>On this site</th></tr></thead>
+        <tbody>
+          {sources.map((s) => (
+            <tr><td>{s.layer}</td><td>{s.source}</td><td>{s.vintage}</td><td>{s.retrieved}</td><td>{s.license}</td><td>{s.published_as}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="asof" data-asof>Generated from the data source log. Most recent retrieval: {sources.map((s) => s.retrieved).filter((d) => /^\d{4}-/.test(d)).sort().at(-1)}.</p>
+  </section>
+
+  <section class="fact" data-fact="incentives">
+    <h2>What the labels on links mean</h2>
+    <p>Every link out of this site is labeled with how the site on the other end makes its money. The labels in use:</p>
+    <ul>{labels.map((l) => <li>{l}</li>)}</ul>
+    <p class="asof" data-asof>Labels assigned 2026-09-30.</p>
+  </section>
+</Base>

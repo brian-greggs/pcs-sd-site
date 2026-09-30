@@ -1,0 +1,344 @@
+---
+// Community page (F1). Facts side by side, no scores. Every section is a
+// FactBlock with its date line. Built only for communities that have a
+// written file in src/content/communities/ (Rancho Bernardo, for now).
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import FactBlock from '../../components/FactBlock.astro';
+import ExtLink from '../../components/ExtLink.astro';
+import { dollars, pct, range, TIER_LABEL, STATUS_LABEL, PAY_BAND_ORDER, monthName, tidyRange } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('communityNotes');
+  const written = new Set(notes.map((n) => n.id));
+  const all = await getCollection('communities');
+  return all.filter((c) => written.has(c.id)).map((c) => ({ params: { slug: c.id } }));
+}
+
+const { slug } = Astro.params;
+const community = (await getEntry('communities', slug!))!.data;
+const notes = (await getEntry('communityNotes', slug!))!;
+const { Content: Gotchas } = await render(notes);
+const zips = community.zips;
+const inZips = (r: { data: { zip: string } }) => zips.includes(r.data.zip);
+const multiZip = zips.length > 1;
+
+// Where the dates come from (Sources and dates footer).
+const prov = Object.fromEntries((await getCollection('provenance')).map((p) => [p.id, p.data]));
+const asOf = (id: string) => `${prov[id].vintage} · verified ${prov[id].verified_on}`;
+
+// --- Cost ---------------------------------------------------------------
+const rent = (await getCollection('rent')).filter(inZips).map((r) => r.data);
+const ratios = (await getCollection('rentToBah')).filter(inZips).map((r) => r.data);
+const bands = PAY_BAND_ORDER.filter((b) => ratios.some((r) => r.pay_band === b));
+const ratioCell = (zip: string, band: string, br: number) => {
+  const r = ratios.find((x) => x.zip === zip && x.pay_band === band && x.bedrooms === br);
+  return r ? range(r.ratio_low_pct, r.ratio_high_pct, '%') : '—';
+};
+const ownership = (await getCollection('ownership')).filter((r) => r.data.community_slug === slug).map((r) => r.data);
+const CFD_LABEL: Record<string, string> = {
+  N: 'No active Mello-Roos district on the county list',
+  Y: 'Mello-Roos (CFD) charge on the tax bill',
+  mixed: 'Some tracts carry a Mello-Roos charge, some don’t',
+  unknown: 'Not confirmed. Check the parcel before an offer',
+};
+
+// --- Commute ------------------------------------------------------------
+const bases = Object.fromEntries((await getCollection('bases')).map((b) => [b.id, b.data]));
+const commuteRows = (await getCollection('commute')).filter(inZips).map((r) => r.data);
+const byBase = Object.values(
+  commuteRows.reduce<Record<string, typeof commuteRows>>((acc, r) => ((acc[r.base] ??= []).push(r), acc), {}),
+).map((rows) => ({
+  base: rows[0].base,
+  peakLo: Math.min(...rows.map((r) => r.peak_am_min)),
+  peakHi: Math.max(...rows.map((r) => r.peak_am_min)),
+  lo: rows.every((r) => r.typical_low_min != null) ? Math.min(...rows.map((r) => r.typical_low_min!)) : null,
+  hi: rows.every((r) => r.typical_high_min != null) ? Math.max(...rows.map((r) => r.typical_high_min!)) : null,
+  tier: rows.sort((a, b) => a.peak_am_min - b.peak_am_min)[0].tier,
+  miles: rows[0].osrm_miles,
+})).sort((a, b) => a.peakLo - b.peakLo);
+const nearestBase = byBase[0];
+
+// --- Schools ------------------------------------------------------------
+const schools = (await getCollection('schools')).filter(inZips).map((r) => r.data)
+  .sort((a, b) => ['elementary', 'middle', 'high', 'k12'].indexOf(a.level) - ['elementary', 'middle', 'high', 'k12'].indexOf(b.level) || a.school.localeCompare(b.school));
+const districtNames = [...new Set(schools.filter((s) => s.charter === 'N').map((s) => s.district))];
+const districts = (await Promise.all(districtNames.map((d) => getEntry('districts', d)))).filter((d) => !!d);
+
+// --- Childcare ----------------------------------------------------------
+const care = (await getCollection('childcare')).filter(inZips).map((r) => r.data);
+const sum = (k: keyof (typeof care)[number]) => care.reduce((n, r) => n + (r[k] as number), 0);
+
+// --- Base housing nearest by commute ------------------------------------
+// The base with the shortest 0700 commute from here, then the base-housing
+// communities whose zip has the shortest 0700 commute to that base.
+const housing = (await getCollection('baseHousing')).map((h) => ({ id: h.id, ...h.data }));
+const servesBase = (h: (typeof housing)[number]) =>
+  nearestBase.base === 'PENDLETON' ? h.installation_served.includes('Pendleton') : !h.installation_served.includes('Pendleton');
+const commuteTo = new Map((await getCollection('commute')).filter((r) => r.data.base === nearestBase.base).map((r) => [r.data.zip, r.data.peak_am_min]));
+const waits = (await getCollection('baseHousingWaits')).map((w) => w.data).filter((w) => w.is_latest);
+const candidates = housing
+  .filter((h) => servesBase(h) && commuteTo.has(h.zip) && waits.some((w) => w.community_slugs.includes(h.id)))
+  .map((h) => ({ ...h, min: commuteTo.get(h.zip)! }));
+const bestMin = Math.min(...candidates.map((c) => c.min));
+const nearestHousing = candidates.filter((c) => c.min === bestMin);
+const nearestIds = new Set(nearestHousing.map((h) => h.id));
+const housingWaits = waits
+  .filter((w) => w.community_slugs.some((s) => nearestIds.has(s)))
+  .sort((a, b) => a.site_display.localeCompare(b.site_display) || a.rank_group.localeCompare(b.rank_group) || a.bedrooms.localeCompare(b.bedrooms));
+const waitMonth = housingWaits[0] ? monthName(housingWaits[0].as_of_date) : '';
+
+// --- Access, climate, hazards (per zip) ---------------------------------
+const access = (await getCollection('militaryAccess')).filter(inZips).map((r) => r.data);
+const climate = (await getCollection('climate')).filter(inZips).map((r) => r.data);
+const coastal = (await getEntry('climate', '92118'))!.data; // Coronado: the coastal baseline used in T12
+const hazards = (await getCollection('hazards')).filter(inZips).map((r) => r.data);
+
+const accessRows = (a: (typeof access)[number]) => [
+  ['Commissary', a.nearest_commissary, a.commissary_min_freeflow, a.commissary_mi],
+  [`Exchange (${a.exchange_store_operator})`, a.nearest_exchange_store, a.exchange_store_min_freeflow, a.exchange_store_mi],
+  [`Exchange gas (${a.exchange_operator})`, a.nearest_exchange_gas, a.exchange_gas_min_freeflow, a.exchange_gas_mi],
+  ...(a.nearest_mtf !== a.nearest_mtf_hospital ? [['Military clinic', a.nearest_mtf, a.mtf_min_freeflow, a.mtf_mi] as const] : []),
+  [a.nearest_mtf !== a.nearest_mtf_hospital ? 'Military hospital' : 'Military clinic or hospital', a.nearest_mtf_hospital, a.mtf_hospital_min_freeflow, a.mtf_hospital_mi],
+  ['Costco', a.nearest_costco, a.costco_min_freeflow, a.costco_mi],
+  ['Costco gas', a.nearest_costco_gas, a.costco_gas_min_freeflow, a.costco_gas_mi],
+] as const;
+
+const NOISE_LABEL: Record<string, string> = {
+  none: 'Outside the MCAS Miramar 65 dB noise contour',
+  '65-70': 'Inside the MCAS Miramar 65–70 dB noise contour',
+  '70-75': 'Inside the MCAS Miramar 70–75 dB noise contour',
+  '75plus': 'Inside the MCAS Miramar 75+ dB noise contour',
+  manual: 'Near NAS North Island; noise zone not yet assigned',
+};
+---
+
+<Base title={community.name} description={`${community.name}: cost, commute, schools, child care, base housing and hazards, side by side with dates.`}>
+  <h1>{community.name}</h1>
+  <p class="kicker">{community.corridor} corridor · zip {zips.join(', ')}</p>
+
+  <div class="placeholder" data-placeholder="lead"><p>{notes.data.lead}</p></div>
+
+  <ul class="jump">
+    <li><a href="#cost">Cost</a></li>
+    <li><a href="#commute">Commute</a></li>
+    <li><a href="#schools">Schools</a></li>
+    <li><a href="#childcare">Child care</a></li>
+    <li><a href="#base-housing">Base housing</a></li>
+    <li><a href="#access">Commissary &amp; Costco</a></li>
+    <li><a href="#climate">Climate</a></li>
+    <li><a href="#hazards">Hazards</a></li>
+    <li><a href="#gotchas">Gotchas</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ul>
+
+  <FactBlock id="cost" title="Cost" asOf={`Rent: ${asOf('rent')}. Ratio: ${asOf('rent_to_bah')}`} source="HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; DTMO BAH 2026 (used for the ratio only)">
+    <h3>Rent</h3>
+    {rent.map((r) => (
+      <div class="table-wrap">
+        <table>
+          <caption>HUD reference rent{multiZip ? `, zip ${r.zip}` : ''}: 40th-percentile rent including utilities{r.safmr_metro_default ? ' (metro default, not zip-specific)' : ''}</caption>
+          <thead><tr><th>Bedrooms</th><th class="num">Studio</th><th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th></tr></thead>
+          <tbody><tr><td>Monthly</td><td class="num">{dollars(r.fy27_0br)}</td><td class="num">{dollars(r.fy27_1br)}</td><td class="num">{dollars(r.fy27_2br)}</td><td class="num">{dollars(r.fy27_3br)}</td><td class="num">{dollars(r.fy27_4br)}</td></tr></tbody>
+        </table>
+      </div>
+      <p class="note">Census median rent across all rented homes here: {dollars(r.acs_median_gross_rent)} (ACS 2020–2024, so older than HUD's figure). For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" />.</p>
+    ))}
+
+    <h3>Rent as a share of your housing allowance</h3>
+    <p class="note">HUD reference rent for that many bedrooms, divided by the 2026 housing allowance with dependents. Under 100% means the reference rent fits inside the allowance. A band shows a range when its grades get different allowances. We don't show the allowance itself.</p>
+    {rent.map((r) => (
+      <div class="table-wrap">
+        <table>
+          {multiZip && <caption>Zip {r.zip}</caption>}
+          <thead><tr><th>Pay band</th><th class="num">2 bed</th><th class="num">3 bed</th><th class="num">4 bed</th></tr></thead>
+          <tbody>
+            {bands.map((band) => (
+              <tr><td>{band}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, band, br)}</td>)}</tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ))}
+
+    <h3>Buying</h3>
+    <dl class="facts">
+      {rent.map((r) => (<>
+        <dt>Census median home value{multiZip ? ` (${r.zip})` : ''}</dt>
+        <dd>{dollars(r.acs_median_home_value)} <span class="muted">(ACS 2020–2024)</span></dd>
+      </>))}
+      {ownership.map((o) => (<>
+        <dt>Mello-Roos: {o.subarea || community.name}</dt>
+        <dd>{CFD_LABEL[o.has_cfd]}{o.cfd_agencies ? ` (${o.cfd_agencies})` : ''}. <span class="muted">Confidence: {o.confidence}.</span>{o.note && <><br /><span class="note">{o.note}</span></>}</dd>
+      </>))}
+    </dl>
+    <p class="note">Mello-Roos is a fixed yearly charge on the property tax bill that doesn't drop when the home's value does. The only reliable check is the parcel itself: <ExtLink id="per-parcel-lookup" /></p>
+  </FactBlock>
+
+  <FactBlock id="commute" title="Commute at 0700" asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
+    <p class="note">Drive times start from the center of the zip, so your street can add or take away 5–10 minutes. The range is Google's typical spread for a weekday at 0700.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Base (gate)</th><th class="num">0700 predicted</th><th class="num">Typical range</th><th>Tier</th><th class="num">Road miles</th></tr></thead>
+        <tbody>
+          {byBase.map((b) => (
+            <tr>
+              <td>{bases[b.base].installation}<br /><span class="muted">{bases[b.base].gate}</span></td>
+              <td class="num">{range(b.peakLo, b.peakHi, ' min')}</td>
+              <td class="num">{b.lo != null && b.hi != null ? range(b.lo, b.hi, ' min') : '—'}</td>
+              <td>{TIER_LABEL[b.tier]}</td>
+              <td class="num">{b.miles ?? '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </FactBlock>
+
+  <FactBlock id="schools" title="Schools" asOf={asOf('schools')} source="California Department of Education: school directory, CA School Dashboard 2025, CAASPP 2024–25">
+    {districts.map((d) => (
+      <dl class="facts">
+        <dt>District</dt>
+        <dd>{d.id}</dd>
+        <dt>Which school is yours</dt>
+        <dd>{d.data.boundary_url ? <ExtLink href={d.data.boundary_url} incentive="Public school district" text="District boundary lookup" /> : <span class="muted">Boundary lookup not yet found; ask the district.</span>}</dd>
+        <dt>Transfers</dt>
+        <dd>{d.data.transfer_url ? <ExtLink href={d.data.transfer_url} incentive="Public school district" text="District transfer policy" /> : <span class="muted">Transfer page not yet found.</span>}</dd>
+      </dl>
+    ))}
+    <p class="note">These are the public schools with an address in {zips.length > 1 ? 'these zips' : 'this zip'}. Your assigned school depends on your street, so check the boundary lookup before you sign a lease.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>School</th><th>Grades</th><th>English (Dashboard)</th><th>Math (Dashboard)</th><th class="num">Met English standard</th><th class="num">Met math standard</th><th class="num">Chronically absent</th><th>Elsewhere</th></tr>
+        </thead>
+        <tbody>
+          {schools.map((s) => (
+            <tr>
+              <td>{s.school}{s.charter === 'Y' && <span class="muted"> (charter)</span>}</td>
+              <td>{s.grades}</td>
+              <td>{s.ela_dfs_statuslevel ? STATUS_LABEL[s.ela_dfs_statuslevel] : '—'}</td>
+              <td>{s.math_dfs_statuslevel ? STATUS_LABEL[s.math_dfs_statuslevel] : '—'}</td>
+              <td class="num">{pct(s.caaspp_ela_pct_met)}</td>
+              <td class="num">{pct(s.caaspp_math_pct_met)}</td>
+              <td class="num">{pct(s.chronic_abs_pct, 1)}</td>
+              <td>{s.greatschools_url ? <ExtLink href={s.greatschools_url} incentive="Nonprofit: ad-supported" text="GreatSchools" /> : '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="note">English and math columns show the Dashboard status level, from very low to very high. The "met standard" columns are the share of tested students who met or exceeded the state standard. The full picture for each school is on the <ExtLink id="ca-school-dashboard" />.</p>
+    <p class="note">Moving mid-year, or need help with enrollment? The School Liaison Officers are free:</p>
+    <ul class="links"><li><ExtLink id="slo-navy-san-diego" /></li><li><ExtLink id="slo-mcas-miramar" /></li></ul>
+  </FactBlock>
+
+  <FactBlock id="childcare" title="Child care" asOf={asOf('childcare')} source="California Department of Social Services, Community Care Licensing (licensed facilities download)">
+    <dl class="facts">
+      <dt>Licensed centers</dt>
+      <dd>{sum('centers')} <span class="muted">(capacity {sum('center_capacity')})</span></dd>
+      <dt>Centers licensed for infants</dt>
+      <dd>{sum('centers_infant')}</dd>
+      <dt>Preschool centers</dt>
+      <dd>{sum('centers_preschool')}</dd>
+      <dt>School-age centers</dt>
+      <dd>{sum('centers_school_age')}</dd>
+      <dt>Large family child care homes (9–14 children)</dt>
+      <dd>{sum('large_fcc_homes')} <span class="muted">(capacity {sum('large_fcc_capacity')})</span></dd>
+    </dl>
+    <p class="gap">Missing from these counts: small family child care homes (up to 8 children). They're licensed, but the state doesn't publish them, and they're often where infant care is. The way to find them is the county's free referral service.</p>
+    <ul class="links">
+      <li><ExtLink id="ymca-childcare-resource-service" /></li>
+      <li><ExtLink id="militarychildcare-request-care" /></li>
+    </ul>
+  </FactBlock>
+
+  <FactBlock id="base-housing" title="Base housing option" asOf={`CNRSW estimate, ${waitMonth} · verified ${prov.base_housing_waits.verified_on}`} source="Navy Housing Service Center / Liberty Military Housing monthly wait-time lists; LMH community pages">
+    <p>From here, the closest base at 0700 is {bases[nearestBase.base].installation} ({range(nearestBase.peakLo, nearestBase.peakHi, ' min')}). The base-housing communities with the shortest 0700 drive to that base ({bestMin} min from the leasing office's zip):</p>
+    <ul class="links">
+      {nearestHousing.map((h) => (
+        <li><ExtLink href={h.community_url} incentive="Private housing operator (PPV): collects the rent" text={h.community} /> <span class="muted">{h.bedroom_counts.replaceAll('|', ', ')} bedrooms</span></li>
+      ))}
+    </ul>
+    <div class="table-wrap">
+      <table>
+        <caption>Wait times, CNRSW estimate, {waitMonth}</caption>
+        <thead><tr><th>Community</th><th>List</th><th>Rank band</th><th class="num">Bedrooms</th><th>Wait</th></tr></thead>
+        <tbody>
+          {housingWaits.map((w) => (
+            <tr><td>{w.site_display}</td><td>{w.rank_group === 'officer' ? 'Officer' : 'Enlisted'}</td><td>{tidyRange(w.rank_band)}</td><td class="num">{w.bedrooms}</td><td>{tidyRange(w.wait_time_stated)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="gap">Which communities your rank can apply to isn't published anywhere; the Housing Service Center answers that by phone. Wait times change monthly.</p>
+    <ul class="links"><li><ExtLink id="navylifesw-housing-service-center" /></li></ul>
+  </FactBlock>
+
+  <FactBlock id="access" title="Commissary, exchange, clinic and Costco" asOf={asOf('military_access')} source="OSRM free-flow drive times on OpenStreetMap (© OpenStreetMap contributors, ODbL); DoD and Costco locations">
+    <p class="note">Drive times with no traffic, from the center of the zip. Real times at rush hour run longer. On-base times can run long because routing avoids restricted base roads.</p>
+    {access.map((a) => (
+      <div class="table-wrap">
+        <table>
+          {multiZip && <caption>Zip {a.zip}</caption>}
+          <thead><tr><th>What</th><th>Nearest</th><th class="num">Minutes</th><th class="num">Miles</th></tr></thead>
+          <tbody>
+            {accessRows(a).map(([what, name, min, mi]) => (
+              <tr><td>{what}</td><td>{name ?? '—'}</td><td class="num">{min != null ? Math.round(min) : '—'}</td><td class="num">{mi ?? '—'}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ))}
+  </FactBlock>
+
+  <FactBlock id="climate" title="Climate" asOf={asOf('climate')} source="NOAA U.S. Climate Normals 1991–2020 (nearest station); California Energy Commission building climate zones">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th>{climate.map((c) => <th class="num">{multiZip ? c.zip : community.name}</th>)}<th class="num">Coronado (coast)</th></tr></thead>
+        <tbody>
+          <tr><td>July average high</td>{climate.map((c) => <td class="num">{Math.round(c.july_mean_max_f)}°F</td>)}<td class="num">{Math.round(coastal.july_mean_max_f)}°F</td></tr>
+          <tr><td>Days at 90°F or hotter, per year</td>{climate.map((c) => <td class="num">{Math.round(c.days_ge_90f)}</td>)}<td class="num">{Math.round(coastal.days_ge_90f)}</td></tr>
+          <tr><td>State building climate zone</td>{climate.map((c) => <td class="num">{c.cec_climate_zone}</td>)}<td class="num">{coastal.cec_climate_zone}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Weather station: {climate.map((c) => `${c.noaa_station_name.toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase())}, ${c.station_distance_km} km away`).join('; ')}.</p>
+    <p class="gap">Whether a rental has air conditioning isn't published anywhere. On hot inland days it matters, so ask before you sign.</p>
+  </FactBlock>
+
+  <FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source="FEMA National Flood Hazard Layer; MCAS Miramar noise contours (2008 airport land use plan, via SANDAG); CAL FIRE (pending)">
+    {hazards.map((h) => (
+      <dl class="facts">
+        {multiZip && <><dt>Zip</dt><dd>{h.zip}</dd></>}
+        <dt>Fire</dt>
+        <dd>{h.fhsz_very_high_pct != null ? `${pct(h.fhsz_very_high_pct, 1)} of land in a Very High fire hazard zone` : <span>Not in our data yet. Check the address yourself: <ExtLink id="cal-fire-fhsz" /></span>}</dd>
+        <dt>Flood</dt>
+        <dd>{pct(h.sfha_pct, 1)} of land is in a FEMA 1%-annual-chance flood zone. <ExtLink id="fema-flood-map" text="Check an address" /></dd>
+        <dt>Aircraft noise</dt>
+        <dd>{NOISE_LABEL[h.aicuz_zone]}{h.miramar_cnel65plus_pct ? ` (${pct(h.miramar_cnel65plus_pct, 1)} of land at 65 dB or more)` : ''}.</dd>
+      </dl>
+    ))}
+  </FactBlock>
+
+  <section class="fact" id="gotchas" data-fact="gotchas">
+    <h2>Gotchas</h2>
+    <div class="placeholder" data-placeholder="gotchas"><Gotchas /></div>
+    <p class="asof" data-asof>Written {notes.data.verified_on}. Source: families who've done this move.</p>
+  </section>
+
+  <section class="fact" id="sources" data-fact="sources">
+    <h2>Sources and dates</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>What</th><th>Source</th><th>Vintage</th><th>Verified</th><th>License</th></tr></thead>
+        <tbody>
+          {['rent', 'rent_to_bah', 'ownership', 'commute', 'schools', 'childcare', 'base_housing', 'base_housing_waits', 'military_access', 'climate', 'hazards'].map((id) => (
+            <tr><td>{prov[id].title}</td><td>{prov[id].source_name}</td><td>{prov[id].vintage}</td><td>{prov[id].verified_on}</td><td>{prov[id].license}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="asof" data-asof>Most recent verification: {Object.values(prov).map((p) => p.verified_on).sort().at(-1)}. Full list: <a href="/sources/">Sources</a>.</p>
+  </section>
+</Base>

@@ -1,0 +1,20 @@
+---
+// F11: what changed between versions and why.
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const entries = (await getCollection('changelog')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+const rendered = await Promise.all(entries.map(async (e) => ({ ...e.data, Content: (await render(e)).Content })));
+---
+
+<Base title="What changed">
+  <h1>What changed</h1>
+  <p>Each version of the site, what changed, and why. Most changes come from families telling us what we got wrong.</p>
+  {rendered.map(({ date, title, version, Content }) => (
+    <section class="fact" data-fact={`changelog-${date}`}>
+      <h2>{version}: {title}</h2>
+      <Content />
+      <p class="asof" data-asof>{date}</p>
+    </section>
+  ))}
+</Base>

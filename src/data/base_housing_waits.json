@@ -1,0 +1,3654 @@
+[
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 216,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0000",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 44,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0001",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Bayview Hills",
+  "community_slugs": [
+   "bayview-hills"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 487,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0002",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Bayview Hills",
+  "community_slugs": [
+   "bayview-hills"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 80,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0003",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Bayview Hills",
+  "community_slugs": [
+   "bayview-hills"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E6",
+  "units": 156,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0004",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Beech St. Knolls",
+  "community_slugs": [
+   "beech-st-knolls"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 60,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0005",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Bonita Bluffs",
+  "community_slugs": [
+   "bonita-bluffs"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 24,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0006",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Bonita Bluffs",
+  "community_slugs": [
+   "bonita-bluffs"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 13,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0007",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Bonita Bluffs",
+  "community_slugs": [
+   "bonita-bluffs"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 38,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0008",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton",
+  "community_slugs": [
+   "chesterton"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 351,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0009",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton",
+  "community_slugs": [
+   "chesterton"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 56,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0010",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton Townhomes",
+  "community_slugs": [
+   "chesterton-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 21,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0011",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton Townhomes",
+  "community_slugs": [
+   "chesterton-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 28,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0012",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights",
+  "community_slugs": [
+   "chollas-heights"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 141,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0013",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights",
+  "community_slugs": [
+   "chollas-heights"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 213,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0014",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights",
+  "community_slugs": [
+   "chollas-heights"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E6",
+  "units": 58,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0015",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights Historical",
+  "community_slugs": [
+   "chollas-heights-historical"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 2,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0016",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights Historical",
+  "community_slugs": [
+   "chollas-heights-historical"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 3,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0017",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights Historical",
+  "community_slugs": [
+   "chollas-heights-historical"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 2,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0018",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Eucalyptus Ridge",
+  "community_slugs": [
+   "eucalyptus-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 20,
+  "wait_time_stated": "04-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0019",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Eucalyptus Ridge",
+  "community_slugs": [
+   "eucalyptus-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 270,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0020",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Gateway Village",
+  "community_slugs": [
+   "gateway-village"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 409,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0021",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Gateway Village",
+  "community_slugs": [
+   "gateway-village"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 51,
+  "wait_time_stated": "09-12 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0022",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Hilleary Park",
+  "community_slugs": [
+   "hilleary-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 3,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0023",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Hilleary Park",
+  "community_slugs": [
+   "hilleary-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 18,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0024",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Hilleary Park",
+  "community_slugs": [
+   "hilleary-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 16,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0025",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Holly Square",
+  "community_slugs": [
+   "holly-square"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 3,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0026",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Holly Square",
+  "community_slugs": [
+   "holly-square"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 10,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0027",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Home Terrace",
+  "community_slugs": [
+   "home-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 71,
+  "wait_time_stated": "03-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0028",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Home Terrace",
+  "community_slugs": [
+   "home-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 14,
+  "wait_time_stated": "06-07 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0029",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Howard Gilmore Terrace",
+  "community_slugs": [
+   "howard-gilmore-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 154,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0030",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Howard Gilmore Terrace",
+  "community_slugs": [
+   "howard-gilmore-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 90,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0031",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "La Mesa Park",
+  "community_slugs": [
+   "la-mesa-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 28,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0032",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "La Mesa Park",
+  "community_slugs": [
+   "la-mesa-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 29,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0033",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Lofgren Terrace",
+  "community_slugs": [
+   "lofgren-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 176,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0034",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Lofgren Terrace",
+  "community_slugs": [
+   "lofgren-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 24,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0035",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Capeharts East Miramar",
+  "community_slugs": [
+   "capeharts-east-miramar"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 32,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0036",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Capeharts East Miramar",
+  "community_slugs": [
+   "capeharts-east-miramar"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 6,
+  "wait_time_stated": "24-28 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0037",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Milcon",
+  "community_slugs": [
+   "miramar-milcon"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 24,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0038",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Milcon",
+  "community_slugs": [
+   "miramar-milcon"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 106,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0039",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Milcon",
+  "community_slugs": [
+   "miramar-milcon"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "5",
+  "rank_band": "E1-E9",
+  "units": 50,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0040",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Miramar PQ",
+  "community_slugs": [
+   "miramar-pq"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 9,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0041",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O3",
+  "units": 176,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0042",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O3",
+  "units": 86,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0043",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Mira Mesa Ridge",
+  "community_slugs": [
+   "mira-mesa-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 47,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0044",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Mira Mesa Ridge",
+  "community_slugs": [
+   "mira-mesa-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 18,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0045",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 198,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0046",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 650,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0047",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 1172,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0048",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "5",
+  "rank_band": "E1-E9",
+  "units": 49,
+  "wait_time_stated": "16-18 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0049",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "NAS North Island",
+  "community_slugs": [
+   "nas-north-island"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 10,
+  "wait_time_stated": "12-14 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0050",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Paradise Gardens",
+  "community_slugs": [
+   "paradise-gardens"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 13,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0051",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Paradise Gardens",
+  "community_slugs": [
+   "paradise-gardens"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 17,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0052",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Paradise Gardens",
+  "community_slugs": [
+   "paradise-gardens"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 16,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0053",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Pomerado Terrace",
+  "community_slugs": [
+   "pomerado-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 72,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0054",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Pomerado Terrace",
+  "community_slugs": [
+   "pomerado-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 48,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0055",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Prospect View",
+  "community_slugs": [
+   "prospect-view"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 28,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0056",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Prospect View",
+  "community_slugs": [
+   "prospect-view"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 56,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0057",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Ramona Vista",
+  "community_slugs": [
+   "ramona-vista"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 62,
+  "wait_time_stated": "00-01 Month",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0058",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Ramona Vista",
+  "community_slugs": [
+   "ramona-vista"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 26,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0059",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "River Place",
+  "community_slugs": [
+   "river-place"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 3,
+  "wait_time_stated": "16-18 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0060",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "River Place",
+  "community_slugs": [
+   "river-place"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 75,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0061",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand I",
+  "community_slugs": [
+   "silver-strand-i"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 184,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0062",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand I",
+  "community_slugs": [
+   "silver-strand-i"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 26,
+  "wait_time_stated": "30-36 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0063",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand II",
+  "community_slugs": [
+   "silver-strand-ii"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 150,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0064",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand II",
+  "community_slugs": [
+   "silver-strand-ii"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 30,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0065",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Terrace View Villas",
+  "community_slugs": [
+   "terrace-view-villas"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 64,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0066",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Terrace View Villas",
+  "community_slugs": [
+   "terrace-view-villas"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 172,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0067",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 200,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0068",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 300,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0069",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 277,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0070",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 503,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0071",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-O4",
+  "units": 120,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0072",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Vista Ridge",
+  "community_slugs": [
+   "vista-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 6,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0073",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Vista Ridge",
+  "community_slugs": [
+   "vista-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E6",
+  "units": 18,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0074",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Woodlake",
+  "community_slugs": [
+   "woodlake"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 12,
+  "wait_time_stated": "09-12 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0075",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "enlisted",
+  "site_display": "Woodlake",
+  "community_slugs": [
+   "woodlake"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 36,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20%20Enlisted%20Wait%20Times.pdf?ver=qSx-Ds_k1_Cilgd51NNYFg%3d%3d",
+  "id": "w0076",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "O4-O5",
+  "units": 33,
+  "wait_time_stated": "10-12 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0077",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "W1-O3",
+  "units": 110,
+  "wait_time_stated": "07-09 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0078",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 8,
+  "wait_time_stated": "20-22 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0079",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 23,
+  "wait_time_stated": "10-12 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0080",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Gateway Village",
+  "community_slugs": [
+   "gateway-village"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 409,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0081",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O3",
+  "units": 176,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0082",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O3",
+  "units": 86,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0083",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "MCAS Miramar Capehart",
+  "community_slugs": [],
+  "mapping_type": "none",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 11,
+  "wait_time_stated": "14-16 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0084",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "MCAS Miramar Capehart",
+  "community_slugs": [],
+  "mapping_type": "none",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 10,
+  "wait_time_stated": "18-20 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0085",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "3",
+  "rank_band": "W1-O5",
+  "units": 150,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0086",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 50,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0087",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 50,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0088",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "O4-O5",
+  "units": 24,
+  "wait_time_stated": "20-22 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0089",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "W1-O3",
+  "units": 0,
+  "wait_time_stated": "No Units",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0090",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 8,
+  "wait_time_stated": "42-44 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0091",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 0,
+  "wait_time_stated": "No Units",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0092",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "NAS North Island",
+  "community_slugs": [
+   "nas-north-island"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "O4-O5",
+  "units": 13,
+  "wait_time_stated": "12-14 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0093",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "NAS North Island",
+  "community_slugs": [
+   "nas-north-island"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "W1-O3",
+  "units": 9,
+  "wait_time_stated": "12-14 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0094",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 200,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0095",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 300,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0096",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 277,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0097",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 503,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0098",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-07",
+  "rank_group": "officer",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-O4",
+  "units": 120,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": false,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/July%202026%20Officer%20Wait%20Times.pdf?ver=g0Z38RH9c9P_SRhESwcN1A%3d%3d",
+  "id": "w0099",
+  "vintage": "2026-07",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 216,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0100",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 44,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0101",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Bayview Hills",
+  "community_slugs": [
+   "bayview-hills"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 487,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0102",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Bayview Hills",
+  "community_slugs": [
+   "bayview-hills"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 80,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0103",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Bayview Hills",
+  "community_slugs": [
+   "bayview-hills"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E6",
+  "units": 156,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0104",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Beech St. Knolls",
+  "community_slugs": [
+   "beech-st-knolls"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 60,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0105",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Bonita Bluffs",
+  "community_slugs": [
+   "bonita-bluffs"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 24,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0106",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Bonita Bluffs",
+  "community_slugs": [
+   "bonita-bluffs"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 13,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0107",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Bonita Bluffs",
+  "community_slugs": [
+   "bonita-bluffs"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 38,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0108",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton",
+  "community_slugs": [
+   "chesterton"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 351,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0109",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton",
+  "community_slugs": [
+   "chesterton"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 56,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0110",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton Townhomes",
+  "community_slugs": [
+   "chesterton-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 21,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0111",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chesterton Townhomes",
+  "community_slugs": [
+   "chesterton-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 28,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0112",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights",
+  "community_slugs": [
+   "chollas-heights"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 141,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0113",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights",
+  "community_slugs": [
+   "chollas-heights"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 213,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0114",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights",
+  "community_slugs": [
+   "chollas-heights"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E6",
+  "units": 58,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0115",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights Historical",
+  "community_slugs": [
+   "chollas-heights-historical"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 2,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0116",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights Historical",
+  "community_slugs": [
+   "chollas-heights-historical"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 3,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0117",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Chollas Heights Historical",
+  "community_slugs": [
+   "chollas-heights-historical"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 2,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0118",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Eucalyptus Ridge",
+  "community_slugs": [
+   "eucalyptus-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 20,
+  "wait_time_stated": "04-05 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0119",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Eucalyptus Ridge",
+  "community_slugs": [
+   "eucalyptus-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 270,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0120",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Gateway Village",
+  "community_slugs": [
+   "gateway-village"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 409,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0121",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Gateway Village",
+  "community_slugs": [
+   "gateway-village"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 51,
+  "wait_time_stated": "08-11 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0122",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Hilleary Park",
+  "community_slugs": [
+   "hilleary-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 3,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0123",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Hilleary Park",
+  "community_slugs": [
+   "hilleary-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 18,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0124",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Hilleary Park",
+  "community_slugs": [
+   "hilleary-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 16,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0125",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Holly Square",
+  "community_slugs": [
+   "holly-square"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 3,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0126",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Holly Square",
+  "community_slugs": [
+   "holly-square"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 10,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0127",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Home Terrace",
+  "community_slugs": [
+   "home-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 71,
+  "wait_time_stated": "04-05 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0128",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Home Terrace",
+  "community_slugs": [
+   "home-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 14,
+  "wait_time_stated": "06-07 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0129",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Howard Gilmore Terrace",
+  "community_slugs": [
+   "howard-gilmore-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 154,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0130",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Howard Gilmore Terrace",
+  "community_slugs": [
+   "howard-gilmore-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 90,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0131",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "La Mesa Park",
+  "community_slugs": [
+   "la-mesa-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 28,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0132",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "La Mesa Park",
+  "community_slugs": [
+   "la-mesa-park"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 29,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0133",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Lofgren Terrace",
+  "community_slugs": [
+   "lofgren-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 176,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0134",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Lofgren Terrace",
+  "community_slugs": [
+   "lofgren-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 24,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0135",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Capeharts East Miramar",
+  "community_slugs": [
+   "capeharts-east-miramar"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 32,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0136",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Capeharts East Miramar",
+  "community_slugs": [
+   "capeharts-east-miramar"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 6,
+  "wait_time_stated": "24-28 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0137",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Milcon",
+  "community_slugs": [
+   "miramar-milcon"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 24,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0138",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Milcon",
+  "community_slugs": [
+   "miramar-milcon"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 106,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0139",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Milcon",
+  "community_slugs": [
+   "miramar-milcon"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "5",
+  "rank_band": "E1-E9",
+  "units": 50,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0140",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Miramar PQ",
+  "community_slugs": [
+   "miramar-pq"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 9,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0141",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O3",
+  "units": 176,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0142",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O3",
+  "units": 86,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0143",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Mira Mesa Ridge",
+  "community_slugs": [
+   "mira-mesa-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 47,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0144",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Mira Mesa Ridge",
+  "community_slugs": [
+   "mira-mesa-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 18,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0145",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 198,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0146",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 650,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0147",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "4",
+  "rank_band": "E1-E9",
+  "units": 1172,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0148",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "5",
+  "rank_band": "E1-E9",
+  "units": 49,
+  "wait_time_stated": "16-18 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0149",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "NAS North Island",
+  "community_slugs": [
+   "nas-north-island"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 10,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0150",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Paradise Gardens",
+  "community_slugs": [
+   "paradise-gardens"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 13,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0151",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Paradise Gardens",
+  "community_slugs": [
+   "paradise-gardens"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 17,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0152",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Paradise Gardens",
+  "community_slugs": [
+   "paradise-gardens"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 16,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0153",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Park Summit",
+  "community_slugs": [
+   "park-summit"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 30,
+  "wait_time_stated": "05-07 Month",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0154",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Pomerado Terrace",
+  "community_slugs": [
+   "pomerado-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E9",
+  "units": 72,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0155",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Pomerado Terrace",
+  "community_slugs": [
+   "pomerado-terrace"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E9",
+  "units": 48,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0156",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Prospect View",
+  "community_slugs": [
+   "prospect-view"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 28,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0157",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Prospect View",
+  "community_slugs": [
+   "prospect-view"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 56,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0158",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Ramona Vista",
+  "community_slugs": [
+   "ramona-vista"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 62,
+  "wait_time_stated": "00-01 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0159",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Ramona Vista",
+  "community_slugs": [
+   "ramona-vista"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 26,
+  "wait_time_stated": "00-01 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0160",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "River Place",
+  "community_slugs": [
+   "river-place"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 3,
+  "wait_time_stated": "16-18 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0161",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "River Place",
+  "community_slugs": [
+   "river-place"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 75,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0162",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand I",
+  "community_slugs": [
+   "silver-strand-i"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E6-E9",
+  "units": 184,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0163",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand I",
+  "community_slugs": [
+   "silver-strand-i"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E6-E9",
+  "units": 26,
+  "wait_time_stated": "30-36 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0164",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand II",
+  "community_slugs": [
+   "silver-strand-ii"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 150,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0165",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Silver Strand II",
+  "community_slugs": [
+   "silver-strand-ii"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 30,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0166",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Terrace View Villas",
+  "community_slugs": [
+   "terrace-view-villas"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "1",
+  "rank_band": "E1-E6",
+  "units": 64,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0167",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Terrace View Villas",
+  "community_slugs": [
+   "terrace-view-villas"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 172,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0168",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 200,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0169",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 300,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0170",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 277,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0171",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 503,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0172",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-O4",
+  "units": 120,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0173",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Vista Ridge",
+  "community_slugs": [
+   "vista-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 6,
+  "wait_time_stated": "04-06 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0174",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Vista Ridge",
+  "community_slugs": [
+   "vista-ridge"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-E6",
+  "units": 18,
+  "wait_time_stated": "00-01 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0175",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Woodlake",
+  "community_slugs": [
+   "woodlake"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-E6",
+  "units": 12,
+  "wait_time_stated": "09-12 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0176",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "enlisted",
+  "site_display": "Woodlake",
+  "community_slugs": [
+   "woodlake"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-E6",
+  "units": 36,
+  "wait_time_stated": "02-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Enlisted%20Wait%20Times.pdf?ver=f2EKKfAW3_x3Yn1Unjp7aw%3d%3d",
+  "id": "w0177",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "O4-O5",
+  "units": 33,
+  "wait_time_stated": "10-12 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0178",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "W1-O3",
+  "units": 110,
+  "wait_time_stated": "08-10 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0179",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 8,
+  "wait_time_stated": "20-22 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0180",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Admiral Hartman",
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 23,
+  "wait_time_stated": "10-12 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0181",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Gateway Village",
+  "community_slugs": [
+   "gateway-village"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 409,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0182",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O3",
+  "units": 176,
+  "wait_time_stated": "01-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0183",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Miramar Townhomes",
+  "community_slugs": [
+   "miramar-townhomes"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O3",
+  "units": 86,
+  "wait_time_stated": "00-02 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0184",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "MCAS Miramar Capehart",
+  "community_slugs": [],
+  "mapping_type": "none",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 11,
+  "wait_time_stated": "14-16 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0185",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "MCAS Miramar Capehart",
+  "community_slugs": [],
+  "mapping_type": "none",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 10,
+  "wait_time_stated": "18-20 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0186",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "3",
+  "rank_band": "W1-O5",
+  "units": 150,
+  "wait_time_stated": "03-05 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0187",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 50,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0188",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Murphy Canyon Heights (covers Aero Ridge, Canyon View, Orleck Heights, Santo Terrace)",
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "mapping_type": "group",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 50,
+  "wait_time_stated": "05-07 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0189",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "O4-O5",
+  "units": 24,
+  "wait_time_stated": "18-20 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0190",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "W1-O3",
+  "units": 0,
+  "wait_time_stated": "No Units",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0191",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "O4-O5",
+  "units": 8,
+  "wait_time_stated": "42-44 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0192",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "Naval Amphibious Base",
+  "community_slugs": [
+   "naval-amphibious-base"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "W1-O3",
+  "units": 0,
+  "wait_time_stated": "No Units",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0193",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "NAS North Island",
+  "community_slugs": [
+   "nas-north-island"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "O4-O5",
+  "units": 13,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0194",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "NAS North Island",
+  "community_slugs": [
+   "nas-north-island"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "W1-O3",
+  "units": 9,
+  "wait_time_stated": "06-08 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0195",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 200,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0196",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "The Village at NTC",
+  "community_slugs": [
+   "the-village-at-ntc"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 300,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0197",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "2",
+  "rank_band": "E1-O4",
+  "units": 277,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0198",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "3",
+  "rank_band": "E1-O4",
+  "units": 503,
+  "wait_time_stated": "01-03 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0199",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "as_of_date": "2026-10",
+  "rank_group": "officer",
+  "site_display": "The Village at Serra Mesa",
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "mapping_type": "direct",
+  "bedrooms": "4",
+  "rank_band": "E1-O4",
+  "units": 120,
+  "wait_time_stated": "02-04 Months",
+  "is_latest": true,
+  "source_url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/CNRSW/NB%20San%20Diego/Monthly%20Wait%20times/October%202026%20Officer%20Wait%20Times.pdf?ver=VO18n6pt6wysmjCHk88j1g%3d%3d",
+  "id": "w0200",
+  "vintage": "2026-10",
+  "verified_on": "2026-09-30"
+ }
+]

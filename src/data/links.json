@@ -1,0 +1,871 @@
+[
+ {
+  "id": "cde-military-children",
+  "title": "Military Children (CA Dept of Education)",
+  "url": "https://www.cde.ca.gov/ls/pf/mc/",
+  "agency": "California Department of Education",
+  "decision_area": "schools",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "cde-military-dependent-transfers",
+  "title": "Military Dependent Children Transfers (CDE letter)",
+  "url": "https://www.cde.ca.gov/nr/el/le/yr25ltr0708.asp",
+  "agency": "California Department of Education",
+  "decision_area": "schools",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "cnic-applying-for-housing",
+  "title": "Applying for Navy Housing (CNIC)",
+  "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+  "agency": "CNIC Fleet & Family Readiness",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "cnic-housing-southwest",
+  "title": "Navy Housing - CNRSW (Navy Region Southwest)",
+  "url": "https://ffr.cnic.navy.mil/Navy-Housing/Housing-By-Region/Southwest/",
+  "agency": "CNIC Fleet & Family Readiness (Navy Region Southwest)",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "cnic-navbase-sd-housing",
+  "title": "Navy Housing - NAVBASE San Diego",
+  "url": "https://ffr.cnic.navy.mil/Navy-Housing/Housing-By-Region/Southwest/NAVBASE-San-Diego/",
+  "agency": "CNIC Fleet & Family Readiness (Naval Base San Diego Housing Service Center)",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30",
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dca-federal-license-portability",
+  "title": "Federal Professional License Portability and State Registration",
+  "url": "https://www.dca.ca.gov/military/federal.shtml",
+  "agency": "California Department of Consumer Affairs",
+  "decision_area": "spouse-employment",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dca-military-expedited-licensure",
+  "title": "Expedited Licensure for Spouses or Domestic Partners of Active-Duty Military Personnel",
+  "url": "https://www.dca.ca.gov/about_us/military_expedited_licensure.shtml",
+  "agency": "California Department of Consumer Affairs",
+  "decision_area": "spouse-employment",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dca-military-temporary-licensure",
+  "title": "Temporary Licensure for Spouses or Domestic Partners of Active-Duty Military Personnel",
+  "url": "https://www.dca.ca.gov/about_us/military_temporary_licensure.shtml",
+  "agency": "California Department of Consumer Affairs",
+  "decision_area": "spouse-employment",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-driver-licenses",
+  "title": "Driver's Licenses",
+  "url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/driver-licenses-dl/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-military-personnel-vc6701",
+  "title": "12.080 Military Personnel (VC §6701)",
+  "url": "https://www.dmv.ca.gov/portal/handbook/vehicle-industry-registration-procedures-manual-2/nonresident-vehicles/military-personnel/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-new-registration",
+  "title": "Vehicle Registration (new and out-of-state vehicles)",
+  "url": "https://www.dmv.ca.gov/portal/vehicle-registration/new-registration/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-new-to-california",
+  "title": "New California Resident Portal",
+  "url": "https://www.dmv.ca.gov/portal/driver-education-and-safety/special-interest-driver-guides/new-to-california/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-nrm-vlf-exemption",
+  "title": "12.105 Nonresident Military (NRM) Exemption (50 USC §574)",
+  "url": "https://www.dmv.ca.gov/portal/handbook/vehicle-industry-registration-procedures-manual-2/nonresident-vehicles/nonresident-military-nrm-exemption/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-real-id",
+  "title": "Apply for REAL ID",
+  "url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/real-id/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-real-id-checklist",
+  "title": "REAL ID Checklist",
+  "url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/real-id/real-id-checklist/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-smog-inspections",
+  "title": "Smog Inspections",
+  "url": "https://www.dmv.ca.gov/portal/vehicle-registration/smog-inspections/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "dmv-veterans-active-military",
+  "title": "Veterans and Active Duty Military",
+  "url": "https://www.dmv.ca.gov/portal/driver-education-and-safety/special-interest-driver-guides/veterans-and-active-duty-military/",
+  "agency": "California DMV",
+  "decision_area": "vehicles",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "fee-assistance-marines",
+  "title": "Child Care Aware of America — Marine Corps fee assistance",
+  "url": "https://www.childcareaware.org/fee-assistancerespite/military-families/marines/",
+  "agency": "Child Care Aware of America",
+  "decision_area": "childcare",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Nonprofit: runs DoD fee-assistance under contract",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "fee-assistance-navy-ccaoa",
+  "title": "Child Care Aware of America — Navy fee assistance (transition notice)",
+  "url": "https://www.childcareaware.org/fee-assistancerespite/military-families/navy/",
+  "agency": "Child Care Aware of America",
+  "decision_area": "childcare",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Nonprofit: runs DoD fee-assistance under contract",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "fee-assistance-navy-mccyn",
+  "title": "Navy fee assistance for off-base care (MCCYN) on MilitaryChildCare.com",
+  "url": "https://public.militarychildcare.csd.disa.mil/mcc-central/mcchome/mccyn",
+  "agency": "DoD MilitaryChildCare.com / Navy Child & Youth Programs",
+  "decision_area": "childcare",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "homes-mil",
+  "title": "HOMES.mil — DoD off-base rental listings",
+  "url": "https://www.homes.mil",
+  "agency": "DoD (HOMES.mil)",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "interstate-compact-military-children",
+  "title": "Interstate Compact for Military Children (summary)",
+  "url": "https://www.militaryonesource.mil/education-employment/for-children-youth/interstate-compact-for-military-children/",
+  "agency": "Military OneSource (DoD)",
+  "decision_area": "schools",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mcas-miramar-cdc",
+  "title": "MCCS Miramar Child Development Centers",
+  "url": "https://miramar.usmc-mccs.org/marine-family-support/child-and-youth/child-development-centers",
+  "agency": "Marine Corps Community Services Miramar",
+  "decision_area": "childcare",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Military family-support program (government)",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mi-nbsd-check-in",
+  "title": "Naval Base San Diego Check-In Procedures",
+  "url": "https://installations.militaryonesource.mil/military-installation/naval-base-san-diego/base-essentials/check-in-procedures",
+  "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+  "decision_area": "moving",
+  "phases": [
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mi-nbsd-housing",
+  "title": "Naval Base San Diego Housing",
+  "url": "https://installations.militaryonesource.mil/military-installation/naval-base-san-diego/housing/housing",
+  "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30",
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mi-nbsd-mfsc",
+  "title": "Naval Base San Diego Military and Family Support Center",
+  "url": "https://installations.militaryonesource.mil/military-installation/naval-base-san-diego/military-and-family-support-center/military-and-family-support-center",
+  "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+  "decision_area": "moving",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mi-nbsd-sponsorship",
+  "title": "Naval Base San Diego Sponsorship",
+  "url": "https://installations.militaryonesource.mil/military-installation/naval-base-san-diego/base-essentials/sponsorship",
+  "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+  "decision_area": "moving",
+  "phases": [
+   "orders",
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "militarychildcare-request-care",
+  "title": "MilitaryChildCare.com: how to request child care",
+  "url": "https://public.militarychildcare.csd.disa.mil/mcc-central/mcchome/how-request-child-care-and-manage-your-requests",
+  "agency": "DoD MilitaryChildCare.com (MCC)",
+  "decision_area": "childcare",
+  "phases": [
+   "orders"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mos-milconnect",
+  "title": "About DMDC milConnect",
+  "url": "https://www.militaryonesource.mil/benefits/milconnect/",
+  "agency": "Military OneSource (DoD)",
+  "decision_area": "health",
+  "phases": [
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mos-military-spouse-preference",
+  "title": "Military Spouse Preference Program",
+  "url": "https://www.militaryonesource.mil/education-employment/for-spouses/understanding-military-spouse-preference/",
+  "agency": "Military OneSource (DoD)",
+  "decision_area": "spouse-employment",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mos-msep",
+  "title": "About the Military Spouse Employer Partnership (MSEP)",
+  "url": "https://msepjobs.militaryonesource.mil/msep/about-us",
+  "agency": "Military OneSource SpouseWorks (DoD)",
+  "decision_area": "spouse-employment",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mos-pcs-and-military-moves",
+  "title": "Preparing for Your PCS or Military Move",
+  "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/pcs-and-military-moves/",
+  "agency": "Military OneSource (DoD)",
+  "decision_area": "moving",
+  "phases": [
+   "orders"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mos-pcs-basics",
+  "title": "Basics of a Military PCS Move",
+  "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/pcs-the-basics-about-permanent-change-of-station/",
+  "agency": "Military OneSource (DoD)",
+  "decision_area": "moving",
+  "phases": [
+   "orders",
+   "90_60_30",
+   "transit",
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mos-plan-my-move",
+  "title": "Plan My Move: Moving Checklist Tool",
+  "url": "https://www.militaryonesource.mil/resources/network/plan-my-move/",
+  "agency": "Military OneSource (DoD)",
+  "decision_area": "moving",
+  "phases": [
+   "orders"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "mos-settle-in-after-pcs",
+  "title": "Resources to Help Settle in After a PCS",
+  "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/moving-checklists-for-military-moves/",
+  "agency": "Military OneSource (DoD)",
+  "decision_area": "moving",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "navy-cdc-san-diego",
+  "title": "MWR Child Development Centers — San Diego Metro",
+  "url": "https://sandiego.navylifesw.com/child-youth/child-development-centers",
+  "agency": "Navy Region Southwest MWR Child & Youth Programs",
+  "decision_area": "childcare",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Military family-support program (government)",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "navy-housing-sd-family-housing",
+  "title": "Family Housing — Navy Housing Service Center (Naval Base San Diego)",
+  "url": "https://sandiego.navylifesw.com/housing/family-housing",
+  "agency": "Navy Region Southwest (CNIC Housing)",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30",
+   "first_30_days"
+  ],
+  "incentive": "Military family-support program (government)",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "navylifesw-ffsc-san-diego",
+  "title": "Fleet & Family Support Center San Diego",
+  "url": "https://sandiego.navylifesw.com/programs/dda11d36-18da-4d6f-a32c-2a6c6eac80d2",
+  "agency": "Navy Region Southwest (CNIC Fleet & Family Support)",
+  "decision_area": "moving",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Military family-support program (government)",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "navylifesw-housing-service-center",
+  "title": "San Diego Housing Service Center",
+  "url": "https://sandiego.navylifesw.com/programs/bc780a5e-012e-42f5-b073-ff9565453020",
+  "agency": "Navy Region Southwest (CNIC Housing)",
+  "decision_area": "housing",
+  "phases": [
+   "arrival"
+  ],
+  "incentive": "Military family-support program (government)",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "nws-sgx-climate-of-san-diego-tm275",
+  "title": "Climate of San Diego, NOAA Tech Memo NWS WR-275 — Santa Ana winds",
+  "url": "https://www.weather.gov/media/wrh/online_publications/TMs/TM-275.pdf",
+  "agency": "NOAA National Weather Service (Western Region; SGX authors)",
+  "decision_area": "climate",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "nws-sgx-san-diego-climate",
+  "title": "San Diego Climate (NWS San Diego) — marine layer / coastal low clouds",
+  "url": "https://www.weather.gov/sgx/san-san",
+  "agency": "NOAA National Weather Service San Diego (WFO SGX)",
+  "decision_area": "climate",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "sdcounty-das-dog-license",
+  "title": "Dog License (County of San Diego Animal Services)",
+  "url": "https://www.sandiegocounty.gov/content/sdc/das/license-laws/license.html",
+  "agency": "County of San Diego Department of Animal Services",
+  "decision_area": "pets",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "sdge-start-stop-move",
+  "title": "Start, Stop, Move (SDG&E residential)",
+  "url": "https://www.sdge.com/residential/customer-service/service-requests/start-stop-move",
+  "agency": "San Diego Gas & Electric (investor-owned utility)",
+  "decision_area": "utilities",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Utility: regulated monopoly that sells you power",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "slo-mcas-miramar",
+  "title": "MCCS Miramar School Liaison",
+  "url": "https://miramar.usmc-mccs.org/marine-family-support/child-and-youth/school-liaison",
+  "agency": "Marine Corps Community Services Miramar",
+  "decision_area": "schools",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Military family-support program (government)",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "slo-navy-san-diego",
+  "title": "School Liaison Officer (Navy Region Southwest / San Diego Metro)",
+  "url": "https://sandiego.navylifesw.com/fleet-family/child-youth-programs/school-liaison-officer",
+  "agency": "Navy Region Southwest (CNIC Fleet & Family / CYP)",
+  "decision_area": "schools",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Military family-support program (government)",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "sos-military-overseas-voters",
+  "title": "Military & Overseas Voters",
+  "url": "https://www.sos.ca.gov/elections/voter-registration/military-overseas-voters",
+  "agency": "California Secretary of State",
+  "decision_area": "voting",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "sos-voter-registration",
+  "title": "Voter Registration (California Secretary of State)",
+  "url": "https://www.sos.ca.gov/elections/voter-registration",
+  "agency": "California Secretary of State",
+  "decision_area": "voting",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "tricare-deers",
+  "title": "Defense Enrollment Eligibility Reporting System (DEERS)",
+  "url": "https://tricare.mil/deers",
+  "agency": "TRICARE (Defense Health Agency)",
+  "decision_area": "health",
+  "phases": [
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "tricare-moving",
+  "title": "Moving (TRICARE life event)",
+  "url": "https://tricare.mil/LifeEvents/Moving",
+  "agency": "TRICARE (Defense Health Agency)",
+  "decision_area": "health",
+  "phases": [
+   "90_60_30",
+   "transit",
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "tricare-moving-prime-adfm",
+  "title": "Moving with TRICARE Prime: Active Duty Family Members",
+  "url": "https://tricare.mil/LifeEvents/Moving/Prime/ADFM",
+  "agency": "TRICARE (Defense Health Agency)",
+  "decision_area": "health",
+  "phases": [
+   "first_30_days"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "tricare-moving-prime-adsm",
+  "title": "Moving with TRICARE Prime: Active Duty Service Members",
+  "url": "https://tricare.mil/LifeEvents/Moving/Prime/ADSM",
+  "agency": "TRICARE (Defense Health Agency)",
+  "decision_area": "health",
+  "phases": [
+   "90_60_30",
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "tricare-pcs-faq",
+  "title": "I'm PCSing: what do I need to do?",
+  "url": "https://tricare.mil/FAQs/general/GEN_pcs",
+  "agency": "TRICARE (Defense Health Agency)",
+  "decision_area": "health",
+  "phases": [
+   "90_60_30",
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "tricare-prime-psa-lookup",
+  "title": "TRICARE Prime Service Area lookup (West Region contractor: TriWest; links to Plan Finder)",
+  "url": "https://tricare.mil/FAQs/Prime/PRI_PSA_Lookup",
+  "agency": "Defense Health Agency (TRICARE)",
+  "decision_area": "health",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "tricare-west-region",
+  "title": "TRICARE West Region",
+  "url": "https://tricare.mil/West",
+  "agency": "TRICARE (Defense Health Agency)",
+  "decision_area": "health",
+  "phases": [
+   "arrival"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "triwest-beneficiary",
+  "title": "TriWest Healthcare Alliance: TRICARE West Region beneficiary site",
+  "url": "https://tricare.triwest.com/en/beneficiary/",
+  "agency": "TriWest Healthcare Alliance (TRICARE West Region contractor)",
+  "decision_area": "health",
+  "phases": [
+   "arrival"
+  ],
+  "incentive": "TRICARE contractor: paid by DoD",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "ymca-childcare-resource-service",
+  "title": "YMCA Childcare Resource Service (San Diego County child care resource & referral)",
+  "url": "https://www.ymcasd.org/community-support/childcare-resource-service",
+  "agency": "YMCA of San Diego County (county R&R agency)",
+  "decision_area": "childcare",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Nonprofit: the county's contracted child care referral agency",
+  "vintage": "2026-09-30",
+  "verified_on": "2026-09-18"
+ },
+ {
+  "id": "per-parcel-lookup",
+  "title": "San Diego County special assessments lookup (per parcel)",
+  "url": "https://specialassessments.sandiegocounty.gov",
+  "agency": "San Diego County",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "current",
+  "verified_on": "2026-09-22"
+ },
+ {
+  "id": "active-cfd-list",
+  "title": "Active Mello-Roos districts FY2025-26 (SD County Auditor & Controller)",
+  "url": "https://www.sandiegocounty.gov/content/dam/sdc/auditor/pdf/cfd.pdf",
+  "agency": "San Diego County",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "FY2025-26",
+  "verified_on": "2026-09-22"
+ },
+ {
+  "id": "cal-fire-fhsz",
+  "title": "CAL FIRE Fire Hazard Severity Zone viewer",
+  "url": "https://osfm.fire.ca.gov/what-we-do/community-wildfire-preparedness-and-mitigation/fire-hazard-severity-zones",
+  "agency": "CAL FIRE",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "fema-flood-map",
+  "title": "FEMA Flood Map Service Center",
+  "url": "https://msc.fema.gov/portal/home",
+  "agency": "FEMA",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "ca-school-dashboard",
+  "title": "California School Dashboard",
+  "url": "https://www.caschooldashboard.org/",
+  "agency": "California Department of Education",
+  "decision_area": "schools",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "hud-safmr",
+  "title": "HUD Small Area Fair Market Rents",
+  "url": "https://www.huduser.gov/portal/datasets/fmr/smallarea/index.html",
+  "agency": "HUD",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "zillow-research",
+  "title": "Zillow Research data (ZORI, ZHVI)",
+  "url": "https://www.zillow.com/research/data/",
+  "agency": "Zillow",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Commercial: earns from agent referrals and listing ads",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "cec-climate-zones",
+  "title": "California Building Climate Zones (CEC)",
+  "url": "https://www.energy.ca.gov/programs-and-topics/programs/building-energy-efficiency-standards/climate-zone-tool-maps-and",
+  "agency": "California Energy Commission",
+  "decision_area": "climate",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "noaa-normals",
+  "title": "NOAA U.S. Climate Normals 1991–2020",
+  "url": "https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals",
+  "agency": "NOAA NCEI",
+  "decision_area": "climate",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "osm-copyright",
+  "title": "OpenStreetMap copyright and license",
+  "url": "https://www.openstreetmap.org/copyright",
+  "agency": "OpenStreetMap",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Open data project: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ }
+]
