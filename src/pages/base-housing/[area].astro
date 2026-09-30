@@ -56,6 +56,9 @@ const petPolicy = (id: string, lmh: string) => {
   return lmh;
 };
 const statedEligibility = (s: string) => (s === 'not stated' ? 'Not stated' : s);
+// Cost rule and discount note, each cited and dated from its link record.
+const cnicRule = (await getEntry('links', 'cnic-privatized-housing'))!.data;
+const oneSource = (await getEntry('links', 'mi-nbsd-housing'))!.data;
 const askOffice = isPendleton ? 'Ask LMH or the Camp Pendleton housing office' : 'Ask the Housing Service Center';
 const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii', 'san-onofre-iii']);
 ---
@@ -136,22 +139,24 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
     </ol>
   </FactBlock>
 
-  <FactBlock id="cost" title="Cost" asOf={isPendleton ? `LMH pages ${area.members[0].vintage}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists (rent as printed)">
+  <FactBlock id="cost" title="Cost" asOf={`Rule: CNIC Privatized Housing page, verified ${cnicRule.verified_on}. Discounts: Military OneSource NBSD housing page, retrieved ${oneSource.verified_on}${costShown.length ? `. Rates as printed: ${estimate}` : ''}`} source="CNIC Navy Housing; Military OneSource; Navy Housing Service Center / LMH wait-time lists">
+    <p>Rent is your BAH, paid to Liberty Military Housing by allotment <span class="muted">(<ExtLink id="cnic-privatized-housing" text="CNIC" />)</span>. Some sites list discounted rates <span class="muted">(<ExtLink id="mi-nbsd-housing" text="Military OneSource" />)</span>; those are shown below as printed.</p>
+    {isPendleton && <p class="note">Both sources are Navy pages (CNIC Navy Housing and Naval Base San Diego). Camp Pendleton's own terms aren't in our material.</p>}
     {costShown.length > 0 ? (
       <>
         <div class="table-wrap">
           <table>
-            <caption>Rent as printed on the {month} list</caption>
+            <caption>Discounted rates as printed on the {month} list</caption>
             <thead><tr><th>Community</th><th class="num">Bedrooms</th><th>As printed</th></tr></thead>
             <tbody>
               {costShown.map((w) => <tr><td>{w.site_display}</td><td class="num">{w.bedrooms}</td><td>{w.cost_as_printed}</td></tr>)}
             </tbody>
           </table>
         </div>
-        <p class="note">This is what the list prints, including move-in specials; asterisks refer to footnotes on the PDF. The list doesn't say how these rents relate to the housing allowance, so ask the Housing Service Center what you'd pay at your grade.</p>
+        <p class="note">Asterisks refer to footnotes on the PDF.</p>
       </>
     ) : (
-      <p class="note">{isPendleton ? 'Our sources don’t state rent for these communities.' : `The ${month} list prints no rent for these communities.`} {askOffice} what you'd pay at your grade.</p>
+      <p class="note">{isPendleton ? 'No discounted rates are in our material for these communities.' : `The ${month} list prints no discounted rates for these communities.`}</p>
     )}
   </FactBlock>
 

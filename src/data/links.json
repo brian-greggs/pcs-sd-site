@@ -906,5 +906,18 @@
   "incentive": "Open data project: no commercial interest",
   "vintage": "as of 2026-09-30",
   "verified_on": "2026-09-30"
+ },
+ {
+  "id": "cnic-privatized-housing",
+  "title": "Privatized Housing (CNIC Navy Housing)",
+  "url": "https://ffr.cnic.navy.mil/Navy-Housing/Privatized-Housing/",
+  "agency": "CNIC Navy Housing",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "read in a browser 2026-09-30",
+  "verified_on": "2026-09-30"
  }
 ]

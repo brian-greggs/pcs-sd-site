@@ -2,11 +2,7 @@
 
 ## Open (session 2, base housing areas, 2026-09-30)
 
-21. **What does a family actually pay for PPV housing?** The sources don't say it plainly, so the area pages show only what the wait list prints and tell families to ask. What the sources say:
-    - The October CNIC/LMH wait lists print a flat rent for many communities ("$2,800 rent", "$3,200 rent") and move-in specials ("First FULL month rent FREE*"), with asterisks pointing to footnotes we haven't captured in full.
-    - Military OneSource's NBSD housing page (DoD, not CNIC or LMH) says PPV residents "pay (via allotment) the equivalent of the member's monthly Basic Allowance for Housing rate. Some neighborhoods offer discounted rates." That page still names the previous operator (Lincoln), so it's out of date.
-    - The CNIC NAVBASE San Diego page says nothing about rent.
-    - Question for the HSC: is rent for a given community the member's BAH, or the printed flat rent, whichever is lower? Then the cost section can say it once, sourced.
+21. ~~What does a family pay for PPV housing?~~ **Resolved 2026-09-30 from sources (Brian).** CNIC's Privatized Housing page says rent is based on BAH: you receive BAH and pay rent to the property manager. Military OneSource's NBSD housing page adds that some neighborhoods offer discounted rates. Area pages now say "Rent is your BAH, paid to Liberty Military Housing by allotment (CNIC). Some sites list discounted rates; those are shown below as printed." Both sources are cited and dated. Still open, on the HSC call list in the data repo's STATUS: whether families keep the difference on discounted units, and utilities.
 22. **Camp Pendleton has no wait times or application steps in our material.** The NBSD Housing Service Center list covers the San Diego complex only, and the saved CNIC pages are Navy. The Pendleton page says so and points to LMH and the Pendleton housing office. That office's page is a candidate for the next Cowork browser list.
 23. **Wait-list footnotes.** Rows with `*` or `**` refer to footnotes the parser records only as fragments ("*Must", "Single", …). The pages say the asterisks refer to the PDF. Capturing the full footnote text would let the cost column explain the specials.
 24. **"Units" on the wait table** is printed as-is. The list doesn't say whether it means total homes or homes on the list. Worth one line from the HSC.
