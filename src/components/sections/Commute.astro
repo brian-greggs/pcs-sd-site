@@ -1,0 +1,44 @@
+---
+// 0700 commute from these zips to every base gate (range across zips).
+import { getCollection } from 'astro:content';
+import FactBlock from '../FactBlock.astro';
+import { range, TIER_LABEL } from '../../lib/format';
+import { provenance } from '../../lib/prov';
+
+interface Props { zips: string[] }
+const { zips } = Astro.props;
+const { asOf } = await provenance();
+const bases = Object.fromEntries((await getCollection('bases')).map((b) => [b.id, b.data]));
+const rows = (await getCollection('commute')).map((r) => r.data).filter((r) => zips.includes(r.zip));
+const byBase = Object.values(
+  rows.reduce<Record<string, typeof rows>>((acc, r) => ((acc[r.base] ??= []).push(r), acc), {}),
+).map((rs) => ({
+  base: rs[0].base,
+  peakLo: Math.min(...rs.map((r) => r.peak_am_min)),
+  peakHi: Math.max(...rs.map((r) => r.peak_am_min)),
+  lo: rs.every((r) => r.typical_low_min != null) ? Math.min(...rs.map((r) => r.typical_low_min!)) : null,
+  hi: rs.every((r) => r.typical_high_min != null) ? Math.max(...rs.map((r) => r.typical_high_min!)) : null,
+  tier: [...rs].sort((a, b) => a.peak_am_min - b.peak_am_min)[0].tier,
+  miles: rs.length === 1 ? rs[0].osrm_miles : null,
+})).sort((a, b) => a.peakLo - b.peakLo);
+---
+
+<FactBlock id="commute" title="Commute at 0700" asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
+  <p class="note">Drive times start from the center of the zip{zips.length > 1 ? ' (a range across the zips here)' : ''}, so your street can add or take away 5–10 minutes. The range is Google's typical spread for a weekday at 0700.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Base (gate)</th><th class="num">0700 predicted</th><th class="num">Typical range</th><th>Tier</th><th class="num">Road miles</th></tr></thead>
+      <tbody>
+        {byBase.map((b) => (
+          <tr>
+            <td>{bases[b.base].installation}<br /><span class="muted">{bases[b.base].gate}</span></td>
+            <td class="num">{range(b.peakLo, b.peakHi, ' min')}</td>
+            <td class="num">{b.lo != null && b.hi != null ? range(b.lo, b.hi, ' min') : '—'}</td>
+            <td>{TIER_LABEL[b.tier]}</td>
+            <td class="num">{b.miles ?? '—'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</FactBlock>

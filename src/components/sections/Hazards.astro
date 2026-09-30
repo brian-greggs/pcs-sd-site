@@ -1,0 +1,35 @@
+---
+// Fire (pending), flood and aircraft noise for these zips.
+import { getCollection } from 'astro:content';
+import FactBlock from '../FactBlock.astro';
+import ExtLink from '../ExtLink.astro';
+import { pct } from '../../lib/format';
+import { provenance } from '../../lib/prov';
+
+interface Props { zips: string[] }
+const { zips } = Astro.props;
+const { asOf } = await provenance();
+const hazards = (await getCollection('hazards')).map((r) => r.data).filter((r) => zips.includes(r.zip));
+const multiZip = hazards.length > 1;
+const NOISE_LABEL: Record<string, string> = {
+  none: 'Outside the MCAS Miramar 65 dB noise contour',
+  '65-70': 'Inside the MCAS Miramar 65–70 dB noise contour',
+  '70-75': 'Inside the MCAS Miramar 70–75 dB noise contour',
+  '75plus': 'Inside the MCAS Miramar 75+ dB noise contour',
+  manual: 'Near NAS North Island; noise zone not yet assigned',
+};
+---
+
+<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source="FEMA National Flood Hazard Layer; MCAS Miramar noise contours (2008 airport land use plan, via SANDAG); CAL FIRE (pending)">
+  {hazards.map((h) => (
+    <dl class="facts">
+      {multiZip && <><dt>Zip</dt><dd>{h.zip}</dd></>}
+      <dt>Fire</dt>
+      <dd>{h.fhsz_very_high_pct != null ? `${pct(h.fhsz_very_high_pct, 1)} of land in a Very High fire hazard zone` : <span>Not in our data yet. Check the address yourself: <ExtLink id="cal-fire-fhsz" /></span>}</dd>
+      <dt>Flood</dt>
+      <dd>{pct(h.sfha_pct, 1)} of land is in a FEMA 1%-annual-chance flood zone. <ExtLink id="fema-flood-map" text="Check an address" /></dd>
+      <dt>Aircraft noise</dt>
+      <dd>{NOISE_LABEL[h.aicuz_zone]}{h.miramar_cnel65plus_pct ? ` (${pct(h.miramar_cnel65plus_pct, 1)} of land at 65 dB or more)` : ''}.</dd>
+    </dl>
+  ))}
+</FactBlock>

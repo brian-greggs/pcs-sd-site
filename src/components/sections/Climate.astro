@@ -1,0 +1,29 @@
+---
+// July high, hot days and building climate zone, beside the Coronado coastal baseline.
+import { getCollection, getEntry } from 'astro:content';
+import FactBlock from '../FactBlock.astro';
+import { provenance, titleCase } from '../../lib/prov';
+
+interface Props { zips: string[]; name: string }
+const { zips, name } = Astro.props;
+const { asOf } = await provenance();
+const climate = (await getCollection('climate')).map((r) => r.data).filter((r) => zips.includes(r.zip));
+const coastal = (await getEntry('climate', '92118'))!.data; // Coronado: the coastal baseline used in T12
+const showCoastal = !zips.includes('92118');
+const label = (zip: string) => (climate.length > 1 ? zip : name);
+---
+
+<FactBlock id="climate" title="Climate" asOf={asOf('climate')} source="NOAA U.S. Climate Normals 1991–2020 (nearest station); California Energy Commission building climate zones">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th>{climate.map((c) => <th class="num">{label(c.zip)}</th>)}{showCoastal && <th class="num">Coronado (coast)</th>}</tr></thead>
+      <tbody>
+        <tr><td>July average high</td>{climate.map((c) => <td class="num">{Math.round(c.july_mean_max_f)}°F</td>)}{showCoastal && <td class="num">{Math.round(coastal.july_mean_max_f)}°F</td>}</tr>
+        <tr><td>Days at 90°F or hotter, per year</td>{climate.map((c) => <td class="num">{Math.round(c.days_ge_90f)}</td>)}{showCoastal && <td class="num">{Math.round(coastal.days_ge_90f)}</td>}</tr>
+        <tr><td>State building climate zone</td>{climate.map((c) => <td class="num">{c.cec_climate_zone}</td>)}{showCoastal && <td class="num">{coastal.cec_climate_zone}</td>}</tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Weather station: {climate.map((c) => `${titleCase(c.noaa_station_name)}, ${c.station_distance_km} km away`).join('; ')}.</p>
+  <p class="gap">Whether a home has air conditioning isn't published anywhere. On hot inland days it matters, so ask before you sign.</p>
+</FactBlock>

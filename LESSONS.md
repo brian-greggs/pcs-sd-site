@@ -18,3 +18,11 @@
 - **Shared logic for anything shown in two places.** The base-housing grouping lives in `src/lib/baseHousing.ts`, used by both the community line and `/base-housing/`, so they can't disagree.
 - **Grouping by "nearest" needs its distance shown.** Grouping every community with its nearest base put two Lakeside communities, 40 min out, under "Near MCAS Miramar". Showing the minutes makes the grouping honest; the cutoff question went to QUESTIONS.
 - **Fix provenance notes in the script that writes them.** Editing only the JSON would be undone on the next pull. Both notes were changed in the pull scripts and in the current JSON, and the wait-time parser's self-test still passes.
+
+## Session 2 (2026-09-30): base housing areas
+
+- **The unchanged checks caught my own new column names.** `rank_eligibility` and `index_base` tripped the no-score rule. They were renamed (`eligible_grades`, `base_group`) rather than exempted, because the instruction was to apply the checks unchanged, and exemptions are how a rule erodes.
+- **Pull sections into components before the second page type, not after.** Neighborhood and base housing pages share six zip-based sections, and each takes a list of zips. The refactor made the area pages mostly composition, and a fix to a section now lands on all 21 pages.
+- **A curated grouping belongs in the data repo with its own guard.** `manual/base_housing_areas.csv` is judgment, not code. The export refuses to run if a community is unassigned, double-assigned or unknown, or if an area's facts zip isn't residential.
+- **"Don't render placeholders" needs two halves.** The page skips any notes whose status is placeholder, and the build fails if placeholder text reaches `dist/`. The first keeps pages clean; the second catches a note someone marks `draft` without replacing the text.
+- **Sources disagreeing is a finding, not a problem to paper over.** On PPV rent, the wait list prints flat rents while a stale DoD page says rent equals BAH. The page shows what's printed and says to ask; the disagreement went to QUESTIONS.

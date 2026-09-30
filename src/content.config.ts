@@ -186,10 +186,9 @@ const baseHousing = defineCollection({
     bedroom_counts: z.string(),
     home_types: z.string(),
     pet_policy: z.string(),
+    eligible_grades: z.string(),
     bases_mentioned: z.string(),
     community_url: z.url(),
-    near_base: baseCode.nullable(), // null until the community's location is known
-    near_base_min: z.number().int().nullable(),
     incentive: z.string().min(3),
     ...dated,
   }),
@@ -207,12 +206,29 @@ const baseHousingWaits = defineCollection({
     rank_band: z.string().min(1),
     units: z.number().int().nullable(),
     wait_time_stated: z.string().min(1),
+    cost_as_printed: z.string(), // LMH's printed rent or special, as on the list; '' when none
     pet_policy: z.string(),
     is_latest: z.boolean(),
     source_url: z.url(),
     incentive: z.string().min(3),
     ...dated,
   }),
+});
+
+// Base housing areas: the curated grouping of LMH communities into pages.
+const baseHousingAreas = defineCollection({
+  loader: strictJson('base_housing_areas'),
+  schema: z.object({
+    name: z.string().min(1),
+    order: z.number().int(),
+    base_group: z.enum(['MIRAMAR', 'NBSD', 'NBPL', 'CORONADO', 'PENDLETON', 'NONE']),
+    facts_zips: z.array(zip),
+    community_slugs: z.array(z.string()).min(1),
+    facts_note: z.string(),
+    base_tie_note: z.string(),
+    has_page: z.boolean(),
+    ...dated,
+  }).refine((a) => a.has_page === a.facts_zips.length > 0, 'an area page needs at least one facts zip'),
 });
 
 const militaryAccess = defineCollection({
@@ -302,14 +318,20 @@ const sources = defineCollection({
 // Human-written text: one file per community page, plus the changelog (F11).
 // YAML turns an unquoted 2026-09-30 into a Date; accept either and store YYYY-MM-DD.
 const isoDay = z.coerce.date().transform((d) => d.toISOString().slice(0, 10));
+// status: placeholder means nothing renders: no lead, no gotchas, no visible placeholder.
+const notesSchema = z.object({
+  name: z.string(),
+  status: z.enum(['placeholder', 'draft', 'reviewed']),
+  lead: z.string().min(1),
+  verified_on: isoDay,
+});
 const communityNotes = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/communities' }),
-  schema: z.object({
-    name: z.string(),
-    status: z.enum(['placeholder', 'draft', 'reviewed']),
-    lead: z.string().min(1),
-    verified_on: isoDay,
-  }),
+  schema: notesSchema,
+});
+const baseHousingNotes = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/base-housing-areas' }),
+  schema: notesSchema,
 });
 
 const changelog = defineCollection({
@@ -323,6 +345,6 @@ const changelog = defineCollection({
 
 export const collections = {
   communities, bases, commute, rent, rentToBah, ownership, schools, districts, childcare,
-  baseHousing, baseHousingWaits, militaryAccess, climate, hazards, links, provenance, sources,
-  communityNotes, changelog,
+  baseHousing, baseHousingWaits, baseHousingAreas, militaryAccess, climate, hazards, links, provenance, sources,
+  communityNotes, baseHousingNotes, changelog,
 };

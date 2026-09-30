@@ -1,0 +1,26 @@
+---
+// "Sources and dates" footer, generated from provenance.
+import FactBlock from '../FactBlock.astro';
+import { provenance } from '../../lib/prov';
+
+interface Props { ids: string[]; extra?: { title: string; source: string; vintage: string; verified: string; license: string }[] }
+const { ids, extra = [] } = Astro.props;
+const { prov } = await provenance();
+const rows = [
+  ...ids.map((id) => ({ title: prov[id].title, source: prov[id].source_name, vintage: prov[id].vintage, verified: prov[id].verified_on, license: prov[id].license })),
+  ...extra,
+];
+const latest = rows.map((r) => r.verified).sort().at(-1)!;
+---
+
+<FactBlock id="sources" title="Sources and dates" asOf={`Most recent verification: ${latest}`} source="the provenance record for each dataset (full list on the Sources page)">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>What</th><th>Source</th><th>Vintage</th><th>Verified</th><th>License</th></tr></thead>
+      <tbody>
+        {rows.map((r) => <tr><td>{r.title}</td><td>{r.source}</td><td>{r.vintage}</td><td>{r.verified}</td><td>{r.license}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <p class="note"><a href="/sources/">All sources</a></p>
+</FactBlock>

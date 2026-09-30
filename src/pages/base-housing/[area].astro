@@ -1,0 +1,166 @@
+---
+// Base housing area page: the LMH communities in one area, their wait times,
+// pet policy, how to apply and cost as the sources print it, then the same
+// zip-based facts as a neighborhood page. No Mello-Roos, no rent-to-BAH ratio,
+// no Census medians here: those are about renting or buying off base.
+import { getEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import FactBlock from '../../components/FactBlock.astro';
+import ExtLink from '../../components/ExtLink.astro';
+import Commute from '../../components/sections/Commute.astro';
+import Schools from '../../components/sections/Schools.astro';
+import Childcare from '../../components/sections/Childcare.astro';
+import Access from '../../components/sections/Access.astro';
+import Climate from '../../components/sections/Climate.astro';
+import Hazards from '../../components/sections/Hazards.astro';
+import Notes from '../../components/sections/Notes.astro';
+import SourcesTable from '../../components/sections/SourcesTable.astro';
+import { baseHousingAreas } from '../../lib/baseHousing';
+import { tidyRange } from '../../lib/format';
+import { writtenNotes } from '../../lib/notes';
+
+export async function getStaticPaths() {
+  const { areas } = await baseHousingAreas();
+  return areas.filter((a) => a.has_page).map((a) => ({ params: { area: a.id } }));
+}
+
+const { area: areaId } = Astro.params;
+const { areas, month, pdfs, verifiedOn } = await baseHousingAreas();
+const area = areas.find((a) => a.id === areaId)!;
+const notes = await writtenNotes(await getEntry('baseHousingNotes', areaId!));
+const zips = area.facts_zips;
+const isPendleton = area.base_group === 'PENDLETON';
+const estimate = `CNRSW estimate, ${month}`;
+const listName = (g: string) => (g === 'officer' ? 'Officer' : 'Enlisted');
+const bandOrder = (b: string) => (b.startsWith('E') ? 0 : b.startsWith('W') ? 1 : 2);
+
+// Wait table by pay band: enlisted first, then officer; within a list, by band, site, bedrooms.
+const waits = [...area.waits].sort((a, b) =>
+  a.rank_group.localeCompare(b.rank_group) || bandOrder(a.rank_band) - bandOrder(b.rank_band) || a.rank_band.localeCompare(b.rank_band) ||
+  a.site_display.localeCompare(b.site_display) || a.bedrooms.localeCompare(b.bedrooms));
+const costRows = [...area.waits].filter((w) => w.cost_as_printed)
+  .sort((a, b) => a.site_display.localeCompare(b.site_display) || a.rank_group.localeCompare(b.rank_group) || a.bedrooms.localeCompare(b.bedrooms));
+// Same printed text on the enlisted and officer lists: show it once.
+const costShown = [...new Map(costRows.map((w) => [`${w.site_display}|${w.bedrooms}|${w.cost_as_printed}`, w])).values()];
+
+// Grades each community appears under on the latest list (by pay band, as printed).
+const gradesOnList = (id: string) => {
+  const bands = [...new Set(area.waits.filter((w) => w.community_slugs.includes(id)).map((w) => tidyRange(w.rank_band)))];
+  return bands.length ? bands.join(', ') : '—';
+};
+const petPolicy = (id: string, lmh: string) => {
+  const printed = [...new Set(area.waits.filter((w) => w.community_slugs.includes(id)).map((w) => w.pet_policy).filter(Boolean))];
+  if (printed.length) return printed.map((t) => t.replace(/\bNO PETS\b/, 'No pets').replace(/\bPETS\b/, 'pets')).join('; ');
+  if (lmh === 'not stated') return 'Not stated';
+  if (lmh === 'pet-friendly (stated)') return 'Pets allowed (LMH page, no details)';
+  return lmh;
+};
+const statedEligibility = (s: string) => (s === 'not stated' ? 'Not stated' : s);
+const askOffice = isPendleton ? 'Ask LMH or the Camp Pendleton housing office' : 'Ask the Housing Service Center';
+const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii', 'san-onofre-iii']);
+---
+
+<Base title={`${area.name} base housing`} description={`Base housing in ${area.name}: communities, wait times, pet policy, how to apply, and the commute, schools and hazards around it.`}>
+  <p class="kicker"><a href="/base-housing/">Base housing</a></p>
+  <h1>{area.name}</h1>
+  <p class="kicker">{area.members.length} {area.members.length === 1 ? 'community' : 'communities'} · zip {zips.join(', ')}{area.base_tie_note ? ` · ${area.base_tie_note}` : ''}</p>
+  {area.facts_note && <p class="note">{area.facts_note}</p>}
+
+  <Notes notes={notes} part="lead" />
+
+  <ul class="jump">
+    <li><a href="#communities">Communities</a></li>
+    <li><a href="#wait-times">Wait times</a></li>
+    <li><a href="#apply">How to apply</a></li>
+    <li><a href="#cost">Cost</a></li>
+    <li><a href="#commute">Commute</a></li>
+    <li><a href="#schools">Schools</a></li>
+    <li><a href="#childcare">Child care</a></li>
+    <li><a href="#access">Commissary &amp; Costco</a></li>
+    <li><a href="#climate">Climate</a></li>
+    <li><a href="#hazards">Hazards</a></li>
+    {notes?.Gotchas && <li><a href="#gotchas">Gotchas</a></li>}
+    <li><a href="#sources">Sources</a></li>
+  </ul>
+
+  <FactBlock id="communities" title="Communities" asOf={`LMH pages ${area.members[0].vintage}; grades and pets from the ${estimate} · verified ${verifiedOn}`} source="Liberty Military Housing community pages; Navy Housing Service Center / LMH wait-time lists">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Community</th><th>Bedrooms</th><th>Eligible grades (LMH page)</th><th>Grades on the {month} list</th><th>Pet policy</th></tr></thead>
+        <tbody>
+          {area.members.map((c) => (
+            <tr>
+              <td><ExtLink href={c.community_url} incentive={c.incentive} text={c.community} />{sanClemente.has(c.id) && <span class="muted"> (San Clemente office)</span>}</td>
+              <td>{c.bedroom_counts === 'not stated' ? '—' : c.bedroom_counts.replaceAll('|', ', ')}</td>
+              <td>{statedEligibility(c.eligible_grades)}</td>
+              <td>{gradesOnList(c.id)}</td>
+              <td>{petPolicy(c.id, c.pet_policy)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="gap">LMH doesn't publish which grades can apply to each community. {askOffice}.{!isPendleton && ' The grades column is what the wait list prints.'}</p>
+  </FactBlock>
+
+  <FactBlock id="wait-times" title="Wait times" asOf={isPendleton ? `LMH pages ${area.members[0].vintage}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH monthly wait-time lists (PDF)">
+    {waits.length > 0 ? (
+      <>
+        <div class="table-wrap">
+          <table>
+            <caption>{estimate}</caption>
+            <thead><tr><th>List</th><th>Pay grades</th><th>Community</th><th class="num">Bedrooms</th><th class="num">Units</th><th>Wait</th></tr></thead>
+            <tbody>
+              {waits.map((w) => (
+                <tr><td>{listName(w.rank_group)}</td><td>{tidyRange(w.rank_band)}</td><td>{w.site_display}</td><td class="num">{w.bedrooms}</td><td class="num">{w.units ?? '—'}</td><td>{tidyRange(w.wait_time_stated)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Wait times change every month. The source lists:</p>
+        <ul class="links">{pdfs.map((p) => <li><ExtLink href={p.source_url} incentive={p.incentive} text={`${month} ${listName(p.rank_group)} wait-time list (PDF)`} /></li>)}</ul>
+      </>
+    ) : isPendleton ? (
+      <p class="note">The Naval Base San Diego Housing Service Center's list doesn't cover Camp Pendleton, and Pendleton's wait times aren't in our data yet. Ask LMH or the Pendleton housing office.</p>
+    ) : (
+      <p class="note">None of these communities is on the {month} list. Ask the Housing Service Center.</p>
+    )}
+  </FactBlock>
+
+  <FactBlock id="apply" title="How to apply" asOf="CNIC NAVBASE San Diego housing page and Navy Region Southwest Housing Service Center page, retrieved 2026-09-30" source="CNIC Fleet & Family Readiness; Navy Region Southwest">
+    {isPendleton && <p class="gap">The steps below are the Naval Base San Diego Housing Service Center's. Camp Pendleton housing runs through its own office, and its steps aren't in our material yet.</p>}
+    <ol>
+      <li><strong>Before you leave your current command:</strong> apply online with the Housing Early Assistance Tool (HEAT), before or after you get orders. A spouse can apply with only minimal information about the service member, and a housing referral professional gets in touch within two business days. <ExtLink id="heat-application" /> <ExtLink id="cnic-heat" text="About HEAT" /></li>
+      <li><strong>Paper instead:</strong> the Application for Assignment to Housing (DD Form 1746), or ask the Housing Service Center to mail or email one. <ExtLink id="dd-form-1746" /></li>
+      <li><strong>When you arrive:</strong> check in at the Navy Housing Service Center, even if you plan to rent off base. It verifies eligibility, processes the application and keeps the wait list; Liberty Military Housing assigns the home. Bldg. 3544, 2625 LeHardy St., Naval Base San Diego; 619-556-8443. <ExtLink id="cnic-navbase-sd-housing" /></li>
+    </ol>
+  </FactBlock>
+
+  <FactBlock id="cost" title="Cost" asOf={isPendleton ? `LMH pages ${area.members[0].vintage}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists (rent as printed)">
+    {costShown.length > 0 ? (
+      <>
+        <div class="table-wrap">
+          <table>
+            <caption>Rent as printed on the {month} list</caption>
+            <thead><tr><th>Community</th><th class="num">Bedrooms</th><th>As printed</th></tr></thead>
+            <tbody>
+              {costShown.map((w) => <tr><td>{w.site_display}</td><td class="num">{w.bedrooms}</td><td>{w.cost_as_printed}</td></tr>)}
+            </tbody>
+          </table>
+        </div>
+        <p class="note">This is what the list prints, including move-in specials; asterisks refer to footnotes on the PDF. The list doesn't say how these rents relate to the housing allowance, so ask the Housing Service Center what you'd pay at your grade.</p>
+      </>
+    ) : (
+      <p class="note">{isPendleton ? 'Our sources don’t state rent for these communities.' : `The ${month} list prints no rent for these communities.`} {askOffice} what you'd pay at your grade.</p>
+    )}
+  </FactBlock>
+
+  <Commute zips={zips} />
+  <Schools zips={zips} />
+  <Childcare zips={zips} />
+  <Access zips={zips} />
+  <Climate zips={zips} name={area.name} />
+  <Hazards zips={zips} />
+  <Notes notes={notes} part="gotchas" />
+  <SourcesTable ids={['base_housing', 'base_housing_waits', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} extra={[{ title: 'Area grouping', source: 'Curated from LMH leasing-office zips and addresses', vintage: area.vintage, verified: area.verified_on, license: 'Ours' }]} />
+</Base>

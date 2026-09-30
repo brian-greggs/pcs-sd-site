@@ -1,10 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import { baseHousingAreas, INDEX_GROUPS } from '../lib/baseHousing';
 
 const communities = (await getCollection('communities')).map((c) => c.data).sort((a, b) => a.name.localeCompare(b.name));
 const written = new Set((await getCollection('communityNotes')).map((n) => n.id));
 const corridors = [...new Set(communities.map((c) => c.corridor))].sort();
+const { areas } = await baseHousingAreas();
 ---
 
 <Base title="Home">
@@ -16,9 +18,7 @@ const corridors = [...new Set(communities.map((c) => c.corridor))].sort();
     and child care are nearby, and what to watch for. There are no scores or rankings, and nobody pays to be listed.
   </p>
 
-  <p><a href="/base-housing/">Base housing</a>: every base-housing community, grouped by base, with the latest wait times and pet policy.</p>
-
-  <h2>Communities</h2>
+  <h2>Neighborhoods</h2>
   <p class="note">Only Rancho Bernardo is written so far. The rest are coming.</p>
   {corridors.map((corridor) => (
     <>
@@ -30,4 +30,18 @@ const corridors = [...new Set(communities.map((c) => c.corridor))].sort();
       </ul>
     </>
   ))}
+
+  <h2>Base housing areas</h2>
+  <p class="note">Each area page has its communities, wait times, pet policy and how to apply. <a href="/base-housing/">All base housing</a></p>
+  {INDEX_GROUPS.map((g) => {
+    const rows = areas.filter((a) => a.has_page && a.base_group === g.key);
+    return rows.length > 0 && (
+      <>
+        <h3>{g.title}</h3>
+        <ul class="communities">
+          {rows.map((a) => <li><a href={`/base-housing/${a.id}/`}>{a.name}</a></li>)}
+        </ul>
+      </>
+    );
+  })}
 </Base>

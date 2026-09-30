@@ -1,0 +1,21 @@
+---
+// The human-written lead or gotchas. Renders nothing unless there's real content
+// (see src/lib/notes.ts).
+import { writtenNotes } from '../../lib/notes';
+
+interface Props {
+  notes: Awaited<ReturnType<typeof writtenNotes>>;
+  part: 'lead' | 'gotchas';
+}
+const { notes, part } = Astro.props;
+const Gotchas = notes?.Gotchas;
+---
+
+{part === 'lead' && notes?.lead && <p class="lead">{notes.lead}</p>}
+{part === 'gotchas' && Gotchas && (
+  <section class="fact" id="gotchas" data-fact="gotchas">
+    <h2>Gotchas</h2>
+    <Gotchas />
+    <p class="asof" data-asof>Written {notes!.verifiedOn}. Source: families who've done this move.</p>
+  </section>
+)}

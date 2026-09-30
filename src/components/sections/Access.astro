@@ -1,0 +1,40 @@
+---
+// Commissary, exchange, military hospital (and clinic when known), Costco.
+import { getCollection } from 'astro:content';
+import FactBlock from '../FactBlock.astro';
+import { provenance } from '../../lib/prov';
+
+interface Props { zips: string[] }
+const { zips } = Astro.props;
+const { asOf } = await provenance();
+const access = (await getCollection('militaryAccess')).map((r) => r.data).filter((r) => zips.includes(r.zip));
+const multiZip = access.length > 1;
+
+const accessRows = (a: (typeof access)[number]) => [
+  ['Commissary', a.nearest_commissary, a.commissary_min_freeflow, a.commissary_mi],
+  [`Exchange (${a.exchange_store_operator})`, a.nearest_exchange_store, a.exchange_store_min_freeflow, a.exchange_store_mi],
+  [`Exchange gas (${a.exchange_operator})`, a.nearest_exchange_gas, a.exchange_gas_min_freeflow, a.exchange_gas_mi],
+  // The export leaves nearest_mtf empty while any clinic is unplaced, so no wrong clinic shows.
+  ...(a.nearest_mtf && a.nearest_mtf !== a.nearest_mtf_hospital ? [['Nearest military clinic', a.nearest_mtf, a.mtf_min_freeflow, a.mtf_mi] as const] : []),
+  ['Nearest military hospital', a.nearest_mtf_hospital, a.mtf_hospital_min_freeflow, a.mtf_hospital_mi],
+  ['Costco', a.nearest_costco, a.costco_min_freeflow, a.costco_mi],
+  ['Costco gas', a.nearest_costco_gas, a.costco_gas_min_freeflow, a.costco_gas_mi],
+] as const;
+---
+
+<FactBlock id="access" title="Commissary, exchange, hospital and Costco" asOf={asOf('military_access')} source="OSRM free-flow drive times on OpenStreetMap (© OpenStreetMap contributors, ODbL); DoD and Costco locations">
+  <p class="note">Drive times with no traffic, from the center of the zip. Real times at rush hour run longer. On-base times can run long because routing avoids restricted base roads.</p>
+  {access.map((a) => (
+    <div class="table-wrap">
+      <table>
+        {multiZip && <caption>Zip {a.zip}</caption>}
+        <thead><tr><th>What</th><th>Nearest</th><th class="num">Minutes</th><th class="num">Miles</th></tr></thead>
+        <tbody>
+          {accessRows(a).map(([what, name, min, mi]) => (
+            <tr><td>{what}</td><td>{name ?? '—'}</td><td class="num">{min != null ? Math.round(min) : '—'}</td><td class="num">{mi ?? '—'}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ))}
+</FactBlock>

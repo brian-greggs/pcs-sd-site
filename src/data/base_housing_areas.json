@@ -1,0 +1,401 @@
+[
+ {
+  "id": "miramar",
+  "name": "Miramar / Mira Mesa",
+  "base_group": "MIRAMAR",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 1,
+  "facts_zips": [
+   "92126"
+  ],
+  "community_slugs": [
+   "capeharts-east-miramar",
+   "capeharts-west-miramar",
+   "mira-mesa-ridge",
+   "miramar-milcon",
+   "miramar-pq",
+   "miramar-townhomes"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "murphy-canyon",
+  "name": "Murphy Canyon",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 2,
+  "facts_zips": [
+   "92124"
+  ],
+  "community_slugs": [
+   "aero-ridge",
+   "canyon-view",
+   "orleck-heights",
+   "santo-terrace"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "scripps-ranch",
+  "name": "Scripps Ranch",
+  "base_group": "MIRAMAR",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 3,
+  "facts_zips": [
+   "92131"
+  ],
+  "community_slugs": [
+   "hilleary-park",
+   "pomerado-terrace",
+   "vista-ridge"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "ramona",
+  "name": "Ramona",
+  "base_group": "MIRAMAR",
+  "facts_note": "LMH lists this community's address as Ramona with zip 92131 (a Scripps Ranch zip). The facts here are for Ramona (92065), where the street address is.",
+  "base_tie_note": "",
+  "order": 4,
+  "facts_zips": [
+   "92065"
+  ],
+  "community_slugs": [
+   "ramona-vista"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "linda-vista",
+  "name": "Linda Vista",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 5,
+  "facts_zips": [
+   "92111"
+  ],
+  "community_slugs": [
+   "chesterton",
+   "chesterton-townhomes"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "serra-mesa",
+  "name": "Serra Mesa",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 6,
+  "facts_zips": [
+   "92123"
+  ],
+  "community_slugs": [
+   "the-village-at-serra-mesa"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "bay-park",
+  "name": "Bay Park",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 7,
+  "facts_zips": [
+   "92109"
+  ],
+  "community_slugs": [
+   "admiral-hartman"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "point-loma",
+  "name": "Point Loma",
+  "base_group": "NBPL",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 8,
+  "facts_zips": [
+   "92106",
+   "92110"
+  ],
+  "community_slugs": [
+   "the-village-at-ntc",
+   "gateway-village"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "north-park",
+  "name": "North Park",
+  "base_group": "NBSD",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 9,
+  "facts_zips": [
+   "92104"
+  ],
+  "community_slugs": [
+   "park-summit"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "home-avenue",
+  "name": "City Heights, Home Avenue",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 10,
+  "facts_zips": [
+   "92105"
+  ],
+  "community_slugs": [
+   "home-terrace",
+   "terrace-view-villas"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "chollas-heights",
+  "name": "Chollas Heights",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 11,
+  "facts_zips": [
+   "92115"
+  ],
+  "community_slugs": [
+   "chollas-heights",
+   "chollas-heights-historical"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "golden-hill",
+  "name": "Golden Hill",
+  "base_group": "NBPL",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 12,
+  "facts_zips": [
+   "92102"
+  ],
+  "community_slugs": [
+   "beech-st-knolls"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "paradise-hills",
+  "name": "Paradise Hills",
+  "base_group": "NBSD",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 13,
+  "facts_zips": [
+   "92139",
+   "92114"
+  ],
+  "community_slugs": [
+   "bayview-hills",
+   "paradise-gardens"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "la-mesa",
+  "name": "La Mesa",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 14,
+  "facts_zips": [
+   "91941"
+  ],
+  "community_slugs": [
+   "howard-gilmore-terrace",
+   "la-mesa-park"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "spring-valley",
+  "name": "Spring Valley",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 15,
+  "facts_zips": [
+   "91977"
+  ],
+  "community_slugs": [
+   "bonita-bluffs"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "lakeside",
+  "name": "Lakeside",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "LMH doesn't tie these to a base.",
+  "order": 16,
+  "facts_zips": [
+   "92040"
+  ],
+  "community_slugs": [
+   "eucalyptus-ridge",
+   "river-place"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "coronado",
+  "name": "Coronado",
+  "base_group": "CORONADO",
+  "facts_note": "The NAS North Island and Naval Amphibious Base communities sit on base; their leasing office is at Naval Base San Diego. The zip-based facts on this page are Coronado's (92118).",
+  "base_tie_note": "",
+  "order": 17,
+  "facts_zips": [
+   "92118"
+  ],
+  "community_slugs": [
+   "silver-strand-i",
+   "silver-strand-ii",
+   "nas-north-island",
+   "naval-amphibious-base"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "imperial-beach",
+  "name": "Imperial Beach",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 18,
+  "facts_zips": [
+   "91932"
+  ],
+  "community_slugs": [
+   "holly-square"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "chula-vista",
+  "name": "Chula Vista, Eastlake",
+  "base_group": "CORONADO",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 19,
+  "facts_zips": [
+   "91913"
+  ],
+  "community_slugs": [
+   "lofgren-terrace"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "camp-pendleton",
+  "name": "Camp Pendleton",
+  "base_group": "PENDLETON",
+  "facts_note": "The zip-based facts on this page describe 92058 (Oceanside side of the base). San Mateo Point and San Onofre I, II and III lease from a San Clemente office (92672), outside the county and outside our data.",
+  "base_tie_note": "",
+  "order": 20,
+  "facts_zips": [
+   "92058"
+  ],
+  "community_slugs": [
+   "del-mar-i",
+   "del-mar-ii",
+   "edson",
+   "forster-hills",
+   "harborview",
+   "oneill-heights",
+   "oneill-heights-east",
+   "pacific-view",
+   "san-luis-rey",
+   "santa-margarita",
+   "seaside-village",
+   "serra-mesa",
+   "south-mesa-i",
+   "south-mesa-ii",
+   "stuart-mesa",
+   "wire-mountain-i",
+   "wire-mountain-ii",
+   "wire-mountain-iii",
+   "san-mateo-point",
+   "san-onofre-i",
+   "san-onofre-ii",
+   "san-onofre-iii"
+  ],
+  "has_page": true,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "unplaced",
+  "name": "Location not yet placed",
+  "base_group": "NONE",
+  "facts_note": "",
+  "base_tie_note": "",
+  "order": 99,
+  "facts_zips": [],
+  "community_slugs": [
+   "prospect-view",
+   "woodlake"
+  ],
+  "has_page": false,
+  "vintage": "curated grouping",
+  "verified_on": "2026-09-30"
+ }
+]

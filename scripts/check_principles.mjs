@@ -11,6 +11,7 @@
 //   no-score     no column or label named score/index/rating (corollary)
 //   incentive    every outbound link carries an incentive label (Principle 4, F4)
 //   noindex      every page is noindex until week 5
+//   placeholder  no placeholder text reaches a page (lead/gotchas render only when written)
 //
 // The pages are our own generated HTML, so the checks read it with regular
 // expressions against markup the components control (data-fact, data-asof,
@@ -45,6 +46,9 @@ const DEMOGRAPHIC_ALLOWED = [/military[- ]household share/gi, /armed[- ]forces s
 const SCORE_WORDS = /\b(score|scores|index|indices|indexes|rating|ratings|rank(?:ing)?s?|grade[- ]?score)\b/i;
 // "Rank band" and "rank group" are military pay-grade terms on the base-housing wait lists, not rankings.
 const SCORE_ALLOWED = [/\brank band\b/i, /\brank group\b/i];
+
+// Placeholder text that must never reach dist/ (checked in the full HTML, attributes included).
+const PLACEHOLDER_PATTERNS = [/PLACEHOLDER/, /Brian writes/i, /data-placeholder/, /\bTODO\b/, /lorem ipsum/i];
 
 // --- Helpers ----------------------------------------------------------------
 const failures = [];
@@ -122,6 +126,12 @@ function checkDist() {
     const page = relative(DIST, file);
     const html = readFileSync(file, 'utf-8');
     const text = visibleText(html);
+
+    // placeholder
+    for (const re of PLACEHOLDER_PATTERNS) {
+      const m = html.match(re);
+      if (m) fail('placeholder', page, `"${m[0]}": ${context(html, m.index)}`);
+    }
 
     // noindex
     if (!/<meta name="robots" content="noindex/.test(html)) fail('noindex', page, 'missing <meta name="robots" content="noindex">');
@@ -201,7 +211,7 @@ else {
 }
 
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
-const checks = stage === 'source' ? ['no-score', 'no-bah', 'license', 'dated', 'data'] : ['dated', 'no-bah', 'no-demo', 'no-score', 'incentive', 'noindex', 'dist'];
+const checks = stage === 'source' ? ['no-score', 'no-bah', 'license', 'dated', 'data'] : ['dated', 'no-bah', 'no-demo', 'no-score', 'incentive', 'noindex', 'placeholder', 'dist'];
 console.log(`\nPrinciple checks (${stage})`);
 for (const c of checks) {
   const fs = byCheck[c] ?? [];

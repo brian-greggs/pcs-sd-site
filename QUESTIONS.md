@@ -1,10 +1,17 @@
 # Questions — site build
 
-## Open (session 1b, 2026-09-30)
+## Open (session 2, base housing areas, 2026-09-30)
 
-18. **"Near MCAS Miramar" includes two communities 40 min out.** Eucalyptus Ridge and River Place (leasing zip 92040, Lakeside) name no base on their LMH pages, so they group with the base that has the shortest 0700 drive from their zip, which is Miramar at 40 min. `/base-housing/` now shows each community's 0700 minutes so this is visible. Options: leave it, add a "farther out" group past some cutoff, or assign them by hand.
-19. **The community-page minutes run to the base gate, not the housing.** "About N min from [community]" is the 0700 drive from the community to the gate of the group's base; there's no 0700 data to the housing itself. The line says "(0700 drive to the base gate)". Getting a real number would take a new zip-to-zip pull.
-20. **Prospect View and Woodlake** have no zip in the LMH data, so they sit in "Location not yet placed" until manual/base_housing_locations.csv is filled.
+21. **What does a family actually pay for PPV housing?** The sources don't say it plainly, so the area pages show only what the wait list prints and tell families to ask. What the sources say:
+    - The October CNIC/LMH wait lists print a flat rent for many communities ("$2,800 rent", "$3,200 rent") and move-in specials ("First FULL month rent FREE*"), with asterisks pointing to footnotes we haven't captured in full.
+    - Military OneSource's NBSD housing page (DoD, not CNIC or LMH) says PPV residents "pay (via allotment) the equivalent of the member's monthly Basic Allowance for Housing rate. Some neighborhoods offer discounted rates." That page still names the previous operator (Lincoln), so it's out of date.
+    - The CNIC NAVBASE San Diego page says nothing about rent.
+    - Question for the HSC: is rent for a given community the member's BAH, or the printed flat rent, whichever is lower? Then the cost section can say it once, sourced.
+22. **Camp Pendleton has no wait times or application steps in our material.** The NBSD Housing Service Center list covers the San Diego complex only, and the saved CNIC pages are Navy. The Pendleton page says so and points to LMH and the Pendleton housing office. That office's page is a candidate for the next Cowork browser list.
+23. **Wait-list footnotes.** Rows with `*` or `**` refer to footnotes the parser records only as fragments ("*Must", "Single", …). The pages say the asterisks refer to the PDF. Capturing the full footnote text would let the cost column explain the specials.
+24. **"Units" on the wait table** is printed as-is. The list doesn't say whether it means total homes or homes on the list. Worth one line from the HSC.
+
+Superseded by the base housing areas (2026-09-30): 18 (Lakeside under Miramar), 19 (minutes to the gate), 20 (unplaced communities; now on the index and the LMH call list in the data repo's STATUS).
 
 ## Answered 2026-09-30 (session 1b)
 
