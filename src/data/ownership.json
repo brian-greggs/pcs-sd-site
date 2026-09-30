@@ -6,8 +6,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "rancho-bernardo-0",
-  "cfd_agencies": "",
-  "note": "Built 1960s–80s; no active CFD on the county list. Carmel Mountain Ranch (also 92128) was Poway Unified CFD #1, which no longer appears on the FY2025-26 active list (retired). Sabre Springs pockets may sit under Poway USD CFD #2 — verify per parcel.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -18,8 +16,6 @@
   "has_cfd": "unknown",
   "confidence": "low",
   "id": "rancho-bernardo-1",
-  "cfd_agencies": "",
-  "note": "",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -30,8 +26,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "4s-ranch-2",
-  "cfd_agencies": "Poway Unified",
-  "note": "All of 4S Ranch carries Poway USD CFD #6 (IA B = tracts north of Rancho Bernardo Rd). This is the canonical contrast with Rancho Bernardo next door: same zip prefix, same school district, materially different tax bill.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -42,8 +36,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "4s-ranch-3",
-  "cfd_agencies": "Poway Unified; City of San Diego",
-  "note": "Overlapping school-district and city CFDs; among the higher cumulative special-tax areas in North County. Rates differ by product type (detached vs. townhome).",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -54,8 +46,6 @@
   "has_cfd": "Y",
   "confidence": "medium",
   "id": "4s-ranch-4",
-  "cfd_agencies": "City of San Diego; Poway Unified",
-  "note": "City CFD #2 is explicit on the county list. Poway USD district number for Santaluz not confirmed from an official text source.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -66,8 +56,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "poway-5",
-  "cfd_agencies": "",
-  "note": "No City of Poway CFDs on the active list; Poway USD CFDs concentrate in the 92127/92129 growth areas, not the city of Poway. Newer infill tracts: verify per parcel.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -78,8 +66,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "scripps-ranch-6",
-  "cfd_agencies": "",
-  "note": "City of San Diego CFD #1 (Miramar Ranch North) has a closeout report on the city site and is not on the FY2025-26 active list — retired. Older Scripps Ranch never had one.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -90,8 +76,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "mira-mesa-7",
-  "cfd_agencies": "",
-  "note": "1970s–80s housing stock; no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -102,8 +86,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "tierrasanta-8",
-  "cfd_agencies": "",
-  "note": "1970s–80s; no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -114,8 +96,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "clairemont-9",
-  "cfd_agencies": "",
-  "note": "1950s–60s; no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -126,8 +106,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "point-loma-10",
-  "cfd_agencies": "",
-  "note": "No CFD outside Liberty Station.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -138,8 +116,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "point-loma-11",
-  "cfd_agencies": "City of San Diego",
-  "note": "Explicit on both the city page and county list. Relevant because Liberty Station is a common first-look for NBPL and MCRD families.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -150,8 +126,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "coronado-12",
-  "cfd_agencies": "",
-  "note": "No Coronado CFDs on the active list.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -162,8 +136,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "imperial-beach-13",
-  "cfd_agencies": "",
-  "note": "No Imperial Beach CFDs on the active list.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -174,8 +146,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "chula-vista-west-14",
-  "cfd_agencies": "",
-  "note": "Pre-1980s stock west of I-805 generally has no CFD; the city's CFDs are all east-side master-planned communities. Verify per parcel near the I-805 line.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -186,8 +156,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "chula-vista-west-15",
-  "cfd_agencies": "City of Chula Vista; Sweetwater Union HSD; Chula Vista Elementary",
-  "note": "East of I-805 but in the 91911 zip; the exception inside 'western' Chula Vista.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -198,8 +166,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "bonita-16",
-  "cfd_agencies": "San Miguel Consolidated FPD (fire special tax only)",
-  "note": "No development CFD. The San Miguel Consolidated Fire Protection District special tax (CFD 2022-1) appears on bills in its service area, which includes Bonita; small relative to development CFDs.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -210,8 +176,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "eastlake-otay-ranch-17",
-  "cfd_agencies": "City of Chula Vista; Sweetwater Union HSD; Chula Vista Elementary",
-  "note": "Three agencies stack on most parcels (city infrastructure/maintenance + high school + elementary). This is the densest CFD area in the county and the one families most often discover after signing. Newer villages (Millenia, Villages 2/3/7/11) carry the most; original Eastlake I/II parcels may have older districts paid down.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -222,8 +186,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "national-city-18",
-  "cfd_agencies": "",
-  "note": "No National City CFDs on the active list.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -234,8 +196,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "la-mesa-19",
-  "cfd_agencies": "",
-  "note": "No La Mesa CFDs on the active list.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -246,8 +206,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "santee-20",
-  "cfd_agencies": "",
-  "note": "Most of Santee has no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -258,8 +216,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "santee-21",
-  "cfd_agencies": "City of Santee",
-  "note": "Weston (northeast Santee) carries two stacked city CFDs. CFD 2015-1 Zone 1 area not confirmed — verify.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -270,8 +226,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "el-cajon-22",
-  "cfd_agencies": "",
-  "note": "No El Cajon city CFDs on the active list. County CFDs 2013-01 and 2019-01 exist for specific unincorporated subdivisions whose locations are not named on the list — verify any new-build tract in 92019/92021.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -282,8 +236,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "lakeside-23",
-  "cfd_agencies": "",
-  "note": "No named CFD. Same caveat as El Cajon on unnamed county CFDs for new tracts.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -294,8 +246,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "alpine-24",
-  "cfd_agencies": "",
-  "note": "No named CFD; Alpine Fire Protection District is a separate agency with no CFD on the list.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -306,8 +256,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "north-park-normal-heights-25",
-  "cfd_agencies": "",
-  "note": "Pre-war and mid-century stock; no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -318,8 +266,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "mission-valley-26",
-  "cfd_agencies": "",
-  "note": "No CFD on the active list. Newer Civita/Quarry Falls parcels may carry HOA or assessment-district charges that are not Mello-Roos — verify per parcel.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -330,8 +276,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "university-city-utc-27",
-  "cfd_agencies": "",
-  "note": "No CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -342,8 +286,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "carmel-valley-28",
-  "cfd_agencies": "North City West School District; Del Mar Union SD; San Dieguito Union HSD; Solana Beach SD",
-  "note": "School-district CFDs rather than city ones; nearly all of Carmel Valley post-1985 sits under at least two. Pacific Highlands Ranch (newest, north of SR-56) carries the most. Original 1980s–90s tracts are under the older North City West / Del Mar Union districts.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -354,8 +296,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "del-mar-solana-beach-29",
-  "cfd_agencies": "",
-  "note": "No CFDs in the two cities. (Solana Beach SD's CFDs apply to Pacific Highlands Ranch in 92130, not the city of Solana Beach.)",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -366,8 +306,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "encinitas-30",
-  "cfd_agencies": "",
-  "note": "No CFD outside Encinitas Ranch.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -378,8 +316,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "encinitas-31",
-  "cfd_agencies": "City of Encinitas; San Dieguito Union HSD",
-  "note": "The one CFD area in Encinitas.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -390,8 +326,6 @@
   "has_cfd": "mixed",
   "confidence": "medium",
   "id": "carlsbad-32",
-  "cfd_agencies": "City of Carlsbad; Carlsbad Unified",
-  "note": "Pre-1991 parcels generally exempt; newer infill under City CFD #1. Verify per parcel.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -402,8 +336,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "carlsbad-33",
-  "cfd_agencies": "City of Carlsbad; Carlsbad Unified",
-  "note": "Carlsbad's CFD #1 is a single citywide district applied to essentially all development since 1991, so most of south and east Carlsbad carries it plus a Carlsbad Unified CFD. Amounts are generally lower than Chula Vista or Del Sur stacks.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -414,8 +346,6 @@
   "has_cfd": "mixed",
   "confidence": "medium",
   "id": "san-marcos-34",
-  "cfd_agencies": "City of San Marcos; San Marcos Unified",
-  "note": "Pre-1988 core has none; 1988–2000 tracts commonly under CFD 88-1 or 91-02.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -426,8 +356,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "san-marcos-35",
-  "cfd_agencies": "City of San Marcos; San Marcos Unified",
-  "note": "San Marcos has more active CFD improvement areas than any other city in the county (~100 on the list). Assume any home built after 1998 carries one city and one school-district CFD until the parcel lookup says otherwise.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -438,8 +366,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "vista-36",
-  "cfd_agencies": "",
-  "note": "No Vista or Vista Unified CFDs on the active list.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -450,8 +376,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "oceanside-37",
-  "cfd_agencies": "",
-  "note": "Most of Oceanside has no CFD; Oceanside Unified has none on the list.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -462,8 +386,6 @@
   "has_cfd": "Y",
   "confidence": "medium",
   "id": "oceanside-38",
-  "cfd_agencies": "City of Oceanside",
-  "note": "Morro Hills is explicit. The 2022-1/2023-1/2023-2 districts are recent and their subdivisions are not named on the list — any 2022+ new-build in Oceanside should be checked per parcel.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -474,8 +396,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "escondido-39",
-  "cfd_agencies": "",
-  "note": "Most of Escondido has no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -486,8 +406,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "escondido-40",
-  "cfd_agencies": "City of Escondido; Escondido Union SD; County of San Diego",
-  "note": "Named subdivisions only; Harmony Grove Village (92029, unincorporated) carries the county CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -498,8 +416,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "fallbrook-bonsall-41",
-  "cfd_agencies": "",
-  "note": "Rural and older tracts have no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -510,8 +426,6 @@
   "has_cfd": "Y",
   "confidence": "high",
   "id": "fallbrook-bonsall-42",
-  "cfd_agencies": "California Statewide Communities Development Authority",
-  "note": "Statewide-authority CFDs on the two newest Fallbrook developments; both are Pendleton-commute new-builds.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -522,8 +436,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "serra-mesa-kearny-mesa-43",
-  "cfd_agencies": "",
-  "note": "1950s–60s stock; no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -534,8 +446,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "college-san-carlos-del-cerro-44",
-  "cfd_agencies": "",
-  "note": "No CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -546,8 +456,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "spring-valley-lemon-grove-45",
-  "cfd_agencies": "San Miguel Consolidated FPD (fire special tax only); County (Sweetwater Place maintenance CFD — small)",
-  "note": "No development CFD on established housing. The fire district special tax applies across the San Miguel FPD area. County CFD 2019-02 (Sweetwater Place) is a small maintenance district on one new tract. Lemon Grove's Main St Promenade CFD is commercial.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -558,8 +466,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "rancho-penasquitos-46",
-  "cfd_agencies": "",
-  "note": "1970s–80s PQ has no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -570,8 +476,6 @@
   "has_cfd": "Y",
   "confidence": "medium",
   "id": "rancho-penasquitos-47",
-  "cfd_agencies": "Poway Unified",
-  "note": "Torrey Highlands is post-2000 and under a Poway USD CFD; the specific district number was not confirmed from an official text source. Verify per parcel.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -582,8 +486,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "otay-mesa-san-ysidro-48",
-  "cfd_agencies": "",
-  "note": "Established San Ysidro has no CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -594,8 +496,6 @@
   "has_cfd": "Y",
   "confidence": "medium",
   "id": "otay-mesa-san-ysidro-49",
-  "cfd_agencies": "San Ysidro Elementary; County of San Diego; SD County Fire Protection District",
-  "note": "Newer Otay Mesa subdivisions carry a school CFD and, in unincorporated pockets, county/fire CFDs. This is a cheap-rent-near-NBSD area where the buy math changes once CFDs are added.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -606,8 +506,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "downtown-uptown-50",
-  "cfd_agencies": "",
-  "note": "No CFD. Downtown has a business improvement district assessment on commercial parcels only; condo HOA dues are the cost to watch instead.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -618,8 +516,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "pacific-beach-la-jolla-51",
-  "cfd_agencies": "",
-  "note": "No CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -630,8 +526,6 @@
   "has_cfd": "N",
   "confidence": "medium",
   "id": "ramona-52",
-  "cfd_agencies": "",
-  "note": "No named CFD; Ramona's fire service is via Ramona MWD/CAL FIRE with no CFD listed.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  },
@@ -642,8 +536,6 @@
   "has_cfd": "N",
   "confidence": "high",
   "id": "southeastern-paradise-hills-53",
-  "cfd_agencies": "",
-  "note": "No CFD.",
   "vintage": "FY2025-26",
   "verified_on": "2026-09-22"
  }

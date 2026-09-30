@@ -6,7 +6,8 @@ import { getCollection, getEntry, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import ExtLink from '../../components/ExtLink.astro';
-import { dollars, pct, range, TIER_LABEL, STATUS_LABEL, PAY_BAND_ORDER, monthName, tidyRange } from '../../lib/format';
+import { dollars, pct, range, TIER_LABEL, STATUS_LABEL, PAY_BAND_ORDER } from '../../lib/format';
+import { baseHousingGroups } from '../../lib/baseHousing';
 
 export async function getStaticPaths() {
   const notes = await getCollection('communityNotes');
@@ -36,12 +37,15 @@ const ratioCell = (zip: string, band: string, br: number) => {
   return r ? range(r.ratio_low_pct, r.ratio_high_pct, '%') : '—';
 };
 const ownership = (await getCollection('ownership')).filter((r) => r.data.community_slug === slug).map((r) => r.data);
+// No CFD is named on the site until T4b verifies it per parcel.
 const CFD_LABEL: Record<string, string> = {
-  N: 'No active Mello-Roos district on the county list',
-  Y: 'Mello-Roos (CFD) charge on the tax bill',
-  mixed: 'Some tracts carry a Mello-Roos charge, some don’t',
-  unknown: 'Not confirmed. Check the parcel before an offer',
+  N: 'No active Mello-Roos district on the county list.',
+  Y: 'Mello-Roos (CFD) charge on the tax bill.',
+  mixed: 'Some tracts carry a Mello-Roos charge, some don’t. Check the parcel before an offer.',
+  unknown: 'Parts of this area may sit in a Mello-Roos district. Check the parcel before an offer.',
 };
+const parcelLinkInline = ownership.some((o) => o.has_cfd === 'unknown' || o.has_cfd === 'mixed');
+const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 
 // --- Commute ------------------------------------------------------------
 const bases = Object.fromEntries((await getCollection('bases')).map((b) => [b.id, b.data]));
@@ -57,7 +61,6 @@ const byBase = Object.values(
   tier: rows.sort((a, b) => a.peak_am_min - b.peak_am_min)[0].tier,
   miles: rows[0].osrm_miles,
 })).sort((a, b) => a.peakLo - b.peakLo);
-const nearestBase = byBase[0];
 
 // --- Schools ------------------------------------------------------------
 const schools = (await getCollection('schools')).filter(inZips).map((r) => r.data)
@@ -69,24 +72,15 @@ const districts = (await Promise.all(districtNames.map((d) => getEntry('district
 const care = (await getCollection('childcare')).filter(inZips).map((r) => r.data);
 const sum = (k: keyof (typeof care)[number]) => care.reduce((n, r) => n + (r[k] as number), 0);
 
-// --- Base housing nearest by commute ------------------------------------
-// The base with the shortest 0700 commute from here, then the base-housing
-// communities whose zip has the shortest 0700 commute to that base.
-const housing = (await getCollection('baseHousing')).map((h) => ({ id: h.id, ...h.data }));
-const servesBase = (h: (typeof housing)[number]) =>
-  nearestBase.base === 'PENDLETON' ? h.installation_served.includes('Pendleton') : !h.installation_served.includes('Pendleton');
-const commuteTo = new Map((await getCollection('commute')).filter((r) => r.data.base === nearestBase.base).map((r) => [r.data.zip, r.data.peak_am_min]));
-const waits = (await getCollection('baseHousingWaits')).map((w) => w.data).filter((w) => w.is_latest);
-const candidates = housing
-  .filter((h) => servesBase(h) && commuteTo.has(h.zip) && waits.some((w) => w.community_slugs.includes(h.id)))
-  .map((h) => ({ ...h, min: commuteTo.get(h.zip)! }));
-const bestMin = Math.min(...candidates.map((c) => c.min));
-const nearestHousing = candidates.filter((c) => c.min === bestMin);
-const nearestIds = new Set(nearestHousing.map((h) => h.id));
-const housingWaits = waits
-  .filter((w) => w.community_slugs.some((s) => nearestIds.has(s)))
-  .sort((a, b) => a.site_display.localeCompare(b.site_display) || a.rank_group.localeCompare(b.rank_group) || a.bedrooms.localeCompare(b.bedrooms));
-const waitMonth = housingWaits[0] ? monthName(housingWaits[0].as_of_date) : '';
+// --- Nearest base housing ----------------------------------------------
+// The base-housing group whose base has the shortest 0700 drive from this
+// community. The minutes are to that base's gate: there's no 0700 data to the
+// housing itself.
+const housingGroups = (await baseHousingGroups()).filter((g) => g.code);
+const nearestGroup = housingGroups
+  .map((g) => ({ ...g, min: byBase.find((b) => b.base === g.code) }))
+  .filter((g) => g.min)
+  .sort((a, b) => a.min!.peakLo - b.min!.peakLo)[0];
 
 // --- Access, climate, hazards (per zip) ---------------------------------
 const access = (await getCollection('militaryAccess')).filter(inZips).map((r) => r.data);
@@ -98,8 +92,9 @@ const accessRows = (a: (typeof access)[number]) => [
   ['Commissary', a.nearest_commissary, a.commissary_min_freeflow, a.commissary_mi],
   [`Exchange (${a.exchange_store_operator})`, a.nearest_exchange_store, a.exchange_store_min_freeflow, a.exchange_store_mi],
   [`Exchange gas (${a.exchange_operator})`, a.nearest_exchange_gas, a.exchange_gas_min_freeflow, a.exchange_gas_mi],
-  ...(a.nearest_mtf !== a.nearest_mtf_hospital ? [['Military clinic', a.nearest_mtf, a.mtf_min_freeflow, a.mtf_mi] as const] : []),
-  [a.nearest_mtf !== a.nearest_mtf_hospital ? 'Military hospital' : 'Military clinic or hospital', a.nearest_mtf_hospital, a.mtf_hospital_min_freeflow, a.mtf_hospital_mi],
+  // The export leaves nearest_mtf empty while any clinic is unplaced, so no wrong clinic shows.
+  ...(a.nearest_mtf && a.nearest_mtf !== a.nearest_mtf_hospital ? [['Nearest military clinic', a.nearest_mtf, a.mtf_min_freeflow, a.mtf_mi] as const] : []),
+  ['Nearest military hospital', a.nearest_mtf_hospital, a.mtf_hospital_min_freeflow, a.mtf_hospital_mi],
   ['Costco', a.nearest_costco, a.costco_min_freeflow, a.costco_mi],
   ['Costco gas', a.nearest_costco_gas, a.costco_gas_min_freeflow, a.costco_gas_mi],
 ] as const;
@@ -142,7 +137,7 @@ const NOISE_LABEL: Record<string, string> = {
           <tbody><tr><td>Monthly</td><td class="num">{dollars(r.fy27_0br)}</td><td class="num">{dollars(r.fy27_1br)}</td><td class="num">{dollars(r.fy27_2br)}</td><td class="num">{dollars(r.fy27_3br)}</td><td class="num">{dollars(r.fy27_4br)}</td></tr></tbody>
         </table>
       </div>
-      <p class="note">Census median rent across all rented homes here: {dollars(r.acs_median_gross_rent)} (ACS 2020–2024, so older than HUD's figure). For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" />.</p>
+      <p class="note">Census median rent across all rented homes here: {dollars(r.acs_median_gross_rent)}. <span class="muted">{ACS_NOTE}</span> For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" />.</p>
     ))}
 
     <h3>Rent as a share of your housing allowance</h3>
@@ -165,14 +160,14 @@ const NOISE_LABEL: Record<string, string> = {
     <dl class="facts">
       {rent.map((r) => (<>
         <dt>Census median home value{multiZip ? ` (${r.zip})` : ''}</dt>
-        <dd>{dollars(r.acs_median_home_value)} <span class="muted">(ACS 2020–2024)</span></dd>
+        <dd>{dollars(r.acs_median_home_value)}. <span class="muted">{ACS_NOTE}</span></dd>
       </>))}
       {ownership.map((o) => (<>
         <dt>Mello-Roos: {o.subarea || community.name}</dt>
-        <dd>{CFD_LABEL[o.has_cfd]}{o.cfd_agencies ? ` (${o.cfd_agencies})` : ''}. <span class="muted">Confidence: {o.confidence}.</span>{o.note && <><br /><span class="note">{o.note}</span></>}</dd>
+        <dd>{CFD_LABEL[o.has_cfd]}{(o.has_cfd === 'unknown' || o.has_cfd === 'mixed') && <> <ExtLink id="per-parcel-lookup" /></>}</dd>
       </>))}
     </dl>
-    <p class="note">Mello-Roos is a fixed yearly charge on the property tax bill that doesn't drop when the home's value does. The only reliable check is the parcel itself: <ExtLink id="per-parcel-lookup" /></p>
+    <p class="note">Mello-Roos is a fixed yearly charge on the property tax bill that doesn't drop when the home's value does. The only reliable check is the parcel itself{parcelLinkInline ? ', with the county lookup above.' : <>: <ExtLink id="per-parcel-lookup" /></>}</p>
   </FactBlock>
 
   <FactBlock id="commute" title="Commute at 0700" asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
@@ -230,7 +225,7 @@ const NOISE_LABEL: Record<string, string> = {
     </div>
     <p class="note">English and math columns show the Dashboard status level, from very low to very high. The "met standard" columns are the share of tested students who met or exceeded the state standard. The full picture for each school is on the <ExtLink id="ca-school-dashboard" />.</p>
     <p class="note">Moving mid-year, or need help with enrollment? The School Liaison Officers are free:</p>
-    <ul class="links"><li><ExtLink id="slo-navy-san-diego" /></li><li><ExtLink id="slo-mcas-miramar" /></li></ul>
+    <ul class="links"><li>Navy: <ExtLink id="slo-navy-san-diego" /></li><li>Marine Corps: <ExtLink id="slo-mcas-miramar" /></li></ul>
   </FactBlock>
 
   <FactBlock id="childcare" title="Child care" asOf={asOf('childcare')} source="California Department of Social Services, Community Care Licensing (licensed facilities download)">
@@ -253,26 +248,12 @@ const NOISE_LABEL: Record<string, string> = {
     </ul>
   </FactBlock>
 
-  <FactBlock id="base-housing" title="Base housing option" asOf={`CNRSW estimate, ${waitMonth} · verified ${prov.base_housing_waits.verified_on}`} source="Navy Housing Service Center / Liberty Military Housing monthly wait-time lists; LMH community pages">
-    <p>From here, the closest base at 0700 is {bases[nearestBase.base].installation} ({range(nearestBase.peakLo, nearestBase.peakHi, ' min')}). The base-housing communities with the shortest 0700 drive to that base ({bestMin} min from the leasing office's zip):</p>
-    <ul class="links">
-      {nearestHousing.map((h) => (
-        <li><ExtLink href={h.community_url} incentive="Private housing operator (PPV): collects the rent" text={h.community} /> <span class="muted">{h.bedroom_counts.replaceAll('|', ', ')} bedrooms</span></li>
-      ))}
-    </ul>
-    <div class="table-wrap">
-      <table>
-        <caption>Wait times, CNRSW estimate, {waitMonth}</caption>
-        <thead><tr><th>Community</th><th>List</th><th>Rank band</th><th class="num">Bedrooms</th><th>Wait</th></tr></thead>
-        <tbody>
-          {housingWaits.map((w) => (
-            <tr><td>{w.site_display}</td><td>{w.rank_group === 'officer' ? 'Officer' : 'Enlisted'}</td><td>{tidyRange(w.rank_band)}</td><td class="num">{w.bedrooms}</td><td>{tidyRange(w.wait_time_stated)}</td></tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <p class="gap">Which communities your rank can apply to isn't published anywhere; the Housing Service Center answers that by phone. Wait times change monthly.</p>
-    <ul class="links"><li><ExtLink id="navylifesw-housing-service-center" /></li></ul>
+  <FactBlock id="base-housing" title="Base housing" asOf={`0700 drive ${asOf('commute')}; communities ${prov.base_housing.vintage}`} source="Liberty Military Housing community pages; Google Maps 0700 predicted drive time">
+    {nearestGroup ? (
+      <p>Nearest base housing: the {nearestGroup.communities.length} communities near {nearestGroup.installation}, about {nearestGroup.min!.peakLo} min from {community.name} <span class="muted">(0700 drive to the base gate)</span>. Wait times on the <a href={`/base-housing/#${nearestGroup.anchor}`}>Base housing page</a>.</p>
+    ) : (
+      <p>No base-housing group with a known location yet. See the <a href="/base-housing/">Base housing page</a>.</p>
+    )}
   </FactBlock>
 
   <FactBlock id="access" title="Commissary, exchange, clinic and Costco" asOf={asOf('military_access')} source="OSRM free-flow drive times on OpenStreetMap (© OpenStreetMap contributors, ODbL); DoD and Costco locations">

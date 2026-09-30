@@ -1,0 +1,118 @@
+---
+// Base housing: every Liberty Military Housing community, grouped by the base it
+// sits beside, with the latest Housing Service Center wait list and pet policy.
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import FactBlock from '../components/FactBlock.astro';
+import ExtLink from '../components/ExtLink.astro';
+import { baseHousingGroups } from '../lib/baseHousing';
+import { monthName, tidyRange } from '../lib/format';
+
+const groups = await baseHousingGroups();
+const allWaits = (await getCollection('baseHousingWaits')).map((w) => w.data);
+const waits = allWaits.filter((w) => w.is_latest);
+const month = monthName(waits[0].as_of_date);
+const estimate = `CNRSW estimate, ${month}`;
+const verifiedOn = waits[0].verified_on;
+const pdfs = [...new Map(waits.map((w) => [w.source_url, w])).values()]
+  .sort((a, b) => a.rank_group.localeCompare(b.rank_group));
+
+const order = (a: (typeof waits)[number], b: (typeof waits)[number]) =>
+  a.site_display.localeCompare(b.site_display) || a.rank_group.localeCompare(b.rank_group) || a.bedrooms.localeCompare(b.bedrooms);
+const waitsFor = (ids: Set<string>) => waits.filter((w) => w.community_slugs.some((s) => ids.has(s))).sort(order);
+const unmatched = waits.filter((w) => w.mapping_type === 'none').sort(order);
+
+// Pet policy: as printed on the wait list when the community is on it, else from its LMH page.
+const petPolicy = (id: string, lmh: string) => {
+  const printed = [...new Set(waits.filter((w) => w.community_slugs.includes(id)).map((w) => w.pet_policy).filter(Boolean))];
+  if (printed.length) return printed.map((t) => t.replace(/\bNO PETS\b/, 'No pets').replace(/\bPETS\b/, 'pets')).join('; ');
+  if (lmh === 'not stated') return 'Not stated';
+  if (lmh === 'pet-friendly (stated)') return 'Pets allowed (LMH page, no details)';
+  return lmh;
+};
+const listName = (g: string) => (g === 'officer' ? 'Officer' : 'Enlisted');
+---
+
+<Base title="Base housing" description="Every base-housing community in San Diego, grouped by the base it sits beside, with the latest wait times and pet policy.">
+  <h1>Base housing</h1>
+  <p>
+    Family housing on and near the San Diego bases is run by Liberty Military Housing (LMH) under the Navy and Marine
+    Corps' public-private venture program. Below is every LMH community, grouped by the base it sits beside, with the
+    Housing Service Center's latest wait list.
+  </p>
+  <p class="gap">
+    Wait times are the Navy Housing Service Center's estimate for {month} and change every month. Which communities
+    your rank can apply to isn't published anywhere; the Housing Service Center answers that by phone.
+  </p>
+  <ul class="links">
+    {pdfs.map((p) => <li><ExtLink href={p.source_url} incentive={p.incentive} text={`${month} ${listName(p.rank_group)} wait-time list (PDF)`} /></li>)}
+    <li><ExtLink id="navylifesw-housing-service-center" /></li>
+  </ul>
+
+  {groups.map((g) => {
+    const ids = new Set(g.communities.map((c) => c.id));
+    const rows = waitsFor(ids);
+    const isPendleton = g.code === 'PENDLETON';
+    return (
+      <FactBlock id={g.anchor} title={g.title} asOf={`${estimate} · verified ${verifiedOn}; communities ${g.communities[0].vintage}`} source="Navy Housing Service Center / LMH wait-time lists; LMH community pages">
+        <div class="table-wrap">
+          <table>
+            <caption>{g.communities.length} {g.communities.length === 1 ? 'community' : 'communities'}</caption>
+            <thead><tr><th>Community</th><th>Bedrooms</th><th class="num">0700 to base gate</th><th>Pet policy</th></tr></thead>
+            <tbody>
+              {g.communities.map((c) => (
+                <tr>
+                  <td><ExtLink href={c.community_url} incentive={c.incentive} text={c.community} /></td>
+                  <td>{c.bedroom_counts === 'not stated' ? '—' : c.bedroom_counts.replaceAll('|', ', ')}</td>
+                  <td class="num">{c.near_base_min != null ? `${c.near_base_min} min` : '—'}</td>
+                  <td>{petPolicy(c.id, c.pet_policy)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {rows.length > 0 ? (
+          <div class="table-wrap">
+            <table>
+              <caption>Wait times, {estimate}</caption>
+              <thead><tr><th>Community</th><th>List</th><th>Rank band</th><th class="num">Bedrooms</th><th class="num">Units</th><th>Wait</th></tr></thead>
+              <tbody>
+                {rows.map((w) => (
+                  <tr><td>{w.site_display}</td><td>{listName(w.rank_group)}</td><td>{tidyRange(w.rank_band)}</td><td class="num">{w.bedrooms}</td><td class="num">{w.units ?? '—'}</td><td>{tidyRange(w.wait_time_stated)}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p class="note">{isPendleton
+            ? 'The Naval Base San Diego Housing Service Center list doesn’t cover Camp Pendleton. Pendleton wait times aren’t in our data yet.'
+            : `None of these communities is on the ${month} list.`}</p>
+        )}
+      </FactBlock>
+    );
+  })}
+
+  {unmatched.length > 0 && (
+    <FactBlock id="not-matched" title="On the wait list, not yet matched to a community" asOf={`${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists">
+      <p class="note">These lines on the list name a site we haven't yet matched to one LMH community. We're confirming with LMH.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Site as printed</th><th>List</th><th>Rank band</th><th class="num">Bedrooms</th><th class="num">Units</th><th>Wait</th></tr></thead>
+          <tbody>
+            {unmatched.map((w) => (
+              <tr><td>{w.site_display}</td><td>{listName(w.rank_group)}</td><td>{tidyRange(w.rank_band)}</td><td class="num">{w.bedrooms}</td><td class="num">{w.units ?? '—'}</td><td>{tidyRange(w.wait_time_stated)}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </FactBlock>
+  )}
+
+  <p class="note">
+    How communities are grouped: by the base with the shortest 0700 drive from the community's leasing office, among the
+    bases its LMH page names (or all San Diego bases if it names none). The 0700 column is that drive, from the
+    leasing office's zip to the base gate, so a community can be in a group and still be a long way out. Leasing offices stand in for the homes until
+    their true locations are placed. Group listings on the wait list are shown as printed, e.g. "covers …" for a site
+    that spans several communities.
+  </p>
+</Base>

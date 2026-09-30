@@ -11,3 +11,10 @@
 - **The export guards its own boundary.** An outbound link with an unknown domain stops the export, so a link can't ship without an incentive label. The export also scans its own output for any BAH figure. That scan found two HUD rents equal to BAH values by coincidence, which is why the site check uses a reviewed allowlist instead of blind matching.
 - **Google's typical range isn't always there.** Downstream code has to handle a missing range; the page shows "—".
 - **Tooling:** Astro 7.3.5 and Node 24. `astro check` wants to install `@astrojs/check` and conflicts with TypeScript 7, so it wasn't run. The build compiles every page, and the schemas validate every row.
+
+## Session 1b (2026-09-30): review fixes
+
+- **Withhold at the boundary rather than hide on the page.** The nearest-clinic value is dropped in the export while any clinic is unplaced, so no page can show a wrong clinic, and the row comes back on its own once the clinics are placed. The same goes for CFD names: they no longer leave the data repo, so no template can print one by accident.
+- **Shared logic for anything shown in two places.** The base-housing grouping lives in `src/lib/baseHousing.ts`, used by both the community line and `/base-housing/`, so they can't disagree.
+- **Grouping by "nearest" needs its distance shown.** Grouping every community with its nearest base put two Lakeside communities, 40 min out, under "Near MCAS Miramar". Showing the minutes makes the grouping honest; the cutoff question went to QUESTIONS.
+- **Fix provenance notes in the script that writes them.** Editing only the JSON would be undone on the next pull. Both notes were changed in the pull scripts and in the current JSON, and the wait-time parser's self-test still passes.

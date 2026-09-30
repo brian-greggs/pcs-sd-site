@@ -121,8 +121,6 @@ const ownership = defineCollection({
     jurisdiction: z.string(),
     has_cfd: z.enum(['Y', 'N', 'mixed', 'unknown']),
     confidence: z.enum(['high', 'medium', 'low']),
-    cfd_agencies: z.string(),
-    note: z.string(),
     ...dated,
   }),
 });
@@ -190,6 +188,9 @@ const baseHousing = defineCollection({
     pet_policy: z.string(),
     bases_mentioned: z.string(),
     community_url: z.url(),
+    near_base: baseCode.nullable(), // null until the community's location is known
+    near_base_min: z.number().int().nullable(),
+    incentive: z.string().min(3),
     ...dated,
   }),
 });
@@ -206,8 +207,10 @@ const baseHousingWaits = defineCollection({
     rank_band: z.string().min(1),
     units: z.number().int().nullable(),
     wait_time_stated: z.string().min(1),
+    pet_policy: z.string(),
     is_latest: z.boolean(),
     source_url: z.url(),
+    incentive: z.string().min(3),
     ...dated,
   }),
 });

@@ -9,6 +9,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/admiral-hartman/",
+  "near_base": "MCRD",
+  "near_base_min": 10,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -22,6 +25,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/aero-ridge/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 10,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -35,6 +41,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Naval Base San Diego",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/bayview-hills/",
+  "near_base": "NBSD",
+  "near_base_min": 22,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -48,6 +57,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Point Loma",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/beech-st-knolls/",
+  "near_base": "NBPL",
+  "near_base_min": 26,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -61,6 +73,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/bonita-bluffs/",
+  "near_base": "MCRD",
+  "near_base_min": 26,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -74,6 +89,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/canyon-view/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 10,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -87,6 +105,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Miramar",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/capeharts-east-miramar/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 9,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -100,6 +121,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Miramar",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/capeharts-west-miramar/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 9,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -113,6 +137,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/chesterton/",
+  "near_base": "MCRD",
+  "near_base_min": 14,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -126,6 +153,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/chesterton-townhomes/",
+  "near_base": "MCRD",
+  "near_base_min": 14,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -139,6 +169,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/chollas-heights/",
+  "near_base": "MCRD",
+  "near_base_min": 18,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -152,6 +185,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/chollas-heights-historical/",
+  "near_base": "MCRD",
+  "near_base_min": 18,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -165,6 +201,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/eucalyptus-ridge/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 40,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -178,6 +217,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Point Loma",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/gateway-village/",
+  "near_base": "NBPL",
+  "near_base_min": 18,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -191,6 +233,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/hilleary-park/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 12,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -204,6 +249,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/holly-square/",
+  "near_base": "NAB",
+  "near_base_min": 24,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -217,6 +265,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/home-terrace/",
+  "near_base": "MCRD",
+  "near_base_min": 16,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -230,6 +281,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/howard-gilmore-terrace/",
+  "near_base": "MCRD",
+  "near_base_min": 22,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -243,6 +297,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/la-mesa-park/",
+  "near_base": "MCRD",
+  "near_base_min": 22,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -256,6 +313,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Coronado",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/lofgren-terrace/",
+  "near_base": "NAB",
+  "near_base_min": 35,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -269,6 +329,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Miramar",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/mira-mesa-ridge/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 9,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -282,6 +345,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Miramar",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/miramar-milcon/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 9,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -295,6 +361,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Miramar",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/miramar-pq/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 9,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -308,6 +377,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Miramar",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/miramar-townhomes/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 9,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -321,6 +393,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "North Island|Coronado",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/nas-north-island/",
+  "near_base": "NASNI",
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -334,6 +409,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Naval Amphibious Base",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/naval-amphibious-base/",
+  "near_base": "NAB",
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -347,6 +425,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/orleck-heights/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 10,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -360,6 +441,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/paradise-gardens/",
+  "near_base": "MCRD",
+  "near_base_min": 22,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -373,6 +457,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Naval Base San Diego|Balboa",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/park-summit/",
+  "near_base": "NMCSD",
+  "near_base_min": 8,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -386,6 +473,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Miramar",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/pomerado-terrace/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 12,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -399,6 +489,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/prospect-view/",
+  "near_base": null,
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -412,6 +505,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Miramar|North Island|Camp Pendleton",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/ramona-vista/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 12,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -425,6 +521,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/river-place/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 40,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -438,6 +537,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/santo-terrace/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 10,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -451,6 +553,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Coronado|Naval Amphibious Base",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/silver-strand-i/",
+  "near_base": "NASNI",
+  "near_base_min": 6,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -464,6 +569,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Coronado|Naval Amphibious Base",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/silver-strand-ii/",
+  "near_base": "NASNI",
+  "near_base_min": 6,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -477,6 +585,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/terrace-view-villas/",
+  "near_base": "MCRD",
+  "near_base_min": 16,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -490,6 +601,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Point Loma",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/the-village-at-ntc/",
+  "near_base": "NBPL",
+  "near_base_min": 4,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -503,6 +617,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/the-village-at-serra-mesa/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 12,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -516,6 +633,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/vista-ridge/",
+  "near_base": "MIRAMAR",
+  "near_base_min": 12,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -529,6 +649,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/san-diego-naval-complex-miramar/woodlake/",
+  "near_base": null,
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -542,6 +665,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/del-mar-i/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -555,6 +681,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/del-mar-ii/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -568,6 +697,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/edson/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -581,6 +713,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/forster-hills/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -594,6 +729,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/harborview/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -607,6 +745,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/oneill-heights/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -620,6 +761,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/oneill-heights-east/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -633,6 +777,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/pacific-view/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -646,6 +793,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/san-luis-rey/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -659,6 +809,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/san-mateo-point/",
+  "near_base": "PENDLETON",
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -672,6 +825,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/san-onofre-i/",
+  "near_base": "PENDLETON",
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -685,6 +841,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/san-onofre-ii/",
+  "near_base": "PENDLETON",
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -698,6 +857,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/san-onofre-iii/",
+  "near_base": "PENDLETON",
+  "near_base_min": null,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -711,6 +873,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/santa-margarita/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -724,6 +889,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/seaside-village/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -737,6 +905,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/serra-mesa/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -750,6 +921,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/south-mesa-i/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -763,6 +937,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/south-mesa-ii/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -776,6 +953,9 @@
   "pet_policy": "not stated",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/stuart-mesa/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -789,6 +969,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/wire-mountain-i/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -802,6 +985,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/wire-mountain-ii/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  },
@@ -815,6 +1001,9 @@
   "pet_policy": "pet-friendly (stated)",
   "bases_mentioned": "Camp Pendleton",
   "community_url": "https://livelmh.com/installations/camp-pendleton-mcb/wire-mountain-iii/",
+  "near_base": "PENDLETON",
+  "near_base_min": 20,
+  "incentive": "Private housing operator (PPV): collects the rent",
   "vintage": "2026-09-18",
   "verified_on": "2026-09-18"
  }

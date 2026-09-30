@@ -1,4 +1,16 @@
-# Questions — site build session 1 (2026-09-30)
+# Questions — site build
+
+## Open (session 1b, 2026-09-30)
+
+18. **"Near MCAS Miramar" includes two communities 40 min out.** Eucalyptus Ridge and River Place (leasing zip 92040, Lakeside) name no base on their LMH pages, so they group with the base that has the shortest 0700 drive from their zip, which is Miramar at 40 min. `/base-housing/` now shows each community's 0700 minutes so this is visible. Options: leave it, add a "farther out" group past some cutoff, or assign them by hand.
+19. **The community-page minutes run to the base gate, not the housing.** "About N min from [community]" is the 0700 drive from the community to the gate of the group's base; there's no 0700 data to the housing itself. The line says "(0700 drive to the base gate)". Getting a real number would take a new zip-to-zip pull.
+20. **Prospect View and Woodlake** have no zip in the LMH data, so they sit in "Location not yet placed" until manual/base_housing_locations.csv is filled.
+
+## Answered 2026-09-30 (session 1b)
+
+Q1 hospital only; the clinic is withheld in the export while any clinic is unplaced · Q2 accepted, recorded in STATUS for the PRD decision log · Q3 Zillow links only for the beta · Q4 bands OK · Q5 changed: one line on the community page + new `/base-housing/` page · Q6 statuslevel note fixed in `pull_schools.py` and `provenance/schools.json` · Q7 no CFD named until T4b; notes and agency names no longer exported · Q8 kept, with the ACS label and the Navy / Marine Corps SLO labels · Q9–13 agreed · Q15 labels as drafted · Q17 mismatch recorded in `pull_base_housing_waittimes.py` and its provenance (`source_mismatches`). Q14 (check links by eye) and Q16 (site name) stay with Brian.
+
+## Session 1 questions (2026-09-30)
 
 Things I had to guess or decide without you. Each has what I did and what would change it.
 
