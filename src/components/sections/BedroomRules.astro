@@ -16,8 +16,8 @@ const rule = (await getEntry('housingRules', 'bedroom-entitlement'))!.data;
     <p>“{rule.intro}”</p>
     <ul>{rule.guidelines.map((g) => <li>“{g}”</li>)}</ul>
   </blockquote>
+  <p>This decides which bedroom row applies to you.</p>
   <p class="note">Quoted from <ExtLink id={rule.link_id} text="CNIC, Applying for Housing" />.</p>
   {rule.officer_section_empty && <p>CNIC's page lists no bedroom standard for officers and senior enlisted; ask the Housing Service Center.</p>}
   {navyOnlyNote && <p class="note">This source is a Navy Housing page. Camp Pendleton's own terms aren't in our material.</p>}
-  <p>This decides which bedroom row applies to you.</p>
 </FactBlock>

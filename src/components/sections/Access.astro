@@ -3,12 +3,16 @@
 import { getCollection } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import { provenance } from '../../lib/prov';
+import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
 interface Props { zips: string[] }
 const { zips } = Astro.props;
 const { asOf } = await provenance();
 const access = (await getCollection('militaryAccess')).map((r) => r.data).filter((r) => zips.includes(r.zip));
 const multiZip = access.length > 1;
+const gap = gapLine(missingZips(zips, access), 'drive times to the commissary, exchange, hospital or Costco', OUT_OF_PULL);
+// The export withholds the nearest clinic while any clinic is unplaced, so the row says so instead of vanishing.
+const clinicWithheld = access.some((a) => !a.nearest_mtf);
 
 const accessRows = (a: (typeof access)[number]) => [
   ['Commissary', a.nearest_commissary, a.commissary_min_freeflow, a.commissary_mi],
@@ -16,6 +20,7 @@ const accessRows = (a: (typeof access)[number]) => [
   [`Exchange gas (${a.exchange_operator})`, a.nearest_exchange_gas, a.exchange_gas_min_freeflow, a.exchange_gas_mi],
   // The export leaves nearest_mtf empty while any clinic is unplaced, so no wrong clinic shows.
   ...(a.nearest_mtf && a.nearest_mtf !== a.nearest_mtf_hospital ? [['Nearest military clinic', a.nearest_mtf, a.mtf_min_freeflow, a.mtf_mi] as const] : []),
+  ...(!a.nearest_mtf ? [['Nearest military clinic', 'Not shown yet (see below)', null, null] as const] : []),
   ['Nearest military hospital', a.nearest_mtf_hospital, a.mtf_hospital_min_freeflow, a.mtf_hospital_mi],
   ['Costco', a.nearest_costco, a.costco_min_freeflow, a.costco_mi],
   ['Costco gas', a.nearest_costco_gas, a.costco_gas_min_freeflow, a.costco_gas_mi],
@@ -37,4 +42,6 @@ const accessRows = (a: (typeof access)[number]) => [
       </table>
     </div>
   ))}
+  {gap && <p class="gap">{gap}</p>}
+  {clinicWithheld && <p class="gap">Nearest clinic not shown: some military clinics aren’t on our map yet, so we can’t say which is closest. The hospital row is accurate.</p>}
 </FactBlock>

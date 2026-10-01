@@ -1,13 +1,13 @@
-# Site build — status (2026-09-30, session 2: base housing areas)
+# Site build — status (2026-09-30, session 3: all neighborhoods)
 
-**Scope done:** F1 skeleton plus one vertical slice (Rancho Bernardo), stopped for review. Not built, by design: the other 39 communities, F2 sequence, F3 decision pages, F5 intake, F6 assistant.
+**Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages. Not built, by design: F2 sequence, F3 decision pages, F5 intake, F6 assistant.
 
-## Pages (25)
+## Pages (64)
 
 | URL | Built from |
 |---|---|
-| `/` | One paragraph; Neighborhoods (all 40 by corridor, only Rancho Bernardo linked) and Base housing areas (all 20, grouped as on the index) |
-| `/communities/rancho-bernardo/` | Exported data + `src/content/communities/rancho-bernardo.md`. The lead and gotchas are placeholders, so they don't render |
+| `/` | One paragraph; Neighborhoods (all 40 by corridor, all linked) and Base housing areas (all 20, grouped as on the index) |
+| `/communities/<slug>/` (40) | Exported data, one page per row of `communities.json`. A `src/content/communities/<slug>.md` file is optional and holds the lead and gotchas; only Rancho Bernardo has one (placeholder, so nothing renders) |
 | `/base-housing/` | Index: the 20 areas grouped by the base LMH names, each with its October 2026 wait range; Prospect View and Woodlake listed as location not yet placed |
 | `/base-housing/<area>/` (20) | `src/data/base_housing_areas.json` (from `manual/base_housing_areas.csv` in the data repo) + LMH communities + the latest wait list + the shared zip sections; `src/content/base-housing-areas/<area>.md` for the lead and gotchas (placeholders, not rendered) |
 | `/sources/` | `src/data/sources.json`, generated from `EAP_Data_Source_Log.md` (latest row per layer) + round-1 layers |
@@ -19,9 +19,13 @@ Base housing area sections: communities (bedrooms, eligible grades as LMH states
 
 Shared zip sections (`src/components/sections/`): commute to every gate at 0700, schools, child care, military access, climate, hazards, sources and dates.
 
-## Checks (all pass on 2026-09-30, session 2)
+Gaps (`src/lib/gaps.ts`): a zip with no row in a layer gets a one-line "No … for zip …: why" in that section. No community zip is missing a row today (none of the five `remote` zips or the out-of-county school zips belong to a community), so these lines don't render yet. In-row gaps that do render: clinic row (withheld), weather station >300 m elevation difference (91978, 92027), school dashes, ACS top-coded or unpublished medians, aircraft noise beyond Miramar.
 
-Source: no-score, no-bah, license, dated, data. Dist: dated (240 fact blocks), no-bah (exact figures + context), no-demo, no-score, incentive (597 outbound links), noindex, placeholder (new). Tested by planting violations in `dist/`: the original 10 plus 3 placeholder patterns were all caught. A note set to `draft` with real text renders; a placeholder renders nothing.
+## Checks (all pass on 2026-09-30, session 3)
+
+Source: no-score, no-bah, license, dated, data. Dist: 64 pages, dated (576 fact blocks), incentive (1,883 outbound links). The BAH check fired twice as expected (QUESTIONS 13); both reviewed and allow-listed per page in `scripts/bah_check_allow.json`. A planted $4,410 on another page still fails.
+
+Session 2: dated (240 fact blocks), no-bah (exact figures + context), no-demo, no-score, incentive (597 outbound links), noindex, placeholder (new). Tested by planting violations in `dist/`: the original 10 plus 3 placeholder patterns were all caught. A note set to `draft` with real text renders; a placeholder renders nothing.
 
 ## For the PRD decision log
 
@@ -33,4 +37,4 @@ See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian) and the LMH call l
 
 ## Next session
 
-Template the remaining 39 neighborhoods (serial for the first two); they only need a markdown file each, since the page is built when its file exists. Multi-zip communities will be the first real test of the per-zip tables; the page already handles more than one zip, but no multi-zip page has been built yet.
+Brian writes leads and gotchas (one `.md` per community; the page picks it up). Data-repo follow-ups from the session 3 spot checks are in QUESTIONS 25–29.

@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "page": "communities/otay-mesa-san-ysidro/index.html",
+    "value": 4440,
+    "why": "HUD FY2027 Small Area FMR, 4 bedrooms, zip 92154 (hud_safmr_sd_zip_fy26_fy27.csv, fy27_4br). Equals the 2026 San Diego (CA038) BAH for O4 without dependents by coincidence; the site shows no without-dependents figures. Reviewed 2026-09-30."
+  },
+  {
+    "page": "communities/santee/index.html",
+    "value": 4410,
+    "why": "HUD FY2027 Small Area FMR, 4 bedrooms, zip 92071 (hud_safmr_sd_zip_fy26_fy27.csv, fy27_4br). Equals the 2026 San Diego (CA038) BAH for W4 without dependents by coincidence; the site shows no without-dependents figures. Reviewed 2026-09-30."
+  }
+]

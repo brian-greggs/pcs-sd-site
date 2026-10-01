@@ -9,12 +9,19 @@ export const pct = (n: number | null | undefined, digits = 0) =>
 export const range = (lo: number, hi: number, unit = '') =>
   lo === hi ? `${lo}${unit}` : `${lo}–${hi}${unit}`;
 
+// Tiers are [30, 45), [45, 60), 60 and up, so a 45-minute drive is 45–59 and a 60-minute drive is 60+.
 export const TIER_LABEL: Record<string, string> = {
   under30: 'Under 30 min',
-  '30-45': '30–45 min',
-  '45-60': '45–60 min',
-  '60plus': 'Over 60 min',
+  '30-45': '30–44 min',
+  '45-60': '45–59 min',
+  '60plus': '60 min or more',
 };
+
+// Census ACS medians are top-coded: $3,501 rent and $2,000,001 home value mean "at least $3,500 / $2,000,000".
+// A blank median means the Census didn't publish one (too few homes in the sample).
+const ACS_TOP: Record<number, string> = { 3501: '$3,500 or more (the Census top value)', 2000001: '$2,000,000 or more (the Census top value)' };
+export const acsDollars = (n: number | null | undefined) =>
+  n == null ? 'not published for this zip (too few homes in the Census sample)' : ACS_TOP[n] ?? dollars(n);
 
 // CA School Dashboard status level (CDE research files: 1 = Very Low … 5 = Very High).
 export const STATUS_LABEL: Record<number, string> = {

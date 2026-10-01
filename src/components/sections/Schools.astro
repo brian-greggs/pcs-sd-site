@@ -14,6 +14,7 @@ const schools = (await getCollection('schools')).map((r) => r.data).filter((s) =
   .sort((a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level) || a.school.localeCompare(b.school));
 const districtNames = [...new Set(schools.filter((s) => s.charter === 'N').map((s) => s.district))];
 const districts = (await Promise.all(districtNames.map((d) => getEntry('districts', d)))).filter((d) => !!d);
+const hasDash = schools.some((s) => [s.ela_dfs_statuslevel, s.math_dfs_statuslevel, s.caaspp_ela_pct_met, s.caaspp_math_pct_met, s.chronic_abs_pct].some((v) => v == null));
 ---
 
 <FactBlock id="schools" title="Schools" asOf={asOf('schools')} source="California Department of Education: school directory, CA School Dashboard 2025, CAASPP 2024–25">
@@ -27,6 +28,7 @@ const districts = (await Promise.all(districtNames.map((d) => getEntry('district
       <dd>{d.data.transfer_url ? <ExtLink href={d.data.transfer_url} incentive="Public school district" text="District transfer policy" /> : <span class="muted">Transfer page not yet found.</span>}</dd>
     </dl>
   ))}
+  {districts.length === 0 && <p class="gap">No school district found for {zips.length > 1 ? 'these zips' : 'this zip'} in our data. The School Liaison Officers below can tell you which district serves an address.</p>}
   <p class="note">These are the public schools with an address in {zips.length > 1 ? 'these zips' : 'this zip'}. Your assigned school depends on your street, so check the boundary lookup before you sign a lease.</p>
   {schools.length > 0 ? (
     <div class="table-wrap">
@@ -53,6 +55,7 @@ const districts = (await Promise.all(districtNames.map((d) => getEntry('district
   ) : (
     <p class="note">No public school has an address in {zips.length > 1 ? 'these zips' : 'this zip'}. The boundary lookup for the district still decides which school is yours.</p>
   )}
+  {hasDash && <p class="note">A dash means the state files we use have no figure for that school. Usually that's because too few students were tested or no tested grades are taught there; the Dashboard's chronic absence measure covers grades K–8.</p>}
   <p class="note">English and math columns show the Dashboard status level, from very low to very high. The "met standard" columns are the share of tested students who met or exceeded the state standard. The full picture for each school is on the <ExtLink id="ca-school-dashboard" />.</p>
   <p class="note">Moving mid-year, or need help with enrollment? The School Liaison Officers are free:</p>
   <ul class="links"><li>Navy: <ExtLink id="slo-navy-san-diego" /></li><li>Marine Corps: <ExtLink id="slo-mcas-miramar" /></li></ul>

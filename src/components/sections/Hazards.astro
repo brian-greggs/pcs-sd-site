@@ -5,12 +5,14 @@ import FactBlock from '../FactBlock.astro';
 import ExtLink from '../ExtLink.astro';
 import { pct } from '../../lib/format';
 import { provenance } from '../../lib/prov';
+import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
 interface Props { zips: string[] }
 const { zips } = Astro.props;
 const { asOf } = await provenance();
 const hazards = (await getCollection('hazards')).map((r) => r.data).filter((r) => zips.includes(r.zip));
 const multiZip = hazards.length > 1;
+const gap = gapLine(missingZips(zips, hazards), 'flood or noise figures', OUT_OF_PULL);
 const NOISE_LABEL: Record<string, string> = {
   none: 'Outside the MCAS Miramar 65 dB noise contour',
   '65-70': 'Inside the MCAS Miramar 65–70 dB noise contour',
@@ -32,4 +34,6 @@ const NOISE_LABEL: Record<string, string> = {
       <dd>{NOISE_LABEL[h.aicuz_zone]}{h.miramar_cnel65plus_pct ? ` (${pct(h.miramar_cnel65plus_pct, 1)} of land at 65 dB or more)` : ''}.</dd>
     </dl>
   ))}
+  {gap && <p class="gap">{gap}</p>}
+  <p class="gap">Aircraft noise here covers MCAS Miramar only. Noise contours for San Diego International, the other Navy and Marine airfields and the county's smaller airports aren't in our data yet.</p>
 </FactBlock>

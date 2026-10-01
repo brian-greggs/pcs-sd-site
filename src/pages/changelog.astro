@@ -3,7 +3,9 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 
-const entries = (await getCollection('changelog')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+// Newest first: by date, then by version (several entries can share a date).
+const entries = (await getCollection('changelog')).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date) || b.data.version.localeCompare(a.data.version, 'en', { numeric: true }));
 const rendered = await Promise.all(entries.map(async (e) => ({ ...e.data, Content: (await render(e)).Content })));
 ---
 

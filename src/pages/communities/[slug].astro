@@ -1,7 +1,8 @@
 ---
 // Neighborhood page (F1). Facts side by side, no scores. Every section is a
-// FactBlock with its date line. Built only for neighborhoods that have a file
-// in src/content/communities/ (Rancho Bernardo, for now). Base housing has its
+// FactBlock with its date line. Built for every community in the exported data;
+// the lead and gotchas in src/content/communities/<slug>.md render only once
+// written, and a community with no file simply has none. Base housing has its
 // own pages (/base-housing/<area>/) and isn't on this one.
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
@@ -15,18 +16,19 @@ import Climate from '../../components/sections/Climate.astro';
 import Hazards from '../../components/sections/Hazards.astro';
 import Notes from '../../components/sections/Notes.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
-import { dollars, range, PAY_BAND_ORDER } from '../../lib/format';
+import { acsDollars, dollars, range, PAY_BAND_ORDER } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { writtenNotes } from '../../lib/notes';
+import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
 export async function getStaticPaths() {
-  const written = new Set((await getCollection('communityNotes')).map((n) => n.id));
-  return (await getCollection('communities')).filter((c) => written.has(c.id)).map((c) => ({ params: { slug: c.id } }));
+  return (await getCollection('communities')).map((c) => ({ params: { slug: c.id } }));
 }
 
 const { slug } = Astro.params;
 const community = (await getEntry('communities', slug!))!.data;
-const notes = await writtenNotes(await getEntry('communityNotes', slug!));
+// Most communities have no notes file yet; find() avoids a not-found warning per page.
+const notes = await writtenNotes((await getCollection('communityNotes')).find((n) => n.id === slug));
 const zips = community.zips;
 const inZips = (r: { data: { zip: string } }) => zips.includes(r.data.zip);
 const multiZip = zips.length > 1;
@@ -49,6 +51,8 @@ const CFD_LABEL: Record<string, string> = {
   unknown: 'Parts of this area may sit in a Mello-Roos district. Check the parcel before an offer.',
 };
 const parcelLinkInline = ownership.some((o) => o.has_cfd === 'unknown' || o.has_cfd === 'mixed');
+const rentGap = gapLine(missingZips(zips, rent), 'HUD reference rent', OUT_OF_PULL);
+const ratioGap = gapLine(missingZips(zips, ratios), 'rent-to-allowance ratio', 'there’s no HUD reference rent to divide');
 const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 ---
 
@@ -72,6 +76,7 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
 
   <FactBlock id="cost" title="Cost" asOf={`Rent: ${asOf('rent')}. Ratio: ${asOf('rent_to_bah')}`} source="HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; DTMO BAH 2026 (used for the ratio only)">
     <h3>Rent</h3>
+    {rentGap && <p class="gap">{rentGap}</p>}
     {rent.map((r) => (
       <div class="table-wrap">
         <table>
@@ -80,12 +85,13 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
           <tbody><tr><td>Monthly</td><td class="num">{dollars(r.fy27_0br)}</td><td class="num">{dollars(r.fy27_1br)}</td><td class="num">{dollars(r.fy27_2br)}</td><td class="num">{dollars(r.fy27_3br)}</td><td class="num">{dollars(r.fy27_4br)}</td></tr></tbody>
         </table>
       </div>
-      <p class="note">Census median rent across all rented homes here: {dollars(r.acs_median_gross_rent)}. <span class="muted">{ACS_NOTE}</span> For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" />.</p>
+      <p class="note">Census median rent across all rented homes here: {acsDollars(r.acs_median_gross_rent)}. <span class="muted">{ACS_NOTE}</span> For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" />.</p>
     ))}
 
     <h3>Rent as a share of your housing allowance</h3>
+    {ratioGap && <p class="gap">{ratioGap}</p>}
     <p class="note">HUD reference rent for that many bedrooms, divided by the 2026 housing allowance with dependents. Under 100% means the reference rent fits inside the allowance. A band shows a range when its grades get different allowances. We don't show the allowance itself.</p>
-    {rent.map((r) => (
+    {rent.filter((r) => ratios.some((x) => x.zip === r.zip)).map((r) => (
       <div class="table-wrap">
         <table>
           {multiZip && <caption>Zip {r.zip}</caption>}
@@ -103,13 +109,14 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
     <dl class="facts">
       {rent.map((r) => (<>
         <dt>Census median home value{multiZip ? ` (${r.zip})` : ''}</dt>
-        <dd>{dollars(r.acs_median_home_value)}. <span class="muted">{ACS_NOTE}</span></dd>
+        <dd>{acsDollars(r.acs_median_home_value)}. <span class="muted">{ACS_NOTE}</span></dd>
       </>))}
       {ownership.map((o) => (<>
         <dt>Mello-Roos: {o.subarea || community.name}</dt>
         <dd>{CFD_LABEL[o.has_cfd]}{(o.has_cfd === 'unknown' || o.has_cfd === 'mixed') && <> <ExtLink id="per-parcel-lookup" /></>}</dd>
       </>))}
     </dl>
+    {ownership.length === 0 && <p class="gap">No Mello-Roos record for {community.name} yet: the county list hasn’t been matched to this area. Check the parcel before an offer.</p>}
     <p class="note">Mello-Roos is a fixed yearly charge on the property tax bill that doesn't drop when the home's value does. The only reliable check is the parcel itself{parcelLinkInline ? ', with the county lookup above.' : <>: <ExtLink id="per-parcel-lookup" /></>}</p>
   </FactBlock>
 

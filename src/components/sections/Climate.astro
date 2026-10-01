@@ -3,6 +3,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import { provenance, titleCase } from '../../lib/prov';
+import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
 interface Props { zips: string[]; name: string }
 const { zips, name } = Astro.props;
@@ -10,10 +11,14 @@ const { asOf } = await provenance();
 const climate = (await getCollection('climate')).map((r) => r.data).filter((r) => zips.includes(r.zip));
 const coastal = (await getEntry('climate', '92118'))!.data; // Coronado: the coastal baseline used in T12
 const showCoastal = !zips.includes('92118');
+const gap = gapLine(missingZips(zips, climate), 'climate normals', OUT_OF_PULL);
+// station_flag: the station sits more than 300 m above or below the zip (kept, not corrected).
+const flagged = climate.filter((c) => c.station_flag);
 const label = (zip: string) => (climate.length > 1 ? zip : name);
 ---
 
 <FactBlock id="climate" title="Climate" asOf={asOf('climate')} source="NOAA U.S. Climate Normals 1991–2020 (nearest station); California Energy Commission building climate zones">
+  {gap && <p class="gap">{gap}</p>}
   <div class="table-wrap">
     <table>
       <thead><tr><th></th>{climate.map((c) => <th class="num">{label(c.zip)}</th>)}{showCoastal && <th class="num">Coronado (coast)</th>}</tr></thead>
@@ -24,6 +29,7 @@ const label = (zip: string) => (climate.length > 1 ? zip : name);
       </tbody>
     </table>
   </div>
-  <p class="note">Weather station: {climate.map((c) => `${titleCase(c.noaa_station_name)}, ${c.station_distance_km} km away`).join('; ')}.</p>
+  {flagged.length > 0 && <p class="gap">The nearest weather station for {flagged.map((c) => (climate.length > 1 ? c.zip : name)).join(' and ')} sits more than 300 m higher or lower than {climate.length === 1 ? 'here' : flagged.length > 1 ? 'those zips' : 'that zip'}, so the real temperatures can differ from these.</p>}
+  {climate.length > 0 && <p class="note">Weather station: {climate.map((c) => `${titleCase(c.noaa_station_name)}, ${c.station_distance_km} km away`).join('; ')}.</p>}
   <p class="gap">Whether a home has air conditioning isn't published anywhere. On hot inland days it matters, so ask before you sign.</p>
 </FactBlock>

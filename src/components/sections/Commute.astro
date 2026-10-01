@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import { range, TIER_LABEL } from '../../lib/format';
 import { provenance } from '../../lib/prov';
+import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
 interface Props { zips: string[] }
 const { zips } = Astro.props;
@@ -21,10 +22,14 @@ const byBase = Object.values(
   tier: [...rs].sort((a, b) => a.peak_am_min - b.peak_am_min)[0].tier,
   miles: rs.length === 1 ? rs[0].osrm_miles : null,
 })).sort((a, b) => a.peakLo - b.peakLo);
+const gap = gapLine(missingZips(zips, rows), '0700 drive times', OUT_OF_PULL);
+const noRange = byBase.some((b) => b.lo == null || b.hi == null);
 ---
 
 <FactBlock id="commute" title="Commute at 0700" asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
   <p class="note">Drive times start from the center of the zip{zips.length > 1 ? ' (a range across the zips here)' : ''}, so your street can add or take away 5–10 minutes. The range is Google's typical spread for a weekday at 0700.</p>
+  {gap && <p class="gap">{gap}</p>}
+  {byBase.length > 0 && (
   <div class="table-wrap">
     <table>
       <thead><tr><th>Base (gate)</th><th class="num">0700 predicted</th><th class="num">Typical range</th><th>Tier</th><th class="num">Road miles</th></tr></thead>
@@ -41,4 +46,7 @@ const byBase = Object.values(
       </tbody>
     </table>
   </div>
+  )}
+  {noRange && <p class="note">A dash in the typical range means Google gave no spread for that trip, which happens on very short drives.</p>}
+  <p class="note">Every base is listed with its real minutes, however long the drive. The tier groups them: under 30, 30–44, 45–59, and 60 minutes or more.</p>
 </FactBlock>

@@ -26,3 +26,11 @@
 - **A curated grouping belongs in the data repo with its own guard.** `manual/base_housing_areas.csv` is judgment, not code. The export refuses to run if a community is unassigned, double-assigned or unknown, or if an area's facts zip isn't residential.
 - **"Don't render placeholders" needs two halves.** The page skips any notes whose status is placeholder, and the build fails if placeholder text reaches `dist/`. The first keeps pages clean; the second catches a note someone marks `draft` without replacing the text.
 - **Sources disagreeing is a finding, not a problem to paper over.** On PPV rent, the wait list prints flat rents while a stale DoD page says rent equals BAH. The page shows what's printed and says to ask; the disagreement went to QUESTIONS.
+
+## Session 3 (2026-09-30): all neighborhoods
+
+- **Every layer covered every zip, and the pages still hid gaps.** The silent ones were inside rows: the clinic row vanished, the weather-station flag was never shown, and school dashes had no explanation. Looking for nulls per column, not missing rows, is what found them.
+- **Sentinel values look like data.** ACS top-codes ($2,000,001, $3,501) rendered as exact figures on five zips. Any source with top-coding needs its sentinels mapped at display.
+- **Labels from half-open ranges need both ends.** "45–60" and "Over 60" put a 60-minute drive in the wrong words. The tier was right; the label wasn't.
+- **"Outside the contour" reads as "quiet" when the contour is the only one we have.** A negative fact needs its scope stated.
+- **Allow-listing per page keeps the check whole.** The same $4,410 planted on another page still fails.

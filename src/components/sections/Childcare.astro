@@ -4,15 +4,19 @@ import { getCollection } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import ExtLink from '../ExtLink.astro';
 import { provenance } from '../../lib/prov';
+import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
 interface Props { zips: string[] }
 const { zips } = Astro.props;
 const { asOf } = await provenance();
 const care = (await getCollection('childcare')).map((r) => r.data).filter((r) => zips.includes(r.zip));
+const gap = gapLine(missingZips(zips, care), 'licensed child care counts', OUT_OF_PULL);
 const sum = (k: keyof (typeof care)[number]) => care.reduce((n, r) => n + (r[k] as number), 0);
 ---
 
 <FactBlock id="childcare" title="Child care" asOf={asOf('childcare')} source="California Department of Social Services, Community Care Licensing (licensed facilities download)">
+  {gap && <p class="gap">{gap}</p>}
+  {care.length > 0 && (
   <dl class="facts">
     <dt>Licensed centers</dt>
     <dd>{sum('centers')} <span class="muted">(capacity {sum('center_capacity')})</span></dd>
@@ -25,6 +29,7 @@ const sum = (k: keyof (typeof care)[number]) => care.reduce((n, r) => n + (r[k] 
     <dt>Large family child care homes (9–14 children)</dt>
     <dd>{sum('large_fcc_homes')} <span class="muted">(capacity {sum('large_fcc_capacity')})</span></dd>
   </dl>
+  )}
   <p class="gap">Missing from these counts: small family child care homes (up to 8 children). They're licensed, but the state doesn't publish them, and they're often where infant care is. The way to find them is the county's free referral service.</p>
   <ul class="links">
     <li><ExtLink id="ymca-childcare-resource-service" /></li>

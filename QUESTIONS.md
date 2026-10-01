@@ -1,5 +1,14 @@
 # Questions — site build
 
+## Open (session 3, all neighborhoods, 2026-09-30)
+
+25. **Fire is the biggest gap on backcountry and East County pages.** CAL FIRE FHSZ is still blocked, so Ramona, Alpine and Lakeside say "not in our data yet" with a link. Honest, but it's the hazard that matters most there.
+26. **Aircraft noise covers Miramar only.** Every page now says so. Imperial Beach (next to the Imperial Beach helicopter field), Coronado and Point Loma, and Downtown (airport) are where it matters. NASNI contours are already a manual item.
+27. **Imperial Beach Charter has Dashboard levels but no CAASPP percentages.** A K–8 school should have tested grades, so this may be a join miss in `pull_schools.py` rather than suppression.
+28. **Del Mar / Solana Beach climate uses inland stations** (Miramar 15 km for 92014, Carlsbad Palomar 15 km for 92075). The July high is likely too warm for the coast. Not flagged, since the elevation rule doesn't catch it.
+29. **Coronado Unified has no boundary lookup** (the page says so). Worth finding before Coronado gets a lead.
+
+
 ## Open (session 2, base housing areas, 2026-09-30)
 
 21. ~~What does a family pay for PPV housing?~~ **Resolved 2026-09-30 from sources (Brian).** CNIC's Privatized Housing page says rent is based on BAH: you receive BAH and pay rent to the property manager. Military OneSource's NBSD housing page adds that some neighborhoods offer discounted rates. Area pages now say "Rent is your BAH, paid to Liberty Military Housing by allotment (CNIC). Some sites list discounted rates; those are shown below as printed." Both sources are cited and dated. Still open, on the HSC call list in the data repo's STATUS: whether families keep the difference on discounted units, and utilities.
@@ -37,7 +46,7 @@ Things I had to guess or decide without you. Each has what I did and what would 
 
 11. **The dist checks run as `postbuild`, not `prebuild`.** The checks read the rendered pages, which don't exist before the build. `prebuild` checks the data files (column names, dates); `postbuild` checks `dist/`. Either failure fails `npm run build`, which also fails a Cloudflare deploy.
 12. **The exact BAH-figure check only runs locally.** It needs the BAH table, which lives in the data repo next door. On Cloudflare that part is skipped, with a SKIP line in the log, and the context check still runs: no dollar figure in a sentence mentioning BAH or the housing allowance. Committing hashes of the figures wouldn't protect anything, since four-digit numbers are trivial to reverse. Since you build locally before every push, I think this is enough.
-13. **Coincidences.** HUD rents of $4,410 and $4,440 (in two other zips) equal 2026 BAH figures. When those pages are built, the check will stop them. Each one gets reviewed and added to `scripts/bah_check_allow.json` with a reason.
+13. ~~**Coincidences.**~~ **Resolved 2026-09-30 (session 3).** The check fired on Santee ($4,410, HUD 4-bed, 92071) and Otay Mesa / San Ysidro ($4,440, HUD 4-bed, 92154). Both equal without-dependents BAH values (W4, O4) by coincidence; each is allow-listed for its page only, with the reason.
 
 ## Check by eye (scripts get 403 from these)
 

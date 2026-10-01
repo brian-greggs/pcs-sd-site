@@ -4,7 +4,6 @@ import Base from '../layouts/Base.astro';
 import { baseHousingAreas, INDEX_GROUPS } from '../lib/baseHousing';
 
 const communities = (await getCollection('communities')).map((c) => c.data).sort((a, b) => a.name.localeCompare(b.name));
-const written = new Set((await getCollection('communityNotes')).map((n) => n.id));
 const corridors = [...new Set(communities.map((c) => c.corridor))].sort();
 const { areas } = await baseHousingAreas();
 ---
@@ -19,13 +18,13 @@ const { areas } = await baseHousingAreas();
   </p>
 
   <h2>Neighborhoods</h2>
-  <p class="note">Only Rancho Bernardo is written so far. The rest are coming.</p>
+  <p class="note">Every page has the facts. The short lead and the gotchas from families who've lived there appear as they're written.</p>
   {corridors.map((corridor) => (
     <>
       <h3>{corridor}</h3>
       <ul class="communities">
         {communities.filter((c) => c.corridor === corridor).map((c) => (
-          <li>{written.has(c.slug) ? <a href={`/communities/${c.slug}/`}>{c.name}</a> : <span class="muted">{c.name}</span>}</li>
+          <li><a href={`/communities/${c.slug}/`}>{c.name}</a></li>
         ))}
       </ul>
     </>
