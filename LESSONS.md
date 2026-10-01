@@ -34,3 +34,12 @@
 - **Labels from half-open ranges need both ends.** "45–60" and "Over 60" put a 60-minute drive in the wrong words. The tier was right; the label wasn't.
 - **"Outside the contour" reads as "quiet" when the contour is the only one we have.** A negative fact needs its scope stated.
 - **Allow-listing per page keeps the check whole.** The same $4,410 planted on another page still fails.
+
+## Session 4 (2026-09-30): new UI
+
+- **Render every variant, toggle with the script.** The commute tile for each base, the rent tile for each pay band and the commute summary for each base are all in the HTML; the script only flips `hidden`. So the principle checks read every word a reader can see, the page works with JavaScript off, and no data lives in a script.
+- **A design system needs its own check.** The contrast check reads `theme.css` and tests 16 text/background pairs; a second rule fails any raw color in other stylesheets, so the 16 pairs are the whole palette. Planting a dim muted color failed four pairs at once.
+- **Self-hosting fonts isn't proven until something fails on a CDN.** The new third-party check scans pages and the bundled CSS; a planted Google Fonts `<link>`, an `<img>` from another host and a `url(https://…)` in CSS were all caught.
+- **Headless Chrome won't go below about 500 px wide.** Screenshots at 390 px looked like horizontal overflow; they weren't. Rendering the page in a 375 px iframe gives a true phone-width check.
+- **`[hidden]` loses to any `display` rule.** The pay-band label has `display: flex`, so `hidden` alone wouldn't hide it with JavaScript off (caught while writing the CSS). One `[hidden] { display: none !important; }` line fixes it everywhere.
+

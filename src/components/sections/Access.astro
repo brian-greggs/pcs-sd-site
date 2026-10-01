@@ -14,6 +14,11 @@ const gap = gapLine(missingZips(zips, access), 'drive times to the commissary, e
 // The export withholds the nearest clinic while any clinic is unplaced, so the row says so instead of vanishing.
 const clinicWithheld = access.some((a) => !a.nearest_mtf);
 
+const near = (k: 'commissary_min_freeflow' | 'costco_min_freeflow' | 'mtf_hospital_min_freeflow') => {
+  const v = access.map((a) => a[k]).filter((x): x is number => x != null);
+  return v.length ? `${Math.round(Math.min(...v))} min` : '—';
+};
+const summary = `Commissary ${near('commissary_min_freeflow')} · military hospital ${near('mtf_hospital_min_freeflow')} · Costco ${near('costco_min_freeflow')}, no traffic`;
 const accessRows = (a: (typeof access)[number]) => [
   ['Commissary', a.nearest_commissary, a.commissary_min_freeflow, a.commissary_mi],
   [`Exchange (${a.exchange_store_operator})`, a.nearest_exchange_store, a.exchange_store_min_freeflow, a.exchange_store_mi],
@@ -27,7 +32,7 @@ const accessRows = (a: (typeof access)[number]) => [
 ] as const;
 ---
 
-<FactBlock id="access" title="Commissary, exchange, hospital and Costco" asOf={asOf('military_access')} source="OSRM free-flow drive times on OpenStreetMap (© OpenStreetMap contributors, ODbL); DoD and Costco locations">
+<FactBlock id="access" title="Commissary, exchange, hospital and Costco" summary={summary} asOf={asOf('military_access')} source="OSRM free-flow drive times on OpenStreetMap (© OpenStreetMap contributors, ODbL); DoD and Costco locations">
   <p class="note">Drive times with no traffic, from the center of the zip. Real times at rush hour run longer. On-base times can run long because routing avoids restricted base roads.</p>
   {access.map((a) => (
     <div class="table-wrap">

@@ -24,10 +24,15 @@ const reasons = (c: (typeof climate)[number]) => c.station_flag!.split(';').map(
   return FLAG_TEXT[f];
 });
 const where = (c: (typeof climate)[number]) => (climate.length > 1 ? `zip ${c.zip}` : name);
+const span = (k: 'july_mean_max_f' | 'days_ge_90f') => {
+  const v = climate.map((c) => Math.round(c[k]));
+  return v.length ? (Math.min(...v) === Math.max(...v) ? `${v[0]}` : `${Math.min(...v)}–${Math.max(...v)}`) : '—';
+};
+const summary = climate.length ? `July high ${span('july_mean_max_f')}°F · ${span('days_ge_90f')} days a year at 90°F or more` : 'No climate normals in our data';
 const label = (zip: string) => (climate.length > 1 ? zip : name);
 ---
 
-<FactBlock id="climate" title="Climate" asOf={asOf('climate')} source="NOAA U.S. Climate Normals 1991–2020 (nearest station); California Energy Commission building climate zones">
+<FactBlock id="climate" title="Climate" summary={summary} asOf={asOf('climate')} source="NOAA U.S. Climate Normals 1991–2020 (nearest station); California Energy Commission building climate zones">
   {gap && <p class="gap">{gap}</p>}
   <div class="table-wrap">
     <table>

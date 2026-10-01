@@ -1,5 +1,19 @@
 # Questions — site build
 
+## Open (session 4, new UI, 2026-09-30)
+
+Things I had to guess while building the Cowork design. Each says what I did; any is a small change.
+
+31. **Base slugs and location lines.** `/base/naval-base-san-diego/`, `miramar`, `north-island`, `naval-amphibious-base`, `point-loma`, `naval-medical-center`, `mcrd`, `camp-pendleton` (in `src/lib/bases.ts`). The one-line locations on the home cards ("Off I-15, north of Kearny Mesa") are mine; the base page shows the gate from the data under the heading.
+32. **Which base housing a base page lists.** LMH's groups map to bases as Miramar → MCAS Miramar, NBSD → Naval Base San Diego, NBPL → Point Loma, Coronado → both NAS North Island and NAB, Pendleton → Camp Pendleton. Naval Medical Center and MCRD have no tied areas, so their pages say so. Every base page also lists the 10 areas LMH ties to no base (Murphy Canyon, Lakeside, …) under "Not tied to a base by LMH", sorted by the drive to that base. Drop that group if it reads as clutter.
+33. **"The pay band updates the Cost table"** I read as: the table keeps every band (so the page is complete with JavaScript off) and the chosen band's row is highlighted. The rent tile switches to the chosen band.
+34. **Commute summary line.** "<your base> N min · nearest: <base> N min · Navy bases A–B min", where the Navy bases are NBSD, North Island, NAB, Point Loma and Naval Medical Center, minus any already named. MCRD and Pendleton are only in the table.
+35. **Neighborhoods with several zips.** Tiles show the range across zips (commute, ratio, Very High fire share). The fire caveat shows if any zip is under 95% rated, worded "in one zip here".
+36. **Base housing tiles.** Pets: the wait list's printed policy wins over the LMH page; shows "Allowed", "Allowed at N of M", "No pets" or "Not stated". Commute: to the area's base; for Coronado the nearer of North Island and NAB; for areas LMH ties to no base, the nearest base, labeled so. Wait: the area's range across every list, grade and bedroom count (same as the index); lower bounds of 0 come from "00-01 Months" rows as printed.
+37. **Kept beyond the spec.** The footer keeps "Unofficial and non-commercial. Not affiliated with the Navy, the Marine Corps or DoD." (Principle 7) under the two lines you gave. Removed: the jump-link list on each page (sections now fold) and the light theme.
+38. **Back links.** Neighborhood → /neighborhoods/, or the base page when `?base=` is set; base housing area → /base-housing/; base pages, both indexes, Sources and What changed → home. Home shows the site name.
+39. **Fonts.** Latin subset only, five weights, woff2 with woff fallback (212 KB in dist, 96 KB of it woff2; a browser fetches only the woff2 for the weights a page uses). Covers ñ (Peñasquitos) and the dashes; anything outside falls back to the system font.
+
 ## Open (session 3, all neighborhoods, 2026-09-30)
 
 25. **Fire (FHSZ).** Brian is downloading the CAL FIRE files to ~/Downloads; when he says they're there, move them to `raw/hazards/fhsz/` in the data repo and re-run `pull_hazards.py` (BLOCKED.md). No change until then.

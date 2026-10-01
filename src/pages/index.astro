@@ -1,46 +1,34 @@
 ---
+// Home: base first. A family picks where they're reporting; the base page sorts
+// neighborhoods and base housing by the 0700 drive. Or they browse everything.
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { baseHousingAreas, INDEX_GROUPS } from '../lib/baseHousing';
+import { BASES } from '../lib/bases';
+import { baseHousingAreas } from '../lib/baseHousing';
 
-const communities = (await getCollection('communities')).map((c) => c.data).sort((a, b) => a.name.localeCompare(b.name));
-const corridors = [...new Set(communities.map((c) => c.corridor))].sort();
+const communities = await getCollection('communities');
 const { areas } = await baseHousingAreas();
+const areaPages = areas.filter((a) => a.has_page).length;
 ---
 
 <Base title="Home">
-  <h1>Moving to San Diego on orders</h1>
-  <p>
-    A guide for military families with orders to San Diego, built from dated public data and from what
-    families who just made this move wish they had known. Each community page puts the facts side by side:
-    what rent costs against your housing allowance, how long the drive to each base takes at 0700, which schools
-    and child care are nearby, and what to watch for. There are no scores or rankings, and nobody pays to be listed.
-  </p>
+  <h1>Orders to San Diego? Start with your base.</h1>
+  <p class="intro">Pick where you're reporting. We'll sort neighborhoods and base housing by the drive at 0700.</p>
 
-  <h2>Neighborhoods</h2>
-  <p class="note">Every page has the facts. The short lead and the gotchas from families who've lived there appear as they're written.</p>
-  {corridors.map((corridor) => (
-    <>
-      <h3>{corridor}</h3>
-      <ul class="communities">
-        {communities.filter((c) => c.corridor === corridor).map((c) => (
-          <li><a href={`/communities/${c.slug}/`}>{c.name}</a></li>
-        ))}
-      </ul>
-    </>
-  ))}
+  <ul class="cards">
+    {BASES.map((b) => (
+      <li>
+        <a class="card" href={`/base/${b.slug}/`}>
+          <span><span class="card-name">{b.short}</span><span class="card-sub">{b.location}</span></span>
+          <span class="arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+    ))}
+  </ul>
 
-  <h2>Base housing areas</h2>
-  <p class="note">Each area page has its communities, wait times, pet policy and how to apply. <a href="/base-housing/">All base housing</a></p>
-  {INDEX_GROUPS.map((g) => {
-    const rows = areas.filter((a) => a.has_page && a.base_group === g.key);
-    return rows.length > 0 && (
-      <>
-        <h3>{g.title}</h3>
-        <ul class="communities">
-          {rows.map((a) => <li><a href={`/base-housing/${a.id}/`}>{a.name}</a></li>)}
-        </ul>
-      </>
-    );
-  })}
+  <h2 class="section-title">Or just browse</h2>
+  <div class="browse">
+    <a class="blue" href="/neighborhoods/"><span class="count">{communities.length}</span><span class="label">Neighborhoods</span></a>
+    <a class="mauve" href="/base-housing/"><span class="count">{areaPages}</span><span class="label">Base housing</span></a>
+  </div>
 </Base>

@@ -17,8 +17,10 @@ import Notes from '../../components/sections/Notes.astro';
 import BedroomRules from '../../components/sections/BedroomRules.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
 import { baseHousingAreas } from '../../lib/baseHousing';
-import { tidyRange } from '../../lib/format';
+import { range, tidyRange } from '../../lib/format';
 import { writtenNotes } from '../../lib/notes';
+import { provenance } from '../../lib/prov';
+import { baseByCode, drives, GROUP_BASES, minutes } from '../../lib/bases';
 
 export async function getStaticPaths() {
   const { areas } = await baseHousingAreas();
@@ -61,34 +63,66 @@ const statedEligibility = (s: string) => (s === 'not stated' ? 'Not stated' : s)
 const cnicRule = (await getEntry('links', 'cnic-privatized-housing'))!.data;
 const oneSource = (await getEntry('links', 'mi-nbsd-housing'))!.data;
 const askOffice = isPendleton ? 'Ask LMH or the Camp Pendleton housing office' : 'Ask the Housing Service Center';
+
+// --- At a glance -----------------------------------------------------------
+const { asOf } = await provenance();
+const waitText = area.waitRange ? `${range(area.waitRange[0], area.waitRange[1])} months` : isPendleton ? 'Not in our data' : 'Not on the list';
+const bedrooms = [...new Set(area.members.flatMap((m) => (m.bedroom_counts === 'not stated' ? [] : m.bedroom_counts.split('|').map(Number))))].sort((a, b) => a - b);
+const bedroomText = bedrooms.length ? (bedrooms.length === 1 ? `${bedrooms[0]}` : `${bedrooms[0]}–${bedrooms.at(-1)}`) : '—';
+const bedroomStated = area.members.filter((m) => m.bedroom_counts !== 'not stated').length;
+// Pets per community: the wait list's printed policy wins, else LMH's page.
+const petState = (id: string, lmh: string) => {
+  const printed = area.waits.filter((w) => w.community_slugs.includes(id)).map((w) => w.pet_policy).filter(Boolean);
+  if (printed.length) return printed.every((t) => /\bNO PETS\b/.test(t)) ? 'no' : 'yes';
+  return lmh === 'pet-friendly (stated)' ? 'yes' : 'unknown';
+};
+const pets = area.members.map((m) => petState(m.id, m.pet_policy));
+const petYes = pets.filter((x) => x === 'yes').length;
+const petNo = pets.filter((x) => x === 'no').length;
+const petText = petYes === pets.length ? 'Allowed' : petYes ? `Allowed at ${petYes} of ${pets.length}` : petNo ? 'No pets' : 'Not stated';
+// The area's base: LMH's group; Coronado serves two bases and areas with no base take the nearest.
+const ds = await drives(zips);
+const candidates = GROUP_BASES[area.base_group];
+const drive = candidates.length ? ds.find((d) => candidates.includes(d.code)) : ds[0];
+const driveLabel = drive ? `to ${baseByCode(drive.code).short}${candidates.length ? '' : ' (nearest; LMH names no base)'}` : 'No drive times in our data';
+const waitSummary = area.waitRange ? `${waitText} · ${estimate}` : isPendleton ? 'Pendleton wait times aren’t in our data' : `Not on the ${month} list`;
+const memberWord = `${area.members.length} ${area.members.length === 1 ? 'community' : 'communities'}`;
+
 const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii', 'san-onofre-iii']);
 ---
 
-<Base title={`${area.name} base housing`} description={`Base housing in ${area.name}: communities, wait times, pet policy, how to apply, and the commute, schools and hazards around it.`}>
-  <p class="kicker"><a href="/base-housing/">Base housing</a></p>
+<Base title={`${area.name} base housing`} back={{ href: '/base-housing/', label: 'Base housing' }} description={`Base housing in ${area.name}: communities, wait times, pet policy, how to apply, and the commute, schools and hazards around it.`}>
+  <p class="eyebrow">Base housing</p>
   <h1>{area.name}</h1>
-  <p class="kicker">{area.members.length} {area.members.length === 1 ? 'community' : 'communities'} · zip {zips.join(', ')}{area.base_tie_note ? ` · ${area.base_tie_note}` : ''}</p>
+  <p class="kicker">{memberWord} · {zips.join(', ')}{area.base_tie_note ? ` · ${area.base_tie_note}` : ''}</p>
   {area.facts_note && <p class="note">{area.facts_note}</p>}
 
   <Notes notes={notes} part="lead" />
 
-  <ul class="jump">
-    <li><a href="#communities">Communities</a></li>
-    <li><a href="#bedrooms">Bedrooms</a></li>
-    <li><a href="#wait-times">Wait times</a></li>
-    <li><a href="#apply">How to apply</a></li>
-    <li><a href="#cost">Cost</a></li>
-    <li><a href="#commute">Commute</a></li>
-    <li><a href="#schools">Schools</a></li>
-    <li><a href="#childcare">Child care</a></li>
-    <li><a href="#access">Commissary &amp; Costco</a></li>
-    <li><a href="#climate">Climate</a></li>
-    <li><a href="#hazards">Hazards</a></li>
-    {notes?.Gotchas && <li><a href="#gotchas">Gotchas</a></li>}
-    <li><a href="#sources">Sources</a></li>
-  </ul>
+  <section class="glance" id="glance" data-fact="glance">
+    <div class="glance-head"><h2>At a glance</h2></div>
+    <dl class="tiles">
+      <div class="tile mauve">
+        <dt>Wait, latest list</dt>
+        <dd><span class="tile-value">{waitText}</span><span class="tile-sub">{area.waitRange ? estimate : isPendleton ? 'Ask LMH or the Pendleton housing office' : 'Ask the Housing Service Center'}</span></dd>
+      </div>
+      <div class="tile blue">
+        <dt>Bedrooms offered</dt>
+        <dd><span class="tile-value">{bedroomText}</span><span class="tile-sub">{bedroomStated === area.members.length ? `across ${memberWord}` : `${bedroomStated} of ${area.members.length} communities state it`}</span></dd>
+      </div>
+      <div class="tile blue">
+        <dt>Pets</dt>
+        <dd><span class="tile-value">{petText}</span><span class="tile-sub">Limits differ by community</span></dd>
+      </div>
+      <div class="tile blue">
+        <dt>Commute at 0700</dt>
+        <dd><span class="tile-value">{drive ? minutes(drive) : '—'}</span><span class="tile-sub">{driveLabel}</span></dd>
+      </div>
+    </dl>
+    <p class="asof" data-asof>Wait and pets: {estimate} · verified {verifiedOn}. Bedrooms and pets: LMH pages {area.members[0].vintage}. Commute: {asOf('commute')}.</p>
+  </section>
 
-  <FactBlock id="communities" title="Communities" asOf={`LMH pages ${area.members[0].vintage}; grades and pets from the ${estimate} · verified ${verifiedOn}`} source="Liberty Military Housing community pages; Navy Housing Service Center / LMH wait-time lists">
+  <FactBlock id="communities" title="Communities" summary={`${memberWord} · ${bedroomText} bedrooms · pets: ${petText.toLowerCase()}`} asOf={`LMH pages ${area.members[0].vintage}; grades and pets from the ${estimate} · verified ${verifiedOn}`} source="Liberty Military Housing community pages; Navy Housing Service Center / LMH wait-time lists">
     <div class="table-wrap">
       <table>
         <thead><tr><th>Community</th><th>Bedrooms</th><th>Eligible grades (LMH page)</th><th>Grades on the {month} list</th><th>Pet policy</th></tr></thead>
@@ -110,7 +144,7 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
 
   <BedroomRules navyOnlyNote={isPendleton} />
 
-  <FactBlock id="wait-times" title="Wait times" asOf={isPendleton ? `LMH pages ${area.members[0].vintage}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH monthly wait-time lists (PDF)">
+  <FactBlock id="wait-times" title="Wait times" open summary={waitSummary} asOf={isPendleton ? `LMH pages ${area.members[0].vintage}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH monthly wait-time lists (PDF)">
     {waits.length > 0 ? (
       <>
         <div class="table-wrap">
@@ -134,7 +168,7 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
     )}
   </FactBlock>
 
-  <FactBlock id="apply" title="How to apply" asOf="CNIC NAVBASE San Diego housing page and Navy Region Southwest Housing Service Center page, retrieved 2026-09-30" source="CNIC Fleet & Family Readiness; Navy Region Southwest">
+  <FactBlock id="apply" title="How to apply" open summary="Apply with HEAT before you leave · check in at the Housing Service Center" asOf="CNIC NAVBASE San Diego housing page and Navy Region Southwest Housing Service Center page, retrieved 2026-09-30" source="CNIC Fleet & Family Readiness; Navy Region Southwest">
     {isPendleton && <p class="gap">The steps below are the Naval Base San Diego Housing Service Center's. Camp Pendleton housing runs through its own office, and its steps aren't in our material yet.</p>}
     <ol>
       <li><strong>Before you leave your current command:</strong> apply online with the Housing Early Assistance Tool (HEAT), before or after you get orders. A spouse can apply with only minimal information about the service member, and a housing referral professional gets in touch within two business days. <ExtLink id="heat-application" /> <ExtLink id="cnic-heat" text="About HEAT" /></li>
@@ -143,7 +177,7 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
     </ol>
   </FactBlock>
 
-  <FactBlock id="cost" title="Cost" asOf={`Rule: CNIC Privatized Housing page, verified ${cnicRule.verified_on}. Discounts: Military OneSource NBSD housing page, retrieved ${oneSource.verified_on}${costShown.length ? `. Rates as printed: ${estimate}` : ''}`} source="CNIC Navy Housing; Military OneSource; Navy Housing Service Center / LMH wait-time lists">
+  <FactBlock id="cost" title="Cost" summary={`Rent is your BAH, by allotment${costShown.length ? ` · ${costShown.length} discounted ${costShown.length === 1 ? 'rate' : 'rates'} printed` : ''}`} asOf={`Rule: CNIC Privatized Housing page, verified ${cnicRule.verified_on}. Discounts: Military OneSource NBSD housing page, retrieved ${oneSource.verified_on}${costShown.length ? `. Rates as printed: ${estimate}` : ''}`} source="CNIC Navy Housing; Military OneSource; Navy Housing Service Center / LMH wait-time lists">
     <p>Rent is your BAH, paid to Liberty Military Housing by allotment <span class="muted">(<ExtLink id="cnic-privatized-housing" text="CNIC" />)</span>. Some sites list discounted rates <span class="muted">(<ExtLink id="mi-nbsd-housing" text="Military OneSource" />)</span>; those are shown below as printed.</p>
     {isPendleton && <p class="note">Both sources are Navy pages (CNIC Navy Housing and Naval Base San Diego). Camp Pendleton's own terms aren't in our material.</p>}
     {costShown.length > 0 ? (

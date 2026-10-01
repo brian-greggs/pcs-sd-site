@@ -1,0 +1,31 @@
+/* Theme: dark "sunset" (chosen 2026-09-30 from the Cowork mockups).
+   Every color on the site is one of these. scripts/check_principles.mjs reads
+   this file and fails the build if a text pair in CONTRAST_PAIRS drops below 4.5:1. */
+:root {
+  color-scheme: dark;
+
+  --bg: #0B1328;
+  --surface: #16203F;
+  --border: #26345C;
+  --text: #FBF3EC;
+  --muted: #B4C0D6;
+
+  --coral: #E9704F;     /* button fills */
+  --on-coral: #0B1328;  /* text on coral */
+  --link: #F07E5C;      /* links and arrows */
+
+  --blue-fg: #8EC3EA;   --blue-bg: #17325A;
+  --mauve-fg: #E8A6C6;  --mauve-bg: #382241;
+  --gold-fg: #FBBD60;   --gold-bg: #3A2618;
+
+  --stripe-1: #3C8DC4;
+  --stripe-2: #B85A86;
+  --stripe-3: #E9704F;
+  --stripe-4: #FBBD60;
+
+  --font-head: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --radius: 12px;
+  --column: 720px;
+  --touch: 44px;
+}

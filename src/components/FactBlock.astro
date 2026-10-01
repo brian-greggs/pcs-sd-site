@@ -1,18 +1,37 @@
 ---
 // A section of facts. The date line is required (Principle 2), and
 // scripts/check_principles.mjs fails the build if a block renders without it.
+// By default the section is a native <details>: the summary shows the section
+// name and a one-line summary built from the data, so a closed section still
+// says what's in it. `plain` renders an always-open card instead.
 interface Props {
   id: string;
   title: string;
   asOf: string; // e.g. "HUD FY2027 · verified 2026-09-18"
   source: string;
+  summary?: string;
+  open?: boolean;
+  plain?: boolean;
 }
-const { id, title, asOf, source } = Astro.props;
+const { id, title, asOf, source, summary, open = false, plain = false } = Astro.props;
 if (!asOf.trim()) throw new Error(`FactBlock "${id}" has no date`);
+if (!plain && !summary?.trim() && !Astro.slots.has('summary')) throw new Error(`FactBlock "${id}" has no summary line`);
 ---
 
-<section class="fact" id={id} data-fact={id}>
-  <h2>{title}</h2>
-  <slot />
-  <p class="asof" data-asof>{asOf}. Source: {source}.</p>
-</section>
+{plain ? (
+  <section class="fact plain" id={id} data-fact={id}>
+    <h2>{title}</h2>
+    <slot />
+    <p class="asof" data-asof>{asOf}. Source: {source}.</p>
+  </section>
+) : (
+  <section class="fact" id={id} data-fact={id}>
+    <details open={open}>
+      <summary><h2>{title}</h2><span class="summary-line"><slot name="summary">{summary}</slot></span></summary>
+      <div class="body">
+        <slot />
+        <p class="asof" data-asof>{asOf}. Source: {source}.</p>
+      </div>
+    </details>
+  </section>
+)}

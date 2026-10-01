@@ -9,11 +9,11 @@ const entries = (await getCollection('changelog')).sort((a, b) =>
 const rendered = await Promise.all(entries.map(async (e) => ({ ...e.data, Content: (await render(e)).Content })));
 ---
 
-<Base title="What changed">
+<Base title="What changed" back={{ href: '/', label: 'Home' }}>
   <h1>What changed</h1>
   <p>Each version of the site, what changed, and why. Most changes come from families telling us what we got wrong.</p>
   {rendered.map(({ date, title, version, Content }) => (
-    <section class="fact" data-fact={`changelog-${date}`}>
+    <section class="fact plain" data-fact={`changelog-${date}`}>
       <h2>{version}: {title}</h2>
       <Content />
       <p class="asof" data-asof>{date}</p>

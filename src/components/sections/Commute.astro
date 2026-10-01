@@ -5,9 +5,14 @@ import FactBlock from '../FactBlock.astro';
 import { range, TIER_LABEL } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
+import { baseByCode, commuteSummary, drives, type BaseCode } from '../../lib/bases';
 
-interface Props { zips: string[] }
-const { zips } = Astro.props;
+// chosen: the base the summary leads with (default: the nearest). switchable renders one summary per
+// base, hidden but the chosen one, so the page script can follow ?base= without new text.
+interface Props { zips: string[]; open?: boolean; chosen?: BaseCode; switchable?: boolean }
+const { zips, open = false, chosen, switchable = false } = Astro.props;
+const ds = await drives(zips);
+const lead = chosen ?? ds[0]?.code;
 const { asOf } = await provenance();
 const bases = Object.fromEntries((await getCollection('bases')).map((b) => [b.id, b.data]));
 const rows = (await getCollection('commute')).map((r) => r.data).filter((r) => zips.includes(r.zip));
@@ -26,7 +31,10 @@ const gap = gapLine(missingZips(zips, rows), '0700 drive times', OUT_OF_PULL);
 const noRange = byBase.some((b) => b.lo == null || b.hi == null);
 ---
 
-<FactBlock id="commute" title="Commute at 0700" asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
+<FactBlock id="commute" title="Commute at 0700" open={open} asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
+  <Fragment slot="summary">{switchable
+    ? ds.map((d) => <span data-base={baseByCode(d.code).slug} hidden={d.code !== lead}>{commuteSummary(ds, d.code)}</span>)
+    : lead ? commuteSummary(ds, lead) : 'No 0700 drive times in our data'}</Fragment>
   <p class="note">Drive times start from the center of the zip{zips.length > 1 ? ' (a range across the zips here)' : ''}, so your street can add or take away 5–10 minutes. The range is Google's typical spread for a weekday at 0700.</p>
   {gap && <p class="gap">{gap}</p>}
   {byBase.length > 0 && (

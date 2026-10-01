@@ -15,9 +15,9 @@ const waitLabel = (a: (typeof areas)[number]) =>
 const unplaced = areas.filter((a) => !a.has_page);
 ---
 
-<Base title="Base housing" description="Every base-housing community in San Diego, grouped into areas, with the latest wait range for each.">
+<Base title="Base housing" back={{ href: '/', label: 'Home' }} description="Every base-housing community in San Diego, grouped into areas, with the latest wait range for each.">
   <h1>Base housing</h1>
-  <p>
+  <p class="intro">
     Family housing on and near the San Diego bases is run by Liberty Military Housing (LMH) under the Navy and Marine
     Corps' public-private venture program. The communities are grouped into areas below; each area page has its
     communities, wait times, pet policy, how to apply, and the commute, schools and hazards around it.
@@ -30,12 +30,12 @@ const unplaced = areas.filter((a) => !a.has_page);
     {pdfs.map((p) => <li><ExtLink href={p.source_url} incentive={p.incentive} text={`${month} ${listName(p.rank_group)} wait-time list (PDF)`} /></li>)}
   </ul>
 
-  <BedroomRules />
+  <BedroomRules plain />
 
   {INDEX_GROUPS.map((g) => {
     const rows = areas.filter((a) => a.has_page && a.base_group === g.key);
     return rows.length > 0 && (
-      <FactBlock id={`areas-${g.key.toLowerCase()}`} title={g.title} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists; LMH community pages">
+      <FactBlock plain id={`areas-${g.key.toLowerCase()}`} title={g.title} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists; LMH community pages">
         <div class="table-wrap">
           <table>
             <thead><tr><th>Area</th><th>Communities</th><th>Wait, {month}</th></tr></thead>
@@ -55,7 +55,7 @@ const unplaced = areas.filter((a) => !a.has_page);
   })}
 
   {unplaced.map((a) => (
-    <FactBlock id="location-pending" title={a.name} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists">
+    <FactBlock plain id="location-pending" title={a.name} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists">
       <p class="note">{a.members.map((m) => m.community).join(' and ')} are on the {month} wait list ({waitLabel(a)}), but LMH gives no address for them yet, so they don't have a page.</p>
     </FactBlock>
   ))}

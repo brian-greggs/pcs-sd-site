@@ -4,6 +4,11 @@
 // the lead and gotchas in src/content/communities/<slug>.md render only once
 // written, and a community with no file simply has none. Base housing has its
 // own pages (/base-housing/<area>/) and isn't on this one.
+//
+// "At a glance" and the pay-band picker: every variant (each base, each pay
+// band) is rendered into the page and the script only toggles which one shows,
+// so the principle checks see every word, and with JavaScript off or storage
+// blocked the page shows the nearest base and E5–E6. Nothing leaves the device.
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
@@ -16,10 +21,11 @@ import Climate from '../../components/sections/Climate.astro';
 import Hazards from '../../components/sections/Hazards.astro';
 import Notes from '../../components/sections/Notes.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
-import { acsDollars, dollars, range, PAY_BAND_ORDER } from '../../lib/format';
+import { acsDollars, dollars, pct, range, PAY_BAND_ORDER } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { writtenNotes } from '../../lib/notes';
 import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
+import { baseByCode, drives, minutes } from '../../lib/bases';
 
 export async function getStaticPaths() {
   return (await getCollection('communities')).map((c) => ({ params: { slug: c.id } }));
@@ -56,28 +62,93 @@ const ratioGap = gapLine(missingZips(zips, ratios), 'rent-to-allowance ratio', '
 // Coastal South Bay and Coronado: on the ocean or San Diego Bay, where beach and bay closures are common.
 // Otay Mesa / San Ysidro is left off on purpose (inland of the Tijuana River valley beaches; Brian 2026-09-30).
 const WATER_QUALITY = ['coronado', 'imperial-beach', 'chula-vista-west', 'national-city'];
+// --- At a glance -----------------------------------------------------------
+const DEFAULT_BAND = 'E5–E6';
+const ds = await drives(zips);
+const spanOf = (lo: number[], hi: number[], unit: string) =>
+  lo.length ? range(Math.min(...lo), Math.max(...hi), unit) : '—';
+const ratio3 = (band: string) => {
+  const rs = ratios.filter((r) => r.pay_band === band && r.bedrooms === 3);
+  return spanOf(rs.map((r) => r.ratio_low_pct), rs.map((r) => r.ratio_high_pct), '%');
+};
+const schoolRows = (await getCollection('schools')).filter(inZips).map((r) => r.data);
+const districtNames = [...new Set(schoolRows.filter((s) => s.charter === 'N').map((s) => s.district))];
+const hazards = (await getCollection('hazards')).filter(inZips).map((r) => r.data);
+const veryHigh = hazards.map((h) => h.fhsz_very_high_pct).filter((x): x is number => x != null);
+const fireValue = veryHigh.length
+  ? (Math.min(...veryHigh) === Math.max(...veryHigh) ? pct(veryHigh[0], veryHigh[0] > 0 && veryHigh[0] < 10 ? 1 : 0) : `${pct(Math.min(...veryHigh), 0)}–${pct(Math.max(...veryHigh), 0)}`)
+  : null;
+const mapped = hazards.map((h) => h.fhsz_mapped_pct).filter((x): x is number => x != null);
+const leastMapped = mapped.length ? Math.min(...mapped) : null;
+const fireDate = hazards.map((h) => h.fhsz_retrieved_on).find(Boolean);
+const rent3 = rent.map((r) => r.fy27_3br).filter((x): x is number => x != null);
+const rent3Text = rent3.length ? (Math.min(...rent3) === Math.max(...rent3) ? dollars(rent3[0]) : `${dollars(Math.min(...rent3))}–${dollars(Math.max(...rent3))}`) : '—';
+const cfd = new Set(ownership.map((o) => o.has_cfd));
+const melloLine = !ownership.length ? 'Mello-Roos not matched yet'
+  : cfd.has('unknown') || cfd.has('mixed') ? 'Mello-Roos: check the parcel'
+  : cfd.has('Y') ? 'Mello-Roos charge on the tax bill'
+  : 'no Mello-Roos district listed';
+const costSummary = `3-bed HUD rent ${rent3Text} · ${melloLine}`;
+
 const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 ---
 
-<Base title={community.name} description={`${community.name}: cost, commute, schools, child care and hazards, side by side with dates.`}>
+<Base title={community.name} back={{ href: '/neighborhoods/', label: 'Neighborhoods' }} description={`${community.name}: cost, commute, schools, child care and hazards, side by side with dates.`}>
   <h1>{community.name}</h1>
-  <p class="kicker">{community.corridor} corridor · zip {zips.join(', ')}</p>
+  <p class="kicker">{community.corridor} · {zips.join(', ')}</p>
 
   <Notes notes={notes} part="lead" />
 
-  <ul class="jump">
-    <li><a href="#cost">Cost</a></li>
-    <li><a href="#commute">Commute</a></li>
-    <li><a href="#schools">Schools</a></li>
-    <li><a href="#childcare">Child care</a></li>
-    <li><a href="#access">Commissary &amp; Costco</a></li>
-    <li><a href="#climate">Climate</a></li>
-    <li><a href="#hazards">Hazards</a></li>
-    {notes?.Gotchas && <li><a href="#gotchas">Gotchas</a></li>}
-    <li><a href="#sources">Sources</a></li>
-  </ul>
+  <section class="glance" id="glance" data-fact="glance">
+    <div class="glance-head">
+      <h2>At a glance</h2>
+      <label class="band-pick" data-band-picker hidden>Pay band
+        <select data-band-select>
+          {bands.map((b) => <option value={b} selected={b === DEFAULT_BAND}>{b}</option>)}
+        </select>
+      </label>
+    </div>
+    <dl class="tiles">
+      <div class="tile blue">
+        <dt>Commute at 0700</dt>
+        {ds.map((d, i) => (
+          <dd data-base={baseByCode(d.code).slug} hidden={i !== 0}>
+            <span class="tile-value">{minutes(d)}</span>
+            <span class="tile-sub">to {baseByCode(d.code).short}{i === 0 ? ' (nearest)' : ''}</span>
+          </dd>
+        ))}
+        {ds.length === 0 && <dd><span class="tile-value">—</span><span class="tile-sub">No drive times in our data</span></dd>}
+      </div>
+      <div class="tile mauve">
+        <dt>3-bed rent vs. BAH</dt>
+        {bands.map((b) => (
+          <dd data-band-show={b} hidden={b !== DEFAULT_BAND}>
+            <span class="tile-value">{ratio3(b)}</span>
+            <span class="tile-sub">HUD rent, {b}</span>
+          </dd>
+        ))}
+        {bands.length === 0 && <dd><span class="tile-value">—</span><span class="tile-sub">No HUD rent for this zip</span></dd>}
+      </div>
+      <div class="tile blue">
+        <dt>School district</dt>
+        <dd>
+          <span class="tile-value tile-text">{districtNames[0] ?? '—'}{districtNames.length > 1 && <span class="muted"> +{districtNames.length - 1}</span>}</span>
+          <span class="tile-sub">{schoolRows.length} public {schoolRows.length === 1 ? 'school' : 'schools'} in {multiZip ? 'these zips' : 'the zip'}</span>
+        </dd>
+      </div>
+      <div class="tile gold">
+        <dt>Fire</dt>
+        <dd>
+          <span class="tile-value">{fireValue ?? '—'}</span>
+          <span class="tile-sub">{fireValue ? 'of land rated Very High by CAL FIRE' : 'Not in our data yet'}</span>
+          {leastMapped != null && leastMapped < 95 && <span class="tile-sub">CAL FIRE rates only {pct(leastMapped, 0)} of {multiZip ? 'the land in one zip here' : 'this zip’s land'}; federal land isn’t mapped.</span>}
+        </dd>
+      </div>
+    </dl>
+    <p class="asof" data-asof>Commute: {asOf('commute')}. Rent ratio: {asOf('rent_to_bah')}. Schools: {asOf('schools')}. Fire: {fireDate ? `CAL FIRE maps, downloaded ${fireDate}` : asOf('hazards')}.</p>
+  </section>
 
-  <FactBlock id="cost" title="Cost" asOf={`Rent: ${asOf('rent')}. Ratio: ${asOf('rent_to_bah')}`} source="HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; DTMO BAH 2026 (used for the ratio only)">
+  <FactBlock id="cost" title="Cost" open summary={costSummary} asOf={`Rent: ${asOf('rent')}. Ratio: ${asOf('rent_to_bah')}`} source="HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; DTMO BAH 2026 (used for the ratio only)">
     <h3>Rent</h3>
     {rentGap && <p class="gap">{rentGap}</p>}
     {rent.map((r) => (
@@ -101,7 +172,7 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
           <thead><tr><th>Pay band</th><th class="num">2 bed</th><th class="num">3 bed</th><th class="num">4 bed</th></tr></thead>
           <tbody>
             {bands.map((band) => (
-              <tr><td>{band}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, band, br)}</td>)}</tr>
+              <tr data-band-row={band} class={band === DEFAULT_BAND ? 'picked' : undefined}><td>{band}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, band, br)}</td>)}</tr>
             ))}
           </tbody>
         </table>
@@ -123,7 +194,7 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
     <p class="note">Mello-Roos is a fixed yearly charge on the property tax bill that doesn't drop when the home's value does. The only reliable check is the parcel itself{parcelLinkInline ? ', with the county lookup above.' : <>: <ExtLink id="per-parcel-lookup" /></>}</p>
   </FactBlock>
 
-  <Commute zips={zips} />
+  <Commute zips={zips} open switchable />
   <Schools zips={zips} />
   <Childcare zips={zips} />
   <Access zips={zips} />
@@ -132,3 +203,32 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
   <Notes notes={notes} part="gotchas" />
   <SourcesTable ids={['rent', 'rent_to_bah', 'ownership', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} />
 </Base>
+
+<script>
+  // Pay band: remembered on this device only (localStorage, wrapped so blocked storage is fine).
+  // Base: ?base=<slug> from a base page picks the commute shown and the back link.
+  const KEY = 'pcs-sd:pay-band';
+  const select = document.querySelector<HTMLSelectElement>('[data-band-select]');
+  const showBand = (band: string) => {
+    document.querySelectorAll<HTMLElement>('[data-band-show]').forEach((el) => { el.hidden = el.dataset.bandShow !== band; });
+    document.querySelectorAll<HTMLElement>('[data-band-row]').forEach((el) => el.classList.toggle('picked', el.dataset.bandRow === band));
+  };
+  if (select) {
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(KEY); } catch { /* storage blocked */ }
+    if (saved && [...select.options].some((o) => o.value === saved)) { select.value = saved; showBand(saved); }
+    select.addEventListener('change', () => {
+      showBand(select.value);
+      try { localStorage.setItem(KEY, select.value); } catch { /* storage blocked */ }
+    });
+    document.querySelector<HTMLElement>('[data-band-picker]')!.hidden = false;
+  }
+
+  const base = new URLSearchParams(location.search).get('base');
+  const els = base ? [...document.querySelectorAll<HTMLElement>('[data-base]')] : [];
+  if (base && els.some((el) => el.dataset.base === base)) {
+    els.forEach((el) => { el.hidden = el.dataset.base !== base; });
+    const back = document.querySelector<HTMLAnchorElement>('[data-back]');
+    if (back) { back.href = `/base/${base}/`; back.setAttribute('aria-label', 'Back to your base'); }
+  }
+</script>

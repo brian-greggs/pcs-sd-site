@@ -12,6 +12,8 @@
 //   incentive    every outbound link carries an incentive label (Principle 4, F4)
 //   noindex      every page is noindex until week 5
 //   placeholder  no placeholder text reaches a page (lead/gotchas render only when written)
+//   third-party  no page or stylesheet loads anything from another origin (Principle 3)
+//   contrast     every text/background pair in the theme is at least 4.5:1 (source stage)
 //
 // The pages are our own generated HTML, so the checks read it with regular
 // expressions against markup the components control (data-fact, data-asof,
@@ -49,6 +51,17 @@ const SCORE_ALLOWED = [/\brank band\b/i, /\brank group\b/i];
 
 // Placeholder text that must never reach dist/ (checked in the full HTML, attributes included).
 const PLACEHOLDER_PATTERNS = [/PLACEHOLDER/, /Brian writes/i, /data-placeholder/, /\bTODO\b/, /lorem ipsum/i];
+
+// Text on background pairs the pages use, as theme.css custom properties.
+// Every one must reach WCAG AA for body text (4.5:1).
+const CONTRAST_MIN = 4.5;
+const CONTRAST_PAIRS = [
+  ['text', 'bg'], ['text', 'surface'], ['muted', 'bg'], ['muted', 'surface'],
+  ['link', 'bg'], ['link', 'surface'], ['on-coral', 'coral'],
+  ['blue-fg', 'blue-bg'], ['mauve-fg', 'mauve-bg'], ['gold-fg', 'gold-bg'],
+  ['text', 'blue-bg'], ['text', 'mauve-bg'], ['text', 'gold-bg'], // tile sub-lines, gap boxes
+  ['muted', 'blue-bg'], ['muted', 'gold-bg'], ['link', 'gold-bg'], // "+1" on a tile; labels and links in a gap box
+];
 
 // --- Helpers ----------------------------------------------------------------
 const failures = [];
@@ -91,8 +104,39 @@ function loadBahAllow() {
   return existsSync(p) ? JSON.parse(readFileSync(p, 'utf-8')) : [];
 }
 
+// --- Contrast -------------------------------------------------------------------
+const luminance = (hex) => {
+  const c = hex.replace('#', '').match(/../g).map((h) => parseInt(h, 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+};
+const ratio = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+function checkContrast() {
+  const styles = join(ROOT, 'src', 'styles');
+  const theme = readFileSync(join(styles, 'theme.css'), 'utf-8');
+  const vars = Object.fromEntries([...theme.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6})\b/gi)].map((m) => [m[1], m[2]]));
+  let worst = Infinity;
+  for (const [fg, bg] of CONTRAST_PAIRS) {
+    if (!vars[fg] || !vars[bg]) { fail('contrast', 'src/styles/theme.css', `--${fg} or --${bg} is not a 6-digit hex color`); continue; }
+    const r = ratio(vars[fg], vars[bg]);
+    worst = Math.min(worst, r);
+    if (r < CONTRAST_MIN) fail('contrast', 'src/styles/theme.css', `--${fg} on --${bg} is ${r.toFixed(2)}:1 (needs ${CONTRAST_MIN}:1)`);
+  }
+  // Every other stylesheet takes its colors from the theme, so the pairs above are the whole palette.
+  for (const f of walk(styles, '.css').filter((f) => !f.endsWith('theme.css'))) {
+    const css = readFileSync(f, 'utf-8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const m = css.match(/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i);
+    if (m) fail('contrast', relative(ROOT, f), `raw color "${m[0]}" (use a theme.css custom property)`);
+  }
+  if (!failures.some((f) => f.check === 'contrast')) passes.push(`contrast: ${CONTRAST_PAIRS.length} theme pairs, lowest ${worst.toFixed(2)}:1`);
+}
+
 // --- Source stage -----------------------------------------------------------
 function checkSource() {
+  checkContrast();
   const files = walk(DATA, '.json');
   if (files.length === 0) fail('data', 'src/data', 'no exported data files; run pull/export_for_site.py in pcs-sd-data');
   for (const f of files) {
@@ -108,7 +152,7 @@ function checkSource() {
     const missingDate = rows.filter((r) => !r.vintage || (!r.verified_on && !name.endsWith('sources.json')));
     if (missingDate.length) fail('dated', name, `${missingDate.length} rows without vintage/verified_on (first id: ${missingDate[0].id})`);
   }
-  if (!failures.length) passes.push(`source: ${files.length} data files, column names and dates OK`);
+  if (!failures.some((f) => f.check !== 'contrast')) passes.push(`source: ${files.length} data files, column names and dates OK`);
 }
 
 // --- Dist stage -------------------------------------------------------------
@@ -122,10 +166,22 @@ function checkDist() {
   const allow = loadBahAllow();
   let factBlocks = 0, extLinks = 0;
 
+  // third-party: stylesheets (fonts, background images) only from this site.
+  for (const file of walk(DIST, '.css')) {
+    const css = readFileSync(file, 'utf-8');
+    for (const m of css.matchAll(/(?:url\(\s*['"]?|@import\s+['"])((?:https?:)?\/\/[^'")\s]+)/gi)) fail('third-party', relative(DIST, file), m[1]);
+  }
+
   for (const file of pages) {
     const page = relative(DIST, file);
     const html = readFileSync(file, 'utf-8');
     const text = visibleText(html);
+
+    // third-party: anything the browser fetches on its own (not <a> links, which the reader chooses).
+    for (const m of html.matchAll(/<(?!a\b)(\w+)\b[^>]*\s(?:src|href|srcset|poster|data)="((?:https?:)?\/\/[^"]+)"/gi)) {
+      fail('third-party', page, `<${m[1]}> loads ${m[2]}`);
+    }
+    for (const m of html.matchAll(/url\(\s*['"]?((?:https?:)?\/\/[^'")\s]+)/gi)) fail('third-party', page, `inline style loads ${m[1]}`);
 
     // placeholder
     for (const re of PLACEHOLDER_PATTERNS) {
@@ -211,7 +267,7 @@ else {
 }
 
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
-const checks = stage === 'source' ? ['no-score', 'no-bah', 'license', 'dated', 'data'] : ['dated', 'no-bah', 'no-demo', 'no-score', 'incentive', 'noindex', 'placeholder', 'dist'];
+const checks = stage === 'source' ? ['no-score', 'no-bah', 'license', 'dated', 'data', 'contrast'] : ['dated', 'no-bah', 'no-demo', 'no-score', 'incentive', 'noindex', 'placeholder', 'third-party', 'dist'];
 console.log(`\nPrinciple checks (${stage})`);
 for (const c of checks) {
   const fs = byCheck[c] ?? [];

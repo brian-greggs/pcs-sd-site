@@ -13,7 +13,7 @@ const rows = [
 const latest = rows.map((r) => r.verified).sort().at(-1)!;
 ---
 
-<FactBlock id="sources" title="Sources and dates" asOf={`Most recent verification: ${latest}`} source="the provenance record for each dataset (full list on the Sources page)">
+<FactBlock id="sources" title="Sources and dates" summary={`${rows.length} sources, each with its date · last checked ${latest}`} asOf={`Most recent verification: ${latest}`} source="the provenance record for each dataset (full list on the Sources page)">
   <div class="table-wrap">
     <table>
       <thead><tr><th>What</th><th>Source</th><th>Vintage</th><th>Verified</th><th>License</th></tr></thead>

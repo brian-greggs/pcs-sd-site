@@ -1,0 +1,112 @@
+---
+// Base page: neighborhoods and base housing sorted by the 0700 drive to this
+// base's main gate. "Off base" / "Base housing" is a pair of anchor links styled
+// as a segmented control; CSS :target picks the pane, so it works without JavaScript.
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { BASES, baseBySlug, drives, GROUP_BASES, minutes, TIERS } from '../../lib/bases';
+import { baseHousingAreas } from '../../lib/baseHousing';
+import { range } from '../../lib/format';
+import { provenance } from '../../lib/prov';
+
+export function getStaticPaths() {
+  return BASES.map((b) => ({ params: { base: b.slug } }));
+}
+
+const base = baseBySlug(Astro.params.base!)!;
+const { asOf } = await provenance();
+const gate = (await getCollection('bases')).find((b) => b.id === base.code)!.data.gate;
+
+// Off base: each neighborhood's drive to this base (range across its zips), grouped by tier.
+const communities = (await getCollection('communities')).map((c) => c.data);
+const rows = (await Promise.all(communities.map(async (c) => {
+  const d = (await drives(c.zips)).find((x) => x.code === base.code);
+  return d ? { ...c, drive: d } : null;
+}))).filter((r) => !!r).sort((a, b) => a.drive.lo - b.drive.lo || a.drive.hi - b.drive.hi || a.name.localeCompare(b.name));
+const missing = communities.length - rows.length;
+
+// Base housing: areas LMH ties to this base, then the ones it ties to no base, by drive.
+const { areas, month, verifiedOn } = await baseHousingAreas();
+const estimate = `CNRSW estimate, ${month}`;
+const withDrive = await Promise.all(areas.filter((a) => a.has_page).map(async (a) => ({
+  ...a, drive: (await drives(a.facts_zips)).find((x) => x.code === base.code) ?? null,
+})));
+const byDrive = (a: (typeof withDrive)[number], b: (typeof withDrive)[number]) => (a.drive?.lo ?? 999) - (b.drive?.lo ?? 999);
+const tied = withDrive.filter((a) => GROUP_BASES[a.base_group].includes(base.code)).sort(byDrive);
+const untied = withDrive.filter((a) => a.base_group === 'NONE').sort(byDrive);
+const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
+---
+
+<Base title={base.short} back={{ href: '/', label: 'Home' }} description={`Reporting to ${base.short}: neighborhoods and base housing sorted by the 0700 drive.`}>
+  <p class="eyebrow">Reporting to</p>
+  <h1>{base.short}</h1>
+  <p class="kicker">{gate}</p>
+
+  <nav class="seg" aria-label="Off base or base housing">
+    <a href="#off-base">Off base</a>
+    <a href="#base-housing">Base housing</a>
+  </nav>
+  <p class="note">Weekday drive to the main gate at 0700, from the middle of each neighborhood. Your street can add 5–10 minutes.</p>
+
+  <section class="pane pane-off" id="off-base" data-fact="off-base">
+    <h2 class="visually-hidden">Off base</h2>
+    {TIERS.map((t) => {
+      const inTier = rows.filter((r) => r.drive.tier === t.key);
+      return inTier.length > 0 && (
+        <>
+          <p class={`chip ${t.tone}`}>{t.label}</p>
+          <ul class="cards">
+            {inTier.map((r) => (
+              <li>
+                <a class="card" href={`/communities/${r.slug}/?base=${base.slug}`}>
+                  <span><span class="card-name">{r.name}</span><span class="card-sub">{r.corridor}</span></span>
+                  <span class="row-min">{minutes(r.drive)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      );
+    })}
+    {missing > 0 && <p class="gap">{missing} {missing === 1 ? 'neighborhood has' : 'neighborhoods have'} no 0700 drive time to {base.short} in our data.</p>}
+    <p class="asof" data-asof>{asOf('commute')}. Source: Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); a neighborhood with several zips shows the range.</p>
+  </section>
+
+  <section class="pane pane-housing" id="base-housing" data-fact="base-housing">
+    <h2 class="visually-hidden">Base housing</h2>
+    {tied.length > 0 ? (
+      <>
+        <p class="chip mauve">Tied to {base.short} by LMH</p>
+        <ul class="cards">
+          {tied.map((a) => (
+            <li>
+              <a class="card" href={`/base-housing/${a.id}/`}>
+                <span><span class="card-name">{a.name}</span><span class="card-sub">{word(a.members.length)}{a.drive ? ` · ${minutes(a.drive)} drive` : ''}</span></span>
+                <span class="row-min">{a.waitRange ? `${range(a.waitRange[0], a.waitRange[1])} mo` : a.base_group === 'PENDLETON' ? 'Not in our data' : 'Not listed'}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        {base.code === 'PENDLETON'
+          ? <p class="note">Camp Pendleton's wait times aren't in our data: the Navy Housing Service Center's list covers the San Diego complex only. <a href="/base-housing/camp-pendleton/">See the Camp Pendleton area page</a> for its communities and who to ask.</p>
+          : <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}.</p>}
+      </>
+    ) : (
+      <p class="gap">Liberty Military Housing doesn't tie any base housing area to {base.short}. The areas below aren't tied to a base, so any eligible family can apply; they're sorted by the drive here.</p>
+    )}
+
+    <p class="chip blue">Not tied to a base by LMH</p>
+    <ul class="cards">
+      {untied.map((a) => (
+        <li>
+          <a class="card" href={`/base-housing/${a.id}/`}>
+            <span><span class="card-name">{a.name}</span><span class="card-sub">{word(a.members.length)}{a.drive ? ` · ${minutes(a.drive)} drive` : ''}</span></span>
+            <span class="row-min">{a.waitRange ? `${range(a.waitRange[0], a.waitRange[1])} mo` : 'Not listed'}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}. <a href="/base-housing/">All base housing</a></p>
+    <p class="asof" data-asof>Waits: {estimate} · verified {verifiedOn}. Drive: {asOf('commute')}. Source: Navy Housing Service Center / LMH wait-time lists; Google Maps predicted drive time from the area's zip.</p>
+  </section>
+</Base>

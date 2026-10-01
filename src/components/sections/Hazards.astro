@@ -42,9 +42,23 @@ const noiseText = (h: (typeof hazards)[number]) =>
     : h.aicuz_zone === 'manual' && nearFields(h.aicuz_note)
     ? `Near ${nearFields(h.aicuz_note)}; noise zone not yet assigned (${nearFields(h.aicuz_note)!.includes(' and ') ? 'those fields’' : 'that field’s'} noise contours aren't in our data yet)`
     : zoneText(h);
+const spanPct = (vals: (number | null)[]) => {
+  const v = vals.filter((x): x is number => x != null);
+  if (!v.length) return null;
+  const lo = Math.min(...v), hi = Math.max(...v);
+  return lo === hi ? pct(lo, lo < 10 && lo > 0 ? 1 : 0) : `${pct(lo, 0)}–${pct(hi, 0)}`;
+};
+const fireSpan = spanPct(hazards.map((h) => h.fhsz_very_high_pct));
+const floodSpan = spanPct(hazards.map((h) => h.sfha_pct));
+const noisy = hazards.some((h) => h.aicuz_zone !== 'none');
+const summary = [
+  fireSpan != null ? `Fire: ${fireSpan} Very High` : 'Fire: not in our data',
+  floodSpan != null ? `flood zone ${floodSpan}` : null,
+  noisy ? 'aircraft noise: see inside' : null,
+].filter(Boolean).join(' · ');
 ---
 
-<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar and NAS North Island noise contours (airport land use plans, via SANDAG); CAL FIRE Fire Hazard Severity Zones (State Responsibility Area 2023, Local Responsibility Area 2025)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
+<FactBlock id="hazards" title="Hazards" summary={summary} asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar and NAS North Island noise contours (airport land use plans, via SANDAG); CAL FIRE Fire Hazard Severity Zones (State Responsibility Area 2023, Local Responsibility Area 2025)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
   {hazards.map((h) => (
     <dl class="facts">
       {multiZip && <><dt>Zip</dt><dd>{h.zip}</dd></>}

@@ -6,12 +6,12 @@ import { getEntry } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import ExtLink from '../ExtLink.astro';
 
-interface Props { navyOnlyNote?: boolean }
-const { navyOnlyNote = false } = Astro.props;
+interface Props { navyOnlyNote?: boolean; plain?: boolean }
+const { navyOnlyNote = false, plain = false } = Astro.props;
 const rule = (await getEntry('housingRules', 'bedroom-entitlement'))!.data;
 ---
 
-<FactBlock id="bedrooms" title="Navy Housing guidelines for enlisted personnel (E1–E6)" asOf={`Rule: CNIC Applying for Housing page, retrieved ${rule.verified_on} (copied by hand from a browser)`} source="CNIC Navy Housing">
+<FactBlock id="bedrooms" title="Bedroom guidelines" plain={plain} summary="Navy Housing's rule for enlisted families (E1–E6), quoted from CNIC" asOf={`Rule: CNIC Applying for Housing page, retrieved ${rule.verified_on} (copied by hand from a browser)`} source="CNIC Navy Housing">
   <blockquote class="quote">
     <p>“{rule.intro}”</p>
     <ul>{rule.guidelines.map((g) => <li>“{g}”</li>)}</ul>

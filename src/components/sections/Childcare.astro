@@ -14,7 +14,7 @@ const gap = gapLine(missingZips(zips, care), 'licensed child care counts', OUT_O
 const sum = (k: keyof (typeof care)[number]) => care.reduce((n, r) => n + (r[k] as number), 0);
 ---
 
-<FactBlock id="childcare" title="Child care" asOf={asOf('childcare')} source="California Department of Social Services, Community Care Licensing (licensed facilities download)">
+<FactBlock id="childcare" title="Child care" summary={care.length ? `${sum('centers')} licensed centers · ${sum('centers_infant')} take infants · ${sum('large_fcc_homes')} large family homes` : 'No counts in our data'} asOf={asOf('childcare')} source="California Department of Social Services, Community Care Licensing (licensed facilities download)">
   {gap && <p class="gap">{gap}</p>}
   {care.length > 0 && (
   <dl class="facts">

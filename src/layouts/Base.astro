@@ -1,13 +1,22 @@
 ---
-// Every page uses this layout: noindex until week 5, no fonts, scripts,
-// analytics or cookies. The "unofficial" line is Principle 7.
+// Every page uses this layout: noindex until week 5; no analytics, cookies or
+// third-party requests. Fonts are self-hosted (@fontsource, bundled into dist/),
+// so a reader's browser only ever talks to this site (Principle 3). The
+// "unofficial" line is Principle 7.
+import '@fontsource/bricolage-grotesque/latin-600.css';
+import '@fontsource/bricolage-grotesque/latin-700.css';
+import '@fontsource/dm-sans/latin-400.css';
+import '@fontsource/dm-sans/latin-500.css';
+import '@fontsource/dm-sans/latin-700.css';
 import '../styles/site.css';
 
 interface Props {
   title: string;
   description?: string;
+  // A natural parent page: the bar shows "‹ back" to it instead of the site name.
+  back?: { href: string; label: string };
 }
-const { title, description = 'An unofficial, non-commercial guide for military families moving to San Diego.' } = Astro.props;
+const { title, description = 'An unofficial, non-commercial guide for military families moving to San Diego.', back } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,21 +27,26 @@ const { title, description = 'An unofficial, non-commercial guide for military f
     <meta name="robots" content="noindex, nofollow" />
     <meta name="referrer" content="no-referrer" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#0B1328" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} · San Diego PCS Guide (beta)</title>
   </head>
   <body>
-    <header class="site-header">
-      <a class="site-name" href="/">San Diego PCS Guide <span class="beta">beta</span></a>
-      <p class="unofficial">Unofficial and non-commercial. Not affiliated with the Navy, the Marine Corps or DoD.</p>
+    <div class="stripe" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <header class="bar">
+      {back
+        ? <a class="back" href={back.href} aria-label={`Back to ${back.label}`} data-back>‹ back</a>
+        : <a class="site-name" href="/">San Diego PCS Guide</a>}
+      <span class="beta">BETA</span>
     </header>
     <main>
       <slot />
     </main>
     <footer class="site-footer">
-      <p>Written by families who've done this move. No accounts, no cookies, no analytics, no referral fees.</p>
+      <p>Every fact carries the date it was checked.</p>
+      <p>No ads, no referrals, nothing you type is collected.</p>
+      <p class="muted">Unofficial and non-commercial. Not affiliated with the Navy, the Marine Corps or DoD.</p>
       <nav>
-        <a href="/base-housing/">Base housing</a>
         <a href="/sources/">Sources</a>
         <a href="/changelog/">What changed</a>
       </nav>

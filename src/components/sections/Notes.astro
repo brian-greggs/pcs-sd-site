@@ -11,11 +11,20 @@ const { notes, part } = Astro.props;
 const Gotchas = notes?.Gotchas;
 ---
 
-{part === 'lead' && notes?.lead && <p class="lead">{notes.lead}</p>}
+{part === 'lead' && notes?.lead && (
+  <aside class="leadbox">
+    <p class="eyebrow">From families who've done this</p>
+    <p class="lead">{notes.lead}</p>
+  </aside>
+)}
 {part === 'gotchas' && Gotchas && (
   <section class="fact" id="gotchas" data-fact="gotchas">
-    <h2>Gotchas</h2>
-    <Gotchas />
-    <p class="asof" data-asof>Written {notes!.verifiedOn}. Source: families who've done this move.</p>
+    <details open>
+      <summary><h2>Gotchas</h2><span class="summary-line">From families who've lived here</span></summary>
+      <div class="body">
+        <Gotchas />
+        <p class="asof" data-asof>Written {notes!.verifiedOn}. Source: families who've done this move.</p>
+      </div>
+    </details>
   </section>
 )}

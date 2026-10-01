@@ -14,10 +14,12 @@ const schools = (await getCollection('schools')).map((r) => r.data).filter((s) =
   .sort((a, b) => LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level) || a.school.localeCompare(b.school));
 const districtNames = [...new Set(schools.filter((s) => s.charter === 'N').map((s) => s.district))];
 const districts = (await Promise.all(districtNames.map((d) => getEntry('districts', d)))).filter((d) => !!d);
+const districtLine = districtNames.length ? `${districtNames[0]}${districtNames.length > 1 ? ` +${districtNames.length - 1} more` : ''}` : 'No district found';
+const summary = `${districtLine} · ${schools.length} public ${schools.length === 1 ? 'school' : 'schools'} in ${zips.length > 1 ? 'these zips' : 'the zip'}`;
 const hasDash = schools.some((s) => [s.ela_dfs_statuslevel, s.math_dfs_statuslevel, s.caaspp_ela_pct_met, s.caaspp_math_pct_met, s.chronic_abs_pct].some((v) => v == null));
 ---
 
-<FactBlock id="schools" title="Schools" asOf={asOf('schools')} source="California Department of Education: school directory, CA School Dashboard 2025, CAASPP 2024–25">
+<FactBlock id="schools" title="Schools" summary={summary} asOf={asOf('schools')} source="California Department of Education: school directory, CA School Dashboard 2025, CAASPP 2024–25">
   {districts.map((d) => (
     <dl class="facts">
       <dt>District</dt>
