@@ -15,22 +15,30 @@ const hazards = (await getCollection('hazards')).map((r) => r.data).filter((r) =
 const multiZip = hazards.length > 1;
 const beachLink = (await getEntry('links', 'sd-county-beach-bay'))!.data;
 const gap = gapLine(missingZips(zips, hazards), 'flood or noise figures', OUT_OF_PULL);
-const NOISE_LABEL: Record<string, string> = {
-  none: 'Outside the MCAS Miramar 65 dB noise contour',
-  '65-70': 'Inside the MCAS Miramar 65–70 dB noise contour',
-  '70-75': 'Inside the MCAS Miramar 70–75 dB noise contour',
-  '75plus': 'Inside the MCAS Miramar 75+ dB noise contour',
-  manual: 'Noise zone not yet assigned',
-};
+// Noise contours we have in GIS: MCAS Miramar and NAS North Island (SDCRAA ALUCP, via SANDAG).
+const FIELD_NAME: Record<string, string> = { Miramar: 'MCAS Miramar', 'North Island NAS': 'NAS North Island' };
+const BAND: Record<string, string> = { '65-70': '65–70 dB', '70-75': '70–75 dB', '75+': '75+ dB' };
+const fieldNames = (f: string | null) => (f ?? '').split(' + ').map((x) => FIELD_NAME[x] ?? x).join(' and ');
+// Share of land at 65 dB or more, per field, wherever it isn't zero.
+const shares = (h: (typeof hazards)[number]) => [
+  ['MCAS Miramar', h.miramar_cnel65plus_pct], ['NAS North Island', h.nasni_cnel65plus_pct],
+].filter(([, v]) => v).map(([n, v]) => `${pct(v as number, 1)} of land at 65 dB or more from ${n}`);
+const zoneText = (h: (typeof hazards)[number]) =>
+  h.aicuz_zone === 'none' ? `${shares(h).length ? 'Mostly outside' : 'Outside'} the MCAS Miramar and NAS North Island 65 dB noise contours`
+  : h.aicuz_zone === 'manual' ? 'Noise zone not yet assigned'
+  : `Inside the ${fieldNames(h.aicuz_field)} ${BAND[h.aicuz_zone]} noise contour${h.aicuz_field?.includes(' + ') ? 's' : ''}`;
 // "within 3 km of NAS North Island and NOLF Imperial Beach; …" -> "NAS North Island and NOLF Imperial Beach"
 const nearFields = (note: string | null) => note?.match(/within \d+ km of ([^;]+);/)?.[1] ?? null;
 const noiseText = (h: (typeof hazards)[number]) =>
-  h.aicuz_zone === 'manual' && nearFields(h.aicuz_note)
+  // Near NOLF Imperial Beach (no contours) but inside North Island's: give the band we have, then the gap.
+  h.aicuz_zone === 'manual' && h.aicuz_gis_zone !== 'none' && nearFields(h.aicuz_note)
+    ? `Inside the ${fieldNames(h.aicuz_gis_field)} ${BAND[h.aicuz_gis_zone]} noise contour; ${nearFields(h.aicuz_note)} is also nearby, and its contours aren't in our data yet`
+    : h.aicuz_zone === 'manual' && nearFields(h.aicuz_note)
     ? `Near ${nearFields(h.aicuz_note)}; noise zone not yet assigned (${nearFields(h.aicuz_note)!.includes(' and ') ? 'those fields’' : 'that field’s'} noise contours aren't in our data yet)`
-    : NOISE_LABEL[h.aicuz_zone];
+    : zoneText(h);
 ---
 
-<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar noise contours (2008 airport land use plan, via SANDAG); CAL FIRE (pending)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
+<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar and NAS North Island noise contours (airport land use plans, via SANDAG); CAL FIRE (pending)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
   {hazards.map((h) => (
     <dl class="facts">
       {multiZip && <><dt>Zip</dt><dd>{h.zip}</dd></>}
@@ -39,7 +47,7 @@ const noiseText = (h: (typeof hazards)[number]) =>
       <dt>Flood</dt>
       <dd>{pct(h.sfha_pct, 1)} of land is in a FEMA 1%-annual-chance flood zone. <ExtLink id="fema-flood-map" text="Check an address" /></dd>
       <dt>Aircraft noise</dt>
-      <dd>{noiseText(h)}{h.miramar_cnel65plus_pct ? ` (${pct(h.miramar_cnel65plus_pct, 1)} of land at 65 dB or more)` : ''}.</dd>
+      <dd>{noiseText(h)}{shares(h).length ? ` (${shares(h).join('; ')})` : ''}.</dd>
     </dl>
   ))}
   {waterQuality && (
@@ -49,5 +57,5 @@ const noiseText = (h: (typeof hazards)[number]) =>
     </dl>
   )}
   {gap && <p class="gap">{gap}</p>}
-  <p class="gap">Aircraft noise here covers MCAS Miramar only. Noise contours for San Diego International, the other Navy and Marine airfields and the county's smaller airports aren't in our data yet.</p>
+  <p class="gap">Aircraft noise here covers MCAS Miramar and NAS North Island only. Noise contours for NOLF Imperial Beach, San Diego International, Camp Pendleton's airfield and the county's smaller airports aren't in our data yet.</p>
 </FactBlock>

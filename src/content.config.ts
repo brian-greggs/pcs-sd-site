@@ -272,7 +272,12 @@ const hazards = defineCollection({
     fhsz_very_high_pct: pct, fhsz_high_pct: pct, fhsz_moderate_pct: pct,
     sfha_pct: pct,
     miramar_cnel65plus_pct: pct, miramar_cnel70plus_pct: pct, miramar_cnel75plus_pct: pct,
-    aicuz_zone: z.enum(['none', 'manual', '65-70', '70-75', '75plus']),
+    nasni_cnel65plus_pct: pct, nasni_cnel70plus_pct: pct, nasni_cnel75plus_pct: pct,
+    aicuz_zone: z.enum(['none', 'manual', '65-70', '70-75', '75+']),
+    // Which field the band comes from: 'Miramar', 'North Island NAS', both joined by ' + ', or 'NOLF Imperial Beach' (manual).
+    aicuz_field: text,
+    aicuz_gis_zone: z.enum(['none', '65-70', '70-75', '75+']), // band from GIS contours alone, even where 'manual'
+    aicuz_gis_field: text,
     aicuz_note: text,
     ...dated,
   }),

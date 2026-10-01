@@ -12,12 +12,11 @@ const climate = (await getCollection('climate')).map((r) => r.data).filter((r) =
 const coastal = (await getEntry('climate', '92118'))!.data; // Coronado: the coastal baseline used in T12
 const showCoastal = !zips.includes('92118');
 const gap = gapLine(missingZips(zips, climate), 'climate normals', OUT_OF_PULL);
-// station_flag (kept, not corrected), ';'-joined: elevation delta > 300 m, station > 10 km away,
-// or a coastal-zone zip on a station in an inland zone. One caveat line names the reasons.
+// station_flag (kept, not corrected), ';'-joined: elevation delta > 300 m, station > 10 km away.
+// One caveat line names the reasons. An unknown flag fails the build.
 const FLAG_TEXT: Record<string, string> = {
   'abs(elevation_delta_m)>300': 'more than 300 m higher or lower',
   'station_distance_km>10': 'more than 10 km away',
-  coastal_zip_inland_station: 'in an inland climate zone while this zip is in the coastal one',
 };
 const flagged = climate.filter((c) => c.station_flag);
 const reasons = (c: (typeof climate)[number]) => c.station_flag!.split(';').map((f) => {

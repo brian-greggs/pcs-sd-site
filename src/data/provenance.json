@@ -101,10 +101,10 @@
  {
   "id": "hazards",
   "title": "Hazards",
-  "source_name": "TIGER 2023 ZCTA5 + AREAWATER; FEMA NFHL (06073C); SANDAG ALUCP noise contours (Miramar); CAL FIRE FHSZ (blocked)",
+  "source_name": "TIGER 2023 ZCTA5 + AREAWATER; FEMA NFHL (06073C); SANDAG ALUCP noise contours (Miramar, NAS North Island); CAL FIRE FHSZ (blocked)",
   "source_url": "https://www2.census.gov/geo/tiger/TIGER2023/ZCTA520/tl_2023_us_zcta520.zip | https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28 | https://geo.sandag.org/server/rest/services/Hosted/Airport_Noise_Contours/FeatureServer/0",
   "license": "Census/FEMA public domain; SANDAG/SanGIS data subject to SanGIS legal notice",
-  "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis)",
+  "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis); NAS North Island ALUCP contours (added to the SANDAG layer Dec 2020 / Aug 2021)",
   "verified_on": "2026-09-18"
  }
 ]

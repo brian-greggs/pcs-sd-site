@@ -218,7 +218,7 @@
   "cdd65_annual": 1377.3,
   "noaa_station_name": "EL CAJON",
   "station_distance_km": 7.9,
-  "station_flag": "coastal_zip_inland_station",
+  "station_flag": null,
   "id": "91941",
   "vintage": "Normals 1991-2020; CEC zones 2015 layer; ZCTA 2023; Census 2023 places; EPQS as of retrieval",
   "verified_on": "2026-09-30"
@@ -232,7 +232,7 @@
   "cdd65_annual": 1377.3,
   "noaa_station_name": "EL CAJON",
   "station_distance_km": 9.1,
-  "station_flag": "coastal_zip_inland_station",
+  "station_flag": null,
   "id": "91942",
   "vintage": "Normals 1991-2020; CEC zones 2015 layer; ZCTA 2023; Census 2023 places; EPQS as of retrieval",
   "verified_on": "2026-09-30"
@@ -778,7 +778,7 @@
   "cdd65_annual": 924.4,
   "noaa_station_name": "RANCHO BERNARDO",
   "station_distance_km": 10.2,
-  "station_flag": "station_distance_km>10;coastal_zip_inland_station",
+  "station_flag": "station_distance_km>10",
   "id": "92067",
   "vintage": "Normals 1991-2020; CEC zones 2015 layer; ZCTA 2023; Census 2023 places; EPQS as of retrieval",
   "verified_on": "2026-09-30"
@@ -932,7 +932,7 @@
   "cdd65_annual": 924.4,
   "noaa_station_name": "RANCHO BERNARDO",
   "station_distance_km": 10.1,
-  "station_flag": "station_distance_km>10;coastal_zip_inland_station",
+  "station_flag": "station_distance_km>10",
   "id": "92091",
   "vintage": "Normals 1991-2020; CEC zones 2015 layer; ZCTA 2023; Census 2023 places; EPQS as of retrieval",
   "verified_on": "2026-09-30"
@@ -1184,7 +1184,7 @@
   "cdd65_annual": 1377.3,
   "noaa_station_name": "EL CAJON",
   "station_distance_km": 9.9,
-  "station_flag": "coastal_zip_inland_station",
+  "station_flag": null,
   "id": "92119",
   "vintage": "Normals 1991-2020; CEC zones 2015 layer; ZCTA 2023; Census 2023 places; EPQS as of retrieval",
   "verified_on": "2026-09-30"
@@ -1310,7 +1310,7 @@
   "cdd65_annual": 924.4,
   "noaa_station_name": "RANCHO BERNARDO",
   "station_distance_km": 7.7,
-  "station_flag": "coastal_zip_inland_station",
+  "station_flag": null,
   "id": "92129",
   "vintage": "Normals 1991-2020; CEC zones 2015 layer; ZCTA 2023; Census 2023 places; EPQS as of retrieval",
   "verified_on": "2026-09-30"

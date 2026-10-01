@@ -54,6 +54,7 @@ const parcelLinkInline = ownership.some((o) => o.has_cfd === 'unknown' || o.has_
 const rentGap = gapLine(missingZips(zips, rent), 'HUD reference rent', OUT_OF_PULL);
 const ratioGap = gapLine(missingZips(zips, ratios), 'rent-to-allowance ratio', 'there’s no HUD reference rent to divide');
 // Coastal South Bay and Coronado: on the ocean or San Diego Bay, where beach and bay closures are common.
+// Otay Mesa / San Ysidro is left off on purpose (inland of the Tijuana River valley beaches; Brian 2026-09-30).
 const WATER_QUALITY = ['coronado', 'imperial-beach', 'chula-vista-west', 'national-city'];
 const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 ---
