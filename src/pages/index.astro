@@ -15,7 +15,7 @@ const areaPages = areas.filter((a) => a.has_page).length;
   <h1>Orders to San Diego? Start with your base.</h1>
   <p class="intro">Pick where you're reporting. We'll sort neighborhoods and base housing by the drive at 0700.</p>
 
-  <ul class="cards">
+  <ul class="cards cards-bases">
     {BASES.map((b) => (
       <li>
         <a class="card" href={`/base/${b.slug}/`}>

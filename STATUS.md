@@ -1,6 +1,13 @@
-# Site build — status (2026-09-30, session 4: new UI, v0.4)
+# Site build — status (2026-09-30, session 4b: desktop layout, v0.4.1)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, and the Cowork UI: dark sunset theme, base-first navigation, phone-first. Not built, by design: F2 sequence, F3 decision pages, F5 intake, F6 assistant.
+
+## Session 4b: desktop layout and dates
+
+- **Breakpoints:** phone layout unchanged. At 720 px and up the container is 960 px; at 1100 px and up it's 1200 px with 32 px side padding. Running text stops at 68 characters; tables, card grids and tile rows take the full width. Header and footer follow the container; the stripe spans the window.
+- **Home:** base cards in 2 columns (tablet) and 4 (desktop); browse tiles side by side below. **Indexes:** `/neighborhoods/` cards and the `/base-housing/` group blocks in 2 and 3 columns. **Base pages (≥1100 px):** off-base tiers on the left (2/3), base housing on the right (1/3, sticky, scrolls inside itself when it's taller than the window); the toggle shows only below 1100 px. Untied areas are under the subheading "Not tied to a specific base by LMH". **Neighborhood and area pages (≥1100 px):** sticky 220 px column of section links (`src/components/Toc.astro`; a link opens a closed section); tiles in one row of four from 720 px.
+- **Checked:** `scripts/check_layout.mjs` loaded all 73 pages at 390, 768, 1280 and 1440 px: none scrolls sideways (a planted 900 px element was caught at 390 and 768).
+- **Dates:** the CAL FIRE download date is now 2026-09-30 (it was the UTC date). All pull scripts use `pull/dates.py` (America/Los_Angeles) in the data repo, and the export refuses any date after today in San Diego.
 
 ## Session 4: what changed
 
@@ -34,7 +41,7 @@ Gaps (`src/lib/gaps.ts`): a zip with no row in a layer gets a one-line "No … f
 
 ## Checks (all pass on 2026-09-30, session 4)
 
-Source: no-score, no-bah, license, dated, data, contrast. Dist: 73 pages, dated (654 fact blocks), no-bah (exact figures ran locally), no-demo, no-score, incentive (1,889 outbound links), noindex, placeholder, third-party. Build 1.7 s wall clock (Astro 688 ms for 73 pages); dist 2.6 MB, of which fonts 212 KB.
+Source: no-score, no-bah, license, dated, data, contrast. Dist: 73 pages, dated (654 fact blocks), no-bah (exact figures ran locally), no-demo, no-score, incentive (1,889 outbound links), noindex, placeholder, third-party. Build 1.7 s wall clock (Astro 688 ms for 73 pages); dist 2.6 MB, of which fonts 212 KB. Session 4b: same checks, all pass; layout check clean at four widths.
 
 ### Session 3
 
@@ -52,6 +59,6 @@ See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian) and the LMH call l
 
 ## Next session
 
-Brian reviews the new UI on a phone and answers QUESTIONS 31–39 where the guess was wrong. Then, as before:
+Brian reviews the layout at phone and desktop widths and edits the base location lines in `src/lib/bases.ts`. Then, as before:
 
 Brian writes leads and gotchas (one `.md` per community; the page picks it up). Open from session 3b: FHSZ files (QUESTIONS 25), the NASNI/NOLF IB hand-assignment, Coronado's boundary lookup (29), beach-link placement (30).

@@ -64,4 +64,5 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/styles/theme.css` | Every color, font and size token (the dark sunset theme); `site.css` uses only these |
 | `src/components/ExtLink.astro` | Every outbound link, with its incentive label |
 | `scripts/check_principles.mjs` | The build-time principle checks; word lists at the top |
+| `scripts/check_layout.mjs` | Layout check, run by hand: every page at 390/768/1280/1440 px, no sideways scroll (needs Chrome; usage at the top) |
 | `scripts/bah_check_allow.json` | Reviewed coincidences where a rent equals a BAH figure (empty) |

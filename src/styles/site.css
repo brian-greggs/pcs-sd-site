@@ -154,3 +154,47 @@ dl.facts dd { margin: 0; }
 ul.links { padding-left: 1.1rem; }
 ul.links li { margin: 6px 0; }
 ul.plain { padding-left: 1.1rem; }
+
+/* --- Base page subheadings ------------------------------------------------- */
+.subhead { font-size: 1rem; margin: 1.2rem 0 0.5rem; }
+.pane-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.toc { display: none; }
+
+/* --- Tablet and up (720px): 960px container --------------------------------
+   Everything above this line is the phone layout and stays as it is. Running
+   text stops at ~68 characters; tables, grids and tile rows take the full width. */
+@media (min-width: 720px) {
+  main, .bar, .site-footer { max-width: 960px; }
+  main :is(p, ol, ul.links, ul.plain, blockquote), .leadbox { max-width: 68ch; }
+  main :is(.card, .browse, .tile) p, main .gap { max-width: 68ch; }
+
+  .cards-bases, .cards-index, .cards-pane { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  dl.tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .index-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-items: start; }
+  .index-grid .fact { margin: 0; }
+}
+
+/* --- Desktop (1100px): 1200px container, 32px side padding ------------------ */
+@media (min-width: 1100px) {
+  main, .bar, .site-footer { max-width: 1200px; padding-left: 32px; padding-right: 32px; }
+
+  .cards-bases { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cards-bases .card { align-items: flex-start; min-height: 104px; }
+  .cards-index { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .index-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  /* Base pages: both panes at once; the toggle is for narrow screens only. */
+  .seg { display: none; }
+  .base-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+  .pane-housing:not(:target), main:has(.pane-housing:target) .pane-off { display: block; }
+  .pane-title { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; margin: 0.6rem 0 0; }
+  .pane-housing { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; padding-right: 4px; }
+  .pane-housing .cards-pane { grid-template-columns: 1fr; }
+
+  /* Neighborhood and base housing pages: sticky jump links on the left. */
+  .page-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .toc { display: block; position: sticky; top: 16px; padding-top: 1rem; }
+  .toc ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--border); }
+  .toc a { display: flex; align-items: center; min-height: var(--touch); padding: 0 12px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .toc a:hover, .toc a:focus-visible { color: var(--link); }
+}

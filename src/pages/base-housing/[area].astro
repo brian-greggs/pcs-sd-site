@@ -14,6 +14,7 @@ import Access from '../../components/sections/Access.astro';
 import Climate from '../../components/sections/Climate.astro';
 import Hazards from '../../components/sections/Hazards.astro';
 import Notes from '../../components/sections/Notes.astro';
+import Toc from '../../components/Toc.astro';
 import BedroomRules from '../../components/sections/BedroomRules.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
 import { baseHousingAreas } from '../../lib/baseHousing';
@@ -89,9 +90,19 @@ const waitSummary = area.waitRange ? `${waitText} · ${estimate}` : isPendleton 
 const memberWord = `${area.members.length} ${area.members.length === 1 ? 'community' : 'communities'}`;
 
 const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii', 'san-onofre-iii']);
+const sections = [
+  { id: 'glance', label: 'At a glance' }, { id: 'communities', label: 'Communities' }, { id: 'bedrooms', label: 'Bedroom guidelines' },
+  { id: 'wait-times', label: 'Wait times' }, { id: 'apply', label: 'How to apply' }, { id: 'cost', label: 'Cost' },
+  { id: 'commute', label: 'Commute' }, { id: 'schools', label: 'Schools' }, { id: 'childcare', label: 'Child care' },
+  { id: 'access', label: 'Commissary & Costco' }, { id: 'climate', label: 'Climate' }, { id: 'hazards', label: 'Hazards' },
+  ...(notes?.Gotchas ? [{ id: 'gotchas', label: 'Gotchas' }] : []), { id: 'sources', label: 'Sources' },
+];
 ---
 
 <Base title={`${area.name} base housing`} back={{ href: '/base-housing/', label: 'Base housing' }} description={`Base housing in ${area.name}: communities, wait times, pet policy, how to apply, and the commute, schools and hazards around it.`}>
+  <div class="page-grid">
+  <Toc items={sections} />
+  <div class="page-main">
   <p class="eyebrow">Base housing</p>
   <h1>{area.name}</h1>
   <p class="kicker">{memberWord} · {zips.join(', ')}{area.base_tie_note ? ` · ${area.base_tie_note}` : ''}</p>
@@ -206,4 +217,6 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
   <Hazards zips={zips} waterQuality={['coronado', 'imperial-beach'].includes(area.id)} />
   <Notes notes={notes} part="gotchas" />
   <SourcesTable ids={['base_housing', 'base_housing_waits', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} extra={[{ title: 'Area grouping', source: 'Curated from LMH leasing-office zips and addresses', vintage: area.vintage, verified: area.verified_on, license: 'Ours' }]} />
+  </div>
+  </div>
 </Base>

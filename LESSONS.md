@@ -43,3 +43,11 @@
 - **Headless Chrome won't go below about 500 px wide.** Screenshots at 390 px looked like horizontal overflow; they weren't. Rendering the page in a 375 px iframe gives a true phone-width check.
 - **`[hidden]` loses to any `display` rule.** The pay-band label has `display: flex`, so `hidden` alone wouldn't hide it with JavaScript off (caught while writing the CSS). One `[hidden] { display: none !important; }` line fixes it everywhere.
 
+## Session 4b (2026-09-30): desktop layout
+
+- **Add desktop as `min-width` layers on top, and the phone can't change.** Every new rule sits inside a 720 px or 1100 px media query, so the phone layout is the same CSS as before, not a copy kept in step.
+- **Two-pane `:target` toggles need an override at the wide breakpoint.** The phone hides the pane that isn't the target; on desktop both panes show, so the wide query restores both and hides the toggle.
+- **A sticky sidebar taller than the window never shows its bottom.** The base-housing pane gets `max-height: calc(100vh - 32px)` and scrolls on its own.
+- **Measure overflow, don't eyeball it.** The layout check compares `scrollWidth` to `clientWidth` and lists any element past the right edge on 73 pages × 4 widths. A planted 900 px element proved it can fail.
+- **Dates are local days.** `date.today()` happened to be right because the Mac is on Pacific time, but a hand-typed date took the UTC day from a file's mtime. The pull scripts now use one helper that names the time zone, and the export rejects future dates.
+

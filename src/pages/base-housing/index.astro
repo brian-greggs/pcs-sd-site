@@ -32,6 +32,7 @@ const unplaced = areas.filter((a) => !a.has_page);
 
   <BedroomRules plain />
 
+  <div class="index-grid">
   {INDEX_GROUPS.map((g) => {
     const rows = areas.filter((a) => a.has_page && a.base_group === g.key);
     return rows.length > 0 && (
@@ -53,6 +54,8 @@ const unplaced = areas.filter((a) => !a.has_page);
       </FactBlock>
     );
   })}
+
+  </div>
 
   {unplaced.map((a) => (
     <FactBlock plain id="location-pending" title={a.name} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists">

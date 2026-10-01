@@ -20,6 +20,7 @@ import Access from '../../components/sections/Access.astro';
 import Climate from '../../components/sections/Climate.astro';
 import Hazards from '../../components/sections/Hazards.astro';
 import Notes from '../../components/sections/Notes.astro';
+import Toc from '../../components/Toc.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
 import { acsDollars, dollars, pct, range, PAY_BAND_ORDER } from '../../lib/format';
 import { provenance } from '../../lib/prov';
@@ -91,9 +92,18 @@ const melloLine = !ownership.length ? 'Mello-Roos not matched yet'
 const costSummary = `3-bed HUD rent ${rent3Text} · ${melloLine}`;
 
 const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
+const sections = [
+  { id: 'glance', label: 'At a glance' }, { id: 'cost', label: 'Cost' }, { id: 'commute', label: 'Commute' },
+  { id: 'schools', label: 'Schools' }, { id: 'childcare', label: 'Child care' }, { id: 'access', label: 'Commissary & Costco' },
+  { id: 'climate', label: 'Climate' }, { id: 'hazards', label: 'Hazards' },
+  ...(notes?.Gotchas ? [{ id: 'gotchas', label: 'Gotchas' }] : []), { id: 'sources', label: 'Sources' },
+];
 ---
 
 <Base title={community.name} back={{ href: '/neighborhoods/', label: 'Neighborhoods' }} description={`${community.name}: cost, commute, schools, child care and hazards, side by side with dates.`}>
+  <div class="page-grid">
+  <Toc items={sections} />
+  <div class="page-main">
   <h1>{community.name}</h1>
   <p class="kicker">{community.corridor} · {zips.join(', ')}</p>
 
@@ -202,6 +212,8 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
   <Hazards zips={zips} waterQuality={WATER_QUALITY.includes(slug!)} />
   <Notes notes={notes} part="gotchas" />
   <SourcesTable ids={['rent', 'rent_to_bah', 'ownership', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} />
+  </div>
+  </div>
 </Base>
 
 <script>

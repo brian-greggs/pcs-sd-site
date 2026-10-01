@@ -48,14 +48,15 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
   </nav>
   <p class="note">Weekday drive to the main gate at 0700, from the middle of each neighborhood. Your street can add 5–10 minutes.</p>
 
+  <div class="base-grid">
   <section class="pane pane-off" id="off-base" data-fact="off-base">
-    <h2 class="visually-hidden">Off base</h2>
+    <h2 class="pane-title">Off base</h2>
     {TIERS.map((t) => {
       const inTier = rows.filter((r) => r.drive.tier === t.key);
       return inTier.length > 0 && (
         <>
           <p class={`chip ${t.tone}`}>{t.label}</p>
-          <ul class="cards">
+          <ul class="cards cards-pane">
             {inTier.map((r) => (
               <li>
                 <a class="card" href={`/communities/${r.slug}/?base=${base.slug}`}>
@@ -73,11 +74,11 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
   </section>
 
   <section class="pane pane-housing" id="base-housing" data-fact="base-housing">
-    <h2 class="visually-hidden">Base housing</h2>
+    <h2 class="pane-title">Base housing</h2>
     {tied.length > 0 ? (
       <>
-        <p class="chip mauve">Tied to {base.short} by LMH</p>
-        <ul class="cards">
+        <h3 class="subhead">Tied to {base.short} by LMH</h3>
+        <ul class="cards cards-pane">
           {tied.map((a) => (
             <li>
               <a class="card" href={`/base-housing/${a.id}/`}>
@@ -95,8 +96,8 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
       <p class="gap">Liberty Military Housing doesn't tie any base housing area to {base.short}. The areas below aren't tied to a base, so any eligible family can apply; they're sorted by the drive here.</p>
     )}
 
-    <p class="chip blue">Not tied to a base by LMH</p>
-    <ul class="cards">
+    <h3 class="subhead">Not tied to a specific base by LMH</h3>
+    <ul class="cards cards-pane">
       {untied.map((a) => (
         <li>
           <a class="card" href={`/base-housing/${a.id}/`}>
@@ -109,4 +110,5 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
     <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}. <a href="/base-housing/">All base housing</a></p>
     <p class="asof" data-asof>Waits: {estimate} · verified {verifiedOn}. Drive: {asOf('commute')}. Source: Navy Housing Service Center / LMH wait-time lists; Google Maps predicted drive time from the area's zip.</p>
   </section>
+  </div>
 </Base>

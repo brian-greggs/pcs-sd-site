@@ -9,7 +9,7 @@ const communities = (await getCollection('communities')).map((c) => c.data).sort
 <Base title="Neighborhoods" back={{ href: '/', label: 'Home' }} description="All 40 San Diego neighborhoods on this guide, A to Z.">
   <h1>Neighborhoods</h1>
   <p class="intro">All {communities.length}, A to Z. Each page has cost, the 0700 drive to every base, schools, child care, climate and hazards, each with its date.</p>
-  <ul class="cards">
+  <ul class="cards cards-index">
     {communities.map((c) => (
       <li>
         <a class="card" href={`/communities/${c.slug}/`}>

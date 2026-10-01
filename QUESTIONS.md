@@ -1,8 +1,10 @@
 # Questions — site build
 
-## Open (session 4, new UI, 2026-09-30)
+## Answered (session 4, new UI, 2026-09-30)
 
-Things I had to guess while building the Cowork design. Each says what I did; any is a small change.
+**Brian's answers, 2026-09-30:** 31 keep the slugs and location lines for now (Brian will edit the copy). 32 keep the untied areas on every base page, under their own subheading "Not tied to a specific base by LMH" below the tied areas (done in v0.4.1); Coronado under both North Island and NAB is correct. 33 the row highlight is correct. 37 keep the Principle 7 line in the footer. 34–36, 38, 39 stand as built.
+
+The guesses as logged:
 
 31. **Base slugs and location lines.** `/base/naval-base-san-diego/`, `miramar`, `north-island`, `naval-amphibious-base`, `point-loma`, `naval-medical-center`, `mcrd`, `camp-pendleton` (in `src/lib/bases.ts`). The one-line locations on the home cards ("Off I-15, north of Kearny Mesa") are mine; the base page shows the gate from the data under the heading.
 32. **Which base housing a base page lists.** LMH's groups map to bases as Miramar → MCAS Miramar, NBSD → Naval Base San Diego, NBPL → Point Loma, Coronado → both NAS North Island and NAB, Pendleton → Camp Pendleton. Naval Medical Center and MCRD have no tied areas, so their pages say so. Every base page also lists the 10 areas LMH ties to no base (Murphy Canyon, Lakeside, …) under "Not tied to a base by LMH", sorted by the drive to that base. Drop that group if it reads as clutter.

@@ -1,0 +1,21 @@
+---
+// Section jump links: a sticky left column at 1100px and up, hidden below
+// (phones get the sections in order). A link to a closed section opens it;
+// without JavaScript it still scrolls to the section's summary.
+interface Props { items: { id: string; label: string }[] }
+const { items } = Astro.props;
+---
+
+<nav class="toc" aria-label="Sections on this page">
+  <ul>{items.map((i) => <li><a href={`#${i.id}`}>{i.label}</a></li>)}</ul>
+</nav>
+
+<script>
+  const open = (hash: string) => {
+    const el = hash.length > 1 ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+    const details = el?.querySelector(':scope > details');
+    if (details instanceof HTMLDetailsElement) details.open = true;
+  };
+  document.querySelectorAll<HTMLAnchorElement>('.toc a').forEach((a) => a.addEventListener('click', () => open(a.hash)));
+  open(location.hash);
+</script>
