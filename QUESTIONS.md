@@ -1,5 +1,10 @@
 # Questions — site build
 
+## Open (session 4c, base page layout, 2026-09-30)
+
+40. **Base page groups start closed at every width.** That's what lets a phone reader see Base housing without scrolling past 40 neighborhoods, and it matches the neighborhood pattern. On desktop it means six closed cards beside the side menu. If you'd rather have "Under 30 min" and "Tied to this base" open on desktop only, that takes a small script (closed without JavaScript); opening them for everyone brings back the long phone scroll.
+41. **Tier summary minutes.** A neighborhood's tier comes from its closest zip, so a group's summary gives the closest-zip minutes ("27 neighborhoods · 9–28 min from the closest zip"); Escondido's row still shows 20–65 min.
+
 ## Answered (session 4, new UI, 2026-09-30)
 
 **Brian's answers, 2026-09-30:** 31 keep the slugs and location lines for now (Brian will edit the copy). 32 keep the untied areas on every base page, under their own subheading "Not tied to a specific base by LMH" below the tied areas (done in v0.4.1); Coronado under both North Island and NAB is correct. 33 the row highlight is correct. 37 keep the Principle 7 line in the footer. 34–36, 38, 39 stand as built.

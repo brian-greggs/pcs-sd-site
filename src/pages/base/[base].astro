@@ -1,9 +1,12 @@
 ---
 // Base page: neighborhoods and base housing sorted by the 0700 drive to this
-// base's main gate. "Off base" / "Base housing" is a pair of anchor links styled
-// as a segmented control; CSS :target picks the pane, so it works without JavaScript.
+// base's main gate. Same layout as a neighborhood page: a sticky side menu at
+// 1100px and up, and below that every group is a closed <details> with a summary
+// line, so a phone reader sees Off base and Base housing on one screen.
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import FactBlock from '../../components/FactBlock.astro';
+import Toc from '../../components/Toc.astro';
 import { BASES, baseBySlug, drives, GROUP_BASES, minutes, TIERS } from '../../lib/bases';
 import { baseHousingAreas } from '../../lib/baseHousing';
 import { range } from '../../lib/format';
@@ -34,50 +37,60 @@ const withDrive = await Promise.all(areas.filter((a) => a.has_page).map(async (a
 const byDrive = (a: (typeof withDrive)[number], b: (typeof withDrive)[number]) => (a.drive?.lo ?? 999) - (b.drive?.lo ?? 999);
 const tied = withDrive.filter((a) => GROUP_BASES[a.base_group].includes(base.code)).sort(byDrive);
 const untied = withDrive.filter((a) => a.base_group === 'NONE').sort(byDrive);
+const span = (lo: number[], hi: number[], unit: string) => (lo.length ? range(Math.min(...lo), Math.max(...hi), unit) : '—');
+const tiers = TIERS.map((t) => ({ ...t, id: `tier-${t.key}`, rows: rows.filter((r) => r.drive.tier === t.key) })).filter((t) => t.rows.length);
+const tierSummary = (rs: typeof rows) =>
+  // The tier comes from each neighborhood's closest zip, so the summary gives those minutes (rows show the full range).
+  `${rs.length} ${rs.length === 1 ? 'neighborhood' : 'neighborhoods'} · ${span(rs.map((r) => r.drive.lo), rs.map((r) => r.drive.lo), ' min')}${rs.some((r) => r.drive.hi !== r.drive.lo) ? ' from the closest zip' : ''}`;
+const waits = (as: typeof tied) => as.filter((a) => a.waitRange);
+const housingSummary = (as: typeof tied, what: 'wait' | 'drive') => {
+  if (!as.length) return 'None';
+  const n = `${as.length} ${as.length === 1 ? 'area' : 'areas'}`;
+  if (what === 'drive') return `${n} · ${span(as.flatMap((a) => (a.drive ? [a.drive.lo] : [])), as.flatMap((a) => (a.drive ? [a.drive.hi] : [])), ' min')} drive`;
+  const w = waits(as);
+  return w.length ? `${n} · wait ${span(w.map((a) => a.waitRange![0]), w.map((a) => a.waitRange![1]), '')} months` : `${n} · wait times not in our data`;
+};
+const commuteAsOf = asOf('commute');
+const commuteSource = "Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); a neighborhood with several zips shows the range";
+const housingAsOf = `Waits: ${estimate} · verified ${verifiedOn}. Drive: ${asOf('commute')}`;
+const housingSource = "Navy Housing Service Center / LMH wait-time lists; Google Maps predicted drive time from the area's zip";
+const sections = [
+  { id: 'off-base', label: 'Off base', children: tiers.map((t) => ({ id: t.id, label: t.label })) },
+  { id: 'base-housing', label: 'Base housing', children: [{ id: 'housing-tied', label: 'Tied to this base' }, { id: 'housing-untied', label: 'Not tied to a base' }] },
+];
 const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
 ---
 
 <Base title={base.short} back={{ href: '/', label: 'Home' }} description={`Reporting to ${base.short}: neighborhoods and base housing sorted by the 0700 drive.`}>
+  <div class="page-grid">
+  <Toc items={sections} />
+  <div class="page-main">
   <p class="eyebrow">Reporting to</p>
   <h1>{base.short}</h1>
   <p class="kicker">{gate}</p>
-
-  <nav class="seg" aria-label="Off base or base housing">
-    <a href="#off-base">Off base</a>
-    <a href="#base-housing">Base housing</a>
-  </nav>
   <p class="note">Weekday drive to the main gate at 0700, from the middle of each neighborhood. Your street can add 5–10 minutes.</p>
 
-  <div class="base-grid">
-  <section class="pane pane-off" id="off-base" data-fact="off-base">
-    <h2 class="pane-title">Off base</h2>
-    {TIERS.map((t) => {
-      const inTier = rows.filter((r) => r.drive.tier === t.key);
-      return inTier.length > 0 && (
-        <>
-          <p class={`chip ${t.tone}`}>{t.label}</p>
-          <ul class="cards cards-pane">
-            {inTier.map((r) => (
-              <li>
-                <a class="card" href={`/communities/${r.slug}/?base=${base.slug}`}>
-                  <span><span class="card-name">{r.name}</span><span class="card-sub">{r.corridor}</span></span>
-                  <span class="row-min">{minutes(r.drive)}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </>
-      );
-    })}
-    {missing > 0 && <p class="gap">{missing} {missing === 1 ? 'neighborhood has' : 'neighborhoods have'} no 0700 drive time to {base.short} in our data.</p>}
-    <p class="asof" data-asof>{asOf('commute')}. Source: Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); a neighborhood with several zips shows the range.</p>
-  </section>
+  <h2 class="group-title" id="off-base">Off base</h2>
+  {tiers.map((t) => (
+    <FactBlock id={t.id} title={t.label} chip={t.tone} level={3} summary={tierSummary(t.rows)} asOf={commuteAsOf} source={commuteSource}>
+      <ul class="cards cards-pane">
+        {t.rows.map((r) => (
+          <li>
+            <a class="card" href={`/communities/${r.slug}/?base=${base.slug}`}>
+              <span><span class="card-name">{r.name}</span><span class="card-sub">{r.corridor}</span></span>
+              <span class="row-min">{minutes(r.drive)}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </FactBlock>
+  ))}
+  {missing > 0 && <p class="gap">{missing} {missing === 1 ? 'neighborhood has' : 'neighborhoods have'} no 0700 drive time to {base.short} in our data.</p>}
 
-  <section class="pane pane-housing" id="base-housing" data-fact="base-housing">
-    <h2 class="pane-title">Base housing</h2>
+  <h2 class="group-title" id="base-housing">Base housing</h2>
+  <FactBlock id="housing-tied" title={`Tied to ${base.short} by LMH`} level={3} summary={housingSummary(tied, 'wait')} asOf={housingAsOf} source={housingSource}>
     {tied.length > 0 ? (
       <>
-        <h3 class="subhead">Tied to {base.short} by LMH</h3>
         <ul class="cards cards-pane">
           {tied.map((a) => (
             <li>
@@ -93,10 +106,11 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
           : <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}.</p>}
       </>
     ) : (
-      <p class="gap">Liberty Military Housing doesn't tie any base housing area to {base.short}. The areas below aren't tied to a base, so any eligible family can apply; they're sorted by the drive here.</p>
+      <p class="gap">Liberty Military Housing doesn't tie any base housing area to {base.short}. The areas under "Not tied to a specific base by LMH" are open to any eligible family; they're sorted by the drive here.</p>
     )}
+  </FactBlock>
 
-    <h3 class="subhead">Not tied to a specific base by LMH</h3>
+  <FactBlock id="housing-untied" title="Not tied to a specific base by LMH" level={3} summary={housingSummary(untied, 'drive')} asOf={housingAsOf} source={housingSource}>
     <ul class="cards cards-pane">
       {untied.map((a) => (
         <li>
@@ -108,7 +122,7 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
       ))}
     </ul>
     <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}. <a href="/base-housing/">All base housing</a></p>
-    <p class="asof" data-asof>Waits: {estimate} · verified {verifiedOn}. Drive: {asOf('commute')}. Source: Navy Housing Service Center / LMH wait-time lists; Google Maps predicted drive time from the area's zip.</p>
-  </section>
+  </FactBlock>
+  </div>
   </div>
 </Base>

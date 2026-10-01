@@ -51,3 +51,8 @@
 - **Measure overflow, don't eyeball it.** The layout check compares `scrollWidth` to `clientWidth` and lists any element past the right edge on 73 pages × 4 widths. A planted 900 px element proved it can fail.
 - **Dates are local days.** `date.today()` happened to be right because the Mac is on Pacific time, but a hand-typed date took the UTC day from a file's mtime. The pull scripts now use one helper that names the time zone, and the export rejects future dates.
 
+## Session 4c (2026-09-30): base pages
+
+- **One layout for sibling pages beats a special one.** The base page's toggle, split columns and inner-scrolling pane were three mechanisms used nowhere else. Rebuilt from `FactBlock` and `Toc`, it needs two small options (heading level, tier chip as the title) and no page-specific CSS.
+- **A summary that contradicts its label reads as a bug.** "Under 30 min · 9–65 min" was true (a multi-zip neighborhood's range) but looked wrong; the summary now uses the minutes the tier is based on.
+

@@ -12,8 +12,11 @@ interface Props {
   summary?: string;
   open?: boolean;
   plain?: boolean;
+  level?: 2 | 3; // 3 for a group inside a page section (base pages)
+  chip?: 'blue' | 'mauve' | 'gold'; // show the title as a tier chip
 }
-const { id, title, asOf, source, summary, open = false, plain = false } = Astro.props;
+const { id, title, asOf, source, summary, open = false, plain = false, level = 2, chip } = Astro.props;
+const H = level === 3 ? 'h3' : 'h2';
 if (!asOf.trim()) throw new Error(`FactBlock "${id}" has no date`);
 if (!plain && !summary?.trim() && !Astro.slots.has('summary')) throw new Error(`FactBlock "${id}" has no summary line`);
 ---
@@ -27,7 +30,7 @@ if (!plain && !summary?.trim() && !Astro.slots.has('summary')) throw new Error(`
 ) : (
   <section class="fact" id={id} data-fact={id}>
     <details open={open}>
-      <summary><h2>{title}</h2><span class="summary-line"><slot name="summary">{summary}</slot></span></summary>
+      <summary><H>{chip ? <span class={`chip ${chip}`}>{title}</span> : title}</H><span class="summary-line"><slot name="summary">{summary}</slot></span></summary>
       <div class="body">
         <slot />
         <p class="asof" data-asof>{asOf}. Source: {source}.</p>

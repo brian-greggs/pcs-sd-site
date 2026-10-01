@@ -1,6 +1,16 @@
-# Site build — status (2026-09-30, session 4b: desktop layout, v0.4.1)
+# Site build — status (2026-09-30, session 4c: base page layout, v0.4.2)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, and the Cowork UI: dark sunset theme, base-first navigation, phone-first. Not built, by design: F2 sequence, F3 decision pages, F5 intake, F6 assistant.
+
+## Session 4c: base pages match neighborhood pages
+
+- `/base/<slug>/` uses the neighborhood layout: the sticky side menu (≥1100 px) with "Off base" (one link per tier group) and "Base housing" ("Tied to this base", "Not tied to a base") nested under it, and one content column. Each tier group and housing group is a `FactBlock` (`level={3}`, tier chip as the title) with a summary line and its dated source line. The segmented toggle, the two-column grid, the sticky housing pane and their CSS are gone; only the page scrolls.
+- Below 1100 px every group starts closed, so Off base and Base housing fit on one phone screen (QUESTIONS 40). Works without JavaScript; with it, a menu link or `#housing-tied` in the URL opens the group.
+- Layout check: 73 pages at 390, 768, 1280 and 1440 px, none scrolls sideways. All principle checks pass.
+
+## Later
+
+- Base pages: On-base amenities section (commissary, exchange, exchange gas, clinic/hospital from T7 access points; hours and links from official pages).
 
 ## Session 4b: desktop layout and dates
 

@@ -81,18 +81,6 @@ blockquote.quote p, blockquote.quote ul { margin: 0.3rem 0; }
 
 .chip { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); margin: 1.2rem 0 0.5rem; }
 
-/* --- Segmented control: anchors, works without JavaScript ------------------- */
-.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 0.4rem 0 0.8rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-.seg a { display: flex; align-items: center; justify-content: center; min-height: var(--touch); border-radius: 8px; text-decoration: none; font-weight: 700; color: var(--muted); }
-/* Off base shows by default; #base-housing shows when it's the target. */
-.seg a[href="#off-base"] { background: var(--coral); color: var(--on-coral); }
-.pane-housing:not(:target) { display: none; }
-main:has(.pane-housing:target) .pane-off { display: none; }
-main:has(.pane-housing:target) .seg a[href="#off-base"] { background: transparent; color: var(--muted); }
-main:has(.pane-housing:target) .seg a[href="#base-housing"] { background: var(--coral); color: var(--on-coral); }
-.pane { scroll-margin-top: 16px; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
 /* --- At a glance tiles ------------------------------------------------------ */
 .glance { margin: 1.2rem 0; }
 .glance-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 0.6rem; }
@@ -125,7 +113,8 @@ dl.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
 .fact > details > summary::-webkit-details-marker { display: none; }
 .fact > details > summary::after { content: "›"; position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--link); font-size: 1.4rem; }
 .fact > details[open] > summary::after { transform: translateY(-50%) rotate(90deg); }
-.fact > details > summary h2 { margin: 0; font-size: 1.1rem; }
+.fact > details > summary :is(h2, h3) { margin: 0; font-size: 1.1rem; }
+.fact > details > summary .chip { margin: 0; }
 .fact .summary-line { display: block; font-size: 0.88rem; color: var(--muted); margin-top: 2px; }
 .fact .body { padding: 0 16px 14px; border-top: 1px solid var(--border); }
 
@@ -155,9 +144,9 @@ ul.links { padding-left: 1.1rem; }
 ul.links li { margin: 6px 0; }
 ul.plain { padding-left: 1.1rem; }
 
-/* --- Base page subheadings ------------------------------------------------- */
-.subhead { font-size: 1rem; margin: 1.2rem 0 0.5rem; }
-.pane-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* --- Base pages: section headings above their groups ------------------------- */
+.group-title { margin: 1.4rem 0 0.4rem; scroll-margin-top: 16px; }
+.fact .cards-pane { margin-top: 12px; }
 .toc { display: none; }
 
 /* --- Tablet and up (720px): 960px container --------------------------------
@@ -183,18 +172,12 @@ ul.plain { padding-left: 1.1rem; }
   .cards-index { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .index-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-  /* Base pages: both panes at once; the toggle is for narrow screens only. */
-  .seg { display: none; }
-  .base-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 32px; align-items: start; }
-  .pane-housing:not(:target), main:has(.pane-housing:target) .pane-off { display: block; }
-  .pane-title { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; margin: 0.6rem 0 0; }
-  .pane-housing { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; padding-right: 4px; }
-  .pane-housing .cards-pane { grid-template-columns: 1fr; }
-
-  /* Neighborhood and base housing pages: sticky jump links on the left. */
+  /* Neighborhood, base housing and base pages: sticky jump links on the left. */
   .page-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: start; }
   .toc { display: block; position: sticky; top: 16px; padding-top: 1rem; }
   .toc ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--border); }
   .toc a { display: flex; align-items: center; min-height: var(--touch); padding: 0 12px; color: var(--muted); text-decoration: none; font-weight: 500; }
   .toc a:hover, .toc a:focus-visible { color: var(--link); }
+  .toc .toc-sub { border-left: 0; padding-left: 12px; }
+  .toc .toc-sub a { font-weight: 400; font-size: 0.92rem; }
 }
