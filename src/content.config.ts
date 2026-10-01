@@ -270,6 +270,8 @@ const hazards = defineCollection({
     zip,
     fhsz_status: z.string(),
     fhsz_very_high_pct: pct, fhsz_high_pct: pct, fhsz_moderate_pct: pct,
+    fhsz_mapped_pct: pct, // share of land CAL FIRE rates at all; the rest is mostly federal (bases, national forest)
+    fhsz_retrieved_on: text, // CAL FIRE files' download date (differs from the rest of the row's retrieval)
     sfha_pct: pct,
     miramar_cnel65plus_pct: pct, miramar_cnel70plus_pct: pct, miramar_cnel75plus_pct: pct,
     nasni_cnel65plus_pct: pct, nasni_cnel70plus_pct: pct, nasni_cnel75plus_pct: pct,

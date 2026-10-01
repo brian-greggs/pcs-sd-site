@@ -52,6 +52,7 @@ h3 { font-size: 1.02rem; margin: 1rem 0 0.4rem; }
 .note { font-size: 0.92rem; color: var(--muted); }
 .gap { border-left: 3px solid var(--warn-line); background: var(--warn-bg); padding: 8px 12px; margin: 0.8rem 0; font-size: 0.95rem; }
 .lead { font-size: 1.08rem; margin: 0.6rem 0 1rem; }
+.gap-inline { display: block; margin-top: 4px; padding: 4px 8px; border-left: 3px solid var(--warn-line); background: var(--warn-bg); font-size: 0.92rem; }
 blockquote.quote { margin: 0.6rem 0; padding: 4px 0 4px 14px; border-left: 3px solid var(--line); }
 blockquote.quote p, blockquote.quote ul { margin: 0.3rem 0; }
 

@@ -1,5 +1,5 @@
 ---
-// Fire (pending), flood and aircraft noise for these zips.
+// Fire (CAL FIRE hazard severity zones), flood and aircraft noise for these zips.
 import { getCollection, getEntry } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import ExtLink from '../ExtLink.astro';
@@ -15,6 +15,12 @@ const hazards = (await getCollection('hazards')).map((r) => r.data).filter((r) =
 const multiZip = hazards.length > 1;
 const beachLink = (await getEntry('links', 'sd-county-beach-bay'))!.data;
 const gap = gapLine(missingZips(zips, hazards), 'flood or noise figures', OUT_OF_PULL);
+// Fire: share of land in each CAL FIRE class (exclusive; SRA 2023 + LRA 2025 combined by the pull).
+const fireText = (h: (typeof hazards)[number]) => {
+  const parts = [['Very High', h.fhsz_very_high_pct], ['High', h.fhsz_high_pct], ['Moderate', h.fhsz_moderate_pct]]
+    .filter(([, v]) => (v as number) > 0).map(([k, v]) => `${pct(v as number, 1)} ${k}`);
+  return parts.length ? `${parts.join(', ')} (share of land in each CAL FIRE fire hazard severity zone)` : 'No land in a CAL FIRE fire hazard severity zone';
+};
 // Noise contours we have in GIS: MCAS Miramar and NAS North Island (SDCRAA ALUCP, via SANDAG).
 const FIELD_NAME: Record<string, string> = { Miramar: 'MCAS Miramar', 'North Island NAS': 'NAS North Island' };
 const BAND: Record<string, string> = { '65-70': '65–70 dB', '70-75': '70–75 dB', '75+': '75+ dB' };
@@ -38,12 +44,12 @@ const noiseText = (h: (typeof hazards)[number]) =>
     : zoneText(h);
 ---
 
-<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar and NAS North Island noise contours (airport land use plans, via SANDAG); CAL FIRE (pending)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
+<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar and NAS North Island noise contours (airport land use plans, via SANDAG); CAL FIRE Fire Hazard Severity Zones (State Responsibility Area 2023, Local Responsibility Area 2025)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
   {hazards.map((h) => (
     <dl class="facts">
       {multiZip && <><dt>Zip</dt><dd>{h.zip}</dd></>}
       <dt>Fire</dt>
-      <dd>{h.fhsz_very_high_pct != null ? `${pct(h.fhsz_very_high_pct, 1)} of land in a Very High fire hazard zone` : <span>Not in our data yet. Check the address yourself: <ExtLink id="cal-fire-fhsz" /></span>}</dd>
+      <dd>{h.fhsz_very_high_pct != null ? <>{fireText(h)}. <span class="muted">CAL FIRE maps, downloaded {h.fhsz_retrieved_on}.</span> <ExtLink id="cal-fire-fhsz" text="Check an address" />{h.fhsz_mapped_pct != null && h.fhsz_mapped_pct < 95 && <span class="gap-inline"> CAL FIRE rates only {pct(h.fhsz_mapped_pct, 0)} of this zip's land. Federal land, such as bases and national forest, isn't in its maps, so the real share in a hazard zone can be higher.</span>}</> : <span>Not in our data yet. Check the address yourself: <ExtLink id="cal-fire-fhsz" /></span>}</dd>
       <dt>Flood</dt>
       <dd>{pct(h.sfha_pct, 1)} of land is in a FEMA 1%-annual-chance flood zone. <ExtLink id="fema-flood-map" text="Check an address" /></dd>
       <dt>Aircraft noise</dt>
