@@ -1,28 +1,36 @@
 ---
 // Fire (pending), flood and aircraft noise for these zips.
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import ExtLink from '../ExtLink.astro';
 import { pct } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
-interface Props { zips: string[] }
-const { zips } = Astro.props;
+// waterQuality: coastal pages get the county's beach and bay closures link.
+interface Props { zips: string[]; waterQuality?: boolean }
+const { zips, waterQuality = false } = Astro.props;
 const { asOf } = await provenance();
 const hazards = (await getCollection('hazards')).map((r) => r.data).filter((r) => zips.includes(r.zip));
 const multiZip = hazards.length > 1;
+const beachLink = (await getEntry('links', 'sd-county-beach-bay'))!.data;
 const gap = gapLine(missingZips(zips, hazards), 'flood or noise figures', OUT_OF_PULL);
 const NOISE_LABEL: Record<string, string> = {
   none: 'Outside the MCAS Miramar 65 dB noise contour',
   '65-70': 'Inside the MCAS Miramar 65–70 dB noise contour',
   '70-75': 'Inside the MCAS Miramar 70–75 dB noise contour',
   '75plus': 'Inside the MCAS Miramar 75+ dB noise contour',
-  manual: 'Near NAS North Island; noise zone not yet assigned',
+  manual: 'Noise zone not yet assigned',
 };
+// "within 3 km of NAS North Island and NOLF Imperial Beach; …" -> "NAS North Island and NOLF Imperial Beach"
+const nearFields = (note: string | null) => note?.match(/within \d+ km of ([^;]+);/)?.[1] ?? null;
+const noiseText = (h: (typeof hazards)[number]) =>
+  h.aicuz_zone === 'manual' && nearFields(h.aicuz_note)
+    ? `Near ${nearFields(h.aicuz_note)}; noise zone not yet assigned (${nearFields(h.aicuz_note)!.includes(' and ') ? 'those fields’' : 'that field’s'} noise contours aren't in our data yet)`
+    : NOISE_LABEL[h.aicuz_zone];
 ---
 
-<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source="FEMA National Flood Hazard Layer; MCAS Miramar noise contours (2008 airport land use plan, via SANDAG); CAL FIRE (pending)">
+<FactBlock id="hazards" title="Hazards" asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar noise contours (2008 airport land use plan, via SANDAG); CAL FIRE (pending)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
   {hazards.map((h) => (
     <dl class="facts">
       {multiZip && <><dt>Zip</dt><dd>{h.zip}</dd></>}
@@ -31,9 +39,15 @@ const NOISE_LABEL: Record<string, string> = {
       <dt>Flood</dt>
       <dd>{pct(h.sfha_pct, 1)} of land is in a FEMA 1%-annual-chance flood zone. <ExtLink id="fema-flood-map" text="Check an address" /></dd>
       <dt>Aircraft noise</dt>
-      <dd>{NOISE_LABEL[h.aicuz_zone]}{h.miramar_cnel65plus_pct ? ` (${pct(h.miramar_cnel65plus_pct, 1)} of land at 65 dB or more)` : ''}.</dd>
+      <dd>{noiseText(h)}{h.miramar_cnel65plus_pct ? ` (${pct(h.miramar_cnel65plus_pct, 1)} of land at 65 dB or more)` : ''}.</dd>
     </dl>
   ))}
+  {waterQuality && (
+    <dl class="facts">
+      <dt>Beach and bay water</dt>
+      <dd>Closures and advisories change daily, so we link to them rather than copy them: <ExtLink id="sd-county-beach-bay" /> <span class="muted">(link checked {beachLink.verified_on})</span></dd>
+    </dl>
+  )}
   {gap && <p class="gap">{gap}</p>}
   <p class="gap">Aircraft noise here covers MCAS Miramar only. Noise contours for San Diego International, the other Navy and Marine airfields and the county's smaller airports aren't in our data yet.</p>
 </FactBlock>

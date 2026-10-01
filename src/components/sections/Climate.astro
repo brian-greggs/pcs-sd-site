@@ -12,8 +12,19 @@ const climate = (await getCollection('climate')).map((r) => r.data).filter((r) =
 const coastal = (await getEntry('climate', '92118'))!.data; // Coronado: the coastal baseline used in T12
 const showCoastal = !zips.includes('92118');
 const gap = gapLine(missingZips(zips, climate), 'climate normals', OUT_OF_PULL);
-// station_flag: the station sits more than 300 m above or below the zip (kept, not corrected).
+// station_flag (kept, not corrected), ';'-joined: elevation delta > 300 m, station > 10 km away,
+// or a coastal-zone zip on a station in an inland zone. One caveat line names the reasons.
+const FLAG_TEXT: Record<string, string> = {
+  'abs(elevation_delta_m)>300': 'more than 300 m higher or lower',
+  'station_distance_km>10': 'more than 10 km away',
+  coastal_zip_inland_station: 'in an inland climate zone while this zip is in the coastal one',
+};
 const flagged = climate.filter((c) => c.station_flag);
+const reasons = (c: (typeof climate)[number]) => c.station_flag!.split(';').map((f) => {
+  if (!FLAG_TEXT[f]) throw new Error(`Climate: unknown station_flag "${f}" for ${c.zip}`);
+  return FLAG_TEXT[f];
+});
+const where = (c: (typeof climate)[number]) => (climate.length > 1 ? `zip ${c.zip}` : name);
 const label = (zip: string) => (climate.length > 1 ? zip : name);
 ---
 
@@ -29,7 +40,7 @@ const label = (zip: string) => (climate.length > 1 ? zip : name);
       </tbody>
     </table>
   </div>
-  {flagged.length > 0 && <p class="gap">The nearest weather station for {flagged.map((c) => (climate.length > 1 ? c.zip : name)).join(' and ')} sits more than 300 m higher or lower than {climate.length === 1 ? 'here' : flagged.length > 1 ? 'those zips' : 'that zip'}, so the real temperatures can differ from these.</p>}
+  {flagged.map((c) => <p class="gap">The nearest weather station for {where(c)} is {reasons(c).join(', and ')}, so the real temperatures can differ from these.</p>)}
   {climate.length > 0 && <p class="note">Weather station: {climate.map((c) => `${titleCase(c.noaa_station_name)}, ${c.station_distance_km} km away`).join('; ')}.</p>}
   <p class="gap">Whether a home has air conditioning isn't published anywhere. On hot inland days it matters, so ask before you sign.</p>
 </FactBlock>

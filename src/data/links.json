@@ -792,6 +792,19 @@
   "verified_on": "2026-09-30"
  },
  {
+  "id": "sd-county-beach-bay",
+  "title": "Beach and bay water quality: closures and advisories (San Diego County)",
+  "url": "https://www.sandiegocounty.gov/content/sdc/deh/lwqd/beachandbay.html",
+  "agency": "San Diego County DEHQ",
+  "decision_area": "housing",
+  "phases": [
+   "90_60_30"
+  ],
+  "incentive": "Government: no commercial interest",
+  "vintage": "as of 2026-09-30",
+  "verified_on": "2026-09-30"
+ },
+ {
   "id": "ca-school-dashboard",
   "title": "California School Dashboard",
   "url": "https://www.caschooldashboard.org/",

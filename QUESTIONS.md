@@ -2,12 +2,12 @@
 
 ## Open (session 3, all neighborhoods, 2026-09-30)
 
-25. **Fire is the biggest gap on backcountry and East County pages.** CAL FIRE FHSZ is still blocked, so Ramona, Alpine and Lakeside say "not in our data yet" with a link. Honest, but it's the hazard that matters most there.
-26. **Aircraft noise covers Miramar only.** Every page now says so. Imperial Beach (next to the Imperial Beach helicopter field), Coronado and Point Loma, and Downtown (airport) are where it matters. NASNI contours are already a manual item.
-27. **Imperial Beach Charter has Dashboard levels but no CAASPP percentages.** A K–8 school should have tested grades, so this may be a join miss in `pull_schools.py` rather than suppression.
-28. **Del Mar / Solana Beach climate uses inland stations** (Miramar 15 km for 92014, Carlsbad Palomar 15 km for 92075). The July high is likely too warm for the coast. Not flagged, since the elevation rule doesn't catch it.
+25. **Fire (FHSZ).** Brian is downloading the CAL FIRE files to ~/Downloads; when he says they're there, move them to `raw/hazards/fhsz/` in the data repo and re-run `pull_hazards.py` (BLOCKED.md). No change until then.
+26. ~~Aircraft noise beyond Miramar.~~ **Done 2026-09-30.** NOLF Imperial Beach added to the manual-radius rule (91911, 91932, 92154; 92118 near both fields). Source for the hand-assignment: the 2015 NOLF IB ALUCP (county ALUC, on the Navy's 2011 AICUZ basis); the AICUZ itself wasn't found online. The "covers MCAS Miramar only" line stays. Open: SANDAG's noise layer now lists "North Island NAS"; that may replace the NASNI hand-assignment (data repo STATUS item 9).
+27. ~~Imperial Beach Charter scores.~~ **Fixed 2026-09-30.** The CAASPP filter in `pull_schools.py` kept Type ID 7 only; charters are 9 and 10. 109 charters gained scores. Still rated with no scores (no tested grades, so correct): Creekside Early Learning Center (P–K), Cardiff Elementary (K–2), Winter Gardens Elementary (K–1), Valley Center Primary (K–2), SDUSD Home & Hospital/Transition Support.
+28. ~~Inland stations on coastal zips.~~ **Done 2026-09-30.** New flags: station >10 km from the origin point, or a CEC-zone-7 zip on a station outside zone 7. Community zips caught: 91914, 91945, 91977, 91978, 92007, 92014, 92037, 92075, 92130 (distance) and 91941, 91942, 92119, 92129 (zone). CEC zone 7 reaches inland, so the zone rule catches La Mesa, College Area and Rancho Peñasquitos, not just the coast.
 29. **Coronado Unified has no boundary lookup** (the page says so). Worth finding before Coronado gets a lead.
-
+30. **Beach and bay link placement.** Shown on Coronado, Imperial Beach, Chula Vista (west) and National City, plus the Coronado and Imperial Beach base housing pages. Otay Mesa / San Ysidro (92154, Tijuana River valley) is left off; add it if the closures matter there.
 
 ## Open (session 2, base housing areas, 2026-09-30)
 

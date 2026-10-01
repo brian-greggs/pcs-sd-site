@@ -1,4 +1,4 @@
-# Site build — status (2026-09-30, session 3: all neighborhoods)
+# Site build — status (2026-09-30, session 3b: gap follow-ups)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages. Not built, by design: F2 sequence, F3 decision pages, F5 intake, F6 assistant.
 
@@ -23,7 +23,7 @@ Gaps (`src/lib/gaps.ts`): a zip with no row in a layer gets a one-line "No … f
 
 ## Checks (all pass on 2026-09-30, session 3)
 
-Source: no-score, no-bah, license, dated, data. Dist: 64 pages, dated (576 fact blocks), incentive (1,883 outbound links). The BAH check fired twice as expected (QUESTIONS 13); both reviewed and allow-listed per page in `scripts/bah_check_allow.json`. A planted $4,410 on another page still fails.
+Source: no-score, no-bah, license, dated, data. Dist: 64 pages, dated (576 fact blocks), incentive (1,889 outbound links; session 3b). The BAH check fired twice as expected (QUESTIONS 13); both reviewed and allow-listed per page in `scripts/bah_check_allow.json`. A planted $4,410 on another page still fails.
 
 Session 2: dated (240 fact blocks), no-bah (exact figures + context), no-demo, no-score, incentive (597 outbound links), noindex, placeholder (new). Tested by planting violations in `dist/`: the original 10 plus 3 placeholder patterns were all caught. A note set to `draft` with real text renders; a placeholder renders nothing.
 
@@ -37,4 +37,4 @@ See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian) and the LMH call l
 
 ## Next session
 
-Brian writes leads and gotchas (one `.md` per community; the page picks it up). Data-repo follow-ups from the session 3 spot checks are in QUESTIONS 25–29.
+Brian writes leads and gotchas (one `.md` per community; the page picks it up). Open from session 3b: FHSZ files (QUESTIONS 25), the NASNI/NOLF IB hand-assignment, Coronado's boundary lookup (29), beach-link placement (30).

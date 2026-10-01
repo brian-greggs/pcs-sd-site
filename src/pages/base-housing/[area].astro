@@ -169,7 +169,7 @@ const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii',
   <Childcare zips={zips} />
   <Access zips={zips} />
   <Climate zips={zips} name={area.name} />
-  <Hazards zips={zips} />
+  <Hazards zips={zips} waterQuality={['coronado', 'imperial-beach'].includes(area.id)} />
   <Notes notes={notes} part="gotchas" />
   <SourcesTable ids={['base_housing', 'base_housing_waits', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} extra={[{ title: 'Area grouping', source: 'Curated from LMH leasing-office zips and addresses', vintage: area.vintage, verified: area.verified_on, license: 'Ours' }]} />
 </Base>

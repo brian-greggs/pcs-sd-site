@@ -53,6 +53,8 @@ const CFD_LABEL: Record<string, string> = {
 const parcelLinkInline = ownership.some((o) => o.has_cfd === 'unknown' || o.has_cfd === 'mixed');
 const rentGap = gapLine(missingZips(zips, rent), 'HUD reference rent', OUT_OF_PULL);
 const ratioGap = gapLine(missingZips(zips, ratios), 'rent-to-allowance ratio', 'there’s no HUD reference rent to divide');
+// Coastal South Bay and Coronado: on the ocean or San Diego Bay, where beach and bay closures are common.
+const WATER_QUALITY = ['coronado', 'imperial-beach', 'chula-vista-west', 'national-city'];
 const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 ---
 
@@ -125,7 +127,7 @@ const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.
   <Childcare zips={zips} />
   <Access zips={zips} />
   <Climate zips={zips} name={community.name} />
-  <Hazards zips={zips} />
+  <Hazards zips={zips} waterQuality={WATER_QUALITY.includes(slug!)} />
   <Notes notes={notes} part="gotchas" />
   <SourcesTable ids={['rent', 'rent_to_bah', 'ownership', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} />
 </Base>

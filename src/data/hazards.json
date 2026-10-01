@@ -89,8 +89,8 @@
   "miramar_cnel65plus_pct": 0.0,
   "miramar_cnel70plus_pct": 0.0,
   "miramar_cnel75plus_pct": 0.0,
-  "aicuz_zone": "none",
-  "aicuz_note": null,
+  "aicuz_zone": "manual",
+  "aicuz_note": "within 3 km of NOLF Imperial Beach; contours not in GIS (hand-assign from the 2015 NOLF IB ALUCP, 2011 AICUZ basis)",
   "id": "91911",
   "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis)",
   "verified_on": "2026-09-18"
@@ -201,8 +201,8 @@
   "miramar_cnel65plus_pct": 0.0,
   "miramar_cnel70plus_pct": 0.0,
   "miramar_cnel75plus_pct": 0.0,
-  "aicuz_zone": "none",
-  "aicuz_note": null,
+  "aicuz_zone": "manual",
+  "aicuz_note": "within 3 km of NOLF Imperial Beach; contours not in GIS (hand-assign from the 2015 NOLF IB ALUCP, 2011 AICUZ basis)",
   "id": "91932",
   "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis)",
   "verified_on": "2026-09-18"
@@ -1082,7 +1082,7 @@
   "miramar_cnel70plus_pct": 0.0,
   "miramar_cnel75plus_pct": 0.0,
   "aicuz_zone": "manual",
-  "aicuz_note": "within 3 km of NAS North Island; NASNI contours not in GIS",
+  "aicuz_note": "within 3 km of NAS North Island; contours not in GIS (hand-assign from the NASNI AICUZ)",
   "id": "92101",
   "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis)",
   "verified_on": "2026-09-18"
@@ -1338,7 +1338,7 @@
   "miramar_cnel70plus_pct": 0.0,
   "miramar_cnel75plus_pct": 0.0,
   "aicuz_zone": "manual",
-  "aicuz_note": "within 3 km of NAS North Island; NASNI contours not in GIS",
+  "aicuz_note": "within 3 km of NAS North Island and NOLF Imperial Beach; contours not in GIS (hand-assign from the NASNI AICUZ; 2015 NOLF IB ALUCP, 2011 AICUZ basis)",
   "id": "92118",
   "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis)",
   "verified_on": "2026-09-18"
@@ -1561,8 +1561,8 @@
   "miramar_cnel65plus_pct": 0.0,
   "miramar_cnel70plus_pct": 0.0,
   "miramar_cnel75plus_pct": 0.0,
-  "aicuz_zone": "none",
-  "aicuz_note": null,
+  "aicuz_zone": "manual",
+  "aicuz_note": "within 3 km of NOLF Imperial Beach; contours not in GIS (hand-assign from the 2015 NOLF IB ALUCP, 2011 AICUZ basis)",
   "id": "92154",
   "vintage": "ZCTA 2023; NFHL as of retrieval; Miramar ALUCP 2008 (2005 AICUZ basis)",
   "verified_on": "2026-09-18"
