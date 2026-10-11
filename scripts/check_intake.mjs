@@ -12,6 +12,10 @@
 //   intake-words     plan text passes the same word lists as the pages (scripts/principle_lists.mjs):
 //                    no demographic descriptors, no score/index labels, no placeholder text
 //   intake-config    the Q8 priority list and the tradeoff table are well formed
+//   (failures print the first 20 per check; ALL=1 node scripts/check_intake.mjs prints every one)
+//   intake-dates     a line's source dates are only for facts on that line, and every fact it shows
+//                    is dated: each date label ("Commute: …", "Pets: …") needs its fact in the line,
+//                    and a drive time, ratio, wait, pet policy, Mello-Roos status or center count needs its label
 //
 // The plan is built in the browser from data embedded in /plan/, so the page checks
 // can't see its text. Instead this script loads the same rules (src/lib/intake/rules.js)
@@ -113,6 +117,47 @@ function checkSource(where, s) {
   } else if (!s.url.startsWith('/') || !pageExists(s.url)) fail('intake-sources', where, `source page doesn't exist in dist/: ${s.url}`);
   wordsFail(where, `${s.title} ${s.dates}`, false);
 }
+// Date labels the rules write, and what each one dates (matched in the line's text and link texts).
+const DATE_FACT = {
+  'Commute': /\b\d+(?:–\d+)? min\b|0700 drive|minutes/,
+  'Rent ratio': /allowance/,
+  'Mello-Roos': /Mello-Roos/,
+  'Schools': /school|serves/i,
+  'Child care': /child care|licensed centers|infant/i,
+  'Waits': /\bwait|\bon the \w+ \d{4} list\b/i,
+  'Wait times': /\bwait/i,
+  'Pets': /\b(?:pets?|dogs?|cats?)\b/i,
+  'Base housing': /\bbase housing\b/i,
+  'Bedroom rule': /bedroom/i,
+};
+// Facts a line can show, and the labels that date them.
+const FACT_DATE = [
+  [/\b\d+(?:–\d+)? min\b/, ['Commute']],
+  [/\d+(?:–\d+)?% of the [^;]*allowance/, ['Rent ratio']],
+  [/\bmonths\b/, ['Waits', 'Wait times']],
+  [/\b(?:pets?|dogs?|cats?)\b/i, ['Pets']],
+  [/Mello-Roos/, ['Mello-Roos']],
+  [/licensed centers/, ['Child care']],
+];
+function checkDates(w, line, sectionId) {
+  if (sectionId === 'tradeoff') return; // hand-written, dated by its author
+  const shown = [line.text, ...(line.ext ?? []).map((x) => x.text)].join(' ');
+  const labels = new Set();
+  for (const src of line.sources) {
+    if (/^https?:/.test(src.url)) continue; // an official link, dated by its own verified date
+    for (const m of src.dates.matchAll(/(?:^|\.\s)([A-Z][A-Za-z -]*?):/g)) labels.add(m[1]);
+  }
+  for (const l of labels) {
+    if (!DATE_FACT[l]) fail('intake-dates', w, `unknown date label "${l}" (add it to DATE_FACT in check_intake.mjs)`);
+    else if (!DATE_FACT[l].test(shown)) fail('intake-dates', w, `dated "${l}" but shows no ${l.toLowerCase()} fact`);
+  }
+  for (const [re, need] of FACT_DATE) {
+    if (re.test(shown) && !need.some((l) => labels.has(l)) && line.sources.some((src) => !/^https?:/.test(src.url))) {
+      fail('intake-dates', w, `shows "${shown.match(re)[0]}" without a ${need.join(' or ')} date`);
+    }
+  }
+}
+
 const seenLines = new Set();
 const seenSections = new Set();
 let plans = 0;
@@ -134,7 +179,7 @@ function checkPlan(plan, where) {
       if (!line.text?.trim()) fail('intake-sources', w, 'empty line');
       wordsFail(w, line.text, false);
       if (!Array.isArray(line.sources) || !line.sources.length) fail('intake-sources', w, 'line without a source');
-      else line.sources.forEach((src) => checkSource(w, src));
+      else { line.sources.forEach((src) => checkSource(w, src)); checkDates(w, line, s.id); }
       for (const x of line.ext ?? []) {
         if (!x.url?.startsWith('https://') || !x.text?.trim() || !x.incentive?.trim()) fail('intake-sources', w, `outbound link without https, text or incentive: ${JSON.stringify(x)}`);
         else wordsFail(w, `${x.text} ${x.incentive}`, false);
@@ -245,7 +290,7 @@ if (!existsSync(planFile)) {
   }
 }
 
-const checks = ['intake-network', 'intake-sources', 'intake-no-bah', 'intake-words', 'intake-config'];
+const checks = ['intake-network', 'intake-sources', 'intake-no-bah', 'intake-words', 'intake-config', 'intake-dates'];
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
 console.log('\nStarting plan checks (dist)');
 for (const c of checks) {
@@ -253,7 +298,7 @@ for (const c of checks) {
   if (!fs.length) console.log(`  PASS  ${c}`);
   else {
     console.log(`  FAIL  ${c} (${fs.length})`);
-    for (const f of fs.slice(0, 20)) console.log(`        ${f.where}: ${f.what}`);
+    for (const f of (process.env.ALL ? fs : fs.slice(0, 20))) console.log(`        ${f.where}: ${f.what}`);
     if (fs.length > 20) console.log(`        … and ${fs.length - 20} more`);
   }
 }

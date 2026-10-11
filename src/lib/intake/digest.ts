@@ -51,15 +51,16 @@ export async function intakeDigest() {
 
   const { areas, month, verifiedOn } = await baseHousingAreas();
   const areaRows = await Promise.all(areas.filter((a) => a.has_page).map(async (a) => {
-    // Pet policy per community, as the area page shows it: the wait list's printed policy wins, else LMH's page.
-    const pets: string[] = [];
+    // Pet policy per community, as the area page shows it: the wait list's printed policy wins, else LMH's
+    // page. Kept per community (with where it comes from) so the plan can name communities and date each line.
+    const pets: { community: string; policy: string; from: 'list' | 'lmh' }[] = [];
     const limits: string[] = [];
     for (const m of a.members) {
       const printed = [...new Set(a.waits.filter((w) => w.community_slugs.includes(m.id)).map((w) => w.pet_policy).filter(Boolean))];
       if (printed.length) {
-        pets.push(...printed.map((t) => t.replace(/\bNO PETS\b/, 'No pets').replace(/\bPETS\b/, 'pets')));
+        for (const t of printed) pets.push({ community: m.community, policy: t.replace(/\bNO PETS\b/, 'No pets').replace(/\bPETS\b/, 'pets'), from: 'list' });
         limits.push(...printed);
-      } else if (m.pet_policy === 'pet-friendly (stated)') pets.push('pets allowed (LMH page, no details)');
+      } else if (m.pet_policy === 'pet-friendly (stated)') pets.push({ community: m.community, policy: 'pets allowed (LMH page, no details)', from: 'lmh' });
     }
     return {
       id: a.id, name: a.name, base_group: a.base_group,
@@ -70,7 +71,8 @@ export async function intakeDigest() {
         const s = parseWait(w.wait_time_stated);
         return { band: w.rank_band, br: Number(w.bedrooms), lo: s ? s[0] : null, hi: s ? s[1] : null };
       }),
-      pets: [...new Set(pets)],
+      communities: a.members.length,
+      pets,
       petLimits: [...new Set(limits)],
     };
   }));
