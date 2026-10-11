@@ -1,6 +1,18 @@
-# Site build — status (2026-10-11, session 5e: answers to QUESTIONS 42–58; rules v0.2, v0.5.2)
+# Site build — status (2026-10-11, session 6: plan rules v0.3, v0.5.3)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 6: plan rules v0.3 (v0.5.3)
+
+Branch `claude/awesome-wozniak-hx88dg`, restarted from `origin/main` after PR #1 merged. From Brian's phone review (O1–O3, Naval Base San Diego, children 0–2 and 3–5, one dog, priorities: admin sequence, then pets):
+
+1. **Infant-care gap in "Watch for"** whenever the household has a child 0–2, whatever the priorities. It cites the Child care section of the neighborhood nearest the base (every neighborhood page states the gap), dated by that section, with the county referral service link. The same line left the child care lead, so it isn't said twice. Not a gap: a page already states it.
+2. **Pet lines name communities.** The digest keeps each community's policy and where it comes from (the wait list or LMH's page). An area whose communities all share one policy keeps one line; otherwise there's one line per distinct policy, naming its communities ("Paradise Hills base housing, Bayview Hills: …" and "…, Paradise Gardens: …"). Communities that state no policy aren't listed, and the section note says so.
+3. **Dates only for the facts on the line.** Base housing sources now take the facts they date (`waits`, `pets-list`, `pets-lmh`, `commute`). Fixed by that: pet lines (were "Waits and pets … Commute …", now "Pets: …" from the list or the LMH pages), the "Watch for" wait line and the more-than-two-pets line (no commute date), and the base housing list in the where-to-live lead (no pets date; commute only when a drive is shown). Also found in the other leads: child care lines show drive minutes but carried only the child care date; they now carry the commute date too. The skip line for base housing is labeled "Base housing", not "Waits". Neighborhood, cost, schools, spouse and bedroom lines were already right.
+
+**New check `intake-dates`** (in `scripts/check_intake.mjs`): every date label on a line's sources must have its fact on the line (a "Commute" date needs drive minutes, a "Pets" date a pet policy, and so on), and every drive time, rent ratio, wait, pet policy, Mello-Roos status or center count on a line needs its date. A new label fails until the check knows what it dates. Planting the old pet sources and the old child care sources failed it (318 lines for the child care one).
+
+Checks on 2026-10-11: all page checks; all six intake checks (26,789 plans, 15,937 distinct lines); the three Functions checks; layout clean on 75 pages at four widths. Rules v0.3, logged in the changelog (v0.5.3).
 
 ## Session 5e: answers to QUESTIONS 42–58 (rules v0.2, v0.5.2)
 

@@ -99,3 +99,10 @@
 - **A fallback only fires if the gate it waits on can close.** The first follow-up design used the previous question only when the new one retrieved nothing relevant. But "What about from Santee?" names a page, so it always counted as relevant and got Santee's Schools section. Folding the previous question in every time, at low weight, with the named page taken from the new question alone, fixed it without letting the old topic win.
 - **Explain a gap in the note, not as a sourced line.** "The move sequence isn't written yet" has no page to cite. It goes in the lead's note (which states no facts, QUESTIONS 44), so the rule "every line has a source" stays intact.
 - **A date is part of the claim.** The Pendleton area line carried the Navy wait list's date, from a list that doesn't cover Pendleton. Citing the right page isn't enough; the date has to be the one that page gives that section.
+
+## Session 6 (2026-10-11): rules v0.3
+
+- **A source line should be built from the facts, not from the page.** One `areaSource(ar)` dated every base housing line the same way, with waits, pets and commute, so pet lines carried a commute date and wait lines a pets date. Passing the facts a line uses (`areaSource(ar, 'pets-list')`) makes the date follow the fact.
+- **"Has a date" was too weak a check.** `intake-sources` only asked for a year somewhere in the source line, so a wrong date passed. `intake-dates` ties each date label to a pattern for its fact, both ways. Its first run flagged two phrasings I hadn't thought of: a wait fact worded "no 3-bed rows … on the October 2026 list", and pet facts worded with "dog" and "cat". It also found the child care lines, which show drive minutes with no commute date.
+- **Joining values loses their keys.** Deduplicating an area's pet policies into one string dropped which community each belonged to. Keep the per-community rows in the data and decide how to group them when writing the line.
+- **A household fact that matters regardless of priorities belongs in "Watch for", not in a lead.** The infant-care gap lived in the child care lead, so a family with a baby who ranked pets first never saw it.

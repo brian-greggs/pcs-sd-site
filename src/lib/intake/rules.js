@@ -14,7 +14,7 @@
 //
 // Changing a rule: bump RULES_VERSION and add a changelog entry.
 
-export const RULES_VERSION = 'v0.2';
+export const RULES_VERSION = 'v0.3';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
@@ -196,8 +196,16 @@ function context(a, data, config) {
     url: `/communities/${n.slug}/`, title: n.name,
     dates: what.map((w) => `${DATE_LABEL[w]}: ${data.dates[w]}`).join('. '),
   });
-  // Camp Pendleton isn't on the wait list, so its page dates that section by the LMH pages instead.
-  const areaSource = (ar) => ({ url: `/base-housing/${ar.id}/`, title: `${ar.name} base housing`, dates: `${ar.waitsInData === false ? `Wait times: LMH pages ${ar.lmhVintage}` : `Waits and pets: ${data.dates.waits}`}. Commute: ${data.dates.commute}` });
+  // A base housing area page, dated only by the facts the line uses: 'waits' (Camp Pendleton isn't on the
+  // wait list, so its page dates that section by the LMH pages), 'pets-list' (printed on the wait list),
+  // 'pets-lmh' (stated on LMH's community pages) and 'commute'.
+  const AREA_DATE = {
+    waits: (ar) => (ar.waitsInData === false ? `Wait times: LMH pages ${ar.lmhVintage}` : `Waits: ${data.dates.waits}`),
+    'pets-list': () => `Pets: ${data.dates.waits}`,
+    'pets-lmh': (ar) => `Pets: LMH pages ${ar.lmhVintage}`,
+    commute: () => `Commute: ${data.dates.commute}`,
+  };
+  const areaSource = (ar, ...what) => ({ url: `/base-housing/${ar.id}/`, title: `${ar.name} base housing`, dates: what.map((w) => AREA_DATE[w](ar)).join('. ') });
   const linkSource = (id) => {
     const l = data.links[id];
     return { url: l.url, title: l.title, dates: `verified ${l.verified_on}`, incentive: l.incentive };
@@ -243,7 +251,7 @@ function areaLine(c, { ar, drive }) {
       ? `latest wait for ${c.a.band}, ${c.brText}: ${span(w.lo, w.hi)} months`
       : w.rows ? `no ${c.brText} homes open to ${c.a.band} on the ${c.data.dates.month} list` : `no ${c.brText} rows for ${c.a.band} on the ${c.data.dates.month} list`;
   }
-  return { text: `${ar.name}: ${drive ? `${drive.text}; ` : ''}${wait}`, sources: [c.areaSource(ar)] };
+  return { text: `${ar.name}: ${drive ? `${drive.text}; ` : ''}${wait}`, sources: [c.areaSource(ar, 'waits', ...(drive ? ['commute'] : []))] };
 }
 
 function leadPlaces(c) {
@@ -314,13 +322,11 @@ function leadChildcare(c) {
   const rows = c.placesIn(NEAR_TIERS);
   const lines = rows.map(({ n, drive }) => ({
     text: `${n.name} (${drive.text}): ${n.care.centers} licensed centers, ${n.care.infant} licensed for infants, ${n.care.homes} large family child care homes`,
-    sources: [c.nbSource(n, 'childcare')],
+    sources: [c.nbSource(n, 'childcare', 'commute')],
   }));
   const nearest = rows[0];
   if (nearest) {
-    if (hasInfant(c.a)) {
-      lines.push({ text: 'Missing from these counts: small family child care homes (up to 8 children). They’re licensed, but the state doesn’t publish them, and they’re often where infant care is', sources: [c.nbSource(nearest.n, 'childcare')] });
-    }
+    // The infant-care gap is in "Watch for" whenever a child is 0–2 (rules v0.3), so it isn't repeated here.
     lines.push({ text: 'The county’s free child care referral service', ext: [c.ext('ymca-childcare-resource-service')], sources: [c.nbSource(nearest.n, 'childcare')] });
     lines.push({ text: 'Requesting military child care', ext: [c.ext('militarychildcare-request-care')], sources: [c.nbSource(nearest.n, 'childcare')] });
   }
@@ -349,11 +355,22 @@ function leadSpouse(c) {
 
 function leadPets(c) {
   if (!c.open.housing) return [];
-  const lines = c.areas.filter(({ ar }) => ar.pets.length).map(({ ar }) => ({
-    text: `${ar.name} base housing: ${ar.pets.join('; ')}`,
-    sources: [c.areaSource(ar)],
-  }));
-  return lines.length ? [{ id: 'lead', heading: 'Pets in base housing', note: 'Pet policies as printed on the latest wait list, or as the LMH community page states them when the list doesn’t.', lines }] : [];
+  // One line per distinct policy, naming its communities, unless the whole area shares one policy
+  // (rules v0.3: "2 pets …; 2 pets … Upstairs …" told nobody which community was which).
+  const lines = c.areas.filter(({ ar }) => ar.pets.length).flatMap(({ ar }) => {
+    const groups = new Map();
+    for (const p of ar.pets) {
+      const key = `${p.from}|${p.policy}`;
+      if (!groups.has(key)) groups.set(key, { ...p, communities: [] });
+      groups.get(key).communities.push(p.community);
+    }
+    const all = [...groups.values()];
+    if (all.length === 1 && all[0].communities.length === ar.communities) {
+      return [{ text: `${ar.name} base housing: ${all[0].policy}`, sources: [c.areaSource(ar, `pets-${all[0].from}`)] }];
+    }
+    return all.map((g) => ({ text: `${ar.name} base housing, ${list(g.communities)}: ${g.policy}`, sources: [c.areaSource(ar, `pets-${g.from}`)] }));
+  });
+  return lines.length ? [{ id: 'lead', heading: 'Pets in base housing', note: 'Pet policies as printed on the latest wait list, or as the LMH community page states them when the list doesn’t. Communities that state no policy aren’t listed.', lines }] : [];
 }
 
 // Priorities without a builder (the admin sequence, move logistics) get no lead until F2 exists.
@@ -379,9 +396,21 @@ function modifiers(c) {
       if (shortest.w.lo > t.windowMonths) {
         lines.push({
           text: `Every base housing wait for ${c.a.band}, ${c.brText} on the ${c.data.dates.month} list runs past your report window (${t.label.toLowerCase()}). The shortest is ${span(shortest.w.lo, shortest.w.hi)} months, at ${shortest.ar.name}. Plan on renting first and moving in when a home comes up`,
-          sources: [c.areaSource(shortest.ar)],
+          sources: [c.areaSource(shortest.ar, 'waits')],
         });
       }
+    }
+  }
+  // A child 0–2: the infant-care gap, whatever the priorities (rules v0.3). Every neighborhood page's
+  // Child care section states it; the line cites the nearest one to the base.
+  if (hasInfant(c.a)) {
+    const near = c.placesIn(NEAR_TIERS)[0] ?? c.placesIn(['45-60', '60plus'])[0];
+    if (near) {
+      lines.push({
+        text: 'Infant care: small family child care homes (up to 8 children) aren’t in the child care counts. They’re licensed, but the state doesn’t publish them, and they’re often where infant care is. The way to find them is the county’s free referral service',
+        ext: [c.ext('ymca-childcare-resource-service')],
+        sources: [c.nbSource(near.n, 'childcare')],
+      });
     }
   }
   // Camp Pendleton: no wait data. Say so once, with the page that already states the gap.
@@ -399,7 +428,7 @@ function modifiers(c) {
     if (limited.length && limited.every(({ ar }) => ar.petLimits.every((p) => (petLimit(p) ?? 0) <= 2))) {
       lines.push({
         text: `You listed ${pets} pets. Every pet policy printed for these base housing areas allows two at most`,
-        sources: limited.slice(0, 3).map(({ ar }) => c.areaSource(ar)),
+        sources: limited.slice(0, 3).map(({ ar }) => c.areaSource(ar, 'pets-list')),
       });
     }
   }
@@ -429,7 +458,7 @@ function skipList(c) {
   if (!hasSchoolAge(c.a)) lines.push({ text: 'Schools sections: no children 6–18 in your household', sources: [{ url: '/neighborhoods/', title: 'Neighborhood pages, Schools section', dates: `Schools: ${c.data.dates.schools}` }] });
   if (!hasUnder6(c.a)) lines.push({ text: 'Child care sections: no children under 6 in your household', sources: [{ url: '/neighborhoods/', title: 'Neighborhood pages, Child care section', dates: `Child care: ${c.data.dates.childcare}` }] });
   if (!c.open.buying) lines.push({ text: 'Mello-Roos and home values under Buying: you’re not buying', sources: [{ url: '/neighborhoods/', title: 'Neighborhood pages, Cost section', dates: `Mello-Roos: ${c.data.dates.ownership}` }] });
-  if (!c.open.housing) lines.push({ text: 'Base housing pages and the base housing half of your base page: you’re not considering base housing', sources: [{ url: '/base-housing/', title: 'Base housing', dates: `Waits: ${c.data.dates.waits}` }] });
+  if (!c.open.housing) lines.push({ text: 'Base housing pages and the base housing half of your base page: you’re not considering base housing', sources: [{ url: '/base-housing/', title: 'Base housing', dates: `Base housing: ${c.data.dates.waits}` }] });
   return lines.length ? [{ id: 'skip', heading: 'You can skip', note: 'Parts of the site your answers make irrelevant.', lines }] : [];
 }
 
