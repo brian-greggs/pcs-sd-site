@@ -1,6 +1,18 @@
-# Site build — status (2026-10-11, session 6: plan rules v0.3, v0.5.3)
+# Site build — status (2026-10-11, session 7: plan rules v0.4, v0.5.4)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 7: plan rules v0.4 (v0.5.4)
+
+Branch `claude/awesome-wozniak-hx88dg`, restarted from `origin/main` after PR #2 merged. From Brian's phone review (Camp Pendleton, E5–E6, under 30 days, single, 2-bed, 3 dogs, renting + base housing; where to live, then cost vs. BAH):
+
+1. **Tiers from the top of the drive range.** In the plan, a place's tier comes from the top of its range at that base (under 30 / 30–44 / 45–59 / 60+), not from its closest zip. So Vista (14–35 to Camp Pendleton) is no longer "under 30 minutes". This applies everywhere the plan uses a tier: the where-to-live lead (under 30), the cost lead, the schools and child care leads (under 45) and the infant-care line's nearest neighborhood. With the base not chosen, the tier is the top of the drive to the nearest base. New check `intake-tiers`: in a section headed "under 30 minutes" or "within 45 minutes", the top of every line's drive range must be under the limit; the old closest-zip rule fails it (40,369 lines).
+   **Base pages disagree** (not changed; QUESTIONS 59): `/base/<slug>/` groups "Off base" by the closest zip's tier, as QUESTIONS 41 describes. 67 neighborhood/base pairs would move, at least one at every base. Examples: Vista 14–35 sits under "Under 30 min" on the Camp Pendleton page; Escondido 20–65 under "Under 30 min" on the Miramar page; Chula Vista (west) 24–30 and Spring Valley / Lemon Grove 20–40 under "Under 30 min" on the NBSD page. The "Tier" column in the commute table on every neighborhood and base housing page uses the same closest-zip rule. Base housing areas aren't grouped by tier on base pages.
+2. **Camp Pendleton and the untied areas.** No page says Pendleton families' eligibility for the areas LMH ties to no base is unconfirmed (PRD Q9), so per the instruction it's a gap (in `GAPS`), and Pendleton plans leave those areas out: the base housing list, the wait check, the pet lines and the more-than-two-pets line. The section note now says "The areas Liberty Military Housing ties to Camp Pendleton". The Camp Pendleton base page still lists them unqualified (QUESTIONS 60).
+3. **Wait vs. report window: at or past.** Flagged when the shortest matching wait starts at or after the window (`lo >= window`); under 30 days with a 1–3 month wait now flags. Wording: "No base housing wait … fits your report window". Also fixed: "the shortest" was the range across every matching row (it printed "1–18 months" for E7–E9 4-bed, merging 4- and 5-bed rows); it's now the single row that starts soonest. The courtesy-move text stays out (no page states it).
+4. **More than two pets** cites every area the claim covers. The base housing index lists no pet policies, so it can't stand in.
+
+Checks on 2026-10-11: all page checks; all seven intake checks (26,789 plans); the three Functions checks; layout clean on 75 pages at four widths. Rules v0.4, logged in the changelog (v0.5.4).
 
 ## Session 6: plan rules v0.3 (v0.5.3)
 
