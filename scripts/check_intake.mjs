@@ -14,6 +14,9 @@
 //   intake-config    the Q8 priority list and the tradeoff table are well formed
 //   intake-tiers     a section headed "under 30 minutes" or "within 45 minutes" shows only places whose
 //                    whole drive range is under that (the first "N–M min" on each line; rules v0.4)
+//   page-tiers       base pages group each neighborhood by the top of its drive range (every card's range fits
+//                    its group, and each group holds exactly the neighborhoods the plan puts in that tier for
+//                    that base), and every commute table's Tier column matches its row's range (QUESTIONS 59)
 //   (failures print the first 20 per check; ALL=1 node scripts/check_intake.mjs prints every one)
 //   intake-dates     a line's source dates are only for facts on that line, and every fact it shows
 //                    is dated: each date label ("Commute: …", "Pets: …") needs its fact in the line,
@@ -33,6 +36,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED, SCORE_WORDS, SCORE_ALLOWED, PLACEHOLDER_PATTERNS } from './principle_lists.mjs';
 import * as rules from '../src/lib/intake/rules.js';
+import { tierOf, TIER_LABEL } from '../src/lib/tiers.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
@@ -130,6 +134,7 @@ const DATE_FACT = {
   'Wait times': /\bwait/i,
   'Pets': /\b(?:pets?|dogs?|cats?)\b/i,
   'Base housing': /\bbase housing\b/i,
+  'Eligibility note': /haven.t confirmed whether Camp Pendleton families can apply/i,
   'Bedroom rule': /bedroom/i,
 };
 // Facts a line can show, and the labels that date them.
@@ -140,6 +145,7 @@ const FACT_DATE = [
   [/\b(?:pets?|dogs?|cats?)\b/i, ['Pets']],
   [/Mello-Roos/, ['Mello-Roos']],
   [/licensed centers/, ['Child care']],
+  [/haven.t confirmed whether Camp Pendleton families can apply/i, ['Eligibility note']],
 ];
 function checkDates(w, line, sectionId) {
   if (sectionId === 'tradeoff') return; // hand-written, dated by its author
@@ -295,12 +301,49 @@ if (!existsSync(planFile)) {
     const sample = make({ ...HOUSEHOLDS[5], base: 'MIRAMAR', band: 'E5–E6', bedrooms: 'help', open: ['unsure'], timeline: 'under30', priorities: ['where', 'cost'] });
     if (JSON.stringify(rules.buildPlan(sample, data, config)) !== JSON.stringify(rules.buildPlan(structuredClone(sample), data, config))) fail('intake-sources', 'determinism', 'the same answers gave two different plans');
 
+    // page-tiers: base pages and commute tables against the same rule and the plan's data.
+    const htmlOf = (rel) => readFileSync(join(DIST, rel), 'utf-8');
+    const minsOf = (t) => { const m = t.match(/(\d+)(?:–(\d+))? min/); return m ? [Number(m[1]), Number(m[2] ?? m[1])] : null; };
+    let cards = 0, tableRows = 0;
+    for (const b of data.bases) {
+      const rel = `base/${b.slug}/index.html`;
+      if (!existsSync(join(DIST, rel))) { fail('page-tiers', rel, 'base page not built'); continue; }
+      const html = htmlOf(rel);
+      const onPage = new Map();
+      for (const [, key, body] of html.matchAll(/<section[^>]*data-fact="tier-([^"]+)"[^>]*>([\s\S]*?)<\/section>/g)) {
+        for (const m of body.matchAll(/href="\/communities\/([^/]+)\/[^"]*"[\s\S]*?<span class="row-min">([^<]+)<\/span>/g)) {
+          cards++;
+          onPage.set(m[1], key);
+          const r = minsOf(m[2]);
+          if (!r || tierOf(r[1]) !== key) fail('page-tiers', rel, `${m[1]} (${m[2]}) is under "${TIER_LABEL[key]}"`);
+        }
+      }
+      for (const n of data.neighborhoods) {
+        const d = n.drives[b.code];
+        if (!d) continue;
+        const want = tierOf(d.hi);
+        if (onPage.get(n.slug) !== want) fail('page-tiers', rel, `${n.name} (${d.lo}–${d.hi} min) is in "${TIER_LABEL[onPage.get(n.slug)] ?? 'no group'}" on the page, "${TIER_LABEL[want]}" in the plan`);
+      }
+    }
+    const pagesWithCommute = [...data.neighborhoods.map((n) => `communities/${n.slug}/index.html`), ...data.areas.map((a) => `base-housing/${a.id}/index.html`)];
+    for (const rel of pagesWithCommute) {
+      const sec = (htmlOf(rel).match(/<section[^>]*data-fact="commute"[^>]*>([\s\S]*?)<\/section>/) ?? [])[1] ?? '';
+      for (const [, row] of sec.matchAll(/<tr>([\s\S]*?)<\/tr>/g)) {
+        const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) => c[1].replace(/<[^>]+>/g, ' ').trim());
+        if (cells.length < 4) continue;
+        tableRows++;
+        const r = minsOf(cells[1]);
+        if (!r || cells[3] !== TIER_LABEL[tierOf(r[1])]) fail('page-tiers', rel, `commute row "${cells[0].slice(0, 40)}": ${cells[1]} labeled "${cells[3]}"`);
+      }
+    }
+    passes.push(`page-tiers: ${cards} base page cards in ${data.bases.length} base pages, ${tableRows} commute table rows`);
+
     passes.push(`intake: ${plans.toLocaleString('en-US')} plans, ${seenLines.size.toLocaleString('en-US')} distinct lines, ${seenSections.size} distinct section headings checked in ${((Date.now() - t0) / 1000).toFixed(1)} s; ${fallbackLead.toLocaleString('en-US')} lead with the second priority (the first has no lead yet), ${noLead.toLocaleString('en-US')} say they have no lead yet`);
     passes.push(`intake: rules ${rules.RULES_VERSION}; ${config.priorities.length} priorities, ${config.tradeoffs.length} tradeoff pairs written`);
   }
 }
 
-const checks = ['intake-network', 'intake-sources', 'intake-no-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers'];
+const checks = ['intake-network', 'intake-sources', 'intake-no-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers', 'page-tiers'];
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
 console.log('\nStarting plan checks (dist)');
 for (const c of checks) {

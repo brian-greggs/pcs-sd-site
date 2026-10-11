@@ -2,6 +2,7 @@
 // for /base/<slug>/. The code matches the commute data; the location line is ours
 // (geography only, no facts that need a date).
 import { getCollection } from 'astro:content';
+import { tierOf } from './tiers.js';
 
 export const BASES = [
   { code: 'NBSD', slug: 'naval-base-san-diego', short: 'Naval Base San Diego', location: '32nd Street, on the bay south of downtown' },
@@ -28,14 +29,23 @@ export const GROUP_BASES: Record<string, BaseCode[]> = {
 };
 const NAVY: BaseCode[] = ['NBSD', 'NASNI', 'NAB', 'NBPL', 'NMCSD'];
 
+// The Camp Pendleton base page's line above the areas LMH ties to no base (QUESTIONS 60, Brian
+// 2026-10-11; PRD Q9 open). The plan quotes it and cites the page, with this date.
+export const PENDLETON_UNTIED_NOTE = {
+  text: 'We haven’t confirmed whether Camp Pendleton families can apply to these areas. Ask LMH.',
+  written: '2026-10-11',
+};
+
 export type Drive = { code: BaseCode; lo: number; hi: number; tier: string };
 
-// 0700 drive from a set of zips to every base: the range across the zips, nearest first.
+// 0700 drive from a set of zips to every base: the range across the zips, nearest first, and the tier
+// from the top of that range.
 export async function drives(zips: string[]): Promise<Drive[]> {
   const rows = (await getCollection('commute')).map((r) => r.data).filter((r) => zips.includes(r.zip));
   return BASES.map((b) => {
     const rs = rows.filter((r) => r.base === b.code).sort((x, y) => x.peak_am_min - y.peak_am_min);
-    return rs.length ? { code: b.code, lo: rs[0].peak_am_min, hi: rs.at(-1)!.peak_am_min, tier: rs[0].tier } : null;
+    // Tier from the top of the range (src/lib/tiers.js), not the closest zip.
+    return rs.length ? { code: b.code, lo: rs[0].peak_am_min, hi: rs.at(-1)!.peak_am_min, tier: tierOf(rs.at(-1)!.peak_am_min) } : null;
   }).filter((d): d is Drive => !!d).sort((a, b) => a.lo - b.lo);
 }
 

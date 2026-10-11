@@ -113,3 +113,10 @@
 - **"Shortest" means one thing, not a span.** Merging every matching row into min-low/max-high is right for "the wait ranges from …" and wrong for "the shortest is …": it printed "1–18 months" by joining a 1–3 row and a 16–18 row. Keep both: the range for the lead, the single soonest row for the warning.
 - **Off-by-one in the language too.** "Runs past the window" with `lo > window` let a 1–3 month wait pass for someone reporting in under 30 days. At or past (`>=`) matches what a family means by "won't be ready when I arrive"; the line now says "doesn't fit your report window".
 - **When the site can't qualify a claim, don't make it.** Listing the untied areas for Pendleton families implied they're eligible. With no page stating the doubt, leaving them out is the honest version of "show it with a note".
+
+## Session 8 (2026-10-11): one tier rule
+
+- **One rule, one function.** The tier was computed three ways in three places: the commute data's per-zip column, `drives()` and the plan's own `tierOf`. A shared `src/lib/tiers.js`, imported by the plan rules (plain JS), the base pages and the commute table, is what makes "the page and the plan can't disagree" true by construction. The check makes it stay true.
+- **Check the page against the plan, not each against itself.** `intake-tiers` proved the plan was consistent with its headings, and the base pages were consistent with their own (old) rule; neither caught the disagreement. `page-tiers` reads the built base pages and compares each group with the tier the plan computes from the same data.
+- **Count a change two ways before reporting it.** The 67 moves were counted from the data before the change, then again by rebuilding the pages with the old rule and running the new check. Both gave the same per-base numbers.
+- **A caveat a family reads on the page should be the same one the plan cites.** The Pendleton line's text and date live in one constant used by the base page and the digest, so the plan can quote and date it exactly.
