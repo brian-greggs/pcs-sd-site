@@ -7,7 +7,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import Toc from '../../components/Toc.astro';
-import { BASES, baseBySlug, drives, GROUP_BASES, minutes, TIERS } from '../../lib/bases';
+import { BASES, baseBySlug, drives, GROUP_BASES, minutes, PENDLETON_UNTIED_NOTE, TIERS } from '../../lib/bases';
 import { baseHousingAreas } from '../../lib/baseHousing';
 import { range } from '../../lib/format';
 import { provenance } from '../../lib/prov';
@@ -40,8 +40,8 @@ const untied = withDrive.filter((a) => a.base_group === 'NONE').sort(byDrive);
 const span = (lo: number[], hi: number[], unit: string) => (lo.length ? range(Math.min(...lo), Math.max(...hi), unit) : '—');
 const tiers = TIERS.map((t) => ({ ...t, id: `tier-${t.key}`, rows: rows.filter((r) => r.drive.tier === t.key) })).filter((t) => t.rows.length);
 const tierSummary = (rs: typeof rows) =>
-  // The tier comes from each neighborhood's closest zip, so the summary gives those minutes (rows show the full range).
-  `${rs.length} ${rs.length === 1 ? 'neighborhood' : 'neighborhoods'} · ${span(rs.map((r) => r.drive.lo), rs.map((r) => r.drive.lo), ' min')}${rs.some((r) => r.drive.hi !== r.drive.lo) ? ' from the closest zip' : ''}`;
+  // A neighborhood's tier is the top of its range (src/lib/tiers.js), so every row's full range fits its group.
+  `${rs.length} ${rs.length === 1 ? 'neighborhood' : 'neighborhoods'} · ${span(rs.map((r) => r.drive.lo), rs.map((r) => r.drive.hi), ' min')}`;
 const waits = (as: typeof tied) => as.filter((a) => a.waitRange);
 const housingSummary = (as: typeof tied, what: 'wait' | 'drive') => {
   if (!as.length) return 'None';
@@ -68,7 +68,7 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
   <p class="eyebrow">Reporting to</p>
   <h1>{base.short}</h1>
   <p class="kicker">{gate}</p>
-  <p class="note">Weekday drive to the main gate at 0700, from the middle of each neighborhood. Your street can add 5–10 minutes.</p>
+  <p class="note">Weekday drive to the main gate at 0700, from the middle of each neighborhood. Your street can add 5–10 minutes. A neighborhood with several zips shows the range and sits in the group for its slowest zip.</p>
   <a class="card plan-card" href="/plan/" data-plan-base={base.code}>
     <span><span class="card-name">Starting plan for {base.short}</span><span class="card-sub">Seven more questions, about a minute. Your answers stay on this device.</span></span>
     <span class="arrow" aria-hidden="true">›</span>
@@ -114,7 +114,8 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
     )}
   </FactBlock>
 
-  <FactBlock id="housing-untied" title="Not tied to a specific base by LMH" level={3} summary={housingSummary(untied, 'drive')} asOf={housingAsOf} source={housingSource}>
+  <FactBlock id="housing-untied" title="Not tied to a specific base by LMH" level={3} summary={housingSummary(untied, 'drive')} asOf={base.code === 'PENDLETON' ? `${housingAsOf}. Eligibility note: ${PENDLETON_UNTIED_NOTE.written}` : housingAsOf} source={housingSource}>
+    {base.code === 'PENDLETON' && <p class="gap">{PENDLETON_UNTIED_NOTE.text}</p>}
     <ul class="cards cards-pane">
       {untied.map((a) => (
         <li>

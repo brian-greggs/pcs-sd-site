@@ -5,6 +5,7 @@ import FactBlock from '../FactBlock.astro';
 import { range, TIER_LABEL } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
+import { tierOf } from '../../lib/tiers.js';
 import { baseByCode, commuteSummary, drives, type BaseCode } from '../../lib/bases';
 
 // chosen: the base the summary leads with (default: the nearest). switchable renders one summary per
@@ -24,7 +25,7 @@ const byBase = Object.values(
   peakHi: Math.max(...rs.map((r) => r.peak_am_min)),
   lo: rs.every((r) => r.typical_low_min != null) ? Math.min(...rs.map((r) => r.typical_low_min!)) : null,
   hi: rs.every((r) => r.typical_high_min != null) ? Math.max(...rs.map((r) => r.typical_high_min!)) : null,
-  tier: [...rs].sort((a, b) => a.peak_am_min - b.peak_am_min)[0].tier,
+  tier: tierOf(Math.max(...rs.map((r) => r.peak_am_min))), // the top of the range, as on base pages and in the plan
   miles: rs.length === 1 ? rs[0].osrm_miles : null,
 })).sort((a, b) => a.peakLo - b.peakLo);
 const gap = gapLine(missingZips(zips, rows), '0700 drive times', OUT_OF_PULL);
@@ -56,5 +57,5 @@ const noRange = byBase.some((b) => b.lo == null || b.hi == null);
   </div>
   )}
   {noRange && <p class="note">A dash in the typical range means Google gave no spread for that trip, which happens on very short drives.</p>}
-  <p class="note">Every base is listed with its real minutes, however long the drive. The tier groups them: under 30, 30–44, 45–59, and 60 minutes or more.</p>
+  <p class="note">Every base is listed with its real minutes, however long the drive. The tier groups them: under 30, 30–44, 45–59, and 60 minutes or more{zips.length > 1 ? ', by the slowest zip here' : ''}.</p>
 </FactBlock>

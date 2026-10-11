@@ -14,7 +14,11 @@
 //
 // Changing a rule: bump RULES_VERSION and add a changelog entry.
 
-export const RULES_VERSION = 'v0.4';
+import { tierOf } from '../tiers.js';
+
+// A place's tier comes from the top of its drive range (src/lib/tiers.js, shared with the base pages):
+// "under 30 minutes" means every zip in it is under 30, so Vista at 14–35 is a 30–44 place.
+export const RULES_VERSION = 'v0.5';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
@@ -23,7 +27,6 @@ export const GAPS = [
   'Modifier: the courtesy-move rule (contact the Housing Service Center within 30 days of arrival; rejecting an offer can forfeit the move) is not on any page',
   'Lead for "Pets" when base housing is ruled out: rental pet policies are not on any page (the plan leads with the second priority and says why); base housing breed restrictions are not in the data',
   'Tradeoff: no pair is written yet (src/config/intake/tradeoffs.json is empty)',
-  'Camp Pendleton: whether Pendleton families can live in the base housing areas LMH ties to no base (the Navy-area ones) is not confirmed (PRD open question Q9), and no page says so; Pendleton plans leave those areas out until a page does',
 ];
 
 export const KID_GROUPS = ['0-2', '3-5', '6-9', '10-13', '14-18'];
@@ -163,9 +166,6 @@ function context(a, data, config) {
     housing: unsureOpen || a.open.includes('base-housing'),
   };
   const baseName = base ? base.short : 'the nearest base';
-  // A place's tier comes from the top of its drive range (rules v0.4): "under 30 minutes" means every
-  // zip in it is under 30, so Vista at 14–35 is a 30–44 place. The data's own tier (closest zip) isn't used.
-  const tierOf = (hi) => (hi < 30 ? 'under30' : hi < 45 ? '30-45' : hi < 60 ? '45-60' : '60plus');
   // A neighborhood's drive for this plan: to the chosen base, or (base not chosen) to its two nearest bases.
   const driveOf = (place) => {
     if (base) {
@@ -184,13 +184,16 @@ function context(a, data, config) {
     .sort((x, y) => x.drive.lo - y.drive.lo || x.drive.hi - y.drive.hi || x.n.name.localeCompare(y.n.name));
   // Base housing areas a family at this base would look at: the ones LMH ties to the base and
   // the ones it ties to no base (as the base page lists them). Base not chosen: all of them.
-  // Camp Pendleton (rules v0.4): not the untied areas. Whether Pendleton families are eligible there
-  // is unconfirmed (PRD Q9) and no page says so, so they're left out rather than shown unqualified (GAPS).
-  const untiedOk = !base || base.code !== 'PENDLETON';
+  // Camp Pendleton (rules v0.5): the untied areas are back, each with the Pendleton base page's caveat
+  // (eligibility unconfirmed, PRD Q9). `caveat(ar)` is that sentence and its source, or null.
   const areas = data.areas
-    .filter((ar) => !base || (ar.base_group === 'NONE' && untiedOk) || (data.groupBases[ar.base_group] ?? []).includes(base.code))
+    .filter((ar) => !base || ar.base_group === 'NONE' || (data.groupBases[ar.base_group] ?? []).includes(base.code))
     .map((ar) => ({ ar, drive: driveOf(ar) }))
     .sort((x, y) => (x.drive?.lo ?? 999) - (y.drive?.lo ?? 999) || x.ar.name.localeCompare(y.ar.name));
+  const caveat = (ar) => (base?.code === 'PENDLETON' && ar.base_group === 'NONE' ? {
+    text: 'We haven’t confirmed whether Camp Pendleton families can apply here. Ask LMH',
+    source: { url: '/base/camp-pendleton/#housing-untied', title: 'Camp Pendleton (base page)', dates: `Eligibility note: ${data.pendletonUntied.written}` },
+  } : null);
   const bandSpan = gradeSpan(a.band);
   const waitOf = (ar) => {
     const rows = ar.waits.filter((w) => overlaps(gradeSpan(w.band), bandSpan) && (br === 4 ? w.br >= 4 : w.br === br));
@@ -224,7 +227,7 @@ function context(a, data, config) {
   const baseSource = (what) => (base
     ? { url: `/base/${base.slug}/`, title: base.short, dates: what.map((w) => `${DATE_LABEL[w]}: ${data.dates[w]}`).join('. ') }
     : { url: '/neighborhoods/', title: 'Neighborhoods', dates: what.map((w) => `${DATE_LABEL[w]}: ${data.dates[w]}`).join('. ') });
-  return { a, data, config, base, baseName, br, brText, open, driveOf, ratioOf, placesIn, areas, waitOf, nbSource, areaSource, linkSource, ext, baseSource };
+  return { a, data, config, base, baseName, br, brText, open, driveOf, ratioOf, placesIn, areas, caveat, waitOf, nbSource, areaSource, linkSource, ext, baseSource };
 }
 
 const DATE_LABEL = {
@@ -252,6 +255,12 @@ function placeLine(c, { n, drive }, firstFact) {
   };
 }
 
+// A line about one base housing area, with the Pendleton caveat appended (and its source) when it applies.
+function withCaveat(c, ar, line) {
+  const cv = c.caveat(ar);
+  return cv ? { ...line, text: `${line.text}. ${cv.text}`, sources: [...line.sources, cv.source] } : line;
+}
+
 function areaLine(c, { ar, drive }) {
   let wait;
   if (ar.waitsInData === false) wait = 'wait times aren’t in our data';
@@ -261,7 +270,7 @@ function areaLine(c, { ar, drive }) {
       ? `latest wait for ${c.a.band}, ${c.brText}: ${span(w.lo, w.hi)} months`
       : w.rows ? `no ${c.brText} homes open to ${c.a.band} on the ${c.data.dates.month} list` : `no ${c.brText} rows for ${c.a.band} on the ${c.data.dates.month} list`;
   }
-  return { text: `${ar.name}: ${drive ? `${drive.text}; ` : ''}${wait}`, sources: [c.areaSource(ar, 'waits', ...(drive ? ['commute'] : []))] };
+  return withCaveat(c, ar, { text: `${ar.name}: ${drive ? `${drive.text}; ` : ''}${wait}`, sources: [c.areaSource(ar, 'waits', ...(drive ? ['commute'] : []))] });
 }
 
 function leadPlaces(c) {
@@ -276,7 +285,7 @@ function leadPlaces(c) {
     sections.push({
       id: 'lead-housing',
       heading: c.base ? `Base housing for ${c.base.short}` : 'Base housing',
-      note: c.base ? (c.base.code === 'PENDLETON' ? 'The areas Liberty Military Housing ties to Camp Pendleton, by the 0700 drive.' : 'The areas Liberty Military Housing ties to this base, and the ones it ties to no base, by the 0700 drive.') : 'Every base housing area, by the 0700 drive to its two nearest bases.',
+      note: c.base ? 'The areas Liberty Military Housing ties to this base, and the ones it ties to no base, by the 0700 drive.' : 'Every base housing area, by the 0700 drive to its two nearest bases.',
       lines: c.areas.map((x) => areaLine(c, x)),
     });
   }
@@ -376,9 +385,9 @@ function leadPets(c) {
     }
     const all = [...groups.values()];
     if (all.length === 1 && all[0].communities.length === ar.communities) {
-      return [{ text: `${ar.name} base housing: ${all[0].policy}`, sources: [c.areaSource(ar, `pets-${all[0].from}`)] }];
+      return [withCaveat(c, ar, { text: `${ar.name} base housing: ${all[0].policy}`, sources: [c.areaSource(ar, `pets-${all[0].from}`)] })];
     }
-    return all.map((g) => ({ text: `${ar.name} base housing, ${list(g.communities)}: ${g.policy}`, sources: [c.areaSource(ar, `pets-${g.from}`)] }));
+    return all.map((g) => withCaveat(c, ar, { text: `${ar.name} base housing, ${list(g.communities)}: ${g.policy}`, sources: [c.areaSource(ar, `pets-${g.from}`)] }));
   });
   return lines.length ? [{ id: 'lead', heading: 'Pets in base housing', note: 'Pet policies as printed on the latest wait list, or as the LMH community page states them when the list doesn’t. Communities that state no policy aren’t listed.', lines }] : [];
 }
@@ -405,10 +414,10 @@ function modifiers(c) {
       const shortest = [...waits].sort((x, y) => x.w.first.lo - y.w.first.lo || x.w.first.hi - y.w.first.hi || x.ar.name.localeCompare(y.ar.name))[0];
       // At or past the window (rules v0.4): reporting in under 30 days, a 1–3 month wait doesn't fit.
       if (shortest.w.first.lo >= t.windowMonths) {
-        lines.push({
+        lines.push(withCaveat(c, shortest.ar, {
           text: `No base housing wait for ${c.a.band}, ${c.brText} on the ${c.data.dates.month} list fits your report window (${t.label.toLowerCase()}). The shortest is ${span(shortest.w.first.lo, shortest.w.first.hi)} months, at ${shortest.ar.name}. Plan on renting first and moving in when a home comes up`,
           sources: [c.areaSource(shortest.ar, 'waits')],
-        });
+        }));
       }
     }
   }
@@ -438,9 +447,10 @@ function modifiers(c) {
     const limited = c.areas.filter(({ ar }) => ar.petLimits.some((p) => petLimit(p) != null));
     if (limited.length && limited.every(({ ar }) => ar.petLimits.every((p) => (petLimit(p) ?? 0) <= 2))) {
       lines.push({
-        text: `You listed ${pets} pets. Every pet policy printed for these base housing areas allows two at most`,
+        text: `You listed ${pets} pets. Every pet policy printed for these base housing areas allows two at most${limited.some(({ ar }) => c.caveat(ar)) ? '. We haven’t confirmed whether Camp Pendleton families can apply to the areas LMH ties to no base. Ask LMH' : ''}`,
         // Every area the claim covers (rules v0.4); the base housing index doesn't list pet policies.
-        sources: limited.map(({ ar }) => c.areaSource(ar, 'pets-list')),
+        // For Camp Pendleton, the untied areas among them carry the caveat (rules v0.5).
+        sources: [...limited.map(({ ar }) => c.areaSource(ar, 'pets-list')), ...(limited.some(({ ar }) => c.caveat(ar)) ? [c.caveat(limited.find(({ ar }) => c.caveat(ar)).ar).source] : [])],
       });
     }
   }

@@ -2,7 +2,7 @@
 // the pages use and embedded in /plan/ as JSON. Ratios only: no BAH figure, no rent
 // dollar figure. Every value here is shown on a page the plan cites.
 import { getCollection, getEntry } from 'astro:content';
-import { BASES, GROUP_BASES, drives } from '../bases';
+import { BASES, GROUP_BASES, PENDLETON_UNTIED_NOTE, drives } from '../bases';
 import { baseHousingAreas, parseWait } from '../baseHousing';
 import { PAY_BAND_ORDER } from '../format';
 import { provenance } from '../prov';
@@ -97,6 +97,8 @@ export async function intakeDigest() {
     areas: areaRows,
     links,
     bedroomRule: { link_id: rule.link_id, officer_section_empty: rule.officer_section_empty },
+    // The Camp Pendleton base page's line above the untied areas, and the date its section gives it.
+    pendletonUntied: { text: PENDLETON_UNTIED_NOTE.text, written: PENDLETON_UNTIED_NOTE.written },
     dates: {
       commute: asOf('commute'),
       ratio: asOf('rent_to_bah'),

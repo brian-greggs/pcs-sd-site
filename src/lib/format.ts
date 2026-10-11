@@ -9,13 +9,8 @@ export const pct = (n: number | null | undefined, digits = 0) =>
 export const range = (lo: number, hi: number, unit = '') =>
   lo === hi ? `${lo}${unit}` : `${lo}–${hi}${unit}`;
 
-// Tiers are [30, 45), [45, 60), 60 and up, so a 45-minute drive is 45–59 and a 60-minute drive is 60+.
-export const TIER_LABEL: Record<string, string> = {
-  under30: 'Under 30 min',
-  '30-45': '30–44 min',
-  '45-60': '45–59 min',
-  '60plus': '60 min or more',
-};
+// Tier labels live with the tier rule (src/lib/tiers.js).
+export { TIER_LABEL } from './tiers.js';
 
 // Census ACS medians are top-coded: $3,501 rent and $2,000,001 home value mean "at least $3,500 / $2,000,000".
 // A blank median means the Census didn't publish one (too few homes in the sample).
