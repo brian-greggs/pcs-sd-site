@@ -1,0 +1,334 @@
+---
+// Starting plan (F5 intake v0, PRD §10.1). Eight questions, then a plan built by
+// fixed rules (src/lib/intake/rules.js) over the same data the pages show.
+//
+// Nothing leaves the device: answers live in localStorage (behind try/catch), the
+// rules run in the browser on data embedded below, there is no <form> (so nothing
+// can be submitted or land in a URL), and the page makes no network requests.
+// scripts/check_intake.mjs checks all of that after the build, and runs the rules
+// over the whole answer space to check every line the plan can print.
+// Without JavaScript the questions stay hidden and the page says why.
+import Base from '../layouts/Base.astro';
+import { BASES } from '../lib/bases';
+import { intakeDigest } from '../lib/intake/digest';
+import { RULES_VERSION, KID_GROUPS, TIMELINES, BEDROOM_CHOICES, OPEN_CHOICES } from '../lib/intake/rules.js';
+import priorities from '../config/intake/priorities.json';
+import tradeoffs from '../config/intake/tradeoffs.json';
+
+const data = await intakeDigest();
+const config = { priorities: priorities.priorities, tradeoffs: tradeoffs.pairs };
+// </script> can't appear inside the JSON block.
+const embedded = JSON.stringify({ data, config }).replace(/</g, '\\u003c');
+const kidLabel = (g: string) => g.replace('-', '–');
+---
+
+<Base title="Starting plan" back={{ href: '/', label: 'Home' }} description="Eight questions, about a minute: a starting plan for your move to San Diego, built from this site's dated facts.">
+  <div data-print-hide>
+  <p class="eyebrow">Starting plan <span class="chip gold v0">v0, rules under test</span></p>
+  <h1>Eight questions, one starting plan</h1>
+  <p class="intro">About a minute. Your answers pick out what matters most for your household, what you can skip, and where to look first. The same answers always give the same plan.</p>
+  <p class="note">Your answers stay in this browser. Nothing is sent, logged or put in a link. Every line of the plan names the page it came from and that page's dates. Rules {RULES_VERSION}.</p>
+  </div>
+
+  <noscript><p class="gap">The questions need JavaScript, because the plan is worked out in your browser so your answers never reach a server. The rest of the site works without it: <a href="/">start with your base</a>.</p></noscript>
+  <p class="gap" data-storage-note hidden>Your browser is blocking storage, so your answers last only until you leave this page.</p>
+
+  <div data-intake hidden>
+    <fieldset class="q" data-q="1">
+      <legend>1. Where are you reporting?</legend>
+      <div class="opts">
+        {BASES.map((b) => <label class="opt"><input type="radio" name="base" value={b.code} />{b.short}</label>)}
+        <label class="opt"><input type="radio" name="base" value="unsure" />Not sure yet</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="q" data-q="2">
+      <legend>2. Pay grade</legend>
+      <div class="opts">
+        {data.bands.map((b) => <label class="opt"><input type="radio" name="band" value={b} />{b}</label>)}
+      </div>
+    </fieldset>
+
+    <fieldset class="q" data-q="3">
+      <legend>3. When do you report?</legend>
+      <div class="opts">
+        {TIMELINES.map((t) => <label class="opt"><input type="radio" name="timeline" value={t.id} />{t.label}</label>)}
+      </div>
+    </fieldset>
+
+    <fieldset class="q" data-q="4">
+      <legend>4. Who's moving with you?</legend>
+      <p class="hint">Spouse or partner</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="partner" value="yes" />Yes</label>
+        <label class="opt"><input type="radio" name="partner" value="no" />No</label>
+      </div>
+      <p class="hint">Children, by age</p>
+      <div class="count-row">
+        {KID_GROUPS.map((g) => <label class="count"><input type="number" name={`kids-${g}`} min="0" max="9" step="1" value="0" inputmode="numeric" />aged {kidLabel(g)}</label>)}
+      </div>
+    </fieldset>
+
+    <fieldset class="q" data-q="5">
+      <legend>5. How many bedrooms do you need?</legend>
+      <div class="opts">
+        {BEDROOM_CHOICES.map((b) => <label class="opt"><input type="radio" name="bedrooms" value={b.id} />{b.label}</label>)}
+      </div>
+      <div data-separate hidden>
+        <p class="hint">Do any children 6 or older need separate rooms?</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="separate6" value="yes" />Yes</label>
+          <label class="opt"><input type="radio" name="separate6" value="no" />No</label>
+        </div>
+      </div>
+      <p class="hint" data-helper-out hidden></p>
+    </fieldset>
+
+    <fieldset class="q" data-q="6">
+      <legend>6. Pets?</legend>
+      <div class="count-row">
+        <label class="count"><input type="number" name="cats" min="0" max="9" step="1" value="0" inputmode="numeric" />cats</label>
+        <label class="count"><input type="number" name="dogs" min="0" max="9" step="1" value="0" inputmode="numeric" />dogs</label>
+      </div>
+    </fieldset>
+
+    <fieldset class="q" data-q="7">
+      <legend>7. Open to</legend>
+      <p class="hint">Pick any.</p>
+      <div class="opts">
+        {OPEN_CHOICES.map((o) => <label class="opt"><input type="checkbox" name="open" value={o.id} />{o.label}</label>)}
+      </div>
+    </fieldset>
+
+    <fieldset class="q" data-q="8">
+      <legend>8. What matters most?</legend>
+      <p class="hint">Pick your top 2, in order. Some choices appear only when your answers make them matter.</p>
+      <div class="pick-row">
+        <label class="pick">Most important
+          <select name="priority-1">
+            <option value="">Choose one</option>
+            {config.priorities.map((p) => <option value={p.id} data-when={p.shown_when ?? ''}>{p.label}</option>)}
+          </select>
+        </label>
+        <label class="pick">Second
+          <select name="priority-2">
+            <option value="">None</option>
+            {config.priorities.map((p) => <option value={p.id} data-when={p.shown_when ?? ''}>{p.label}</option>)}
+          </select>
+        </label>
+      </div>
+    </fieldset>
+
+    <p class="gap" data-missing hidden></p>
+    <div class="actions">
+      <button type="button" class="btn primary" data-show-plan>Show my plan</button>
+      <button type="button" class="btn" data-clear>Clear my answers</button>
+    </div>
+  </div>
+
+  <div data-plan-view hidden>
+    <div data-plan-out></div>
+    <div class="actions" data-print-hide>
+      <button type="button" class="btn primary" data-print>Print or save as PDF</button>
+      <button type="button" class="btn" data-edit>Change my answers</button>
+      <button type="button" class="btn" data-clear>Clear my answers</button>
+    </div>
+  </div>
+
+  <script type="application/json" id="plan-data" is:inline set:html={embedded}></script>
+</Base>
+
+<script>
+  import { buildPlan, cleanAnswers, emptyAnswers, availablePriorities, missingAnswers, needsSeparateQuestion, bedroomHelper, KID_GROUPS, TIMELINES, BEDROOM_CHOICES, OPEN_CHOICES, RULES_VERSION } from '../lib/intake/rules.js';
+
+  const KEY = 'pcs-sd:intake';
+  const { data, config } = JSON.parse(document.getElementById('plan-data')!.textContent!);
+  const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!;
+  const $$ = <T extends Element = HTMLInputElement>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
+  const intake = $('[data-intake]');
+  const planView = $('[data-plan-view]');
+
+  // --- Storage: this device only, and the page still works when it's blocked. ---
+  let storageOk = true;
+  const load = () => {
+    try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw).answers : null; } catch { storageOk = false; return null; }
+  };
+  const save = (a: ReturnType<typeof emptyAnswers>) => {
+    try { localStorage.setItem(KEY, JSON.stringify({ rules_version: RULES_VERSION, answers: a })); } catch { storageOk = false; }
+    $('[data-storage-note]').hidden = storageOk;
+  };
+  const forget = () => { try { localStorage.removeItem(KEY); } catch { /* storage blocked */ } };
+
+  let answers = cleanAnswers(load(), data, config);
+
+  // --- Form <-> answers ---
+  const radio = (name: string) => $$(`input[name="${name}"]`, intake).find((i) => i.checked)?.value ?? null;
+  const num = (name: string) => Math.max(0, Math.min(9, Math.trunc(Number($<HTMLInputElement>(`input[name="${name}"]`, intake).value) || 0)));
+  const read = () => {
+    const a = emptyAnswers();
+    a.base = radio('base');
+    a.band = radio('band');
+    a.timeline = radio('timeline');
+    const p = radio('partner');
+    a.partner = p == null ? null : p === 'yes';
+    for (const g of KID_GROUPS) a.kids[g] = num(`kids-${g}`);
+    a.bedrooms = radio('bedrooms');
+    const s = radio('separate6');
+    a.separate6 = s == null ? null : s === 'yes';
+    a.cats = num('cats');
+    a.dogs = num('dogs');
+    a.open = $$('input[name="open"]', intake).filter((i) => i.checked).map((i) => i.value);
+    a.priorities = [$<HTMLSelectElement>('select[name="priority-1"]').value, $<HTMLSelectElement>('select[name="priority-2"]').value].filter(Boolean);
+    return cleanAnswers(a, data, config);
+  };
+  const write = (a: typeof answers) => {
+    const set = (name: string, value: string | null) => $$(`input[name="${name}"]`, intake).forEach((i) => { i.checked = i.value === value; });
+    set('base', a.base); set('band', a.band); set('timeline', a.timeline);
+    set('partner', a.partner == null ? null : a.partner ? 'yes' : 'no');
+    for (const g of KID_GROUPS) $<HTMLInputElement>(`input[name="kids-${g}"]`).value = String(a.kids[g]);
+    set('bedrooms', a.bedrooms);
+    set('separate6', a.separate6 == null ? null : a.separate6 ? 'yes' : 'no');
+    $<HTMLInputElement>('input[name="cats"]').value = String(a.cats);
+    $<HTMLInputElement>('input[name="dogs"]').value = String(a.dogs);
+    $$('input[name="open"]', intake).forEach((i) => { i.checked = a.open.includes(i.value); });
+    refresh(a);
+    $<HTMLSelectElement>('select[name="priority-1"]').value = a.priorities[0] ?? '';
+    $<HTMLSelectElement>('select[name="priority-2"]').value = a.priorities[1] ?? '';
+    refresh(a);
+  };
+  // Show only the Q8 choices this household gets, the bedroom follow-up when it matters, and the helper's answer.
+  const refresh = (a: typeof answers) => {
+    const offered = new Set(availablePriorities(a, config.priorities).map((p: { id: string }) => p.id));
+    const first = $<HTMLSelectElement>('select[name="priority-1"]');
+    const second = $<HTMLSelectElement>('select[name="priority-2"]');
+    for (const sel of [first, second]) {
+      for (const o of [...sel.options].filter((o) => o.value)) {
+        o.hidden = o.disabled = !offered.has(o.value) || (sel === second && o.value === first.value);
+      }
+      if (sel.selectedOptions[0]?.disabled) sel.value = '';
+    }
+    const helping = a.bedrooms === 'help';
+    $('[data-separate]').hidden = !(helping && needsSeparateQuestion(a));
+    const out = $('[data-helper-out]');
+    out.hidden = !helping;
+    if (helping) {
+      const h = bedroomHelper(a);
+      out.textContent = `Navy Housing's enlisted guidelines give ${h.computed} ${h.computed === 1 ? 'bedroom' : 'bedrooms'} for your household; the plan uses the ${h.row}-bedroom rows.`;
+    }
+  };
+  intake.addEventListener('change', (e) => {
+    // "Not sure yet" in Q7 clears the other choices, and picking one clears "Not sure yet".
+    const changed = e.target as HTMLInputElement;
+    if (changed.name === 'open') {
+      $$('input[name="open"]', intake).forEach((i) => {
+        if (changed.value === 'unsure' && i.value !== 'unsure' && changed.checked) i.checked = false;
+        if (changed.value !== 'unsure' && i.value === 'unsure' && changed.checked) i.checked = false;
+      });
+    }
+    refresh(read());
+    answers = read();
+    save(answers);
+  });
+
+  // --- The plan ---
+  const QUESTION = ['', 'where you’re reporting', 'pay grade', 'when you report', 'who’s moving with you', 'bedrooms', '', 'what you’re open to', 'what matters most'];
+  const el = (tag: string, cls?: string, text?: string) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+  const sentence = (s: string) => (/[.?!:]$/.test(s) ? s : `${s}.`);
+  const extLink = (l: { url: string; text: string; incentive: string }) => {
+    const wrap = el('span', 'ext');
+    const a = el('a', undefined, l.text) as HTMLAnchorElement;
+    a.href = l.url; a.rel = 'noopener noreferrer'; a.dataset.incentive = l.incentive;
+    wrap.append(a, ' ', el('small', 'incentive', l.incentive));
+    return wrap;
+  };
+  const sourceLink = (s: { url: string; title: string; dates: string; incentive?: string }) => {
+    const span = el('span');
+    if (/^https?:/.test(s.url)) span.append(extLink({ url: s.url, text: s.title, incentive: s.incentive ?? 'Official source' }));
+    else { const a = el('a', undefined, s.title) as HTMLAnchorElement; a.href = s.url; span.append(a); }
+    span.append(` · ${s.dates}`);
+    return span;
+  };
+  const answerSummary = (a: typeof answers) => {
+    const base = a.base === 'unsure' ? 'Not sure yet' : data.bases.find((b: { code: string }) => b.code === a.base).short;
+    const kids = KID_GROUPS.filter((g) => a.kids[g]).map((g) => `${a.kids[g]} aged ${g.replace('-', '–')}`);
+    const household = [a.partner ? 'spouse or partner' : 'no spouse or partner', kids.length ? `children: ${kids.join(', ')}` : 'no children'].join('; ');
+    const pets = a.cats + a.dogs ? [a.cats ? `${a.cats} ${a.cats === 1 ? 'cat' : 'cats'}` : '', a.dogs ? `${a.dogs} ${a.dogs === 1 ? 'dog' : 'dogs'}` : ''].filter(Boolean).join(', ') : 'none';
+    const label = (id: string) => config.priorities.find((p: { id: string }) => p.id === id).label;
+    const bedrooms = a.bedrooms === 'help' ? `${bedroomHelper(a).computed} (from the bedroom helper)` : BEDROOM_CHOICES.find((b) => b.id === a.bedrooms)!.label;
+    return [
+      ['Reporting to', base], ['Pay grade', a.band!], ['Report', TIMELINES.find((t) => t.id === a.timeline)!.label],
+      ['Moving with you', household], ['Bedrooms', bedrooms], ['Pets', pets],
+      ['Open to', a.open.map((o) => OPEN_CHOICES.find((c) => c.id === o)!.label).join(', ')],
+      ['Matters most', a.priorities.map((p, i) => `${i + 1}. ${label(p)}`).join('  ')],
+    ];
+  };
+  const render = (a: typeof answers) => {
+    const plan = buildPlan(a, data, config);
+    const out = $('[data-plan-out]');
+    out.replaceChildren();
+    const head = el('div', 'plan-head');
+    head.append(el('h2', undefined, 'Your starting plan'), el('p', 'note', `v0, rules under test (rules ${plan.rules_version}). Built from this site's data; each line names its source page and that page's dates.`));
+    const box = el('section', 'plan-answers');
+    box.append(el('h3', undefined, 'Your answers'));
+    const dl = el('dl', 'facts');
+    for (const [k, v] of answerSummary(a)) dl.append(el('dt', undefined, k), el('dd', undefined, v));
+    box.append(dl);
+    out.append(head, box);
+    for (const s of plan.sections) {
+      const sec = el('section', 'plan-section');
+      sec.dataset.planSection = s.id;
+      sec.append(el('h3', undefined, s.heading));
+      if (s.note) sec.append(el('p', 'note', s.note));
+      const ul = el('ul', 'plan-lines');
+      for (const line of s.lines) {
+        const li = el('li');
+        const p = el('p', 'line-text', sentence(line.text));
+        for (const x of line.ext ?? []) p.append(' ', extLink(x));
+        const src = el('p', 'line-source', line.sources.length > 1 ? 'Sources: ' : 'Source: ');
+        line.sources.forEach((s: { url: string; title: string; dates: string }, i: number) => { if (i) src.append('; '); src.append(sourceLink(s)); });
+        li.append(p, src);
+        ul.append(li);
+      }
+      if (s.lines.length) sec.append(ul);
+      out.append(sec);
+    }
+  };
+  const showPlan = () => {
+    answers = read();
+    const missing = missingAnswers(answers);
+    const note = $('[data-missing]');
+    if (missing.length) {
+      note.textContent = `Still to answer: ${missing.map((n) => `${n} (${QUESTION[n]})`).join(', ')}.`;
+      note.hidden = false;
+      $(`[data-q="${missing[0]}"]`).scrollIntoView({ block: 'start' });
+      return;
+    }
+    note.hidden = true;
+    save(answers);
+    render(answers);
+    intake.hidden = true;
+    planView.hidden = false;
+    window.scrollTo(0, 0);
+  };
+  $('[data-show-plan]').addEventListener('click', showPlan);
+  $('[data-edit]').addEventListener('click', () => { planView.hidden = true; intake.hidden = false; window.scrollTo(0, 0); });
+  $('[data-print]').addEventListener('click', () => window.print());
+  $$<HTMLButtonElement>('[data-clear]').forEach((b) => b.addEventListener('click', () => {
+    forget();
+    answers = emptyAnswers();
+    write(answers);
+    $('[data-missing]').hidden = true;
+    planView.hidden = true;
+    intake.hidden = false;
+    window.scrollTo(0, 0);
+  }));
+
+  write(answers);
+  $('[data-storage-note]').hidden = storageOk;
+  if (!missingAnswers(answers).length) { render(answers); planView.hidden = false; } else intake.hidden = false;
+</script>

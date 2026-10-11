@@ -27,30 +27,8 @@ const DIST = join(ROOT, 'dist');
 const DATA = join(ROOT, 'src', 'data');
 const stage = process.argv[2] ?? 'dist';
 
-// --- Word lists (edit here) -------------------------------------------------
-// Principle 5: places are described by commute, cost and school access, never
-// by who lives there. Matched as whole words/phrases, case-insensitive, in the
-// visible text of every page except /sources/.
-const DEMOGRAPHIC_TERMS = [
-  'affluent', 'wealthy', 'upscale', 'upper-class', 'upper class', 'middle-class', 'middle class',
-  'working-class', 'working class', 'blue-collar', 'white-collar', 'low-income', 'high-income',
-  'diverse', 'diversity', 'ethnic', 'ethnicity', 'racial', 'race', 'hispanic', 'latino', 'latina',
-  'latinx', 'asian', 'caucasian', 'african american', 'immigrant', 'immigrants', 'retirees',
-  'retiree', 'elderly', 'young professionals', 'young families', 'family-friendly', 'family friendly',
-  'kid-friendly', 'demographic', 'demographics', 'gentrified', 'gentrifying', 'gentrification',
-  'up-and-coming', 'sketchy', 'rough area', 'bad area', 'good area', 'nice area', 'safe area',
-  'religious', 'conservative', 'liberal', 'military town', 'mostly military',
-];
-// The one documented exception: the military-household share (ACS armed-forces share).
-const DEMOGRAPHIC_ALLOWED = [/military[- ]household share/gi, /armed[- ]forces share/gi];
-
-// Corollary: no composite scores. Labels only (headers, captions, terms), and data column names.
-const SCORE_WORDS = /\b(score|scores|index|indices|indexes|rating|ratings|rank(?:ing)?s?|grade[- ]?score)\b/i;
-// "Rank band" and "rank group" are military pay-grade terms on the base-housing wait lists, not rankings.
-const SCORE_ALLOWED = [/\brank band\b/i, /\brank group\b/i];
-
-// Placeholder text that must never reach dist/ (checked in the full HTML, attributes included).
-const PLACEHOLDER_PATTERNS = [/PLACEHOLDER/, /Brian writes/i, /data-placeholder/, /\bTODO\b/, /lorem ipsum/i];
+// --- Word lists: scripts/principle_lists.mjs (edit there) --------------------
+import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED, SCORE_WORDS, SCORE_ALLOWED, PLACEHOLDER_PATTERNS } from './principle_lists.mjs';
 
 // Text on background pairs the pages use, as theme.css custom properties.
 // Every one must reach WCAG AA for body text (4.5:1).
@@ -61,6 +39,7 @@ const CONTRAST_PAIRS = [
   ['blue-fg', 'blue-bg'], ['mauve-fg', 'mauve-bg'], ['gold-fg', 'gold-bg'],
   ['text', 'blue-bg'], ['text', 'mauve-bg'], ['text', 'gold-bg'], // tile sub-lines, gap boxes
   ['muted', 'blue-bg'], ['muted', 'gold-bg'], ['link', 'gold-bg'], // "+1" on a tile; labels and links in a gap box
+  ['ink', 'paper'], ['ink-muted', 'paper'], // the printed starting plan
 ];
 
 // --- Helpers ----------------------------------------------------------------

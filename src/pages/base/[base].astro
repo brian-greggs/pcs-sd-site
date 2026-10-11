@@ -69,6 +69,10 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
   <h1>{base.short}</h1>
   <p class="kicker">{gate}</p>
   <p class="note">Weekday drive to the main gate at 0700, from the middle of each neighborhood. Your street can add 5–10 minutes.</p>
+  <a class="card plan-card" href="/plan/" data-plan-base={base.code}>
+    <span><span class="card-name">Starting plan for {base.short}</span><span class="card-sub">Seven more questions, about a minute. Your answers stay on this device.</span></span>
+    <span class="arrow" aria-hidden="true">›</span>
+  </a>
 
   <h2 class="group-title" id="off-base">Off base</h2>
   {tiers.map((t) => (
@@ -126,3 +130,16 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
   </div>
   </div>
 </Base>
+
+<script>
+  // "Starting plan for <base>" answers question 1 for the reader, on this device only
+  // (localStorage, wrapped so blocked storage is fine). Nothing goes in the link.
+  const link = document.querySelector<HTMLAnchorElement>('[data-plan-base]');
+  link?.addEventListener('click', () => {
+    try {
+      const KEY = 'pcs-sd:intake';
+      const saved = JSON.parse(localStorage.getItem(KEY) ?? 'null') ?? {};
+      localStorage.setItem(KEY, JSON.stringify({ ...saved, answers: { ...(saved.answers ?? {}), base: link.dataset.planBase } }));
+    } catch { /* storage blocked: question 1 stays unanswered */ }
+  });
+</script>

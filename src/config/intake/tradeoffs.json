@@ -1,0 +1,4 @@
+{
+  "_note": "Tradeoff table (PRD §10.1): one entry per first-priority × second-priority pair. Brian writes the text from interviews. Until a pair has an entry, the plan shows no tradeoff for it (never a generic one). Each entry: first and second (priority ids from priorities.json), either_order (true if the same text applies with the two swapped), text (one or two sentences, no dollar figures), and sources: a list of { url, title, dates } where url is a page on this site (e.g. /base/miramar/) or an official link, and dates is that page's date line (must include a year). scripts/check_intake.mjs fails the build if an entry is missing any of these. Changing this table changes the rules: bump RULES_VERSION in rules.js and add a changelog entry.",
+  "pairs": []
+}
