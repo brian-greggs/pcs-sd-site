@@ -1,6 +1,58 @@
-# Site build — status (2026-09-30, session 4c: base page layout, v0.4.2)
+# Site build — status (2026-10-11, session 5: starting plan v0, v0.5)
 
-**Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, and the Cowork UI: dark sunset theme, base-first navigation, phone-first. Not built, by design: F2 sequence, F3 decision pages, F5 intake, F6 assistant.
+**Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: see session 5b below.
+
+## Session 5: starting plan (F5 intake v0, rules v0.1)
+
+**Where it sits in the base-first flow.** The intake is its own page, `/plan/`, with two doors:
+
+- **Base page** (`/base/<slug>/`): a "Starting plan for <base>" card under the heading. Clicking it saves question 1 as that base (localStorage, behind try/catch) and opens `/plan/`, so the family answers seven more questions. This is the spec's "after Pick your base": the base pick on the home page *is* question 1.
+- **Home page:** a "Then get a starting plan" card directly under the eight base cards, for families who don't know their base yet (question 1 offers "Not sure yet").
+
+Why not on the home page itself: eight questions above "Or just browse" would push the base cards' job (one tap to a sorted base page) below a form, and the home page would need a script. Why not a URL parameter from the base page: the spec says nothing goes in a URL, so the base travels in the reader's own storage, only because they clicked "Starting plan for <base>". With JavaScript off the card still opens `/plan/`, which says the questions need JavaScript and points back to the base pages.
+
+**How it works.**
+
+- The questions are static HTML (so the page checks read every word). The answers live in `localStorage` under `pcs-sd:intake` (with `rules_version`), behind try/catch; with storage blocked the page says the answers last only until you leave. There's no `<form>`, so nothing can be submitted or land in a URL. "Clear my answers" is on both the questions and the plan.
+- The rules are `src/lib/intake/rules.js`: plain JavaScript, a pure function of the answers and the data, run in the browser. The data is a digest of the collections (`src/lib/intake/digest.ts`) embedded in the page as JSON: drive minutes, rent-to-BAH ratios by band and bedrooms, Mello-Roos status, child care counts, districts and boundary lookups, base housing waits and printed pet policies, the dates of each, and the links a rule can cite. Ratios only: no rent or allowance in dollars.
+- The plan: your answers, then the lead (first priority), the bedroom helper's answer if asked, "Watch for", the tradeoff (none written yet), and "You can skip". Every line names its source page (or the official link) with that source's dates. It prints on white paper (print CSS: header, buttons and questions hidden; source paths printed after each link). Labeled "v0, rules under test" and "rules v0.1".
+- Q8 list: `src/config/intake/priorities.json`. Tradeoff table: `src/config/intake/tradeoffs.json` (empty; the format is in its `_note`). Both feed the rules unchanged; edit either and bump `RULES_VERSION`.
+
+**Rules as built** (§10.1; interpretations in QUESTIONS 42–51):
+
+| Rule | Built as |
+|---|---|
+| Lead: where to live / the commute | Neighborhoods in the under-30 tier, by minutes, each with the ratio for the band and bedrooms (+ Mello-Roos status if buying). If open to base housing: the base page's areas (tied to the base + tied to none) by drive, with the latest wait for the band and bedrooms |
+| Lead: cost vs. BAH | Neighborhoods under 45 min whose ratio is at or under 100% across the whole band, lowest first; if none, a line that says so |
+| Lead: kids' schools | Districts with a public school in the under-30 and 30–44 tiers, nearest first, with the boundary lookup (or "no lookup found yet"), the School Liaison Officers and the Interstate Compact |
+| Lead: child care | Licensed center, infant-center and large-home counts per neighborhood in those tiers; the infant-care gap if a child is 0–2; the county referral service; MilitaryChildCare.com |
+| Lead: spouse's job | MSEP, the three California licensure pages, the second-commute prompt |
+| Lead: pets | Printed pet policies of the base page's areas, when open to base housing |
+| "Not sure" base | Each neighborhood shows its two nearest bases; tiers come from the nearest; says so in the section note |
+| Bedroom helper | CNIC's enlisted guidelines from Q4; asks "do any children 6 or older need separate rooms?" only when it changes the count; says CNIC lists no standard for officers and senior enlisted (E7 and up) |
+| Watch for | Base housing wait past the report window (under 30 days = 1 month, 30–60 = 2, 60–90 = 3; flagged when even the shortest wait starts later); more than two pets against the printed policies |
+| Skip list | Schools (no child 6–18), child care (no child under 6), Mello-Roos (not buying), base housing (not open to it) |
+
+**Gaps: rules with nothing to point at yet (lines left out, no placeholder):**
+
+1. Reporting in under 30 days or no orders yet → open with the arrival and first-30-days steps (needs F2).
+2. Lead for "The admin sequence" and "Move logistics" (needs F2). A family who picks either first gets no lead section.
+3. The courtesy-move rule (Housing Service Center within 30 days; rejecting an offer can forfeit the move): not on any page or in the data.
+4. Pets: "rental pet policies vary" isn't on any page; base housing breed restrictions aren't in the data. Pets as first priority with base housing ruled out gives no lead.
+5. Tradeoffs: none written; the plan shows none.
+6. Q3 "which phase the plan opens on" (F2).
+
+**New checks** (`scripts/check_intake.mjs`, postbuild, after the page checks):
+
+- `intake-network`: the intake pages (`/plan/`, home, the 8 base pages) and every script they load, imports included, use no `fetch`, `XMLHttpRequest`, `sendBeacon`, `WebSocket`, `EventSource`, history or location writes, `window.open` or cookies, and have no `<form>`.
+- `intake-sources`, `intake-no-bah`, `intake-words`: the check loads the rules and the data embedded in `dist/plan/`, builds 26,789 plans across the answer space (every base incl. "not sure" × band × bedroom choice × "open to" set × first priority; "Watch for" over every report window; every priority pair; every household up to 3 children per age group; every pet count to 4 + 4), and checks all 15,931 distinct lines: at least one source, the source page exists in `dist/` (or is an https link with its incentive label), a dated source line, no dollar figure at all, no demographic, score or placeholder words. Also: no dollar figure or allowance field in the embedded data; same answers give the same plan. 4.6 s.
+- `intake-config`: the Q8 list and tradeoff table are well formed; a tradeoff with no source fails.
+- Proved by planting: a `fetch(` in the plan bundle, a `<form>`, a missing source page, a `$1,234` and "affluent" in a neighborhood name, an undated source line, and a tradeoff with "TODO" and no source. All caught; the clean rebuild passed.
+- In a real browser (headless Chromium): the base-page card pre-answered Q1; the separate-rooms question appeared only when it mattered; Q8 hid choices the household doesn't get; the plan rendered, survived a reload, and "Clear my answers" emptied storage. Zero network requests from answering through rendering.
+
+Checks on 2026-10-11: all page checks pass (74 pages, 687 fact blocks, 1,889 outbound links; contrast 18 pairs, the two new print pairs included, lowest 5.33:1); all five intake checks pass; layout check clean at 390, 768, 1280 and 1440 px on 74 pages.
+
+Version: v0.5 (changelog entry, `package.json` 0.5.0).
 
 ## Session 4c: base pages match neighborhood pages
 
@@ -28,18 +80,19 @@
 - **Neighborhood and area pages:** "At a glance" tiles (2×2), every section a native `<details>` with a data-built summary line and its dated source line. Neighborhood pages have a pay-band select (default E5–E6, kept in localStorage behind try/catch) and follow `?base=`; every variant is rendered server-side and the inline script only toggles `hidden`.
 - **New checks:** `contrast` (source stage: 16 theme pairs ≥ 4.5:1, lowest 5.33:1; no raw colors outside the theme) and `third-party` (dist: nothing loaded from another origin by a page or stylesheet). Both tested by planting violations.
 
-## Pages (73)
+## Pages (74)
 
 | URL | Built from |
 |---|---|
-| `/` | Base-first home: the 8 bases, then "Or just browse" |
+| `/` | Base-first home: the 8 bases, the starting plan card, then "Or just browse" |
+| `/plan/` | Starting plan (F5 intake v0): `src/pages/plan.astro`, rules in `src/lib/intake/rules.js` |
 | `/base/<slug>/` (8) | Neighborhoods and base housing sorted by the 0700 drive to that base (`src/lib/bases.ts`) |
 | `/neighborhoods/` | All 40, A to Z, with corridor |
 | `/communities/<slug>/` (40) | Exported data, one page per row of `communities.json`. A `src/content/communities/<slug>.md` file is optional and holds the lead and gotchas; only Rancho Bernardo has one (placeholder, so nothing renders) |
 | `/base-housing/` | Index: the 20 areas grouped by the base LMH names, each with its October 2026 wait range; Prospect View and Woodlake listed as location not yet placed |
 | `/base-housing/<area>/` (20) | `src/data/base_housing_areas.json` (from `manual/base_housing_areas.csv` in the data repo) + LMH communities + the latest wait list + the shared zip sections; `src/content/base-housing-areas/<area>.md` for the lead and gotchas (placeholders, not rendered) |
 | `/sources/` | `src/data/sources.json`, generated from `EAP_Data_Source_Log.md` (latest row per layer) + round-1 layers |
-| `/changelog/` | `src/content/changelog/` (F11): v0.1 through v0.4 |
+| `/changelog/` | `src/content/changelog/` (F11): v0.1 through v0.5 |
 
 Neighborhood sections: cost (HUD rent by bedroom, rent-to-BAH ratio by pay band, Mello-Roos by subarea + per-parcel lookup, ACS medians), then the shared zip sections, gotchas when written, and sources and dates. Base housing is not on neighborhood pages.
 

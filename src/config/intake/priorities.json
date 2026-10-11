@@ -1,0 +1,14 @@
+{
+  "_note": "Q8 priority list (PRD §10.1, same list as screener Q7/Q8). Finalize after the screener results. shown_when: null (always), child_6_18, child_0_5, partner or pet. A priority with no lead builder in src/lib/intake/rules.js (LEADS) gets no lead line in the plan until one exists. Changing this list changes the rules: bump RULES_VERSION in rules.js and add a changelog entry.",
+  "priorities": [
+    { "id": "where", "label": "Where to live", "shown_when": null },
+    { "id": "cost", "label": "Cost vs. BAH", "shown_when": null },
+    { "id": "commute", "label": "The commute", "shown_when": null },
+    { "id": "schools", "label": "Kids' schools", "shown_when": "child_6_18" },
+    { "id": "childcare", "label": "Child care", "shown_when": "child_0_5" },
+    { "id": "spouse", "label": "Spouse's job", "shown_when": "partner" },
+    { "id": "admin", "label": "The admin sequence", "shown_when": null },
+    { "id": "logistics", "label": "Move logistics", "shown_when": null },
+    { "id": "pets", "label": "Pets", "shown_when": "pet" }
+  ]
+}

@@ -181,3 +181,53 @@ ul.plain { padding-left: 1.1rem; }
   .toc .toc-sub { border-left: 0; padding-left: 12px; }
   .toc .toc-sub a { font-weight: 400; font-size: 0.92rem; }
 }
+
+/* --- Starting plan (/plan/): questions, plan, print ------------------------- */
+.chip.v0 { margin: 0 0 0 6px; vertical-align: middle; letter-spacing: 0; text-transform: none; }
+.q { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 10px 16px 16px; margin: 0 0 12px; min-width: 0; }
+.q legend { font-family: var(--font-head); font-weight: 600; font-size: 1.05rem; padding: 0 4px; }
+.hint { font-size: 0.9rem; color: var(--muted); margin: 0.6rem 0 0.4rem; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt {
+  display: inline-flex; align-items: center; gap: 8px; min-height: var(--touch); padding: 0 12px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg); cursor: pointer;
+}
+.opt:has(input:checked) { border-color: var(--link); background: var(--mauve-bg); color: var(--text); }
+.opt input, .count input { accent-color: var(--coral); margin: 0; }
+.count-row, .pick-row { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.count, .pick { display: inline-flex; align-items: center; gap: 8px; }
+.pick { flex-wrap: wrap; }
+input[type="number"] {
+  width: 4.5rem; min-height: var(--touch); padding: 0 8px; font: inherit;
+  color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+}
+input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: var(--touch); padding: 0 18px;
+  font: inherit; font-weight: 700; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; cursor: pointer; text-decoration: none;
+}
+.btn.primary { color: var(--on-coral); background: var(--coral); border-color: var(--coral); }
+.plan-head h2 { margin-top: 1rem; }
+.plan-answers, .plan-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 16px 12px; margin: 12px 0; }
+.plan-section h3, .plan-answers h3 { margin-top: 0.8rem; }
+.plan-lines { list-style: none; margin: 0; padding: 0; }
+.plan-lines li { padding: 10px 0; border-top: 1px solid var(--border); }
+.plan-lines p { margin: 0; }
+.line-source { font-size: 0.82rem; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+.plan-card { margin: 0 0 12px; }
+
+@media print {
+  body { background: var(--paper); color: var(--ink); font-size: 11pt; }
+  .stripe, .bar, .site-footer nav, .toc, [data-print-hide], [data-intake], .intro, noscript { display: none !important; }
+  main, .site-footer { max-width: none; padding: 0; }
+  a { color: var(--ink); }
+  .note, .muted, .hint, .line-source, .asof, .eyebrow, .site-footer, .ext small.incentive { color: var(--ink-muted); }
+  .chip, .gap { background: var(--paper); color: var(--ink); border-color: var(--ink-muted); }
+  .plan-answers, .plan-section { background: var(--paper); border-color: var(--ink-muted); }
+  .plan-lines li { border-color: var(--ink-muted); break-inside: avoid; }
+  .plan-section h3 { break-after: avoid; }
+  .line-source a[href^="/"]::after { content: " (" attr(href) ")"; }
+  .plan-lines .ext a::after { content: " <" attr(href) ">"; overflow-wrap: anywhere; }
+}

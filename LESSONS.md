@@ -56,3 +56,13 @@
 - **One layout for sibling pages beats a special one.** The base page's toggle, split columns and inner-scrolling pane were three mechanisms used nowhere else. Rebuilt from `FactBlock` and `Toc`, it needs two small options (heading level, tier chip as the title) and no page-specific CSS.
 - **A summary that contradicts its label reads as a bug.** "Under 30 min · 9–65 min" was true (a multi-zip neighborhood's range) but looked wrong; the summary now uses the minutes the tier is based on.
 
+
+## Session 5 (2026-10-11): starting plan
+
+- **When the output space is too big to render, check the generator instead of the pages.** Pre-rendering every plan (9 bases × 7 bands × 4 bedroom choices × 8 "open to" sets × 9 priorities × households) isn't possible, so the page checks can't read plan text. Keeping the rules a pure function in plain JavaScript lets the build load the same module and the same embedded data and build ~27,000 plans, then check the ~16,000 distinct lines. Lines repeat a lot, so deduplicating by line keeps it under 5 seconds.
+- **Cover each rule's inputs in full, not the full product.** The report window only changes "Watch for", so the main loop cycles it and a second loop covers "Watch for" in full. Coverage didn't change (the same 15,931 distinct lines) and the check went from 14 s to under 5 s.
+- **"No network requests" is checkable from the bundle.** The check follows every script a page loads, imports included, and looks for anything that can send data or change the URL. A browser run confirmed it: zero requests from the first answer to the rendered plan.
+- **A `<form>` is a leak even without a server.** A form with no action submits to the same page with every answer in the query string when JavaScript is off. The intake has no `<form>`, and the check fails one on any intake page.
+- **A shortcut that carries state needs a user action, not a URL.** The base page's "Starting plan for <base>" card writes question 1 to the reader's own storage on click, so the base never goes into a link.
+- **Contrast checks can be fooled by a print override.** Redefining `--text` inside `@media print` would have made the check read the print value instead of the screen value (it takes the last definition). Print colors got their own tokens (`--paper`, `--ink`, `--ink-muted`) and their own contrast pairs.
+- **`pkill -f` matches its own shell.** `pkill -f "astro preview"` killed the command that ran it. Kill by PID.

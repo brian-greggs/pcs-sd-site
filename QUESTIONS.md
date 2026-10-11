@@ -1,5 +1,23 @@
 # Questions — site build
 
+## Open (session 5, starting plan v0, 2026-10-11)
+
+**About the principle checks** (you asked for these here rather than a guess):
+
+42. **What counts as a plan line's "source page".** Most lines cite a page on this site (a neighborhood, base, or base housing page) with that section's date line. A few rules point at official links that no page shows yet: MSEP and the three California licensure pages (spouse's job), the Interstate Compact (schools). Those lines cite the linked page itself, with its incentive label and its `verified_on` from `links.json`, and `intake-sources` accepts an https source with an incentive label and a dated line. If a plan line must cite a page on this site, those four lines drop out until a page carries the links (the F3 spouse-employment and schools pages would).
+43. **No dollar figure at all in the plan.** The spec says the plan never shows a BAH dollar figure. `intake-no-bah` is stricter: it fails on *any* dollar figure in plan text, because the plan has no reason to show one (rent appears only as a ratio). Say if you want HUD rent in dollars in the plan; the check would then need the same context rule as the pages.
+44. **Section notes don't carry a source.** Each plan section can have a one-sentence note explaining the list ("Sorted by the weekday drive at 0700…"). Notes state no facts, so they're checked against the word lists and for dollar figures, but not for a source. If you'd rather every visible sentence carry a source, the notes go.
+
+**Rule interpretations** (built one way, easy to flip):
+
+45. **First priority with no lead yet.** "The admin sequence" and "Move logistics" stay in Q8 (so it lines up with the screener), but they have no lead until F2 exists, so a family who picks either first gets a plan with no lead section: their answers, then "Watch for" and "You can skip". Options: (a) as built; (b) lead with their second priority and say so; (c) hide the two from Q8 until F2. Same for "Pets" first with base housing ruled out.
+46. **Cost vs. BAH, "ratio at or under 100%".** A band can span grades with different allowances, and a neighborhood can span zips, so the ratio is often a range (85–104%). I count a neighborhood only when the top of the range is at or under 100% (it fits for every grade in the band). Using the bottom of the range would list more places.
+47. **Base housing wait vs. the report window.** Under 30 days = 1 month, 30–60 = 2, 60–90 = 3. The plan says the wait runs past the window when even the shortest matching wait starts later (its low end is over the window). "90 days or more" and "No orders yet" have no upper bound, so they're never flagged. Which areas count: the ones the base page lists (tied to the base by LMH, plus the ones tied to none); all areas when the base isn't chosen. Camp Pendleton has no wait data, so it's never flagged.
+48. **Base housing in the where-to-live lead.** The spec's lead is neighborhoods only, but Q7 says it changes "which options the plan compares". When the family is open to base housing (or not sure), the where-to-live and commute lead adds a second list: the base page's areas by drive, with the latest wait for their band and bedrooms. Drop it if the lead should stay one list.
+49. **Bedroom helper.** "Yes, some children 6 or older need separate rooms" gives each child aged 6–9 a room of their own (we don't ask sexes, so this is the cautious count). The follow-up appears only when the answer changes the count. A household that comes to 1 bedroom uses the 2-bedroom rows (the smallest we have); 5 or more uses the 4-bedroom rows. Officers and E7 and up get the same count with the note that CNIC lists no standard for them.
+50. **Skip list.** Built: Schools (no child 6–18), Child care (no child under 6), Mello-Roos and home values (not buying), base housing (not open to it). Not skipped: rent tables when not renting (the ratio is the cost signal for buyers too). "Not sure" in Q7 skips nothing.
+51. **More than two pets.** Flagged when every printed pet policy for the relevant areas allows two or fewer (all of them do on the October list). It counts pets in total; it doesn't flag two dogs where a policy says "1 dog or 2 cats". Breed limits aren't in the data.
+
 ## Open (session 4c, base page layout, 2026-09-30)
 
 40. **Base page groups start closed at every width.** That's what lets a phone reader see Base housing without scrolling past 40 neighborhoods, and it matches the neighborhood pattern. On desktop it means six closed cards beside the side menu. If you'd rather have "Under 30 min" and "Tied to this base" open on desktop only, that takes a small script (closed without JavaScript); opening them for everyone brings back the long phone scroll.
