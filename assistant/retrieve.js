@@ -72,7 +72,10 @@ export function buildIndex(corpus) {
     const url = c.url.split('#')[0];
     if (!pages.has(url)) pages.set(url, { url, title: c.page_title, titleTokens: new Set(tokens(c.page_title)) });
   }
-  return { chunks: corpus.chunks, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [] };
+  // Parts of one split section, in order: when one part ranks, all of them are sent.
+  const groups = new Map();
+  corpus.chunks.forEach((c, i) => { const g = c.group ?? c.id; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(i); });
+  return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [] };
 }
 
 // Expanded query terms, each with a weight (the words the family typed count fully).
@@ -86,7 +89,7 @@ function queryTerms(q) {
 
 // Settings the eval tunes (LESSONS.md, session 5b).
 export const SETTINGS = {
-  k: 6, perPage: 3,
+  k: 6, perPage: 3, // sections sent (every part of each), and at most this many from one page
   minScore: 4.0, // below this, the top chunk isn't about the question
   pageBoost: 1.6, // a chunk on a page the question names (all of the page title's words in the question)
 };
@@ -113,19 +116,25 @@ export function search(index, question, settings = SETTINGS) {
   const scored = [...acc].map(([i, a]) => {
     const chunk = index.chunks[i];
     const s = named.has(chunk.url.split('#')[0]) ? a.s * settings.pageBoost : a.s;
-    return { d: { chunk }, s, contentHits: a.contentHits };
+    return { i, d: { chunk }, s, contentHits: a.contentHits };
   });
   scored.sort((x, y) => y.s - x.s || x.d.chunk.id.localeCompare(y.d.chunk.id));
   const top = scored[0];
   const relevant = !!top && top.s >= settings.minScore && top.contentHits > 0;
+  // Pick sections, not chunks: k sections (at most perPage from one page), each sent whole, so a
+  // table split across parts for ranking never reaches the model with half its rows.
   const perPage = new Map();
+  const picked = new Set();
   const chunks = [];
   for (const x of scored) {
-    if (chunks.length >= settings.k) break;
+    if (picked.size >= settings.k) break;
+    const group = x.d.chunk.group ?? x.d.chunk.id;
+    if (picked.has(group)) continue;
     const page = x.d.chunk.url.split('#')[0];
     if ((perPage.get(page) ?? 0) >= settings.perPage) continue;
     perPage.set(page, (perPage.get(page) ?? 0) + 1);
-    chunks.push({ ...x.d.chunk, score: Math.round(x.s * 100) / 100 });
+    picked.add(group);
+    for (const j of index.groups.get(group) ?? [x.i]) chunks.push({ ...index.chunks[j], score: Math.round(x.s * 100) / 100 });
   }
   // Nearest page: the best-scoring page even when nothing clears the bar; the home page if nothing matched at all.
   const nearest = top ? { url: top.d.chunk.url.split('#')[0], title: top.d.chunk.page_title } : { url: '/', title: 'Home: start with your base' };

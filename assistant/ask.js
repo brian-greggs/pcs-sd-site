@@ -43,7 +43,8 @@ export function householdLine(c, PRIORITY = {}) {
   ].filter(Boolean).join('; ');
 }
 
-const citation = (c) => ({ url: c.url, title: c.page_title, section: c.section_heading, verified_on: c.verified_on });
+// Whole sections are sent (every part of a split one), so a citation names the section, not a part.
+const citation = (c) => ({ url: c.url, title: c.page_title, section: c.section_heading.replace(/ \(part \d+ of \d+\)$/, ''), verified_on: c.verified_on });
 const citationsOf = (chunks) => [...new Map(chunks.map((c) => [c.url, citation(c)])).values()];
 const nearestChunk = (r) => r.chunks[0] ?? null;
 

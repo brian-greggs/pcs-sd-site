@@ -62,16 +62,39 @@ function split(body) {
   parts.push({ sub: heading, html: body.slice(last) });
   return parts.map((p) => ({ sub: p.sub, text: text(p.html) })).filter((p) => p.text.length > 0);
 }
+// Split a long section without breaking a table: lines are grouped into blocks (a whole table, or
+// one line of text) and blocks are packed into parts of about MAX_CHARS. Only a table that is itself
+// longer than that (the school lists) is split, between rows, and each part repeats its header row.
+// Retrieval sends every part of a section together (assistant/retrieve.js), so parts are for ranking,
+// never for cutting a section in half.
+// Of the per-base and per-band variants a page renders (the page script shows one), keep the visible default.
+const stripHidden = (html) => html.replace(/<(\w+)\b[^>]*\shidden(?:="")?[^>]*>[\s\S]*?<\/\1>/g, ' ');
+const isRow = (l) => l.includes(' | ');
 function windows(t) {
   if (t.length <= MAX_CHARS) return [t];
-  const lines = t.split('\n');
+  const blocks = [];
+  for (const l of t.split('\n')) {
+    const last = blocks.at(-1);
+    if (last && isRow(l) && last.table) last.lines.push(l);
+    else blocks.push({ table: isRow(l), lines: [l] });
+  }
   const out = [];
   let cur = [];
-  for (const l of lines) {
-    if (cur.join('\n').length + l.length > MAX_CHARS && cur.length) { out.push(cur.join('\n')); cur = []; }
-    cur.push(l);
+  const size = (ls) => ls.join('\n').length;
+  const flush = () => { if (cur.length) out.push(cur.join('\n')); cur = []; };
+  for (const b of blocks) {
+    if (size([...cur, ...b.lines]) <= MAX_CHARS) { cur.push(...b.lines); continue; }
+    flush();
+    if (size(b.lines) <= MAX_CHARS || !b.table) { cur.push(...b.lines); continue; }
+    const [header, ...rows] = b.lines;
+    let part = [header];
+    for (const r of rows) {
+      if (part.length > 1 && size([...part, r]) > MAX_CHARS) { out.push(part.join('\n')); part = [header]; }
+      part.push(r);
+    }
+    cur = part;
   }
-  if (cur.length) out.push(cur.join('\n'));
+  flush();
   return out;
 }
 
@@ -97,11 +120,11 @@ for (const file of walk(DIST)) {
     if (!verified) throw new Error(`build_corpus: ${url}#${id} has no date in its date line: "${dates}"`);
     const headHtml = (inner.match(/<h[23]\b[^>]*>([\s\S]*?)<\/h[23]>/) ?? [, id])[1];
     const heading = text(headHtml);
-    const summary = text((inner.match(/<span class="summary-line">([\s\S]*?)<\/span>\s*<\/summary>/) ?? [, ''])[1]);
+    // The summary line, like the body, can hold one variant per base (all but one hidden): keep the visible one.
+    const summary = text(stripHidden((inner.match(/<summary>([\s\S]*?)<\/summary>/) ?? [, ''])[1].replace(/^[\s\S]*?<span class="summary-line">/, '')));
     let body = inner.replace(/<p[^>]*data-asof[^>]*>[\s\S]*?<\/p>/, '');
     body = body.replace(/<summary>[\s\S]*?<\/summary>/, '').replace(/<h2\b[^>]*>[\s\S]*?<\/h2>/, '');
-    // Of the per-base and per-band variants a page renders (the script shows one), keep the visible default.
-    body = body.replace(/<(\w+)\b[^>]*\shidden(?:="")?[^>]*>[\s\S]*?<\/\1>/g, ' ');
+    body = stripHidden(body);
     const parts = split(body);
     parts.forEach((p, pi) => {
       const ws = windows(pi === 0 && summary ? `${summary}\n${p.text}` : p.text);
@@ -111,6 +134,7 @@ for (const file of walk(DIST)) {
           url: `${url}#${id}`,
           page_title: pageTitle,
           section_heading: [heading, p.sub].filter(Boolean).join(' › ') + (ws.length > 1 ? ` (part ${wi + 1} of ${ws.length})` : ''),
+          group: `${url}#${id}${parts.length > 1 ? `-${pi}` : ''}`, // all parts of one (sub)section; retrieval sends them together
           text: w,
           verified_on: verified,
           dates,

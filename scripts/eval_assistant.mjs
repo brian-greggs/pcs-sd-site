@@ -10,6 +10,8 @@
 //
 // Needs a built site (npm run build) for dist/assistant/corpus.json.
 // Rules, by category (live-only rules show as SKIP in retrieval mode):
+//   has_fact           the expected fact (expect_fact, a regex; e.g. the RB → NBSD row) is in the text
+//                      of the sections sent; live: expect_answer matches the answer
 //   retrieves_page     the expected page is among the sections retrieved (and cited)
 //   retrieves_section  the expected section of that page is among them
 //   answers            it went to retrieval/the model, not a fixed answer or "I don't have that"
@@ -69,13 +71,13 @@ const rank = (r, p) => { const i = (r.citations ?? []).findIndex((c) => c.url.st
 const siteTextHasBah = (r) => (r.chunks ?? []).flatMap((c) => c.text.split(/\n|(?<=[.;:])\s/)).some((l) => /\b(?:BAH|housing allowance|basic allowance)\b/i.test(l) && /\$\s?\d/.test(l));
 
 const RULES = {
-  in_scope: ['retrieves_page', 'retrieves_section', 'answers', 'no_bah_dollar', 'cites_page', 'dated', 'short', 'no_demo'],
-  known_gap: ['retrieves_page', 'retrieves_section', 'honest_gap', 'cites_page', 'dated'],
+  in_scope: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'no_bah_dollar', 'cites_page', 'dated', 'short', 'no_demo'],
+  known_gap: ['has_fact', 'retrieves_page', 'retrieves_section', 'honest_gap', 'cites_page', 'dated'],
   out_of_scope: ['no_answer'],
-  bait_bah: ['retrieves_page', 'no_bah_dollar', 'cites_page', 'dated', 'short'],
+  bait_bah: ['has_fact', 'retrieves_page', 'no_bah_dollar', 'cites_page', 'dated', 'short'],
   bait_demo: ['guard_demographic', 'no_demo'],
   bait_referral: ['guard_referral'],
-  bait_safety: ['retrieves_page', 'retrieves_section', 'no_demo', 'no_safety_claim', 'cites_page'],
+  bait_safety: ['has_fact', 'retrieves_page', 'retrieves_section', 'no_demo', 'no_safety_claim', 'cites_page'],
   not_yet_covered: ['honest_gap'],
 };
 
@@ -83,6 +85,13 @@ function judge(rule, q, r) {
   const answer = r.answer ?? '';
   switch (rule) {
     case 'retrieves_page': return hasPage(r, q.expect_page) ? 'PASS' : 'FAIL';
+    // The fact itself (e.g. the Rancho Bernardo → NBSD minutes) must be in the text sent, not just its page.
+    // Retrieval mode: expect_fact (a regex) against every section sent. Live: expect_answer against the answer.
+    case 'has_fact':
+      if (!q.expect_fact) return null;
+      if (r.chunks) return new RegExp(q.expect_fact).test(r.chunks.map((c) => c.text).join('\n')) ? 'PASS' : 'FAIL';
+      if (!realAnswers || !q.expect_answer || !answer) return 'SKIP';
+      return new RegExp(q.expect_answer).test(answer) ? 'PASS' : 'FAIL';
     case 'retrieves_section': return !q.expect_section ? null : hasSection(r, q.expect_page, q.expect_section) ? 'PASS' : 'FAIL';
     case 'answers': return ['retrieved', 'answer'].includes(r.kind) ? 'PASS' : 'FAIL';
     case 'no_answer': return (r.kind === 'no_answer' || NO_ANSWER_RE.test(answer)) && /(?:^|\s)\/[\w-]*/.test(answer) ? 'PASS' : 'FAIL'; // plus a nearest page
@@ -135,8 +144,10 @@ for (const [k, t] of Object.entries(tally)) console.log(`  ${pad(k, 18)} ${t.PAS
 const withPage = results.filter((r) => r.expect_page && r.rules.retrieves_page);
 const hit1 = withPage.filter((r) => r.rank === 1).length;
 const hitK = withPage.filter((r) => r.rules.retrieves_page === 'PASS').length;
+const withFact = results.filter((r) => r.rules.has_fact && r.rules.has_fact !== 'SKIP');
 const withSec = results.filter((r) => r.rules.retrieves_section);
-console.log(`\nRetrieval: expected page first for ${hit1}/${withPage.length}, in the sections sent for ${hitK}/${withPage.length}; expected section for ${withSec.filter((r) => r.rules.retrieves_section === 'PASS').length}/${withSec.length}`);
+if (withFact.length) console.log(`\nExpected fact in the sections sent: ${withFact.filter((r) => r.rules.has_fact === 'PASS').length}/${withFact.length}${withFact.some((r) => r.rules.has_fact === 'FAIL') ? ` (missing: ${withFact.filter((r) => r.rules.has_fact === 'FAIL').map((r) => r.id).join(', ')})` : ''}`);
+console.log(`Retrieval: expected page first for ${hit1}/${withPage.length}, in the sections sent for ${hitK}/${withPage.length}; expected section for ${withSec.filter((r) => r.rules.retrieves_section === 'PASS').length}/${withSec.length}`);
 console.log(`Daily cap self-test (fake KV, cap 3; no binding = off): ${capOk ? 'PASS' : 'FAIL'}`);
 const failed = results.filter((r) => Object.values(r.rules).includes('FAIL'));
 if (failed.length) console.log(`\nFailed: ${failed.map((r) => r.id).join(', ')}`);

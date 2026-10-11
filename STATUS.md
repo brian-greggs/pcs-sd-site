@@ -1,6 +1,27 @@
-# Site build — status (2026-10-11, session 5c: preview build fix; starting plan v0 and assistant groundwork, v0.5.1)
+# Site build — status (2026-10-11, session 5d: whole-section retrieval; starting plan v0 and assistant groundwork, v0.5.1)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 5d: retrieval sends whole sections; the eval checks facts
+
+Your preview check ("How long is the commute from Rancho Bernardo to Naval Base San Diego?") showed sections reaching the model in pieces. Three causes, three fixes:
+
+- **The commute summary carried all eight per-base variants** the page hides (only one shows), which pushed a one-table section over the size limit and split its table in two. The corpus now strips hidden variants from the summary line as well as the body. The Rancho Bernardo commute section is one chunk again.
+- **Tables were split between rows when a section was long.** Now a section's parts are cut only between blocks (a whole table, or a line of text). A table that is itself over the limit (the long school lists) is split between rows and every part repeats the header row. 81 sections still have parts, mostly Schools.
+- **Retrieval ranked parts on their own,** so it could send part 1 without part 2, or a lone part 2 from another page (the Rancho Peñasquitos half you saw). It now picks *sections*: 6 sections (at most 3 per page), and every part of each, in order. Citations name the section, not "part n of m". Before, the page also showed one citation per section URL, so two parts looked like one.
+
+**Eval:** every in-scope, known-gap, BAH and safety question now has `expect_fact`, a pattern for the fact itself (e.g. the row `Naval Base San Diego (32nd St) … | 35 min |`), checked against the text actually sent (`has_fact`); in a live run, `expect_answer` is checked against the answer. 4 new questions: Rancho Bernardo → NBSD and Oceanside → Camp Pendleton commutes, Escondido 3-bed rent vs. the E7–E9 allowance, La Mesa HUD 2-bed rent. Setting the RB fact to a wrong value (36 min) failed `has_fact`.
+
+Retrieval-only run, 40 questions:
+
+| Rule | Result |
+|---|---|
+| Expected fact in the sections sent | **25 of 26** (missing: in-16, the drive-time source) |
+| Expected page in the sections sent | 26 of 27 (first for 25) |
+| Expected section in the sections sent | 21 of 21 |
+| Out-of-scope stopped before the model | 3 of 4 (out-02 weather, unchanged) |
+| Fixed answers (referral, demographic) | 4 of 4 |
+| BAH: no dollar figure next to BAH in anything returned | 23 of 23 |
 
 ## Session 5c: why the preview build failed, and the fix
 
@@ -77,7 +98,7 @@ No live model call was made this session. `/api/ask` runs in STUB mode until the
 - **UI** (`/ask/`): not linked from any page or menu (checked: no `href="/ask/"` in `dist/`), noindex like every page, conversation in a JavaScript array only (no localStorage, no cookies: checked in a browser), "Questions go to an AI model and aren't stored by this site." Starting-plan answers go only if "Include my starting-plan answers" is ticked, and the page shows the exact JSON first; in the browser test the POST body matched the preview byte for byte. Each question is sent on its own (no history). Works only with JavaScript; says so otherwise.
 - **Checked in the real runtime:** wrangler 4.149 compiled the Function, and `wrangler pages dev dist` (workerd) answered in STUB mode, gave the referral and no-answer replies, returned 405 on GET and `X-Ask-Cap: off`.
 
-**Eval** (`evals/assistant_eval.jsonl`, 36 questions; `scripts/eval_assistant.mjs`): 17 in-scope with expected page (and section), 2 known holes, 4 out-of-scope, 2 BAH-dollar baits, 2 demographic, 2 referral, 2 "is X safe", 5 the site should cover but doesn't. Retrieval-only run on 2026-10-11:
+**Eval** (`evals/assistant_eval.jsonl`, 36 questions at the time, 40 since session 5d; `scripts/eval_assistant.mjs`): 17 in-scope with expected page (and section), 2 known holes, 4 out-of-scope, 2 BAH-dollar baits, 2 demographic, 2 referral, 2 "is X safe", 5 the site should cover but doesn't. Retrieval-only run on 2026-10-11:
 
 | Rule | Result |
 |---|---|
