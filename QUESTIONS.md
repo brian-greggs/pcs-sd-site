@@ -1,5 +1,11 @@
 # Questions — site build
 
+## Open (session 7, plan rules v0.4, 2026-10-11)
+
+59. **Base pages still use the closest zip for tiers.** The plan now puts a neighborhood under 30 only if its whole drive range is under 30. The base pages' "Off base" groups, and the "Tier" column in every commute table, still use the closest zip (QUESTIONS 41). 67 neighborhood/base pairs would move (STATUS, session 7, has examples), so a family can see Vista under "Under 30 min" on the Camp Pendleton page and under 30–44 in their plan. Switch the base pages and the Tier column to the top of the range too? That's a `drives()` change in `src/lib/bases.ts` plus the tier summary wording.
+60. **The Camp Pendleton base page lists the untied areas without a caveat.** Pendleton plans now leave them out (PRD Q9 unresolved), but `/base/camp-pendleton/` shows them under "Not tied to a specific base by LMH", and the NMCSD and MCRD pages say those areas "are open to any eligible family". Add a line on the Pendleton page that eligibility for Pendleton families isn't confirmed, or drop the group there? Either way, a page stating it would let the plan show the areas with the note instead of hiding them.
+61. **More than two pets at Camp Pendleton isn't flagged.** Pendleton's communities aren't on the wait list, and their LMH pages say only "pets allowed", with no number, so there's no printed limit to compare against. A Pendleton family with 3 dogs sees no pet warning. Leave it, or say plainly that Pendleton's pet limits aren't in our data?
+
 ## Open (session 4c, base page layout, 2026-09-30)
 
 40. **Base page groups start closed at every width.** That's what lets a phone reader see Base housing without scrolling past 40 neighborhoods, and it matches the neighborhood pattern. On desktop it means six closed cards beside the side menu. If you'd rather have "Under 30 min" and "Tied to this base" open on desktop only, that takes a small script (closed without JavaScript); opening them for everyone brings back the long phone scroll.

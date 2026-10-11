@@ -106,3 +106,10 @@
 - **"Has a date" was too weak a check.** `intake-sources` only asked for a year somewhere in the source line, so a wrong date passed. `intake-dates` ties each date label to a pattern for its fact, both ways. Its first run flagged two phrasings I hadn't thought of: a wait fact worded "no 3-bed rows … on the October 2026 list", and pet facts worded with "dog" and "cat". It also found the child care lines, which show drive minutes with no commute date.
 - **Joining values loses their keys.** Deduplicating an area's pet policies into one string dropped which community each belonged to. Keep the per-community rows in the data and decide how to group them when writing the line.
 - **A household fact that matters regardless of priorities belongs in "Watch for", not in a lead.** The infant-care gap lived in the child care lead, so a family with a baby who ranked pets first never saw it.
+
+## Session 7 (2026-10-11): rules v0.4
+
+- **A tier is a claim about the whole range.** "Under 30 minutes" from the closest zip let a neighborhood with a 35-minute zip into the under-30 list. The plan now uses the top of the range, and `intake-tiers` checks every listed line against its heading. The base pages still use the old rule, so the two can disagree until QUESTIONS 59 is answered; I reported that rather than change pages I wasn't asked to touch.
+- **"Shortest" means one thing, not a span.** Merging every matching row into min-low/max-high is right for "the wait ranges from …" and wrong for "the shortest is …": it printed "1–18 months" by joining a 1–3 row and a 16–18 row. Keep both: the range for the lead, the single soonest row for the warning.
+- **Off-by-one in the language too.** "Runs past the window" with `lo > window` let a 1–3 month wait pass for someone reporting in under 30 days. At or past (`>=`) matches what a family means by "won't be ready when I arrive"; the line now says "doesn't fit your report window".
+- **When the site can't qualify a claim, don't make it.** Listing the untied areas for Pendleton families implied they're eligible. With no page stating the doubt, leaving them out is the honest version of "show it with a note".

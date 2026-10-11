@@ -12,6 +12,8 @@
 //   intake-words     plan text passes the same word lists as the pages (scripts/principle_lists.mjs):
 //                    no demographic descriptors, no score/index labels, no placeholder text
 //   intake-config    the Q8 priority list and the tradeoff table are well formed
+//   intake-tiers     a section headed "under 30 minutes" or "within 45 minutes" shows only places whose
+//                    whole drive range is under that (the first "N–M min" on each line; rules v0.4)
 //   (failures print the first 20 per check; ALL=1 node scripts/check_intake.mjs prints every one)
 //   intake-dates     a line's source dates are only for facts on that line, and every fact it shows
 //                    is dated: each date label ("Commute: …", "Pets: …") needs its fact in the line,
@@ -171,6 +173,14 @@ function checkPlan(plan, where) {
       wordsFail(`${where} § ${s.id}`, s.heading, true);
       if (s.note) wordsFail(`${where} § ${s.id}`, s.note, false);
     }
+    // intake-tiers: the heading's limit against the top of each line's (first) drive range.
+    const limit = /\bunder 30 minutes\b/i.test(s.heading) ? 30 : /\bwithin 45 minutes\b/i.test(s.heading) ? 45 : null;
+    if (limit) {
+      for (const line of s.lines) {
+        const m = line.text.match(/\b(\d+)(?:–(\d+))? min to\b/);
+        if (m && Number(m[2] ?? m[1]) >= limit) fail('intake-tiers', `${where} § ${s.id}`, `"${s.heading}" lists "${line.text.slice(0, 70)}"`);
+      }
+    }
     for (const line of s.lines) {
       const key = JSON.stringify(line);
       if (seenLines.has(key)) continue;
@@ -290,7 +300,7 @@ if (!existsSync(planFile)) {
   }
 }
 
-const checks = ['intake-network', 'intake-sources', 'intake-no-bah', 'intake-words', 'intake-config', 'intake-dates'];
+const checks = ['intake-network', 'intake-sources', 'intake-no-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers'];
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
 console.log('\nStarting plan checks (dist)');
 for (const c of checks) {
