@@ -1,0 +1,137 @@
+---
+// Assistant (F6 groundwork). Not linked from any page or menu; noindex like every page.
+// Questions go to /api/ask on this site (functions/api/ask.js), which answers only from
+// this site's pages. The conversation lives in this page's memory: no localStorage, no
+// cookies; reload and it's gone. Starting-plan answers are sent only if the reader turns
+// that on, and the page shows exactly what will be sent first.
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Ask" back={{ href: '/', label: 'Home' }} description="Ask a question about moving to San Diego. Answers come only from this site's pages.">
+  <p class="eyebrow">Assistant <span class="chip gold v0">test</span></p>
+  <h1>Ask about the move</h1>
+  <p class="intro">Answers come only from this site's pages, each with the page and the date it was checked. If the San Diego material doesn't cover it, the answer says so.</p>
+  <p class="gap">Questions go to an AI model and aren't stored by this site. Don't type names, addresses or anything personal.</p>
+
+  <noscript><p class="gap">The assistant needs JavaScript. Everything it knows is on the pages: <a href="/">start with your base</a>.</p></noscript>
+
+  <div data-ask hidden>
+    <ol class="ask-log" data-log aria-live="polite"></ol>
+
+    <div class="ask-box">
+      <label class="ask-label" for="ask-q">Your question</label>
+      <textarea id="ask-q" rows="3" maxlength="500" data-q></textarea>
+      <label class="opt ask-context" data-context-wrap>
+        <input type="checkbox" data-context /> Include my starting-plan answers
+      </label>
+      <div class="note" data-context-preview hidden>
+        <p>This is exactly what will be sent with each question:</p>
+        <pre class="ask-pre" data-context-json></pre>
+      </div>
+      <p class="note" data-context-none hidden>No starting-plan answers on this device. <a href="/plan/">Answer the eight questions</a> if you want answers fitted to your household.</p>
+      <div class="actions">
+        <button type="button" class="btn primary" data-send>Ask</button>
+        <button type="button" class="btn" data-clear-log>Clear this conversation</button>
+      </div>
+      <p class="gap" data-error hidden></p>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
+  const root = $('[data-ask]');
+  const log = $('[data-log]');
+  const q = $<HTMLTextAreaElement>('[data-q]');
+  const toggle = $<HTMLInputElement>('[data-context]');
+  const errorBox = $('[data-error]');
+  root.hidden = false;
+
+  // Starting-plan answers: read only when the reader turns this on; only these four fields go out.
+  type Ctx = { base?: string; band?: string; kids?: string[]; priorities?: string[] };
+  const readContext = (): Ctx | null => {
+    try {
+      const a = JSON.parse(localStorage.getItem('pcs-sd:intake') ?? 'null')?.answers;
+      if (!a) return null;
+      const c: Ctx = {};
+      if (a.base) c.base = a.base;
+      if (a.band) c.band = a.band;
+      if (a.kids) c.kids = Object.keys(a.kids).filter((g) => a.kids[g] > 0);
+      if (Array.isArray(a.priorities)) c.priorities = a.priorities.slice(0, 2);
+      return Object.keys(c).length ? c : null;
+    } catch { return null; }
+  };
+  const showContext = () => {
+    const c = toggle.checked ? readContext() : null;
+    $('[data-context-preview]').hidden = !c;
+    $('[data-context-none]').hidden = !(toggle.checked && !c);
+    $('[data-context-json]').textContent = c ? JSON.stringify(c, null, 2) : '';
+  };
+  toggle.addEventListener('change', showContext);
+
+  // The conversation: this page's memory only.
+  const history: { question: string; reply: Record<string, any> }[] = [];
+  const el = (tag: string, cls?: string, text?: string) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+  const render = () => {
+    log.replaceChildren();
+    for (const { question, reply } of history) {
+      const li = el('li', 'ask-turn');
+      li.append(el('p', 'ask-you', question));
+      const a = el('div', 'ask-answer');
+      if (reply.error) a.append(el('p', 'gap', reply.error));
+      if (reply.answer) a.append(el('p', 'ask-text', reply.answer));
+      if (reply.note) a.append(el('p', 'note', reply.note));
+      if (reply.citations?.length) {
+        const ul = el('ul', 'links');
+        for (const c of reply.citations) {
+          const item = el('li');
+          const link = el('a', undefined, `${c.title}: ${c.section}`) as HTMLAnchorElement;
+          link.href = c.url;
+          item.append(link, ` · verified ${c.verified_on}`);
+          ul.append(item);
+        }
+        a.append(el('p', 'note', 'From:'), ul);
+      }
+      if (reply.prompt) {
+        const d = el('details', 'ask-stub');
+        d.append(el('summary', undefined, 'The prompt that would go to the model'));
+        d.append(el('pre', 'ask-pre', `${reply.prompt.system}\n\n=== user ===\n\n${reply.prompt.messages[0].content}`));
+        a.append(d);
+      }
+      li.append(a);
+      log.append(li);
+    }
+  };
+  const send = async () => {
+    const question = q.value.trim();
+    if (!question) return;
+    errorBox.hidden = true;
+    const button = $<HTMLButtonElement>('[data-send]');
+    button.disabled = true;
+    const context = toggle.checked ? readContext() : null;
+    try {
+      const res = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(context ? { question, context } : { question }),
+      });
+      const reply = await res.json().catch(() => ({ error: 'The assistant isn’t working right now.' }));
+      history.push({ question, reply });
+      q.value = '';
+      render();
+    } catch {
+      errorBox.textContent = 'Couldn’t reach the assistant. Check your connection and try again.';
+      errorBox.hidden = false;
+    } finally {
+      button.disabled = false;
+    }
+  };
+  $('[data-send]').addEventListener('click', send);
+  q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+  $('[data-clear-log]').addEventListener('click', () => { history.length = 0; render(); });
+</script>

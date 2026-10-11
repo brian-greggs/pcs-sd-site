@@ -22,3 +22,8 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# assistant eval outputs (live runs contain model answers)
+evals/*_run.json
+# local wrangler state
+.wrangler/

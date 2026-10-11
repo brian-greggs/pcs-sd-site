@@ -1,5 +1,15 @@
 # Questions — site build
 
+## Open (session 5b, assistant groundwork, 2026-10-11)
+
+52. **The BAH output filter also catches rent.** It removes any sentence with a dollar figure within 120 characters of "BAH" or "housing allowance", as you specified. So "3-bed HUD rent is $3,650, about 92% of your housing allowance" loses the sentence even though $3,650 is rent. Arguably right (rent ÷ ratio gives the allowance, QUESTIONS 2), but the model will mostly avoid rent dollars as a result. Keep it, or narrow it to figures the model calls BAH?
+53. **Fixed answers.** Realtor/lender/mover/landlord requests and "who lives there" questions get fixed text (in `assistant/guards.js`) without a model call. The wording is mine. "Is X safe" isn't fixed: it goes to the model, which is told crime isn't in the material and to offer the Hazards section.
+54. **No conversation history goes to the server.** Each question is answered on its own, so "what about Santee?" after a question about Mira Mesa won't work. Sending the last one or two turns is a small change; it also means sending more of what the family typed.
+55. **The daily cap counts every request**, fixed answers and "I don't have that" included, by UTC day. KV is eventually consistent, so under bursts it can run a few over.
+56. **No refusal fallback.** The model is whatever `ASSISTANT_MODEL` names, so the request uses only parameters every current model accepts. If the model declines (stop reason "refusal"), the family gets "I can't answer that one here" and the nearest page.
+57. **What the corpus leaves out:** text outside a dated section (page intros, 6 KB), each page's "Sources and dates" block (duplicates `/sources/`), `/plan/`, `/ask/` and the changelog. Of the per-base and per-band variants a page renders, only the visible default goes in (the nearest base's commute tile, E5–E6), so a question about another band leans on the Cost table, which has every band.
+58. **The pages' own source lines aren't indexed.** Indexing them answered "where do your drive times come from?" but every Cost section's source line names "DTMO BAH", which pushed the base housing cost question off its page. They still go to the model with each section (the "Verified" line), just not into the ranking.
+
 ## Open (session 5, starting plan v0, 2026-10-11)
 
 **About the principle checks** (you asked for these here rather than a guess):

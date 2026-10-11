@@ -231,3 +231,20 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outl
   .line-source a[href^="/"]::after { content: " (" attr(href) ")"; }
   .plan-lines .ext a::after { content: " <" attr(href) ">"; overflow-wrap: anywhere; }
 }
+
+/* --- Assistant (/ask/, not linked) ------------------------------------------ */
+.ask-log { list-style: none; margin: 0; padding: 0; }
+.ask-turn { margin: 12px 0; }
+.ask-you { margin: 0 0 6px; padding: 10px 14px; border-radius: var(--radius); background: var(--mauve-bg); color: var(--text); }
+.ask-answer { padding: 10px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.ask-text { white-space: pre-line; margin: 0.4rem 0; }
+.ask-box { margin-top: 16px; }
+.ask-label { display: block; font-weight: 700; margin-bottom: 6px; }
+textarea {
+  width: 100%; min-height: 88px; padding: 10px 12px; font: inherit;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+}
+textarea:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.ask-context { margin-top: 8px; }
+.ask-pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; max-height: 24rem; overflow-y: auto; }
+.ask-stub summary { cursor: pointer; color: var(--link); min-height: var(--touch); display: flex; align-items: center; }

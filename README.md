@@ -73,5 +73,10 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `scripts/check_principles.mjs` | The build-time principle checks |
 | `scripts/principle_lists.mjs` | The word lists every check uses (demographic terms, score words, placeholder patterns) |
 | `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes, and every line the rules can print (built across the answer space) has a source and a date, no dollar figure, and passes the word lists |
+| `scripts/build_corpus.mjs` | Postbuild: chunks every published page by dated section into `dist/assistant/corpus.json` with BM25 postings (the assistant's only knowledge) |
+| `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, intake context, daily cap) |
+| `functions/api/ask.js` | Cloudflare Pages Function at `/api/ask` (same origin). Env: `ANTHROPIC_API_KEY`, `ASSISTANT_MODEL`, optional KV `ASK_LIMITS` and `ASK_DAILY_CAP` |
+| `src/pages/ask.astro` | `/ask/`: the assistant page; not linked anywhere; conversation in page memory only |
+| `evals/assistant_eval.jsonl`, `scripts/eval_assistant.mjs` | 36 test questions and the runner: `npm run eval:assistant` (retrieval only), `-- --live`, or `-- --url <deployed site>` |
 | `scripts/check_layout.mjs` | Layout check, run by hand: every page at 390/768/1280/1440 px, no sideways scroll (needs Chrome; usage at the top) |
 | `scripts/bah_check_allow.json` | Reviewed coincidences where a rent equals a BAH figure (empty) |
