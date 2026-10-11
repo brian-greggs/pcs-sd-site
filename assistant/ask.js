@@ -8,7 +8,6 @@ import Anthropic from '@anthropic-ai/sdk';
 import { search } from './retrieve.js';
 import { SYSTEM_PROMPT, NO_ANSWER, userMessage } from './prompt.js';
 import { isReferral, isDemographic, GUARD_TEXT, filterBahDollars } from './guards.js';
-import priorities from '../src/config/intake/priorities.json' with { type: 'json' };
 
 export const MAX_QUESTION = 500;
 
@@ -20,9 +19,12 @@ const BASES = {
 };
 const BANDS = ['E1–E4', 'E5–E6', 'E7–E9', 'W1–W5', 'O1–O3E', 'O1–O3', 'O4–O6'];
 const KID_GROUPS = ['0-2', '3-5', '6-9', '10-13', '14-18'];
-const PRIORITY = Object.fromEntries(priorities.priorities.map((p) => [p.id, p.label]));
+// Q8 labels come with the corpus (scripts/build_corpus.mjs copies src/config/intake/priorities.json
+// into it). Not a JSON import: Node needs `with { type: 'json' }` for one, and the wrangler 3 that
+// Cloudflare Pages uses to compile functions/ can't parse that syntax (LESSONS, session 5c).
+const priorityLabels = (index) => Object.fromEntries((index?.priorities ?? []).map((p) => [p.id, p.label]));
 
-export function cleanContext(raw) {
+export function cleanContext(raw, PRIORITY = {}) {
   if (!raw || typeof raw !== 'object') return null;
   const c = {};
   if (Object.hasOwn(BASES, raw.base)) c.base = raw.base;
@@ -31,7 +33,7 @@ export function cleanContext(raw) {
   if (Array.isArray(raw.priorities)) c.priorities = raw.priorities.filter((p, i, xs) => Object.hasOwn(PRIORITY, p) && xs.indexOf(p) === i).slice(0, 2);
   return Object.keys(c).length ? c : null;
 }
-export function householdLine(c) {
+export function householdLine(c, PRIORITY = {}) {
   if (!c) return null;
   return [
     c.base && `reporting to ${BASES[c.base]}`,
@@ -49,8 +51,9 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
   const question = typeof body?.question === 'string' ? body.question.replace(/\s+/g, ' ').trim() : '';
   if (!question) return { status: 400, json: { error: 'Ask a question.' } };
   if (question.length > MAX_QUESTION) return { status: 400, json: { error: `Keep it under ${MAX_QUESTION} characters.` } };
-  const context = cleanContext(body.context);
-  const household = householdLine(context);
+  const labels = priorityLabels(index);
+  const context = cleanContext(body.context, labels);
+  const household = householdLine(context, labels);
   const live = Boolean(env.ANTHROPIC_API_KEY && env.ASSISTANT_MODEL);
   const mode = live ? 'live' : 'stub';
   const r = search(index, question);

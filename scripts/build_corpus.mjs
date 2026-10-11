@@ -122,6 +122,9 @@ for (const file of walk(DIST)) {
 
 if (!existsSync(dirname(OUT))) mkdirSync(dirname(OUT), { recursive: true });
 // The BM25 postings go in the same file, built with the same tokenizer the Function uses.
-const json = JSON.stringify({ built_from: 'dist/ pages after the principle checks', chunks, index: indexChunks(chunks) });
+// The Q8 priority labels ride along for /api/ask's intake context (the Function can't import JSON
+// in a way both Node and Cloudflare's wrangler 3 accept). They're public: /plan/ shows them.
+const intakePriorities = JSON.parse(readFileSync(join(ROOT, 'src', 'config', 'intake', 'priorities.json'), 'utf-8')).priorities.map(({ id, label }) => ({ id, label }));
+const json = JSON.stringify({ built_from: 'dist/ pages after the principle checks', chunks, index: indexChunks(chunks), intake_priorities: intakePriorities });
 writeFileSync(OUT, json);
 console.log(`\nAssistant corpus\n  ${chunks.length} chunks from ${pages} pages → dist/assistant/corpus.json (${Math.round(json.length / 1024)} KB); ${Math.round(undatedChars / 1024)} KB of undated text outside fact blocks left out\n`);

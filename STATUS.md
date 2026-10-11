@@ -1,6 +1,10 @@
-# Site build — status (2026-10-11, session 5: starting plan v0 and assistant groundwork, v0.5.1)
+# Site build — status (2026-10-11, session 5c: preview build fix; starting plan v0 and assistant groundwork, v0.5.1)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 5c: why the preview build failed, and the fix
+
+The branch's Cloudflare Pages build failed while compiling `functions/`, not in `npm run build`: `assistant/ask.js` imported a JSON file with `with { type: 'json' }`, which Node 22 accepts but wrangler 3 (in Cloudflare's build image) can't parse. Reproduced from a fresh clone (`npm ci`, `npm run build`, then `wrangler pages functions build`): wrangler 4.149 compiled it, 3.114 and 3.22 failed. Fixed by carrying the Q8 labels in the corpus instead; all three versions now compile it, and wrangler 3's local runtime answered with the household line built from them. New postbuild check `scripts/check_functions.mjs` (syntax wrangler 3 can't parse, JSON or Node built-in imports, `process.env`, bundle size). Function size: about 0.8 MB raw / 0.14 MB gzipped as wrangler builds it, against the 3 MB free-plan limit; the 1.3 MB corpus is a static asset, not part of the Function. Node pinned with `.node-version` (22). Details in LESSONS, session 5c.
 
 ## Session 5: starting plan (F5 intake v0, rules v0.1)
 

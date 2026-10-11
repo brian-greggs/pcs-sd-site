@@ -9,8 +9,8 @@
     "dev": "astro dev",
     "prebuild": "node scripts/check_principles.mjs source",
     "build": "astro build",
-    "postbuild": "node scripts/check_principles.mjs dist && node scripts/check_intake.mjs && node scripts/build_corpus.mjs",
-    "check": "node scripts/check_principles.mjs source && node scripts/check_principles.mjs dist && node scripts/check_intake.mjs",
+    "postbuild": "node scripts/check_principles.mjs dist && node scripts/check_intake.mjs && node scripts/check_functions.mjs && node scripts/build_corpus.mjs",
+    "check": "node scripts/check_principles.mjs source && node scripts/check_principles.mjs dist && node scripts/check_intake.mjs && node scripts/check_functions.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "eval:assistant": "node scripts/eval_assistant.mjs"

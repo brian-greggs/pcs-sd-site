@@ -72,7 +72,7 @@ export function buildIndex(corpus) {
     const url = c.url.split('#')[0];
     if (!pages.has(url)) pages.set(url, { url, title: c.page_title, titleTokens: new Set(tokens(c.page_title)) });
   }
-  return { chunks: corpus.chunks, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()] };
+  return { chunks: corpus.chunks, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [] };
 }
 
 // Expanded query terms, each with a weight (the words the family typed count fully).
