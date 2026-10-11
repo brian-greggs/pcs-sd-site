@@ -2,8 +2,9 @@
 // Assistant (F6 groundwork). Not linked from any page or menu; noindex like every page.
 // Questions go to /api/ask on this site (functions/api/ask.js), which answers only from
 // this site's pages. The conversation lives in this page's memory: no localStorage, no
-// cookies; reload and it's gone. Starting-plan answers are sent only if the reader turns
-// that on, and the page shows exactly what will be sent first.
+// cookies; reload and it's gone. With each question go the previous turn (last question
+// and answer, nothing older) and, only if the reader turns it on, four starting-plan
+// fields; the page shows exactly that before it's sent.
 import Base from '../layouts/Base.astro';
 ---
 
@@ -25,8 +26,9 @@ import Base from '../layouts/Base.astro';
         <input type="checkbox" data-context /> Include my starting-plan answers
       </label>
       <div class="note" data-context-preview hidden>
-        <p>This is exactly what will be sent with each question:</p>
+        <p>Besides your question, this is exactly what will be sent with it:</p>
         <pre class="ask-pre" data-context-json></pre>
+        <p data-previous-note hidden>Your last question and the answer you saw go along so a follow-up makes sense. Nothing older is sent. Clear the conversation to send none.</p>
       </div>
       <p class="note" data-context-none hidden>No starting-plan answers on this device. <a href="/plan/">Answer the eight questions</a> if you want answers fitted to your household.</p>
       <div class="actions">
@@ -61,13 +63,25 @@ import Base from '../layouts/Base.astro';
       return Object.keys(c).length ? c : null;
     } catch { return null; }
   };
-  const showContext = () => {
+  // What goes with the next question besides the question itself: the previous turn (last question and
+  // the answer shown, nothing older) and, only if ticked, the four starting-plan fields. The preview shows
+  // this same object, and send() sends it.
+  const extras = () => {
+    const out: { previous?: { question: string; answer?: string }; context?: Ctx } = {};
+    const last = history.at(-1);
+    if (last) out.previous = last.reply.answer ? { question: last.question, answer: last.reply.answer } : { question: last.question };
     const c = toggle.checked ? readContext() : null;
-    $('[data-context-preview]').hidden = !c;
-    $('[data-context-none]').hidden = !(toggle.checked && !c);
-    $('[data-context-json]').textContent = c ? JSON.stringify(c, null, 2) : '';
+    if (c) out.context = c;
+    return out;
   };
-  toggle.addEventListener('change', showContext);
+  const showOutgoing = () => {
+    const x = extras();
+    $('[data-context-preview]').hidden = !Object.keys(x).length;
+    $('[data-previous-note]').hidden = !x.previous;
+    $('[data-context-none]').hidden = !(toggle.checked && !x.context);
+    $('[data-context-json]').textContent = JSON.stringify(x, null, 2);
+  };
+  toggle.addEventListener('change', showOutgoing);
 
   // The conversation: this page's memory only.
   const history: { question: string; reply: Record<string, any> }[] = [];
@@ -113,17 +127,18 @@ import Base from '../layouts/Base.astro';
     errorBox.hidden = true;
     const button = $<HTMLButtonElement>('[data-send]');
     button.disabled = true;
-    const context = toggle.checked ? readContext() : null;
+    const outgoing = { question, ...extras() };
     try {
       const res = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(context ? { question, context } : { question }),
+        body: JSON.stringify(outgoing),
       });
       const reply = await res.json().catch(() => ({ error: 'The assistant isn’t working right now.' }));
       history.push({ question, reply });
       q.value = '';
       render();
+      showOutgoing();
     } catch {
       errorBox.textContent = 'Couldn’t reach the assistant. Check your connection and try again.';
       errorBox.hidden = false;
@@ -133,5 +148,5 @@ import Base from '../layouts/Base.astro';
   };
   $('[data-send]').addEventListener('click', send);
   q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
-  $('[data-clear-log]').addEventListener('click', () => { history.length = 0; render(); });
+  $('[data-clear-log]').addEventListener('click', () => { history.length = 0; render(); showOutgoing(); });
 </script>

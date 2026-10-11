@@ -65,6 +65,7 @@ export async function intakeDigest() {
       id: a.id, name: a.name, base_group: a.base_group,
       drives: await driveMap(a.facts_zips),
       waitsInData: a.base_group !== 'PENDLETON',
+      lmhVintage: a.members[0].vintage, // the date the area page gives its wait-times section when there's no wait list
       waits: a.waits.map((w) => {
         const s = parseWait(w.wait_time_stated);
         return { band: w.rank_band, br: Number(w.bedrooms), lo: s ? s[0] : null, hi: s ? s[1] : null };

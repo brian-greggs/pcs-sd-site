@@ -47,12 +47,14 @@ const index = url ? null : buildIndex(JSON.parse(readFileSync(corpusFile, 'utf-8
 const env = live ? { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY, ASSISTANT_MODEL: process.env.ASSISTANT_MODEL } : {};
 const realAnswers = Boolean(url || live);
 
-async function ask(question) {
+// An item can carry `previous` ({question, answer}): the turn before it, as /ask/ sends it.
+async function ask(question, previous) {
+  const body = previous ? { question, previous } : { question };
   if (url) {
-    const res = await fetch(new URL('/api/ask', url), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question }) });
+    const res = await fetch(new URL('/api/ask', url), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     return { status: res.status, ...(await res.json()) };
   }
-  const out = await handleAsk({ body: { question }, env, index });
+  const out = await handleAsk({ body, env, index });
   return { status: out.status, ...out.json };
 }
 
@@ -117,7 +119,7 @@ function judge(rule, q, r) {
 const questions = readFileSync(join(ROOT, 'evals', 'assistant_eval.jsonl'), 'utf-8').trim().split('\n').map((l) => JSON.parse(l));
 const results = [];
 for (const q of questions) {
-  const r = await ask(q.question);
+  const r = await ask(q.question, q.previous);
   const rules = Object.fromEntries(RULES[q.category].map((rule) => [rule, judge(rule, q, r)]).filter(([, v]) => v));
   results.push({ ...q, kind: r.kind, status: r.status, top: (r.citations ?? [])[0]?.url ?? r.nearest?.url ?? '', rank: q.expect_page ? rank(r, q.expect_page) : null, rules, answer: r.answer ?? null });
 }

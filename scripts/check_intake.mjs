@@ -197,6 +197,7 @@ if (!existsSync(planFile)) {
     };
     let i = 0;
     let noLead = 0;
+    let fallbackLead = 0;
     for (const base of BASES) for (const band of data.bands) for (const bedrooms of ['2', '3', '4plus', 'help']) for (const open of OPEN) for (const first of ids) {
       const t = rules.TIMELINES[i % rules.TIMELINES.length]; // the report window only feeds "Watch for", covered in full below
       const fits = HOUSEHOLDS.filter((h) => rules.availablePriorities(make(h), config.priorities).some((p) => p.id === first));
@@ -208,7 +209,8 @@ if (!existsSync(planFile)) {
       if (rules.missingAnswers(a).length) { fail('intake-sources', `${base}/${band}/${bedrooms}`, `answers incomplete: ${rules.missingAnswers(a)}`); continue; }
       const where = `${base} ${band} ${bedrooms}bd ${open.join('+')} ${t.id} ${first}>${second ?? '-'}`;
       const plan = rules.buildPlan(a, data, config);
-      if (!plan.sections.some((s) => s.id === 'lead')) noLead++;
+      if (plan.sections.some((s) => s.id === 'lead-missing')) noLead++;
+      else if (plan.sections.find((s) => s.id === 'lead')?.note?.includes('leads with your second priority')) fallbackLead++;
       checkPlan(plan, where);
     }
     // "Watch for" in full: every base × band × bedrooms × report window × "open to" set that includes base housing.
@@ -238,7 +240,7 @@ if (!existsSync(planFile)) {
     const sample = make({ ...HOUSEHOLDS[5], base: 'MIRAMAR', band: 'E5–E6', bedrooms: 'help', open: ['unsure'], timeline: 'under30', priorities: ['where', 'cost'] });
     if (JSON.stringify(rules.buildPlan(sample, data, config)) !== JSON.stringify(rules.buildPlan(structuredClone(sample), data, config))) fail('intake-sources', 'determinism', 'the same answers gave two different plans');
 
-    passes.push(`intake: ${plans.toLocaleString('en-US')} plans, ${seenLines.size.toLocaleString('en-US')} distinct lines, ${seenSections.size} distinct section headings checked in ${((Date.now() - t0) / 1000).toFixed(1)} s; ${noLead.toLocaleString('en-US')} plans have no lead (first priority has no lead yet)`);
+    passes.push(`intake: ${plans.toLocaleString('en-US')} plans, ${seenLines.size.toLocaleString('en-US')} distinct lines, ${seenSections.size} distinct section headings checked in ${((Date.now() - t0) / 1000).toFixed(1)} s; ${fallbackLead.toLocaleString('en-US')} lead with the second priority (the first has no lead yet), ${noLead.toLocaleString('en-US')} say they have no lead yet`);
     passes.push(`intake: rules ${rules.RULES_VERSION}; ${config.priorities.length} priorities, ${config.tradeoffs.length} tradeoff pairs written`);
   }
 }

@@ -78,12 +78,16 @@ export function buildIndex(corpus) {
   return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [] };
 }
 
-// Expanded query terms, each with a weight (the words the family typed count fully).
-function queryTerms(q) {
+// Expanded query terms, each with a weight (the words the family typed count fully). `context` is the
+// previous question in a conversation: its topic words count a little (so "what about Santee?" after a
+// commute question finds Santee's commute), but only the new question decides which page is named.
+const CONTEXT_WEIGHT = 0.4;
+function queryTerms(q, context = '') {
   const typed = tokens(q);
   const terms = new Map();
   for (const t of typed) terms.set(t, 1);
   for (const t of typed) for (const s of SYNONYMS[t] ?? []) if (!terms.has(stem(s))) terms.set(stem(s), 0.5);
+  for (const t of tokens(context)) if (!GENERIC.has(t) && !terms.has(t)) terms.set(t, CONTEXT_WEIGHT);
   return { typed, terms };
 }
 
@@ -94,8 +98,8 @@ export const SETTINGS = {
   pageBoost: 1.6, // a chunk on a page the question names (all of the page title's words in the question)
 };
 
-export function search(index, question, settings = SETTINGS) {
-  const { typed, terms } = queryTerms(question);
+export function search(index, question, settings = SETTINGS, context = '') {
+  const { typed, terms } = queryTerms(question, context);
   const content = new Set(typed.filter((t) => !GENERIC.has(t)));
   const named = new Set(index.pages.filter((p) => p.titleTokens.size && [...p.titleTokens].filter((t) => !['base', 'housing'].includes(t)).every((t) => typed.includes(t)) && [...p.titleTokens].some((t) => !GENERIC.has(t) && t !== 'housing')).map((p) => p.url));
   const acc = new Map(); // chunk number -> { s, contentHits }

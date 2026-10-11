@@ -33,6 +33,16 @@ export function cleanContext(raw, PRIORITY = {}) {
   if (Array.isArray(raw.priorities)) c.priorities = raw.priorities.filter((p, i, xs) => Object.hasOwn(PRIORITY, p) && xs.indexOf(p) === i).slice(0, 2);
   return Object.keys(c).length ? c : null;
 }
+// The previous turn (QUESTIONS 54, Brian 2026-10-11): the family's last question and the answer
+// they saw, nothing older. Context for a follow-up ("what about Santee?"), never a source.
+export const MAX_PREVIOUS_ANSWER = 2000;
+export function cleanPrevious(raw) {
+  if (!raw || typeof raw !== 'object' || typeof raw.question !== 'string') return null;
+  const question = raw.question.replace(/\s+/g, ' ').trim().slice(0, MAX_QUESTION);
+  const answer = typeof raw.answer === 'string' ? raw.answer.trim().slice(0, MAX_PREVIOUS_ANSWER) : '';
+  return question ? { question, answer } : null;
+}
+
 export function householdLine(c, PRIORITY = {}) {
   if (!c) return null;
   return [
@@ -57,7 +67,10 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
   const household = householdLine(context, labels);
   const live = Boolean(env.ANTHROPIC_API_KEY && env.ASSISTANT_MODEL);
   const mode = live ? 'live' : 'stub';
-  const r = search(index, question);
+  const previous = cleanPrevious(body.previous);
+  // Retrieve for the new question, with the previous question's topic words at a low weight (a follow-up
+  // such as "what about Santee?" names a place but not the topic). The answer text isn't used for retrieval.
+  const r = search(index, question, undefined, previous?.question ?? '');
   const pointer = r.relevant
     ? { url: nearestChunk(r).url, title: nearestChunk(r).page_title, verified_on: nearestChunk(r).verified_on }
     : { url: r.nearest.url, title: r.nearest.title };
@@ -76,7 +89,7 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
     return { status: 200, json: { mode, kind: 'no_answer', answer: `${NO_ANSWER} ${pointTo}`, citations: [], nearest: r.nearest } };
   }
 
-  const prompt = { system: SYSTEM_PROMPT, messages: [{ role: 'user', content: userMessage(question, r.chunks, r.nearest, household) }] };
+  const prompt = { system: SYSTEM_PROMPT, messages: [{ role: 'user', content: userMessage(question, r.chunks, r.nearest, household, previous) }] };
   const citations = citationsOf(r.chunks);
   if (!live) {
     const missing = ['ANTHROPIC_API_KEY', 'ASSISTANT_MODEL'].filter((k) => !env[k]);

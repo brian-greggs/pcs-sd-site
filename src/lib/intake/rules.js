@@ -14,14 +14,14 @@
 //
 // Changing a rule: bump RULES_VERSION and add a changelog entry.
 
-export const RULES_VERSION = 'v0.1';
+export const RULES_VERSION = 'v0.2';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
   'Q3 / modifier: reporting in under 30 days or no orders yet opens the plan with the arrival and first-30-days steps (needs the F2 sequence)',
-  'Lead for "The admin sequence" and "Move logistics" (needs the F2 sequence)',
+  'Lead for "The admin sequence" and "Move logistics" (needs the F2 sequence); the plan leads with the second priority instead and says why',
   'Modifier: the courtesy-move rule (contact the Housing Service Center within 30 days of arrival; rejecting an offer can forfeit the move) is not on any page',
-  'Lead for "Pets": the note that rental pet policies vary is not on any page; base housing breed restrictions are not in the data',
+  'Lead for "Pets" when base housing is ruled out: rental pet policies are not on any page (the plan leads with the second priority and says why); base housing breed restrictions are not in the data',
   'Tradeoff: no pair is written yet (src/config/intake/tradeoffs.json is empty)',
 ];
 
@@ -196,7 +196,8 @@ function context(a, data, config) {
     url: `/communities/${n.slug}/`, title: n.name,
     dates: what.map((w) => `${DATE_LABEL[w]}: ${data.dates[w]}`).join('. '),
   });
-  const areaSource = (ar) => ({ url: `/base-housing/${ar.id}/`, title: `${ar.name} base housing`, dates: `Waits and pets: ${data.dates.waits}. Commute: ${data.dates.commute}` });
+  // Camp Pendleton isn't on the wait list, so its page dates that section by the LMH pages instead.
+  const areaSource = (ar) => ({ url: `/base-housing/${ar.id}/`, title: `${ar.name} base housing`, dates: `${ar.waitsInData === false ? `Wait times: LMH pages ${ar.lmhVintage}` : `Waits and pets: ${data.dates.waits}`}. Commute: ${data.dates.commute}` });
   const linkSource = (id) => {
     const l = data.links[id];
     return { url: l.url, title: l.title, dates: `verified ${l.verified_on}`, incentive: l.incentive };
@@ -383,6 +384,14 @@ function modifiers(c) {
       }
     }
   }
+  // Camp Pendleton: no wait data. Say so once, with the page that already states the gap.
+  const pendleton = c.data.areas.find((ar) => ar.waitsInData === false);
+  if (c.open.housing && c.base?.code === 'PENDLETON' && pendleton) {
+    lines.push({
+      text: 'Camp Pendleton’s base housing wait times aren’t in our data. Contact LMH or the Camp Pendleton housing office for the current wait',
+      sources: [{ url: `/base-housing/${pendleton.id}/`, title: `${pendleton.name} base housing`, dates: `Wait times: LMH pages ${pendleton.lmhVintage}` }],
+    });
+  }
   const pets = c.a.cats + c.a.dogs;
   if (c.open.housing && pets > 2) {
     // ar.petLimits holds the policies as printed on the wait list; LMH-only wording has no number.
@@ -434,19 +443,44 @@ function tradeoff(c) {
 
 // --- The plan ----------------------------------------------------------------------
 
+// Why a first priority has no lead of its own (QUESTIONS 45, Brian 2026-10-11: lead with the
+// second priority and say so plainly). Shown in the lead's note, which states no facts.
+const NO_LEAD_REASON = {
+  admin: 'The move sequence isn’t written yet',
+  logistics: 'The move sequence isn’t written yet',
+  pets: 'Rental pet policies aren’t on this site yet, and base housing (the only pet rules we have) is off your list',
+};
+const leadFor = (id, c) => {
+  const sections = (LEADS[id]?.(c) ?? []).filter((s) => s.lines.length);
+  return sections.length ? sections : null;
+};
+
+function lead(c) {
+  const [first, second] = c.a.priorities;
+  const own = leadFor(first, c);
+  if (own) return own;
+  const label = (id) => c.config.priorities.find((p) => p.id === id)?.label ?? id;
+  const reason = NO_LEAD_REASON[first] ?? `Nothing on this site answers “${label(first)}” for your answers yet`;
+  const fallback = second ? leadFor(second, c) : null;
+  if (fallback) {
+    const [top, ...rest] = fallback;
+    return [{ ...top, note: `${reason}, so this plan leads with your second priority, “${label(second)}”.${top.note ? ` ${top.note}` : ''}` }, ...rest];
+  }
+  return [{ id: 'lead-missing', heading: 'No lead yet', note: `${reason}, so this plan has no lead yet.`, lines: [], notice: true }];
+}
+
 export function buildPlan(answers, data, config) {
   const missing = missingAnswers(answers);
   if (missing.length) throw new Error(`buildPlan: unanswered questions ${missing.join(', ')}`);
   const c = context(answers, data, config);
-  const lead = LEADS[answers.priorities[0]];
   return {
     rules_version: RULES_VERSION,
     sections: [
-      ...(lead ? lead(c) : []),
+      ...lead(c),
       ...bedroomSection(c),
       ...modifiers(c),
       ...tradeoff(c),
       ...skipList(c),
-    ].filter((s) => s.lines.length),
+    ].filter((s) => s.lines.length || s.notice),
   };
 }

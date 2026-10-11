@@ -93,3 +93,9 @@
 - **Never split a table between rows unless it can't fit, and then repeat the header.** A row without its header is a list of numbers.
 - **"Right page" is too easy a bar for retrieval.** The old eval passed whenever the page was in the sections sent, even if the row the family asked about wasn't. Each question now names the fact (a pattern for the exact row) and the eval checks the text sent. Live, the same question checks the answer for the number.
 - **A list of citations can hide what was sent.** One citation per URL made two parts look like one; checking the sections themselves, not the citation list, is what showed the problem.
+
+## Session 5e (2026-10-11): rules v0.2 and follow-ups
+
+- **A fallback only fires if the gate it waits on can close.** The first follow-up design used the previous question only when the new one retrieved nothing relevant. But "What about from Santee?" names a page, so it always counted as relevant and got Santee's Schools section. Folding the previous question in every time, at low weight, with the named page taken from the new question alone, fixed it without letting the old topic win.
+- **Explain a gap in the note, not as a sourced line.** "The move sequence isn't written yet" has no page to cite. It goes in the lead's note (which states no facts, QUESTIONS 44), so the rule "every line has a source" stays intact.
+- **A date is part of the claim.** The Pendleton area line carried the Navy wait list's date, from a list that doesn't cover Pendleton. Citing the right page isn't enough; the date has to be the one that page gives that section.

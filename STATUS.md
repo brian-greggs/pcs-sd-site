@@ -1,6 +1,17 @@
-# Site build — status (2026-10-11, session 5d: whole-section retrieval; starting plan v0 and assistant groundwork, v0.5.1)
+# Site build — status (2026-10-11, session 5e: answers to QUESTIONS 42–58; rules v0.2, v0.5.2)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 5e: answers to QUESTIONS 42–58 (rules v0.2, v0.5.2)
+
+All of 42–58 are answered (moved to Answered in QUESTIONS). What changed:
+
+- **45 (b):** when the first priority has no lead of its own, the plan leads with the second priority and the lead's note says why: "The move sequence isn't written yet, so this plan leads with your second priority, …". Pets first with base housing ruled out works the same way, with its own reason ("Rental pet policies aren't on this site yet, and base housing … is off your list"). With no usable second priority, a "No lead yet" notice says the same, plainly. The reason sits in the section note, which states no facts (44). In the check's sample: 2,837 plans lead with the second priority, 1,951 show the notice.
+- **47:** reporting to Camp Pendleton and open to base housing → one "Watch for" line: Pendleton's wait times aren't in our data; contact LMH or the Camp Pendleton housing office. It cites `/base-housing/camp-pendleton/`, which already states the gap, dated as that page dates its wait-times section (LMH pages 2026-09-18). Also fixed: the Pendleton area line in the where-to-live lead was dated by the CNRSW wait list, which doesn't cover Pendleton; it now carries the LMH pages' date.
+- **54:** `/ask/` sends the previous turn (last question and the answer shown; nothing older) with the next question. The preview shows the exact extras (previous turn, and the starting-plan fields only if ticked); a browser test confirmed the request body equals the preview plus the question, and "Clear this conversation" drops the previous turn. The server caps it (question 500 characters, answer 2,000), applies the fixed answers to the new question only, folds the previous *question's* words into retrieval at low weight (the answer isn't used for retrieval), and takes the named page from the new question only, so the old topic can't pull its own page back. The prompt calls it context, not a source. New eval item fu-01 ("What about from Santee?" after the Rancho Bernardo → NBSD question) finds the Santee → NBSD row.
+- Rules version v0.2, logged in the changelog (v0.5.2).
+
+Checks on 2026-10-11: all page checks, all five intake checks and the three Functions checks pass (Function 126 KB gzipped); layout clean on 75 pages at four widths. Retrieval-only eval, 41 questions: expected fact in the sections sent 26 of 27 (missing in-16, the drive-time source); expected page 27 of 28 (first for 26); expected section 22 of 22; out-of-scope stopped 3 of 4 (out-02 weather); fixed answers 4 of 4; no BAH dollar figure 24 of 24.
 
 ## Session 5d: retrieval sends whole sections; the eval checks facts
 
@@ -43,7 +54,7 @@ Why not on the home page itself: eight questions above "Or just browse" would pu
 - The plan: your answers, then the lead (first priority), the bedroom helper's answer if asked, "Watch for", the tradeoff (none written yet), and "You can skip". Every line names its source page (or the official link) with that source's dates. It prints on white paper (print CSS: header, buttons and questions hidden; source paths printed after each link). Labeled "v0, rules under test" and "rules v0.1".
 - Q8 list: `src/config/intake/priorities.json`. Tradeoff table: `src/config/intake/tradeoffs.json` (empty; the format is in its `_note`). Both feed the rules unchanged; edit either and bump `RULES_VERSION`.
 
-**Rules as built** (§10.1; interpretations in QUESTIONS 42–51):
+**Rules as built** (§10.1; interpretations in QUESTIONS 42–51, all answered 2026-10-11; v0.2 changes in session 5e above):
 
 | Rule | Built as |
 |---|---|
@@ -61,9 +72,9 @@ Why not on the home page itself: eight questions above "Or just browse" would pu
 **Gaps: rules with nothing to point at yet (lines left out, no placeholder):**
 
 1. Reporting in under 30 days or no orders yet → open with the arrival and first-30-days steps (needs F2).
-2. Lead for "The admin sequence" and "Move logistics" (needs F2). A family who picks either first gets no lead section.
+2. Lead for "The admin sequence" and "Move logistics" (needs F2). Since rules v0.2 the plan leads with the second priority and says why.
 3. The courtesy-move rule (Housing Service Center within 30 days; rejecting an offer can forfeit the move): not on any page or in the data.
-4. Pets: "rental pet policies vary" isn't on any page; base housing breed restrictions aren't in the data. Pets as first priority with base housing ruled out gives no lead.
+4. Pets: "rental pet policies vary" isn't on any page; base housing breed restrictions aren't in the data. Pets first with base housing ruled out leads with the second priority (rules v0.2).
 5. Tradeoffs: none written; the plan shows none.
 6. Q3 "which phase the plan opens on" (F2).
 
@@ -203,6 +214,6 @@ See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian) and the LMH call l
 
 ## Next session
 
-Brian reviews the branch preview: `/plan/` (try a few households, print one), the "Starting plan" cards on home and the base pages, and `/ask/` (STUB until the key and model are set). Then QUESTIONS 42–58, the tradeoff table (`src/config/intake/tradeoffs.json`), and the writing list above. Going live with the assistant: the steps above, then the live eval.
+Brian reviews the branch preview: `/plan/` (try a few households, print one), the "Starting plan" cards on home and the base pages, and `/ask/` (STUB until the key and model are set). Then the tradeoff table (`src/config/intake/tradeoffs.json`), and the writing list above. Going live with the assistant: the steps above, then the live eval.
 
 Still open from session 4: Brian writes leads and gotchas (one `.md` per community; the page picks it up). FHSZ files (QUESTIONS 25), the NASNI/NOLF IB hand-assignment, Coronado's boundary lookup (29), beach-link placement (30).

@@ -294,7 +294,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
         li.append(p, src);
         ul.append(li);
       }
-      sec.append(ul);
+      if (s.lines.length) sec.append(ul);
       out.append(sec);
     }
   };

@@ -20,6 +20,7 @@ Where your answers come from
 - Do not use general knowledge, even when you're confident, and even to fill a small gap. If the sections don't contain the answer, reply with exactly "${NO_ANSWER}" and then one sentence pointing to the nearest page given in the message, with its URL. Don't guess, and don't half-answer from memory.
 - If the sections answer part of the question, answer that part and say plainly which part the San Diego material doesn't cover.
 - Cite every page you draw from, with its verified date, like: (Santee, verified 2026-09-18, /communities/santee/#cost). No claim without a citation.
+- The previous turn, if the message includes it, is only there so you can tell what a follow-up refers to ("what about Santee?"). It is not a source: every fact still comes from the numbered sections, even if the previous answer stated it.
 - The household details, if the message includes them, are what the family chose to share. Use them to pick the right rows (their base, pay band, children's ages, top priorities). Never repeat them back as a profile.
 
 What you never do
@@ -38,12 +39,13 @@ Shape of an answer
 - Lead with one recommendation for this family, then the tradeoff that comes with it, named plainly ("the closest neighborhoods run highest against the allowance").
 - End with the citations. Nothing after them.`;
 
-export function userMessage(question, chunks, nearest, household) {
+export function userMessage(question, chunks, nearest, household, previous) {
   const sections = chunks.map((c, i) => `[${i + 1}] ${c.page_title}: ${c.section_heading}\nURL: ${c.url}\nVerified: ${c.verified_on} (${c.dates})\n${c.text}`).join('\n\n');
   return [
     `Site sections retrieved for this question:\n\n${sections}`,
     `Nearest page if the sections don't answer it: ${nearest.title} (${nearest.url})`,
     household ? `Household details the family chose to share: ${household}` : '',
+    previous ? `Previous turn (context only, not a source):\nThe family asked: ${previous.question}${previous.answer ? `\nThe answer they saw: ${previous.answer}` : ''}` : '',
     `Question: ${question}`,
   ].filter(Boolean).join('\n\n---\n\n');
 }
