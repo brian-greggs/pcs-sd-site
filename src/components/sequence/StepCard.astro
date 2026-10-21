@@ -1,0 +1,41 @@
+---
+// One step of the move sequence: its timing anchor, deadline, what comes first, who it's for, its forms,
+// any rules shown side by side (the control date), a "Not yet confirmed" line where the sources leave it
+// open, and the quotes it rests on. Everything comes from the step's row in src/data/sequence_steps.json;
+// scripts/check_sequence.mjs compares the rendered deadline with the row (data-step / data-deadline).
+import FactBlock from '../FactBlock.astro';
+import Cites from './Cites.astro';
+import { ANCHOR_LABEL, appliesText, citeDates, citeNames, formHref, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import type { SequenceData, Step } from '../../lib/sequenceData';
+
+interface Props { step: Step; data: SequenceData }
+const { step, data } = Astro.props;
+// "Do first" names the earlier step by phase and number, then its first sentence.
+const firstSentence = (t: string) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
+const deps = step.depends_on.map((id) => data.stepById.get(id)!);
+const forms = step.forms.map((id) => data.formById.get(id)!);
+const applies = appliesText(step.applies_to);
+---
+
+<FactBlock plain id={step.id} title={`${step.order}. ${step.step}`} asOf={citeDates(step)} source={citeNames(step)}>
+  <dl class="facts" data-step={step.id}>
+    <dt>Timing</dt><dd data-anchor>{ANCHOR_LABEL[step.anchor]}</dd>
+    <dt>Deadline</dt><dd data-deadline>{step.deadline}</dd>
+    {deps.length > 0 && <><dt>Do first</dt><dd><ul class="plain">{deps.map((d) => <li><a href={stepHref(d)}>{phaseByKey(d.phase).label}, step {d.order}</a>: {firstSentence(d.step)}</li>)}</ul></dd></>}
+    {applies && <><dt>Applies to</dt><dd>{applies}</dd></>}
+    {forms.length > 0 && <><dt>Forms</dt><dd><ul class="plain">{forms.map((f) => <li><a href={formHref(f.id)} data-form-link={f.id}>{f.form}</a></li>)}</ul></dd></>}
+  </dl>
+  {step.alternatives.length > 0 && (
+    <div class="alts">
+      {step.alternatives.map((a) => (
+        <div class="alt" data-alternative>
+          <p>{a.rule}</p>
+          <Cites sources={a.sources} />
+        </div>
+      ))}
+    </div>
+  )}
+  {step.note && <p class="note">{step.note}</p>}
+  {step.unconfirmed && <p class="gap" data-unconfirmed={step.unconfirmed.ask}>{unconfirmedLine(step.unconfirmed)}</p>}
+  <Cites sources={step.sources} superseded={step.superseded} />
+</FactBlock>

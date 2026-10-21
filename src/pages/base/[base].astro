@@ -3,7 +3,8 @@
 // base's main gate. Same layout as a neighborhood page: a sticky side menu at
 // 1100px and up, and below that every group is a closed <details> with a summary
 // line, so a phone reader sees Off base and Base housing on one screen. Last, the
-// base's 2026 BAH table for every pay band (Brian 2026-10-20), from src/data/bah.json.
+// base's 2026 BAH table for every pay band (Brian 2026-10-20), from src/data/bah.json. Below the plan card, a
+// link into the move sequence; on the three Marine Corps bases, the line saying its rules are Navy rules.
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
@@ -13,6 +14,7 @@ import { baseHousingAreas } from '../../lib/baseHousing';
 import { dollars, range } from '../../lib/format';
 import { bahKey, bahTable } from '../../lib/bah';
 import { provenance } from '../../lib/prov';
+import { MARINE_BASES, NAVY_RULES_NOTE } from '../../lib/sequence.js';
 
 export function getStaticPaths() {
   return BASES.map((b) => ({ params: { base: b.slug } }));
@@ -78,6 +80,11 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
     <span><span class="card-name">Starting plan for {base.short}</span><span class="card-sub">Seven more questions, about a minute. Your answers stay on this device.</span></span>
     <span class="arrow" aria-hidden="true">›</span>
   </a>
+  <a class="card plan-card" href="/sequence/" data-sequence-link>
+    <span><span class="card-name">Move sequence</span><span class="card-sub">Orders to your first 30 days, in order: deadlines, forms and the official pages behind them.</span></span>
+    <span class="arrow" aria-hidden="true">›</span>
+  </a>
+  {MARINE_BASES.includes(base.code) && <p class="note" data-navy-note>{NAVY_RULES_NOTE}</p>}
 
   <h2 class="group-title" id="off-base">Off base</h2>
   {tiers.map((t) => (

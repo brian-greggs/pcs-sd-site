@@ -198,5 +198,15 @@
   "license": "same",
   "published_as": "Wait times as printed; rent text not published",
   "verified_on": "2026-09-30"
+ },
+ {
+  "id": "f2-sources-sequence-forms",
+  "layer": "F2 sources, sequence, forms",
+  "source": "Military OneSource (pages + October 2026 fact sheets), MilitaryINSTALLATIONS (NBSD, NBC, MCRD), MyNavy HR PDFs (MILPCS claim settlement SOP Jun 2024, travel advance SOP May 2025, TPC routing guidance 10 Nov 2025, GTCC for PCS FAQ Aug 2025, OPS Alert 019-25, NAVADMIN 210/25 fact sheet, NAVADMIN 286/21, PCS Guide 2026, NPPSC 1300/3), PDTATAC UTD for MAP 66-24(R) and Locations with Approved TLE Extensions (9 Oct 2026), DTMO GTCC Regulations, DoD FMR Vol 9, CNIC M-11103.3, CHP, SDUSD, PUSD; URLs per row in manual/f2_pages.csv",
+  "vintage": "as published",
+  "retrieved": "2026-10-20",
+  "license": "Public domain (US government works), quoted; California and school district pages quoted",
+  "published_as": "Values, attributed",
+  "verified_on": "2026-10-20"
  }
 ]

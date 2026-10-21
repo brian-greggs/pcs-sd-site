@@ -11,6 +11,8 @@ export const KNOWN_GAPS = [
   'Base housing wait times are the Housing Service Center’s monthly estimates, not promises; Camp Pendleton’s waits are not in our data at all. Instead: apply early (HEAT) and ask the Housing Service Center or, for Pendleton, LMH and the Pendleton housing office.',
   'Crime: not in our data, and the site doesn’t rate places as safe or unsafe. Instead: the Hazards section (fire, flood, aircraft noise) and the base’s sponsor or Fleet and Family Support Center.',
   'Drive times go to the eight bases only, not to other workplaces.',
+  'The move sequence and its forms are Navy rules; Marine Corps steps aren’t covered yet. Instead: the installation transportation office and the unit’s admin office.',
+  'Weight allowances by grade and DLA rates aren’t on the site, and a few sequence rows are marked “Not yet confirmed”. Instead: the transportation office (PPPO) for weight, the CPPA for pay, the Housing Service Center for the control date, as each row says.',
 ];
 
 export const SYSTEM_PROMPT = `You answer questions for military families moving to San Diego, on an unofficial, non-commercial guide written by families who've done this. Sound like a sponsor who has made this move: plain, warm, direct. Not a chatbot.

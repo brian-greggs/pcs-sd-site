@@ -1,0 +1,34 @@
+---
+// One phase of the move sequence (F2): its steps in order, each with its timing, deadline, what comes first,
+// its forms and the official quotes behind it. The two lines at the top are on every sequence page.
+import Base from '../../layouts/Base.astro';
+import SequenceTop from '../../components/sequence/SequenceTop.astro';
+import StepCard from '../../components/sequence/StepCard.astro';
+import { PHASES } from '../../lib/sequence.js';
+import { sequenceData } from '../../lib/sequenceData';
+
+export function getStaticPaths() {
+  return PHASES.map((p) => ({ params: { phase: p.slug } }));
+}
+
+const i = PHASES.findIndex((p) => p.slug === Astro.params.phase);
+const phase = PHASES[i];
+const data = await sequenceData();
+const steps = data.steps.filter((s) => s.phase === phase.key);
+const prev = PHASES[i - 1];
+const next = PHASES[i + 1];
+---
+
+<Base title={`Move sequence: ${phase.label}`} back={{ href: '/sequence/', label: 'Move sequence' }} description={`${phase.label}: the PCS steps for this phase, in order, with deadlines and official sources.`}>
+  <p class="eyebrow">Move sequence · phase {i + 1} of {PHASES.length}</p>
+  <h1>{phase.label}</h1>
+  <p class="kicker">{phase.blurb}. {steps.length} steps.</p>
+  <SequenceTop />
+
+  {steps.map((s) => <StepCard step={s} data={data} />)}
+
+  <nav class="seq-nav" aria-label="Other phases">
+    {prev ? <a href={`/sequence/${prev.slug}/`}>‹ {prev.label}</a> : <span></span>}
+    {next ? <a href={`/sequence/${next.slug}/`}>{next.label} ›</a> : <a href="/sequence/forms/">Forms and claims ›</a>}
+  </nav>
+</Base>

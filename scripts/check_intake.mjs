@@ -28,6 +28,10 @@
 //                    rent_to_bah.json, every neighborhood page's ratio tables (one set per MHA, shown for that
 //                    MHA's bases) and the plan's embedded ratios; and a plan line's ratio is the one for the
 //                    MHA of the base it cites
+//   intake-sequence  the admin and move-logistics lead (rules v0.9) lists steps of the phase Q3 sets
+//                    (src/lib/sequence.js, TIMELINE_PHASE), each line exactly the step, its deadline and its "Not yet
+//                    confirmed" line as src/data/sequence_steps.json has them, citing that phase's page with the
+//                    step's date line; and the steps embedded in /plan/ equal the export (no hand-typed deadline)
 //   (failures print the first 20 per check; ALL=1 node scripts/check_intake.mjs prints every one)
 //   intake-dates     a line's source dates are only for facts on that line, and every fact it shows
 //                    is dated: each date label ("Commute: …", "Pets: …") needs its fact in the line,
@@ -48,6 +52,7 @@ import { fileURLToPath } from 'node:url';
 import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED, SCORE_WORDS, SCORE_ALLOWED, PLACEHOLDER_PATTERNS } from './principle_lists.mjs';
 import * as rules from '../src/lib/intake/rules.js';
 import { tierOf, TIER_LABEL } from '../src/lib/tiers.js';
+import { TIMELINE_PHASE, phaseByKey, citeDates } from '../src/lib/sequence.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
@@ -59,6 +64,7 @@ const YEAR = /\b(19|20)\d{2}\b/;
 const DOLLAR = /\$\s?\d/;
 // The exported BAH table (Brian 2026-10-20): the only place a plan's dollar figures may come from.
 const BAH_ROWS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'bah.json'), 'utf-8'));
+const STEPS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_steps.json'), 'utf-8'));
 const bahRow = (year, mha, grade) => BAH_ROWS.find((r) => r.year === year && r.mha === mha && r.grade === grade);
 const BAH_LINE = /^(\w+): \$([\d,]+) a month with dependents, \$([\d,]+) without \((\d{4}) BAH, (.+) area, MHA (CA\d{3})\)$/;
 let bahLines = 0;
@@ -166,14 +172,16 @@ const DATE_FACT = {
   'Base housing': /\bbase housing\b/i,
   'Eligibility note': /haven.t confirmed whether Camp Pendleton families can apply/i,
   'Bedroom rule': /bedroom/i,
+  'Sequence': /Deadline:/,
 };
 // Facts a line can show, and the labels that date them.
 const FACT_DATE = [
   [/\b\d+(?:–\d+)? min\b/, ['Commute']],
   [/\d+(?:–\d+)?% of the [^;]*allowance/, ['Rent ratio']],
   [/\$\s?\d/, ['BAH']],
-  [/\bmonths\b/, ['Waits', 'Wait times']],
-  [/\b(?:pets?|dogs?|cats?)\b/i, ['Pets']],
+  [/\bmonths\b/, ['Waits', 'Wait times', 'Sequence']],
+  [/\b(?:pets?|dogs?|cats?)\b/i, ['Pets', 'Sequence']],
+  [/Deadline:/, ['Sequence']],
   [/Mello-Roos/, ['Mello-Roos']],
   [/licensed centers/, ['Child care']],
   [/haven.t confirmed whether Camp Pendleton families can apply/i, ['Eligibility note']],
@@ -217,6 +225,23 @@ function checkBahSection(plan, where, a) {
     if (!sec || sec.lines.some(isNoBase) || !sec.lines.every((l) => BAH_LINE.test(l.text)) || (want && sec.lines.length !== want)) fail('intake-bah', where, `base chosen: the housing allowance section must list the ${a.band} grades (${want}), not the no-base line`);
   }
 }
+let sequenceLines = 0;
+function checkSequenceLead(s, where, a) {
+  const ph = phaseByKey(TIMELINE_PHASE[a.timeline]);
+  if (s.heading !== `Your move sequence: ${ph.label}`) fail('intake-sequence', where, `${a.timeline} should open at "${ph.label}", not "${s.heading}"`);
+  for (const line of s.lines) {
+    sequenceLines++;
+    const id = (line.links?.[0]?.url ?? '').split('#')[1];
+    const row = STEPS.find((r) => r.id === id);
+    const w = `${where} § ${s.id}: "${line.text.slice(0, 50)}"`;
+    if (!row) { fail('intake-sequence', w, `links to no step in sequence_steps.json (${line.links?.[0]?.url})`); continue; }
+    if (row.phase !== ph.key) fail('intake-sequence', w, `step ${id} is in ${row.phase}, not ${ph.key}`);
+    if (line.text !== rules.sequenceLine(row)) fail('intake-sequence', w, `text differs from step ${id} as exported (deadline "${row.deadline}")`);
+    const src = line.sources[0];
+    if (src?.url !== `/sequence/${ph.slug}/` || src?.dates !== `Sequence: ${citeDates(row)}`) fail('intake-sequence', w, `source is not /sequence/${ph.slug}/ dated "Sequence: ${citeDates(row)}"`);
+  }
+}
+
 function checkPlan(plan, where, a) {
   plans++;
   checkBahSection(plan, where, a);
@@ -236,6 +261,7 @@ function checkPlan(plan, where, a) {
         if (m && Number(m[2] ?? m[1]) >= limit) fail('intake-tiers', `${where} § ${s.id}`, `"${s.heading}" lists "${line.text.slice(0, 70)}"`);
       }
     }
+    if (s.heading.startsWith('Your move sequence')) checkSequenceLead(s, where, a);
     for (const line of s.lines) {
       const key = JSON.stringify(line);
       if (seenLines.has(key)) continue;
@@ -291,6 +317,14 @@ if (!existsSync(planFile)) {
       if (t.grades.length !== BAH_ROWS.filter((r) => r.mha === mha && r.year === t.year).length) fail('intake-bah', 'plan data', `${mha}: grades missing from the embedded table`);
     }
     if (!embeddedBah || !data.bases.every((b) => embeddedBah[b.mha])) fail('intake-bah', 'plan data', 'a base whose MHA has no BAH table');
+    // The sequence steps embedded in /plan/ are the export's, for every phase Q3 can open on.
+    const planPhases = new Set(Object.values(TIMELINE_PHASE));
+    const wantSteps = STEPS.filter((r) => planPhases.has(r.phase));
+    if ((data.sequence ?? []).length !== wantSteps.length) fail('intake-sequence', 'plan data', `${(data.sequence ?? []).length} steps embedded, export has ${wantSteps.length} for ${[...planPhases].join(', ')}`);
+    for (const e of data.sequence ?? []) {
+      const r = STEPS.find((x) => x.id === e.id);
+      if (!r || r.step !== e.step || r.deadline !== e.deadline || r.phase !== e.phase || JSON.stringify(r.unconfirmed) !== JSON.stringify(e.unconfirmed) || citeDates(r) !== e.dates) fail('intake-sequence', 'plan data', `step ${e.id} differs from sequence_steps.json`);
+    }
 
     // Config.
     const ids = config.priorities.map((p) => p.id);
@@ -485,12 +519,13 @@ if (!existsSync(planFile)) {
     passes.push(`page-ratios: ${ratioRows.length.toLocaleString('en-US')} exported ratios, ${ratioCells.toLocaleString('en-US')} page cells and ${ratioLines.toLocaleString('en-US')} plan lines against rent ÷ BAH for the duty station's MHA`);
 
     passes.push(`intake: ${plans.toLocaleString('en-US')} plans, ${seenLines.size.toLocaleString('en-US')} distinct lines, ${seenSections.size} distinct section headings checked in ${((Date.now() - t0) / 1000).toFixed(1)} s; ${fallbackLead.toLocaleString('en-US')} lead with the second priority (the first has no lead yet), ${noLead.toLocaleString('en-US')} say they have no lead yet`);
+    passes.push(`intake-sequence: ${sequenceLines.toLocaleString('en-US')} sequence lines checked against sequence_steps.json`);
     passes.push(`intake-bah: ${bahLines.toLocaleString('en-US')} distinct BAH lines, each against bah.json`);
     passes.push(`intake: rules ${rules.RULES_VERSION}; ${config.priorities.length} priorities, ${config.tradeoffs.length} tradeoff pairs written`);
   }
 }
 
-const checks = ['intake-network', 'intake-sources', 'intake-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers', 'page-tiers', 'page-ratios'];
+const checks = ['intake-network', 'intake-sources', 'intake-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-sequence', 'intake-tiers', 'page-tiers', 'page-ratios'];
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
 console.log('\nStarting plan checks (dist)');
 for (const c of checks) {

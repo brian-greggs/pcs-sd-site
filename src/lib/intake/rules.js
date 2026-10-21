@@ -8,23 +8,23 @@
 //
 // A plan is a list of sections; a section has lines; every line names at least one
 // source (a page on this site, or an official link) with that source's dates.
-// When a rule points at something the site doesn't have yet (the F2 sequence, the
-// courtesy-move rule, rental pet policies, an unwritten tradeoff), the line is left
+// When a rule points at something the site doesn't have yet (rental pet policies, an
+// unwritten tradeoff), the line is left
 // out. No placeholder, no link to nothing. GAPS below lists each one.
 //
 // Changing a rule: bump RULES_VERSION and add a changelog entry.
 
 import { tierOf } from '../tiers.js';
+import { MARINE_BASES, NAVY_RULES_NOTE, SEQUENCE_DISCLAIMER, TIMELINE_PHASE, phaseByKey, stepHref, unconfirmedLine } from '../sequence.js';
 
 // A place's tier comes from the top of its drive range (src/lib/tiers.js, shared with the base pages):
 // "under 30 minutes" means every zip in it is under 30, so Vista at 14–35 is a 30–44 place.
-export const RULES_VERSION = 'v0.8';
+export const RULES_VERSION = 'v0.9';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
-  'Q3 / modifier: reporting in under 30 days or no orders yet opens the plan with the arrival and first-30-days steps (needs the F2 sequence)',
-  'Lead for "The admin sequence" and "Move logistics" (needs the F2 sequence); the plan leads with the second priority instead and says why',
-  'Modifier: the courtesy-move rule (contact the Housing Service Center within 30 days of arrival; rejecting an offer can forfeit the move) is not on any page',
+  'Modifier: reporting in under 30 days or no orders yet opens the plan with the arrival and first-30-days steps (the steps are on /sequence/ since v0.9; the modifier isn\'t wired, and §10.1 puts "no orders yet" with arrival while the admin lead opens it at Orders: QUESTIONS F2-21)',
+  'Modifier: the courtesy-move rule (contact the Housing Service Center within 30 days of arrival; rejecting an offer can forfeit the move) is on /sequence/arrival/ since v0.9, but the wait-window modifier doesn\'t state it yet',
   'Lead for "Pets" when base housing is ruled out: rental pet policies are not on any page (the plan leads with the second priority and says why); base housing breed restrictions are not in the data',
   'Tradeoff: no pair is written yet (src/config/intake/tradeoffs.json is empty)',
 ];
@@ -92,6 +92,7 @@ export const hasSchoolAge = (a) => kidsIn(a, ['6-9', '10-13', '14-18']) > 0;
 export const hasUnder6 = (a) => kidsIn(a, ['0-2', '3-5']) > 0;
 const hasInfant = (a) => a.kids['0-2'] > 0;
 const hasPet = (a) => a.cats + a.dogs > 0;
+const hasKids = (a) => KID_GROUPS.some((g) => a.kids[g] > 0);
 
 // Q8 offers some priorities only when Q4 or Q6 make them matter.
 export function availablePriorities(a, priorities) {
@@ -399,8 +400,34 @@ function leadPets(c) {
   return lines.length ? [{ id: 'lead', heading: 'Pets in base housing', note: 'Pet policies as printed on the latest wait list, or as the LMH community page states them when the list doesn’t. Communities that state no policy aren’t listed.', lines }] : [];
 }
 
-// Priorities without a builder (the admin sequence, move logistics) get no lead until F2 exists.
-export const LEADS = { where: leadPlaces, commute: leadPlaces, cost: leadCost, schools: leadSchools, childcare: leadChildcare, spouse: leadSpouse, pets: leadPets };
+// The admin sequence and move logistics (rules v0.9, F2): the move sequence's steps for the phase Q3 sets
+// (src/lib/sequence.js, TIMELINE_PHASE), the ones that apply to this household, each with its deadline exactly
+// as the sequence page shows it and its "Not yet confirmed" line, citing the phase page and its date line.
+const TIMELINE_WORDS = {
+  under30: 'You report in under 30 days', '30-60': 'You report in 30–60 days', '60-90': 'You report in 60–90 days',
+  '90plus': 'You report in 90 days or more', 'no-orders': 'You don’t have orders yet',
+};
+export const sequenceLine = (s) => `${s.step} Deadline: ${s.deadline}${s.unconfirmed ? ` ${unconfirmedLine(s.unconfirmed)}` : ''}`;
+function leadSequence(c) {
+  const ph = phaseByKey(TIMELINE_PHASE[c.a.timeline]);
+  const fits = (w) => (!w.bases || (c.base && w.bases.includes(c.base.code))) && (!w.housing || c.open.housing)
+    && (!w.kids || hasKids(c.a)) && (!w.family || c.a.partner || hasKids(c.a)) && (!w.pets || hasPet(c.a));
+  const steps = c.data.sequence.filter((s) => s.phase === ph.key && fits(s.who));
+  if (!steps.length) return [];
+  const marine = c.base && MARINE_BASES.includes(c.base.code);
+  return [{
+    id: 'lead',
+    heading: `Your move sequence: ${ph.label}`,
+    note: `${TIMELINE_WORDS[c.a.timeline]}, so this starts at “${ph.label}”. ${SEQUENCE_DISCLAIMER}${marine ? ` ${NAVY_RULES_NOTE}` : ''}`,
+    lines: steps.map((s) => ({
+      text: sequenceLine(s),
+      links: [{ url: stepHref(s), text: 'The step and its sources' }],
+      sources: [{ url: `/sequence/${ph.slug}/`, title: `Move sequence: ${ph.label}`, dates: `Sequence: ${s.dates}` }],
+    })),
+  }];
+}
+
+export const LEADS = { where: leadPlaces, commute: leadPlaces, cost: leadCost, schools: leadSchools, childcare: leadChildcare, spouse: leadSpouse, pets: leadPets, admin: leadSequence, logistics: leadSequence };
 
 // --- Modifiers --------------------------------------------------------------------
 
@@ -536,8 +563,6 @@ function tradeoff(c) {
 // Why a first priority has no lead of its own (QUESTIONS 45, Brian 2026-10-11: lead with the
 // second priority and say so plainly). Shown in the lead's note, which states no facts.
 const NO_LEAD_REASON = {
-  admin: 'The move sequence isn’t written yet',
-  logistics: 'The move sequence isn’t written yet',
   pets: 'Rental pet policies aren’t on this site yet, and base housing (the only pet rules we have) is off your list',
 };
 const leadFor = (id, c) => {

@@ -1,0 +1,2169 @@
+[
+ {
+  "id": "orders-read",
+  "phase": "orders",
+  "order": 1,
+  "step": "Read your orders in full and check the details (name, report date, duty station, family member entitlements); get errors fixed right away.",
+  "anchor": "orders_in_hand",
+  "deadline": "As soon as you have orders.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Verify your personal information including report dates, duty location, and family member entitlements."
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Before PCS As SOON AS YOU HAVE ORDERS"
+   },
+   {
+    "title": "Arranging a Personal Property Shipment",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "If you see anything that does not look right, let your administration know right away that there is an error so it can be corrected as soon as possible."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-no-moves-before-orders",
+  "phase": "orders",
+  "order": 2,
+  "step": "Don't book the move on an assignment notification; wait for official orders.",
+  "anchor": "orders_in_hand",
+  "deadline": "Not before orders are in hand.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Arranging a Personal Property Shipment",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "It’s important to understand that an assignment notification does not mean that you have “orders” yet."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-sponsor",
+  "phase": "orders",
+  "order": 3,
+  "step": "Request a sponsor at the gaining command.",
+  "anchor": "orders_in_hand",
+  "deadline": "not stated",
+  "depends_on": [
+   "orders-read"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Request a sponsor at the gaining command."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-medical-screening",
+  "phase": "orders",
+  "order": 4,
+  "step": "If your orders are operational (sea duty), start suitability screening through the NMRTC/NMRTU screening coordinator.",
+  "anchor": "orders_in_hand",
+  "deadline": "Within three days of receiving orders.",
+  "depends_on": [
+   "orders-read"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "For San Diego shore orders this applies only if the orders are operational; overseas and remote screening doesn't apply to a move to San Diego.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Sailors on operational orders must undergo suitability screening."
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Before PCS within three days of receiving orders"
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-child-care",
+  "phase": "orders",
+  "order": 5,
+  "step": "Register for child care on MilitaryChildCare.com.",
+  "anchor": "orders_in_hand",
+  "deadline": "As soon as you receive orders.",
+  "depends_on": [
+   "orders-read"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "yes",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "As soon as you receive orders, plan ahead by registering for child care through MilitaryChildCare.com."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-hhg-counseling",
+  "phase": "orders",
+  "order": 6,
+  "step": "Contact the transportation office for household goods counseling.",
+  "anchor": "orders_in_hand",
+  "deadline": "Once you have orders; MyNavy HR places personal property 3-6 months before the PCS.",
+  "depends_on": [
+   "orders-no-moves-before-orders"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Arranging a Personal Property Shipment",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Now that you have orders in hand, you get to choose how to ship your goods and schedule your move dates. You should contact your local transportation office to schedule an info/counseling session and discover options for transporting your goods."
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Before PCS 3-6 months before your pcs"
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-hhg-counseling-shipment"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-dps-shipment",
+  "phase": "orders",
+  "order": 7,
+  "step": "Upload orders and create the shipment(s) in DPS; pick packing and pickup dates (a seven-day spread window).",
+  "anchor": "orders_in_hand",
+  "deadline": "not stated",
+  "depends_on": [
+   "orders-hhg-counseling"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Arranging a Personal Property Shipment",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "DPS is the online system you use to upload your orders and create shipment(s) (e.g. household goods, unaccompanied baggage, non-temporary storage, personally procured move, etc.)."
+   },
+   {
+    "title": "Arranging a Personal Property Shipment",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "When creating your shipment, you will select the packing and pickup dates. This will be a seven-day spread window during which your moving company is required to pick up your shipment."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-hhg-counseling-shipment"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-ppm-approval",
+  "phase": "orders",
+  "order": 8,
+  "step": "If you'll move some or all of your goods yourself (PPM), get approval from the Personal Property Office first.",
+  "anchor": "orders_in_hand",
+  "deadline": "Before moving; orders required.",
+  "depends_on": [
+   "orders-hhg-counseling"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "ppm",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Personally Procured Moves fact sheet (October 2026)",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Before moving, you must have your official orders and get approval from your local Personal Property Office (PPO)."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-ppm-paperwork"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "orders-command-items",
+  "phase": "orders",
+  "order": 9,
+  "step": "Complete the items your command must see before detachment (required screenings, OBLISERV, dependency application and record of emergency data, SGLI/FSGLI).",
+  "anchor": "detachment",
+  "deadline": "Prior to detachment.",
+  "depends_on": [
+   "orders-read"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "NPPSC 1300/3 PCS Transfer Checklist (Rev 05-24)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Reference/Forms/NPPSC/NPPSC1300-3_Rev05-24%20FinalV3.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "3. Command Responsibility: Command must ensure Sailors complete the following items prior to detachment (if applicable)"
+   },
+   {
+    "title": "NPPSC 1300/3 PCS Transfer Checklist (Rev 05-24)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Reference/Forms/NPPSC/NPPSC1300-3_Rev05-24%20FinalV3.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Required obligated service (OBLISERV)"
+   },
+   {
+    "title": "NPPSC 1300/3 PCS Transfer Checklist (Rev 05-24)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Reference/Forms/NPPSC/NPPSC1300-3_Rev05-24%20FinalV3.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "NAVPERS 1070/602 Dependency Application (Page 2) and DD 93 Record of Emergency Data via NSIPS RED/DA"
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-housing-apply",
+  "phase": "90_60_30",
+  "order": 1,
+  "step": "Apply for base housing early through HEAT (before or after orders); it isn't fully processed until all documents are in.",
+  "anchor": "orders_in_hand",
+  "deadline": "Any time; HEAT works before or after orders.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "base_housing",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Navy Housing - NAVBASE San Diego",
+    "agency": "CNIC Fleet & Family Readiness (Naval Base San Diego Housing Service Center)",
+    "url": "https://ffr.cnic.navy.mil/Navy-Housing/Housing-By-Region/Southwest/NAVBASE-San-Diego/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "The Housing Early Assistance Tool (HEAT) enables Service Members and their families to apply for PPV family housing prior to departure from their current command, before or after receiving permanent change of station orders."
+   },
+   {
+    "title": "Applying for Housing (Navy Housing)",
+    "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
+    "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "You can apply for military housing at any time; however, your application cannot be fully processed until you have provided all of the required documents"
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "pre-housing-offer-window",
+  "phase": "90_60_30",
+  "order": 2,
+  "step": "Expect the housing queue to start 30-45 days before arrival; homes are not usually held more than 30 days.",
+  "anchor": "report_date",
+  "deadline": "Queue starts within 30-45 days of arrival.",
+  "depends_on": [
+   "pre-housing-apply"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "base_housing",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Applying for Housing (Navy Housing)",
+    "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
+    "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "Once the required documents have been submitted, you will be placed in a queue for housing until you are within 30-45 days of your arrival. For planning purposes, Navy Housing (for Navy-owned) and our Partners (for privatized) do not typically reserve homes for greater than 30 days."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "pre-dependency-verify",
+  "phase": "90_60_30",
+  "order": 3,
+  "step": "Verify your dependency application (NAVPERS 1070/602) in NSIPS before asking for any dependent travel or dependent advance.",
+  "anchor": "detachment",
+  "deadline": "At least 30 days before requesting dependent-related travel, pay or allowances.",
+  "depends_on": [
+   "orders-command-items"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MILPCS Travel Advance Request Processing SOP (May 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Advance_SOP_May_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "At least 30 days prior to requesting dependent related travel, transportation, pay, benefits, or allowances (e.g., advanced or delayed dependent travel, dependent travel advances, early return of dependents, etc.)."
+   },
+   {
+    "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Claim_Settlement_SOP_Rev_Jun_2024.pdf?ver=zlUS5BsOrcC-rZuSEQtAzg%3D%3D",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Travel offices will only pay travel entitlements for dependents verified in NSIPS."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-dependent-travel"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-travel-advance",
+  "phase": "90_60_30",
+  "order": 4,
+  "step": "If you need an advance (DLA; PPM; dependents traveling separately; or no GTCC), submit the NPPSC 1300/1 Application for Transfer and Advances through your CPPA.",
+  "anchor": "detachment",
+  "deadline": "At least 45 days before the approved transfer date; processed no earlier than 35 days before it.",
+  "depends_on": [
+   "pre-dependency-verify"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "newest_authority",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/CRG_TPC_10NOV25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "PCS Travel Advances must be submitted at least 45 days prior to approved transfer date."
+   },
+   {
+    "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/CRG_TPC_10NOV25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Advances will be processed no earlier than 35 days prior to approved transfer date."
+   },
+   {
+    "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/CRG_TPC_10NOV25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "NPPSC 1300/1 Application for Transfer and Advances is the only authorized Travel Advance Request form."
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Before PCS 60 days before your pcs"
+   }
+  ],
+  "superseded": [
+   {
+    "title": "MILPCS Travel Advance Request Processing SOP (May 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Advance_SOP_May_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Submit Application for Transfer and Advances to the Travel Claim Processing Center No Earlier Than 60 days but No Later Than 30 days from Departure Date.",
+    "reason": "MILPCS Travel Advance SOP (May 2025) allows submission up to 30 days before departure; the TPC Case Routing Guidance of 10 November 2025 requires at least 45 days. The PCS Guide 2026 (60 days) fits inside the newer rule."
+   },
+   {
+    "title": "MILPCS Travel Advance Request Processing SOP (May 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Advance_SOP_May_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Travel Advances will be processed no more than 30 days prior to transfer date.",
+    "reason": "Same SOP (May 2025); the November 2025 routing guidance processes advances no earlier than 35 days before transfer."
+   }
+  ],
+  "forms": [
+   "navy-travel-advance"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-dla-advance",
+  "phase": "90_60_30",
+  "order": 5,
+  "step": "Decide on advance DLA. The GTCC can't be used for DLA; DLA is paid as an advance (on the NPPSC 1300/1) or at settlement.",
+  "anchor": "detachment",
+  "deadline": "Same as the advance request; DLA advances are paid about 30 days before detachment.",
+  "depends_on": [
+   "pre-travel-advance"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "newest_authority",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Dislocation Allowance (DLA) cannot be charged to the GTCC and will be paid as an advance."
+   },
+   {
+    "title": "NPPSC OPS Alert 019-25 Mandatory GTCC (Rev 1)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/OPS_Alerts/OPS2025/019-25_OA_Mandatory_GTCC_Rev1.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "DLA advances will be liquidated ~30 prior to detachment."
+   }
+  ],
+  "superseded": [
+   {
+    "title": "NAVADMIN 286/21 (Dec 2021, PCS travel claim timeliness)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/NAV2021/NAV21286.txt?ver=ryeWvoEKNa7Z_iLRIve_9g%3D%3D",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "The GTCC is authorized for dislocation allowance (DLA) expenses.",
+    "reason": "NAVADMIN 286/21 (Dec 2021). The NAVADMIN 210/25 fact sheet (Oct 2025) says DLA cannot be charged to the GTCC."
+   },
+   {
+    "title": "GTCC for PCS FAQ (Aug 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/GTCC/GTCC_%20for_PCS_FAQ_Aug_25.doc.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Regarding the use of the GTCC for DLA expenses, cash may be withdrawn from a bank teller or ATM within 3 working days of departure date of official travel.",
+    "reason": "GTCC for PCS FAQ (Aug 2025) predates NAVADMIN 210/25 (Oct 2025)."
+   },
+   {
+    "title": "Military Dislocation Allowance",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/benefits/military-dislocation-allowance/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You will need to visit your installation’s finance office 10 to 15 days before your move and file a request for your commander’s approval.",
+    "reason": "Military OneSource (all services) is below MyNavy HR in the authority order; Navy advances go through the CPPA on the NPPSC 1300/1 at least 45 days before transfer."
+   }
+  ],
+  "forms": [
+   "navy-dla",
+   "navy-travel-advance"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-ppm-advance",
+  "phase": "90_60_30",
+  "order": 6,
+  "step": "For a PPM advance (up to 60% of the incentive), give your CPPA a rental reservation or moving company estimate and the DD 2278 signed by you and the housing (transportation) office.",
+  "anchor": "detachment",
+  "deadline": "Same as the advance request; PPM advances are paid about 10 days before detachment.",
+  "depends_on": [
+   "orders-ppm-approval",
+   "pre-travel-advance"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "ppm",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "The Military OneSource Navy page carrying the 60% rule is dated March 21, 2022.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Navy PCS Moving Assistance",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/navy-pcs-moving-assistance/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Generally, Navy personnel requesting an advance of up to 60% for a PPM, must provide a copy of a vehicle rental reservation or moving company estimate to be eligible for a funds advance."
+   },
+   {
+    "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/CRG_TPC_10NOV25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "For all advances related to DITY/PPM moves, DD Form 2278 must be signed by both the member and housing office."
+   },
+   {
+    "title": "NPPSC OPS Alert 019-25 Mandatory GTCC (Rev 1)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/OPS_Alerts/OPS2025/019-25_OA_Mandatory_GTCC_Rev1.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "PPM and non-concurrent travel advances will be liquidated ~10 days prior to detachment."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-travel-advance",
+   "navy-ppm-paperwork"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-gtcc-ready",
+  "phase": "90_60_30",
+  "order": 7,
+  "step": "Get GTCC counseling (signed Page 13 and DD Form 3120), check out with the APC (zero balance), and confirm the card is in PCS mission-critical status.",
+  "anchor": "detachment",
+  "deadline": "Before detaching; mission-critical status at least five days before detachment.",
+  "depends_on": [
+   "orders-command-items"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Sailors must be counseled on proper GTCC use by the Command Financial Specialist or APC before detaching for PCS."
+   },
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Training and counseling must be documented with a signed Page 13 and a signed DD Form 3120 Statement of Understanding."
+   },
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Detaching command APCs must ensure the GTCC is in PCS mission-critical status at least five days before detachment and throughout the travel period."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-gtcc-pcs"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-passenger-travel",
+  "phase": "90_60_30",
+  "order": 8,
+  "step": "If you'll fly, submit a Passenger Reservation Request (PRR) to NAVPTO; orders aren't needed to start.",
+  "anchor": "detachment",
+  "deadline": "Up to 120 days before the PCS.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Submit your Passenger Reservation Request (PRR) as soon as you can - you don’t need orders to initiate travel plans!"
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Before PCS up to 120 days before your pcs"
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-dependent-travel"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-pets",
+  "phase": "90_60_30",
+  "order": 9,
+  "step": "Plan pet travel, vaccinations and documents; movers can't ship animals.",
+  "anchor": "detachment",
+  "deadline": "not stated",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "yes",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Plan pet travel, vaccinations, and documentation."
+   },
+   {
+    "title": "Understand Your Military PCS Entitlements",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/benefits/pcs-entitlements/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Your moving company cannot ship any live animals as part of your move."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-pet-expenses"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-schools",
+  "phase": "90_60_30",
+  "order": 10,
+  "step": "Notify the current schools and request transcripts and records.",
+  "anchor": "detachment",
+  "deadline": "not stated",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "yes",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Notify schools and request transcripts and records."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "pre-vehicle",
+  "phase": "90_60_30",
+  "order": 11,
+  "step": "Schedule POV shipment (drop-off and pick-up) or plan the drive.",
+  "anchor": "detachment",
+  "deadline": "not stated",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "yes",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Schedule POV shipment, drop-off and pick-up locations, or plan for your drive."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "transit-receipts",
+  "phase": "transit",
+  "order": 1,
+  "step": "Keep itemized, zero-balance receipts; lodging needs a receipt at any amount, other single expenses over $75.",
+  "anchor": "detachment",
+  "deadline": "During travel.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You must provide receipts for lodging regardless of the amount, and any single expense greater than $75 to be reimbursed."
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Submit all receipts with a zero balance, and itemized to show things like taxes and fees separately."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-dd1351-2-travel-voucher"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "transit-gtcc-use",
+  "phase": "transit",
+  "order": 2,
+  "step": "Use the GTCC for lodging, meals, TLE and POV fuel or charging; not for DLA, PPM costs, storage or airfare.",
+  "anchor": "detachment",
+  "deadline": "During travel.",
+  "depends_on": [
+   "pre-gtcc-ready"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Authorized uses include lodging, meals, Temporary Lodging Expense (TLE) / Temporary Lodging Allowance (TLA), and fuel and electric vehicle charging for your Privately Owned Vehicle (POV) if you're driving to your new duty station."
+   },
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Unauthorized uses include Personally Procured Moves (PPM) costs (like rental trucks or supplies), separation or retirement travel, Dislocation Allowance (DLA), debt repayment, household goods storage, and non-travel-related expenses."
+   },
+   {
+    "title": "NPPSC OPS Alert 019-25 Mandatory GTCC (Rev 1)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/OPS_Alerts/OPS2025/019-25_OA_Mandatory_GTCC_Rev1.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Commercial airfare for PCS travel (Commercial airfare will continue to be booked by NAVPTO)."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-gtcc-pcs"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "transit-leave",
+  "phase": "transit",
+  "order": 3,
+  "step": "Leave en route is charged automatically on gain; up to 30 days between duty stations unless the orders say otherwise.",
+  "anchor": "report_date",
+  "deadline": "Report by the date on your orders.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Unless your orders say otherwise, you can take up to 30 days of leave between duty stations."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "transit-tle",
+  "phase": "transit",
+  "order": 4,
+  "step": "Temporary lodging (TLE) near the old or new duty station, split as you choose. San Diego isn't on the extended-TLE list. Use Navy Lodge first, or get a certificate of non-availability.",
+  "anchor": "report_date",
+  "deadline": "Up to 21 days for a CONUS move.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "newest_authority",
+  "note": "The extended-TLE list dated 9 October 2026 names Laughlin AFB, NAS Fallon and Vance AFB only. Check the list again before relying on it.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "UTD for MAP 66-24(R) Temporary Lodging Expense (TLE) Period Increase",
+    "agency": "Defense Travel Management Office (DoD)",
+    "url": "https://media.defense.gov/2024/Dec/03/2003597426/-1/-1/0/UTD_FOR_MAP_66-24(R)%2C_TEMPORARY_LODGING_EXPENSE_(TLE)_PERIOD_INCREASE.PDF",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "A Service member may be authorized TLE for either 7 or 21 days, depending on whether the new PDS location is in the CONUS. The days may be split between multiple authorized locations and at the Service member’s or dependent’s discretion."
+   },
+   {
+    "title": "JTR Supplement: Locations with Approved TLE Extensions",
+    "agency": "Per Diem, Travel and Transportation Allowance Committee (DoD)",
+    "url": "https://www.travel.dod.mil/Portals/119/Documents/JTR/Supplements/Locations_with_Approved_TLE_Extensions.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "9 October 2026 Locations with Approved TLE Extensions"
+   },
+   {
+    "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Claim_Settlement_SOP_Rev_Jun_2024.pdf?ver=zlUS5BsOrcC-rZuSEQtAzg%3D%3D",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Certificate of Non-availability (CNA) is required from Navy Gateway Inns & Suites (NGIS) if Navy Lodge (primary) and NGIS (secondary) lodging is NOT available in order to support on the economy lodging expense."
+   }
+  ],
+  "superseded": [
+   {
+    "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Claim_Settlement_SOP_Rev_Jun_2024.pdf?ver=zlUS5BsOrcC-rZuSEQtAzg%3D%3D",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Cannot exceed a total of 14 days.",
+    "reason": "The MILPCS Travel Claim Settlement SOP (Rev Jun 2024) predates the JTR change (UTD for MAP 66-24(R)) that raised CONUS TLE from 14 to 21 days."
+   }
+  ],
+  "forms": [
+   "navy-tle-claim"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-check-in",
+  "phase": "arrival",
+  "order": 1,
+  "step": "Check in to the new command and get gained; see the CPPA or admin about the gain, travel claim and dependent status.",
+  "anchor": "report_date",
+  "deadline": "Within one day after arrival.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "See your CPPA or Admin for help with your gain, travel claim, and dependent status verification."
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "within one day after your arrival"
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-travel-claim",
+  "phase": "arrival",
+  "order": 2,
+  "step": "Submit the PCS travel claim (DD 1351-2) through the gaining CPPA, with all receipts; before taking house-hunting PTDY. No partial claims.",
+  "anchor": "report_date",
+  "deadline": "Within 5 working days of reporting.",
+  "depends_on": [
+   "arrival-check-in"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "Source note: the Travel Processing Center's routing guidance words it “within 5 days of completing PCS travel”; the DoD FMR and the other Navy sources say five working days of arrival or check-in.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "DoD Financial Management Regulation, Volume 9 (Travel Policy)",
+    "agency": "Office of the Under Secretary (Comptroller) (DoD)",
+    "url": "https://comptroller.defense.gov/Portals/45/documents/fmr/Volume_09.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "The traveler must submit all claims within five working days of return to or arrival at the PDS."
+   },
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Sailors must check in with the gaining CPPA to submit their travel voucher within five working days and before executing Permissive Temporary Duty (PTDY)."
+   },
+   {
+    "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Claim_Settlement_SOP_Rev_Jun_2024.pdf?ver=zlUS5BsOrcC-rZuSEQtAzg%3D%3D",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Submit PCS Travel Claim Settlement within five working days of arrival at the PDS in accordance with DoD FMR, Vol. 9 Chap. 8."
+   },
+   {
+    "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/CRG_TPC_10NOV25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "All travel claims must be submitted within 5 days of completing PCS travel."
+   },
+   {
+    "title": "NPPSC OPS Alert 019-25 Mandatory GTCC (Rev 1)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/OPS_Alerts/OPS2025/019-25_OA_Mandatory_GTCC_Rev1.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Submit travel claim once PCS travel is complete. Do not submit partial travel claims."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-dd1351-2-travel-voucher",
+   "navy-dla",
+   "navy-advance-settlement",
+   "navy-dependent-travel",
+   "navy-pet-expenses"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-ptdy-house-hunting",
+  "phase": "arrival",
+  "order": 3,
+  "step": "House-hunting PTDY (five days, up to 10 calendar days with weekends and holidays) comes after the travel claim is in.",
+  "anchor": "report_date",
+  "deadline": "After the travel claim is submitted.",
+  "depends_on": [
+   "arrival-travel-claim"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You’re authorized five Permissive Temporary Duty (PTDY) days, extendable to 10 calendar days, when combined with weekends, holidays, and liberty."
+   },
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Sailors must check in with the gaining CPPA to submit their travel voucher within five working days and before executing Permissive Temporary Duty (PTDY)."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-housing-control-date",
+  "phase": "arrival",
+  "order": 4,
+  "step": "Get your base housing application in (or confirm it) at the Housing Service Center. Your control date sets your place on the wait list, and official sources give two different rules for it.",
+  "anchor": "report_date",
+  "deadline": "Within 30 days of reporting under one rule; the other states no limit. Confirm with the HSC.",
+  "depends_on": [
+   "pre-housing-apply"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "base_housing",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "confirm_with_hsc",
+  "note": "CNIC M-11103.3 says it does not cover privatized housing, and San Diego family housing is privatized (PPV).",
+  "unconfirmed": {
+   "text": "Which control-date rule applies to San Diego privatized housing.",
+   "ask": "HSC"
+  },
+  "alternatives": [
+   {
+    "rule": "Rule 1 (CNIC, Applying for Housing): your control date is the actual date of detachment stamped on your PCS orders, not the estimated date.",
+    "sources": [
+     {
+      "title": "Applying for Housing (Navy Housing)",
+      "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
+      "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+      "incentive": "Government: no commercial interest",
+      "retrieved_on": "2026-09-30",
+      "quote": "Note that your actual date of departure stamped on your PCS orders, not your estimated date of departure, determines your control date."
+     }
+    ]
+   },
+   {
+    "rule": "Rule 2 (CNIC M-11103.3; MilitaryINSTALLATIONS, MCRD San Diego): your control date is your detachment date only if you apply within 30 days of reporting; otherwise it's the date the HSC receives your application.",
+    "sources": [
+     {
+      "title": "CNIC M-11103.3 Navy Housing Manual (23 Jan 2019)",
+      "agency": "CNIC (Navy)",
+      "url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/Headquarters/Policy/CNIC%20M-11103.3%20EAT.pdf",
+      "incentive": "Government: no commercial interest",
+      "retrieved_on": "2026-10-20",
+      "quote": "If the Service Member does not apply or confirm their housing application within 30 days of report date, the control date is the date the HSC receives the application."
+     },
+     {
+      "title": "MCRD San Diego Government Housing",
+      "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+      "url": "https://installations.militaryonesource.mil/military-installation/mcrd-san-diego/housing/government-housing",
+      "incentive": "Government: no commercial interest",
+      "retrieved_on": "2026-10-20",
+      "quote": "The control date will usually be the date of detachment from your last permanent duty station, provided the application is received within 30 days of your arrival at your San Diego duty station."
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "title": "Applying for Housing (Navy Housing)",
+    "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
+    "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "Note that your actual date of departure stamped on your PCS orders, not your estimated date of departure, determines your control date."
+   },
+   {
+    "title": "Applying for Housing (Navy Housing)",
+    "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
+    "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "Military Member: The control date will be the date of detachment from the last permanent duty station"
+   },
+   {
+    "title": "CNIC M-11103.3 Navy Housing Manual (23 Jan 2019)",
+    "agency": "CNIC (Navy)",
+    "url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/Headquarters/Policy/CNIC%20M-11103.3%20EAT.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "If the Service Member does not apply or confirm their housing application within 30 days of report date, the control date is the date the HSC receives the application."
+   },
+   {
+    "title": "CNIC M-11103.3 Navy Housing Manual (23 Jan 2019)",
+    "agency": "CNIC (Navy)",
+    "url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/Headquarters/Policy/CNIC%20M-11103.3%20EAT.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "The date of detachment from the previous permanent duty station if the application is submitted within 30 days of the reporting date; or the date of receipt of the application by the HSC if application is not submitted within 30 days of the reporting date."
+   },
+   {
+    "title": "CNIC M-11103.3 Navy Housing Manual (23 Jan 2019)",
+    "agency": "CNIC (Navy)",
+    "url": "https://ffr.cnic.navy.mil/Portals/76/Navy%20Housing/Headquarters/Policy/CNIC%20M-11103.3%20EAT.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "It does not include privatized housing."
+   },
+   {
+    "title": "MCRD San Diego Government Housing",
+    "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+    "url": "https://installations.militaryonesource.mil/military-installation/mcrd-san-diego/housing/government-housing",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "The control date will usually be the date of detachment from your last permanent duty station, provided the application is received within 30 days of your arrival at your San Diego duty station."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-hsc-courtesy-move",
+  "phase": "arrival",
+  "order": 5,
+  "step": "Contact the HSC within 30 days of arrival to keep the right to a government-funded local move; turning down family housing can cost you that move.",
+  "anchor": "report_date",
+  "deadline": "Within 30 days of arrival.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Applying for Housing (Navy Housing)",
+    "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
+    "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "Generally, Service Members must contact the installation HSC within 30 days of arrival to retain rights to a local move."
+   },
+   {
+    "title": "Applying for Housing (Navy Housing)",
+    "agency": "CNIC Fleet & Family Readiness (Navy Housing headquarters)",
+    "url": "https://ffr.cnic.navy.mil/Navy-Housing/Applying-for-Housing/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "Rejecting offers of military family housing may disqualify you from a future local move."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "arrival-housing-offers",
+  "phase": "arrival",
+  "order": 6,
+  "step": "When you reach the top of the list, you're offered a selection of two units, not necessarily at the same time. Refusing either of the two cancels your application.",
+  "anchor": "report_date",
+  "deadline": "When you reach the top of the wait list.",
+  "depends_on": [
+   "arrival-housing-control-date"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "base_housing",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "In the words of the MilitaryINSTALLATIONS MCRD San Diego government housing page.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MCRD San Diego Government Housing",
+    "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+    "url": "https://installations.militaryonesource.mil/military-installation/mcrd-san-diego/housing/government-housing",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You will be given a selection of two units but not necessarily at the same time. Refusal to accept one of the two homes will result in the cancellation of your application."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-dps-address",
+  "phase": "arrival",
+  "order": 7,
+  "step": "Put the delivery address in DPS so the movers know where to deliver.",
+  "anchor": "address_in_hand",
+  "deadline": "not stated",
+  "depends_on": [
+   "orders-dps-shipment"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Update your address in the Defense Personal Property System (DPS) so movers know where to deliver your HHG."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-deers",
+  "phase": "arrival",
+  "order": 8,
+  "step": "Update DEERS (and NFAAS and Page 2) with the new address after you move; a TRICARE plan change dates from the DEERS address change.",
+  "anchor": "address_in_hand",
+  "deadline": "After you move; plan changes within 90 days of the address change.",
+  "depends_on": [
+   "arrival-check-in"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Update your info in DEERS, NFAAS, and your Page 2!"
+   },
+   {
+    "title": "Moving (TRICARE life event)",
+    "agency": "TRICARE (Defense Health Agency)",
+    "url": "https://tricare.mil/LifeEvents/Moving",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "If you’re permanently relocating, be sure to update your address and other personal information in the Defense Enrollment Eligibility Reporting System after you move."
+   },
+   {
+    "title": "Moving (TRICARE life event)",
+    "agency": "TRICARE (Defense Health Agency)",
+    "url": "https://tricare.mil/LifeEvents/Moving",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "You have 90 days from the date of your address change to change your TRICARE health plan."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-school-residence-proof",
+  "phase": "arrival",
+  "order": 9,
+  "step": "If you enrolled the kids before you had a local address, give the district proof of residence within 10 days after the arrival date on your orders.",
+  "anchor": "report_date",
+  "deadline": "Within 10 days after the published arrival date.",
+  "depends_on": [
+   "pre-schools"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "yes",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Military Children (CA Dept of Education)",
+    "agency": "California Department of Education",
+    "url": "https://www.cde.ca.gov/ls/pf/mc/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "would require a parent to provide proof of residence in the school district within 10 days after the published arrival date provided on official documentation."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-09-30"
+ },
+ {
+  "id": "arrival-ca-driver-license",
+  "phase": "arrival",
+  "order": 10,
+  "step": "A driver's license from a former duty-station state (not California and not your home state) must be replaced with a California or home-state license.",
+  "anchor": "report_date",
+  "deadline": "Within 10 days of entering California.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "yes",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "The clock starts when you enter California; this page counts it from your report date.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Military Personnel (CHP)",
+    "agency": "California Highway Patrol",
+    "url": "https://www.chp.ca.gov/programs-services/services-information/military-personnel/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Former duty station - If you obtained a drivers license in the state of a former duty station (other than California) it must be replaced with one issued by California or your state of residence within 10 days of entering California."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "arrival-nbc-vehicle-registration",
+  "phase": "arrival",
+  "order": 11,
+  "step": "Naval Base Coronado only. Register your vehicle with the base.",
+  "anchor": "report_date",
+  "deadline": "Within 60 days of transfer.",
+  "depends_on": [],
+  "applies_to": {
+   "base": [
+    "NASNI",
+    "NAB"
+   ],
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "yes",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "The MilitaryINSTALLATIONS page is undated; check with base Pass and ID before relying on it.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Naval Base Coronado Motor Vehicles",
+    "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+    "url": "https://installations.militaryonesource.mil/military-installation/naval-base-coronado/transportation/motor-vehicles",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You must register your vehicle with the base within 60 days of transfer."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-delivery-check",
+  "phase": "first_30_days",
+  "order": 1,
+  "step": "At delivery, check each item off by inventory number, note missing or broken items on the delivery-day form, and photograph damage.",
+  "anchor": "delivery_date",
+  "deadline": "On delivery day.",
+  "depends_on": [
+   "arrival-dps-address"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Personally verify each HHG item by inventory number with movers, and document missing or damaged items."
+   },
+   {
+    "title": "After a PCS Move Checklist (Resources to Help Settle in After a PCS)",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/moving-checklists-for-military-moves/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Compare delivered items with your inventory list and take clear photos of damages."
+   },
+   {
+    "title": "Personal Property Claims fact sheet (October 2026)",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "“Notification of Loss or Damage AT Delivery” form completed with moving company on delivery day."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-hhg-loss-damage-notice",
+   "navy-hhg-quick-claim"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-loss-damage-notice",
+  "phase": "first_30_days",
+  "order": 2,
+  "step": "Give the moving company written notice of any loss or damage (DPS \"after delivery\" form, or email, fax or mail with proof of receipt). Several notices are allowed.",
+  "anchor": "delivery_date",
+  "deadline": "Within 180 days of delivery.",
+  "depends_on": [
+   "f30-delivery-check"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Personal Property Claims fact sheet (October 2026)",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Give written notice of loss/damage within 180 days from delivery date"
+   },
+   {
+    "title": "Understanding Moving Claims",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You can give multiple notifications during that 180-day time frame if you discover additional items after your initial notification."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-hhg-loss-damage-notice"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-loss-damage-claim",
+  "phase": "first_30_days",
+  "order": 3,
+  "step": "File the itemized loss or damage claim in DPS.",
+  "anchor": "delivery_date",
+  "deadline": "12 months from delivery for shipments picked up on or after May 15, 2026; 9 months if picked up on or before May 14, 2026.",
+  "depends_on": [
+   "f30-loss-damage-notice"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "newest_authority",
+  "note": "The MyNavy HR PCS Guide 2026 says nine months; it predates the May 15, 2026 change.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Personal Property Claims fact sheet (October 2026)",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Important note: You have 9 months to file a claim for shipments picked up on or before May 14, 2026. For shipments picked up on or after May 15, 2026, the filing period is extended to 12 months."
+   },
+   {
+    "title": "Understanding Moving Claims",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "If your shipment was picked up on or after May 15, 2026, you have up to 12 months from your delivery date to file."
+   }
+  ],
+  "superseded": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "file dps claim within nine months",
+    "reason": "The PCS Guide 2026 gives nine months only; the Personal Property Claims fact sheet (October 2026) extends it to 12 months for shipments picked up on or after May 15, 2026."
+   },
+   {
+    "title": "Understanding Moving Claims",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Up to nine months after delivery date: Submit your itemized claim for any lost or damaged items.",
+    "reason": "The same page's timeline section wasn't updated for the May 15, 2026 change stated earlier on the page."
+   }
+  ],
+  "forms": [
+   "navy-hhg-claim"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-inconvenience-claim",
+  "phase": "first_30_days",
+  "order": 4,
+  "step": "If the moving company missed the pickup or delivery dates and you lacked household items, tell the company you intend to file an inconvenience claim.",
+  "anchor": "delivery_date",
+  "deadline": "The company must acknowledge within five business days of your contact.",
+  "depends_on": [],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Understanding Moving Claims",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Notify your TSP that you intend to file a claim and ask for the inconvenience claim form if they have not already offered it to you."
+   },
+   {
+    "title": "Understanding Moving Claims",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "The TSP must acknowledge your intent to file an inconvenience claim within five business days of being contacted by you or your local transportation office."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-hhg-inconvenience-claim"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-tle-supplemental",
+  "phase": "first_30_days",
+  "order": 5,
+  "step": "After the temporary lodging stay ends, file a supplemental voucher for TLE with the NPPSC 7220/2 certification and paid, itemized lodging receipts.",
+  "anchor": "report_date",
+  "deadline": "After the TLE stay (no deadline stated).",
+  "depends_on": [
+   "arrival-travel-claim",
+   "transit-tle"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Temporary Lodging Expense (TLE) at old or new CONUS PDS (file supplemental voucher after stay)."
+   },
+   {
+    "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Claim_Settlement_SOP_Rev_Jun_2024.pdf?ver=zlUS5BsOrcC-rZuSEQtAzg%3D%3D",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "All paid daily itemized lodging receipts, showing a zero balance."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-tle-claim"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-gtcc-pay-off",
+  "phase": "first_30_days",
+  "order": 6,
+  "step": "Pay the GTCC in full when the travel claim settles (split disbursement pays the card first); you owe any balance the claim doesn't cover.",
+  "anchor": "report_date",
+  "deadline": "In full upon travel claim liquidation.",
+  "depends_on": [
+   "arrival-travel-claim"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "GTCC must be paid in full upon travel claim liquidation."
+   },
+   {
+    "title": "NPPSC OPS Alert 019-25 Mandatory GTCC (Rev 1)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/OPS_Alerts/OPS2025/019-25_OA_Mandatory_GTCC_Rev1.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Any GTCC balance not covered by the claim remains the Service member’s responsibility and must be paid in full."
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-gtcc-pcs"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-ppm-closeout",
+  "phase": "first_30_days",
+  "order": 7,
+  "step": "Close out the PPM. Turn in weight tickets (empty and full), receipts and the DD 3166 checklist; Navy packages go to the NAVSUP HHG Audit Division.",
+  "anchor": "detachment",
+  "deadline": "45 days from the planned move start date (Military OneSource FAQ dated Oct. 6, 2023). Confirm with your PPPO.",
+  "depends_on": [
+   "orders-ppm-approval"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "any",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "any",
+   "vehicles": "ppm",
+   "service": "navy"
+  },
+  "status": "partial",
+  "note": "The clock starts at the PPM's planned move start date; this page counts it from your detachment date.",
+  "unconfirmed": {
+   "text": "The 45-day rule comes from an all-services FAQ dated 2023; a Navy deadline isn't on this site yet.",
+   "ask": "PPPO"
+  },
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Personal Property FAQs",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You have 45 days from the planned move start date to turn in all paperwork."
+   },
+   {
+    "title": "Personal Property FAQs",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Oct. 6, 2023"
+   },
+   {
+    "title": "Personally Procured Moves fact sheet (October 2026)",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Obtain empty and full weight tickets (based on Service Branch requirements) from a certified weigh station for each segment of your PPM, including multiple TDY trips en route."
+   },
+   {
+    "title": "Arranging a Personal Property Shipment",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "DD3166- Personally Procured Move Checklist and Expense Certification: This form will be generated by DPS during your transportation office counseling appointment."
+   },
+   {
+    "title": "Navy PCS Moving Assistance",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/navy-pcs-moving-assistance/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Email submissions: hhg_audit_ppm_claims.fct@navy.mil"
+   }
+  ],
+  "superseded": [],
+  "forms": [
+   "navy-ppm-paperwork"
+  ],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
+  "id": "f30-housing-renewal",
+  "phase": "first_30_days",
+  "order": 8,
+  "step": "Renew the base housing application every six months while you wait.",
+  "anchor": "report_date",
+  "deadline": "Every six months.",
+  "depends_on": [
+   "arrival-housing-control-date"
+  ],
+  "applies_to": {
+   "base": "all",
+   "housing_choice": "base_housing",
+   "pets": "any",
+   "kids": "any",
+   "dependents": "yes",
+   "vehicles": "any",
+   "service": "navy"
+  },
+  "status": "ok",
+  "note": "The NBSD MilitaryINSTALLATIONS page also names the previous PPV operator; confirm with the HSC.",
+  "unconfirmed": null,
+  "alternatives": [],
+  "sources": [
+   {
+    "title": "Naval Base San Diego Housing",
+    "agency": "Military OneSource MilitaryINSTALLATIONS (DoD)",
+    "url": "https://installations.militaryonesource.mil/military-installation/naval-base-san-diego/housing/housing",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-09-30",
+    "quote": "All personnel are required to renew their applications every six months. Renewal may be made in person or by telephone at 619-556-8443."
+   }
+  ],
+  "superseded": [],
+  "forms": [],
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-09-30"
+ }
+]

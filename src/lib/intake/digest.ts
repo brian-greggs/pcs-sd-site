@@ -8,6 +8,8 @@ import { baseHousingAreas, parseWait } from '../baseHousing';
 import { PAY_BAND_ORDER } from '../format';
 import { provenance } from '../prov';
 import { bahTable } from '../bah';
+import { sequenceData } from '../sequenceData';
+import { TIMELINE_PHASE, citeDates } from '../sequence.js';
 
 // Outbound links a rule can cite (each keeps its incentive label and verified date).
 const LINK_IDS = [
@@ -99,7 +101,24 @@ export async function intakeDigest() {
     links[rule.link_id] = { title: l.data.title, url: l.data.url, incentive: l.data.incentive, verified_on: l.data.verified_on };
   }
 
+  // The move sequence's steps for the phases Q3 can open on (src/lib/sequence.js, TIMELINE_PHASE), as the
+  // sequence pages show them: the step, its deadline, its "Not yet confirmed" line and its date line. `who` is
+  // applies_to reduced to what the answers can decide (vehicles and PPM aren't asked, so those steps always show).
+  const planPhases = new Set(Object.values(TIMELINE_PHASE));
+  const sequence = (await sequenceData()).steps.filter((s) => planPhases.has(s.phase)).map((s) => ({
+    id: s.id, phase: s.phase, order: s.order, step: s.step, deadline: s.deadline, unconfirmed: s.unconfirmed,
+    who: {
+      bases: s.applies_to.base === 'all' ? null : s.applies_to.base,
+      housing: s.applies_to.housing_choice === 'base_housing',
+      kids: s.applies_to.kids === 'yes',
+      family: s.applies_to.dependents === 'yes',
+      pets: s.applies_to.pets === 'yes',
+    },
+    dates: citeDates(s),
+  }));
+
   return {
+    sequence,
     bases: BASES.map((b) => ({ code: b.code, slug: b.slug, short: b.short, mha: bahT.mhaOfBase[b.code] })),
     bah,
     groupBases: GROUP_BASES,

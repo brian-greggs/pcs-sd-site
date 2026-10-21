@@ -38,6 +38,15 @@
   "note": "spot-checked by hand, 5 figures, DTMO calculator"
  },
  {
+  "id": "sequence",
+  "title": "Move sequence and forms",
+  "source_name": "Official pages: JTR changes (PDTATAC), DoD FMR, MyNavy HR, Military OneSource, CNIC, CHP; each step and form names its own",
+  "source_url": "",
+  "license": "Public domain (US government works), quoted; CHP page quoted",
+  "vintage": "F2 sequence, built 2026-10-20",
+  "verified_on": "2026-10-20"
+ },
+ {
   "id": "ownership",
   "title": "Mello-Roos status",
   "source_name": "SD County Auditor & Controller — Active Mello-Roos Districts FY2025-26",

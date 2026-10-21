@@ -23,7 +23,8 @@ npm run build    # principle checks + build into dist/ (this is what Cloudflare 
 3. `postbuild`: `scripts/check_principles.mjs dist` checks the rendered pages: every fact block dated, every BAH
    dollar figure from `src/data/bah.json` with its year, MHA and date line, no demographic descriptors, no score/index/rating labels, an incentive label on every outbound
    link, `noindex` on every page, no placeholder text, nothing loaded from another origin. Then
-   `scripts/check_intake.mjs` checks the starting plan (see the table below).
+   `scripts/check_intake.mjs` checks the starting plan (see the table below), and `scripts/check_sequence.mjs` checks
+   the move sequence pages against their exported rows.
 
 ## How data gets here
 
@@ -56,6 +57,9 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/content/communities/*.md` | Human-written lead and gotchas, one file per neighborhood. A neighborhood page is built only when its file exists. Nothing renders while `status: placeholder` |
 | `src/content/base-housing-areas/*.md` | Lead and gotchas for each base housing area (same rules) |
 | `src/data/base_housing_areas.json` | The base housing areas, curated in `manual/base_housing_areas.csv` in the data repo |
+| `src/pages/sequence/` | The move sequence (F2): `/sequence/`, one page per phase (`[phase].astro`) and `/sequence/forms/`, from `src/data/sequence_steps.json` and `sequence_forms.json` (exported only after the data repo's `pull/check_f2.py` passes) |
+| `src/lib/sequence.js`, `src/lib/sequenceData.ts`, `src/components/sequence/` | Phases, anchors, the disclaimer and Navy-rules lines, the Q3 → phase map (shared with the plan rules and the checks); the steps and forms in order; the step card, the quotes and the two top lines |
+| `scripts/check_sequence.mjs` | Postbuild: every step and form on a page is an exported row with its deadline word for word, a date line, every quote and its "Not yet confirmed" line; the disclaimer and Navy-rules lines are where they must be; USMC rows never render. `--plant all` proves each rule fails |
 | `src/content/changelog/*.md` | The "What changed" page (F11), one file per entry |
 | `src/pages/index.astro` | Home: the eight bases, the starting plan, then "Or just browse" |
 | `src/pages/plan.astro` | Starting plan (F5 intake v0): the eight questions and the printable plan, worked out in the browser; answers in localStorage only |
@@ -79,7 +83,7 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, intake context, daily cap) |
 | `functions/api/ask.js` | Cloudflare Pages Function at `/api/ask` (same origin). Env: `ANTHROPIC_API_KEY`, `ASSISTANT_MODEL`, optional KV `ASK_LIMITS` and `ASK_DAILY_CAP` |
 | `src/pages/ask.astro` | `/ask/`: the assistant page; not linked anywhere; conversation in page memory only |
-| `evals/assistant_eval.jsonl`, `scripts/eval_assistant.mjs` | 36 test questions and the runner: `npm run eval:assistant` (retrieval only), `-- --live`, or `-- --url <deployed site>` |
+| `evals/assistant_eval.jsonl`, `scripts/eval_assistant.mjs` | 46 test questions and the runner: `npm run eval:assistant` (retrieval only), `-- --live`, or `-- --url <deployed site>` |
 | `scripts/check_layout.mjs` | Layout check, run by hand: every page at 390/768/1280/1440 px, no sideways scroll (needs Chrome; usage at the top) |
 | `scripts/bah_check_allow.json` | Reviewed coincidences where a HUD rent equals a BAH figure (two, each for one page) |
 | `src/scripts/variants.ts` | Which per-base and per-band variants a neighborhood or base housing page shows (pay band, the base's MHA for BAH and ratios, the commute tile) |

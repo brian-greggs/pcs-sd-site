@@ -332,6 +332,70 @@ const housingRules = defineCollection({
   }),
 });
 
+// F2: the move sequence and its forms (content/f2_*.yml in the data repo; the export runs pull/check_f2.py
+// first, so every citation's quote is on the saved official page). Every step and form names its sources.
+const phase = z.enum(['orders', '90_60_30', 'transit', 'arrival', 'first_30_days']);
+const anchor = z.enum(['orders_in_hand', 'detachment', 'report_date', 'address_in_hand', 'delivery_date']);
+const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+const cite = z.object({
+  title: z.string().min(1),
+  agency: z.string().min(1),
+  url: z.url(),
+  incentive: z.string().min(1),
+  retrieved_on: day,
+  quote: z.string().min(1),
+  reason: z.string().min(1).optional(), // superseded entries only
+});
+const unconfirmed = z.object({ text: z.string().min(1), ask: z.enum(['CPPA', 'PPPO', 'HSC']) }).nullable();
+const sequenceSteps = defineCollection({
+  loader: strictJson('sequence_steps'),
+  schema: z.object({
+    phase,
+    order: z.number().int().min(1),
+    step: z.string().min(1),
+    anchor,
+    deadline: z.string().min(1),
+    depends_on: z.array(z.string()),
+    applies_to: z.object({
+      base: z.union([z.literal('all'), z.array(baseCode).min(1)]),
+      housing_choice: z.enum(['any', 'base_housing', 'rental']),
+      pets: z.enum(['any', 'yes']),
+      kids: z.enum(['any', 'yes']),
+      dependents: z.enum(['any', 'yes']),
+      vehicles: z.enum(['any', 'yes', 'ppm']),
+      service: z.enum(['navy', 'usmc', 'both']),
+    }),
+    status: z.enum(['ok', 'confirm_with_hsc', 'newest_authority', 'partial']),
+    note: z.string(),
+    unconfirmed,
+    alternatives: z.array(z.object({ rule: z.string().min(1), sources: z.array(cite).min(1) })),
+    sources: z.array(cite).min(1),
+    superseded: z.array(cite.required({ reason: true })),
+    forms: z.array(z.string()),
+    ...dated,
+  }).refine((s) => ['partial', 'confirm_with_hsc'].includes(s.status) === !!s.unconfirmed, 'partial and confirm_with_hsc steps need an unconfirmed line; others none'),
+});
+const sequenceForms = defineCollection({
+  loader: strictJson('sequence_forms'),
+  schema: z.object({
+    service: z.enum(['navy', 'usmc']),
+    form: z.string().min(1),
+    pays_or_does: z.string().min(1),
+    who_files: z.string().min(1),
+    anchor,
+    deadline: z.string().min(1),
+    filed_where: z.string().min(1),
+    attachments: z.array(z.string()),
+    sequence_step: z.array(z.string()),
+    status: z.enum(['ok', 'newest_authority', 'partial', 'not_yet_covered']),
+    note: z.string(),
+    unconfirmed,
+    sources: z.array(cite).min(1),
+    superseded: z.array(cite.required({ reason: true })),
+    ...dated,
+  }).refine((f) => (f.status === 'partial') === !!f.unconfirmed, 'partial forms need an unconfirmed line; others none'),
+});
+
 const provenance = defineCollection({
   loader: strictJson('provenance'),
   schema: z.object({
@@ -388,5 +452,6 @@ const changelog = defineCollection({
 export const collections = {
   communities, bases, bah, commute, rent, rentToBah, ownership, schools, districts, childcare,
   baseHousing, baseHousingWaits, baseHousingAreas, housingRules, militaryAccess, climate, hazards, links, provenance, sources,
+  sequenceSteps, sequenceForms,
   communityNotes, baseHousingNotes, changelog,
 };

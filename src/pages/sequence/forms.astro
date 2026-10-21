@@ -1,0 +1,40 @@
+---
+// Every form and claim in the move sequence (F2): what it pays or does, who files, the deadline, where it's
+// filed, what to attach, the steps it belongs to, and the official quotes. Navy rows only; USMC rows are
+// "not yet covered" and the Navy-rules note at the top says so (Brian 2026-10-20).
+import Base from '../../layouts/Base.astro';
+import FactBlock from '../../components/FactBlock.astro';
+import Cites from '../../components/sequence/Cites.astro';
+import SequenceTop from '../../components/sequence/SequenceTop.astro';
+import { ANCHOR_LABEL, citeDates, citeNames, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import { sequenceData } from '../../lib/sequenceData';
+
+const data = await sequenceData();
+---
+
+<Base title="Forms and claims" back={{ href: '/sequence/', label: 'Move sequence' }} description="Every PCS form and claim in the move sequence: deadline, where to file, what to attach, with official sources.">
+  <p class="eyebrow">Move sequence</p>
+  <h1>Forms and claims</h1>
+  <SequenceTop />
+  <p class="intro">{data.forms.length} forms and claims, each with its deadline, where it's filed and what goes with it.</p>
+
+  {data.forms.map((f) => (
+    <FactBlock plain id={f.id} title={f.form} asOf={citeDates(f)} source={citeNames(f)}>
+      <dl class="facts" data-form={f.id}>
+        <dt>What it pays or does</dt><dd>{f.pays_or_does}</dd>
+        <dt>Who files</dt><dd>{f.who_files}</dd>
+        <dt>Timing</dt><dd data-anchor>{ANCHOR_LABEL[f.anchor]}</dd>
+        <dt>Deadline</dt><dd data-deadline>{f.deadline}</dd>
+        <dt>Where it's filed</dt><dd data-filed>{f.filed_where}</dd>
+        {f.attachments.length > 0 && <><dt>What to attach</dt><dd><ul class="plain">{f.attachments.map((x) => <li>{x}</li>)}</ul></dd></>}
+        {f.sequence_step.length > 0 && <><dt>Steps</dt><dd><ul class="plain">{f.sequence_step.map((id) => {
+          const s = data.stepById.get(id)!;
+          return <li><a href={stepHref(s)}>{phaseByKey(s.phase).label}, step {s.order}</a></li>;
+        })}</ul></dd></>}
+      </dl>
+      {f.note && <p class="note">{f.note}</p>}
+      {f.unconfirmed && <p class="gap" data-unconfirmed={f.unconfirmed.ask}>{unconfirmedLine(f.unconfirmed)}</p>}
+      <Cites sources={f.sources} superseded={f.superseded} />
+    </FactBlock>
+  ))}
+</Base>

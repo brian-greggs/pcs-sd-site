@@ -1,0 +1,35 @@
+---
+// What the official pages say, in their words: one quote per citation, with the page, its incentive label and
+// the date it was saved; then any older guidance that says otherwise and why it isn't used. Closed by default.
+import ExtLink from '../ExtLink.astro';
+
+type Cite = { title: string; agency: string; url: string; incentive: string; retrieved_on: string; quote: string; reason?: string };
+interface Props { sources: Cite[]; superseded?: Cite[] }
+const { sources, superseded = [] } = Astro.props;
+---
+
+<details class="cites">
+  <summary>What the official pages say</summary>
+  <ul class="quotes">
+    {sources.map((c) => (
+      <li data-cite>
+        <blockquote>“{c.quote}”</blockquote>
+        <span class="cite-from"><ExtLink href={c.url} incentive={c.incentive} text={`${c.agency}, ${c.title}`} /> · retrieved {c.retrieved_on}</span>
+      </li>
+    ))}
+  </ul>
+  {superseded.length > 0 && (
+    <>
+      <p class="cites-head">Older guidance that says otherwise (not used)</p>
+      <ul class="quotes">
+        {superseded.map((c) => (
+          <li data-superseded>
+            <blockquote>“{c.quote}”</blockquote>
+            <span class="cite-from"><ExtLink href={c.url} incentive={c.incentive} text={`${c.agency}, ${c.title}`} /> · retrieved {c.retrieved_on}</span>
+            <span class="cite-why">{c.reason}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</details>

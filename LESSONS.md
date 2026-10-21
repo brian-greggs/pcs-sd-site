@@ -137,3 +137,10 @@
 - **Recompute, don't compare a thing with itself.** `page-ratios` doesn't trust the export: it divides rent by BAH again (rounding halves to even, as Python does) and checks the export, the pages and the plan against that.
 - **Repeated words still rank.** One "BAH" in the ratio note and "allowance" in every caption were enough to send BAH questions back to 40 Cost sections. Wording on repeated sections is part of retrieval tuning.
 
+## Session 10 (2026-10-20): the move sequence
+
+- **Check the page against the export, and the export against the source.** The data repo proves each quote is on its saved official page before export; the site proves each deadline on a page is its row's, word for word. Neither alone would catch both a hand-typed deadline and a drifted quote.
+- **Plant in memory when the check reads files.** `check_sequence.mjs --plant all` changes a copy of the pages or rows and confirms each kind fails, so the proof reruns in a second and never leaves a planted file behind.
+- **The collection doesn't keep the file's order.** The forms page came out in id order; the check caught it. Order that means something has to come from the data, not from the loader.
+- **New pages change retrieval for old questions.** Adding 81 chunks of official wording turned two out-of-scope questions into matches ("weekends", "renew"). Taking the quotes out of ranking made it worse (a schools question lost its page), so it was reverted; the eval is what showed both.
+- **A string shared by a page, a plan rule and a check lives in one module.** The disclaimer, the Navy-rules line, the phase map and the "Not yet confirmed" wording are in `src/lib/sequence.js`, imported by all three, so the check compares against the words the page prints.
