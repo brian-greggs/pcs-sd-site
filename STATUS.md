@@ -1,6 +1,15 @@
-# Site build — status (2026-10-20, session 9c: no-base BAH line, v0.6.2, rules v0.8)
+# Site build — status (2026-10-20, session 9d: BAH figures verified by hand, v0.6.3)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 9d: BAH figures verified (QUESTIONS 64; v0.6.3)
+
+Brian checked 5 figures in DTMO's BAH calculator on 2026-10-20 (2026, with dependents), all match: 92136 E5 $3,975, E6 $4,404, O3 $4,518; 92055 E5 $3,963, E6 $4,398.
+
+- **Data repo:** new `EAP Data/provenance/dod_bah_2026_sd_mhas.json` (retrieved 2026-09-17, verified 2026-10-20, note "spot-checked by hand, 5 figures, DTMO calculator", and the 5 figures). The export takes `BAH_VERIFIED` and the note from it, and stops if a checked figure differs from the table (planted $4,519 for O3: stopped).
+- **Site:** `bah.json`, `rent_to_bah.json` and the `bah` / `rent_to_bah` provenance rows now carry verified 2026-10-20, so every BAH line, base page table, rent share and plan BAH line shows it. The provenance rows carry the note (new optional `note` in the schema), and each page's Sources table shows it after the source ("… (verified: spot-checked by hand, 5 figures, DTMO calculator)"). The /sources/ row for D1 keeps the 2026-09-17 download date and adds the verification.
+
+Checks on 2026-10-20: full build, all checks pass; retrieval-only eval unchanged.
 
 ## Session 9c: the housing allowance line with no base (QUESTIONS 63; v0.6.2, rules v0.8)
 
@@ -317,11 +326,11 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-See `QUESTIONS.md` (open: 62–64 from session 9, 21–24, plus 14 and 16 with Brian) and the LMH call list in the data repo's STATUS. Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
+See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian) and the LMH call list in the data repo's STATUS. Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
 ## Next session
 
-Session 9 (BAH figures): Brian looks at a neighborhood page from two bases (e.g. `/communities/oceanside/?base=naval-base-san-diego` and `?base=camp-pendleton`), a base housing page, a base page's Housing allowance table and a plan with a base chosen; answers QUESTIONS 62–64; spot-checks a few figures in DTMO's calculator (data repo STATUS item 12). With a key set, rerun the eval live: the two BAH questions now expect "$4,404" and "$4,518" with "2026".
+Session 9 (BAH figures): Brian looks at a neighborhood page from two bases (e.g. `/communities/oceanside/?base=naval-base-san-diego` and `?base=camp-pendleton`), a base housing page, a base page's Housing allowance table and a plan with a base chosen; QUESTIONS 62–64 are answered (sessions 9b–9d). With a key set, rerun the eval live: the two BAH questions now expect "$4,404" and "$4,518" with "2026".
 
 Before session 9: Brian reviews the branch preview: `/plan/` (try a few households, print one), the "Starting plan" cards on home and the base pages, and `/ask/` (STUB until the key and model are set). Then the tradeoff table (`src/config/intake/tradeoffs.json`), and the writing list above. Going live with the assistant: the steps above, then the live eval.
 

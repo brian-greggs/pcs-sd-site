@@ -339,6 +339,7 @@ const provenance = defineCollection({
     source_name: z.string().min(1),
     source_url: z.string(),
     license: z.string().min(1),
+    note: z.string().min(1).optional(), // how the date was checked when it wasn't a download (BAH: by hand)
     ...dated,
   }),
 });

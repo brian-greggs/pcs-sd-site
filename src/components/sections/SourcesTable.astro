@@ -7,7 +7,7 @@ interface Props { ids: string[]; extra?: { title: string; source: string; vintag
 const { ids, extra = [] } = Astro.props;
 const { prov } = await provenance();
 const rows = [
-  ...ids.map((id) => ({ title: prov[id].title, source: prov[id].source_name, vintage: prov[id].vintage, verified: prov[id].verified_on, license: prov[id].license })),
+  ...ids.map((id) => ({ title: prov[id].title, source: prov[id].note ? `${prov[id].source_name} (verified: ${prov[id].note})` : prov[id].source_name, vintage: prov[id].vintage, verified: prov[id].verified_on, license: prov[id].license })),
   ...extra,
 ];
 const latest = rows.map((r) => r.verified).sort().at(-1)!;

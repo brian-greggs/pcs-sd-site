@@ -24,7 +24,8 @@
   "source_url": "https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/",
   "license": "Public domain (derived)",
   "vintage": "FY2027 / 2026",
-  "verified_on": "2026-09-17"
+  "verified_on": "2026-10-20",
+  "note": "spot-checked by hand, 5 figures, DTMO calculator"
  },
  {
   "id": "bah",
@@ -33,7 +34,8 @@
   "source_url": "https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/",
   "license": "Public domain",
   "vintage": "BAH 2026",
-  "verified_on": "2026-09-17"
+  "verified_on": "2026-10-20",
+  "note": "spot-checked by hand, 5 figures, DTMO calculator"
  },
  {
   "id": "ownership",
