@@ -288,6 +288,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
       for (const line of s.lines) {
         const li = el('li');
         const p = el('p', 'line-text', sentence(line.text));
+        for (const x of line.links ?? []) { const a = el('a', undefined, x.text) as HTMLAnchorElement; a.href = x.url; p.append(' ', a); } // pages on this site
         for (const x of line.ext ?? []) p.append(' ', extLink(x));
         const src = el('p', 'line-source', line.sources.length > 1 ? 'Sources: ' : 'Source: ');
         line.sources.forEach((s: { url: string; title: string; dates: string }, i: number) => { if (i) src.append('; '); src.append(sourceLink(s)); });

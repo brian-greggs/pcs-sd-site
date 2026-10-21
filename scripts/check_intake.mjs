@@ -11,7 +11,10 @@
 //                    with- and without-dependents figures, its year and MHA on the line, and a source
 //                    dated "BAH: BAH <year> · verified <date>"; no other dollar figure anywhere (headings,
 //                    notes, sources, links). The embedded BAH table equals bah.json, and no other field
-//                    could carry a dollar figure (Brian 2026-10-20; replaced intake-no-bah)
+//                    could carry a dollar figure (Brian 2026-10-20; replaced intake-no-bah). With a base
+//                    chosen, the housing allowance section has one line per grade in the band; with
+//                    "Not sure yet", it has exactly the one no-figure line below, linking to the base list,
+//                    and no BAH figure appears anywhere in the plan (QUESTIONS 63)
 //   intake-words     plan text passes the same word lists as the pages (scripts/principle_lists.mjs):
 //                    no demographic descriptors, no score/index labels, no placeholder text
 //   intake-config    the Q8 priority list and the tradeoff table are well formed
@@ -152,7 +155,7 @@ function checkSource(where, s) {
 // Date labels the rules write, and what each one dates (matched in the line's text and link texts).
 const DATE_FACT = {
   'Commute': /\b\d+(?:–\d+)? min\b|0700 drive|minutes/,
-  'BAH': /\$[\d,]+ a month with dependents/,
+  'BAH': /\$[\d,]+ a month with dependents|\bduty station\b/,
   'Rent ratio': /allowance/,
   'Mello-Roos': /Mello-Roos/,
   'Schools': /school|serves/i,
@@ -197,8 +200,26 @@ function checkDates(w, line, sectionId) {
 const seenLines = new Set();
 const seenSections = new Set();
 let plans = 0;
-function checkPlan(plan, where) {
+// The housing allowance line when no base is chosen (Brian 2026-10-20, QUESTIONS 63), as the plan must print it.
+const NO_BASE_BAH = { text: 'BAH depends on your duty station, not where you live. Pick a base to see your rates', link: '/' };
+function checkBahSection(plan, where, a) {
+  if (!a) return;
+  const sec = plan.sections.find((x) => x.id === 'bah');
+  const isNoBase = (l) => l.text === NO_BASE_BAH.text;
+  if (a.base === 'unsure') {
+    const [line, ...more] = sec?.lines ?? [];
+    if (!line || more.length || !isNoBase(line)) fail('intake-bah', where, `no base chosen: the housing allowance section must be the one line "${NO_BASE_BAH.text}"`);
+    else if (!(line.links ?? []).some((l) => l.url === NO_BASE_BAH.link)) fail('intake-bah', where, 'no base chosen: the "Pick a base" line has no link to the base list (/)');
+    const fig = plan.sections.flatMap((x) => x.lines).find((l) => DOLLAR.test(l.text));
+    if (fig) fail('intake-bah', where, `no base chosen, but a dollar figure appears: "${fig.text.slice(0, 70)}"`);
+  } else {
+    const want = BAH_ROWS.filter((r) => r.pay_band === a.band && r.mha === plan.base_mha).length;
+    if (!sec || sec.lines.some(isNoBase) || !sec.lines.every((l) => BAH_LINE.test(l.text)) || (want && sec.lines.length !== want)) fail('intake-bah', where, `base chosen: the housing allowance section must list the ${a.band} grades (${want}), not the no-base line`);
+  }
+}
+function checkPlan(plan, where, a) {
   plans++;
+  checkBahSection(plan, where, a);
   if (plan.rules_version !== rules.RULES_VERSION) fail('intake-sources', where, 'plan without rules_version');
   for (const s of plan.sections) {
     const sk = `${s.heading}|${s.note}`;
@@ -225,6 +246,10 @@ function checkPlan(plan, where) {
       if (DOLLAR.test(line.text)) checkBahLine(w, line);
       if (!Array.isArray(line.sources) || !line.sources.length) fail('intake-sources', w, 'line without a source');
       else { line.sources.forEach((src) => checkSource(w, src)); checkDates(w, line, s.id); }
+      for (const x of line.links ?? []) { // pages on this site, shown in the line
+        if (!x.url?.startsWith('/') || !pageExists(x.url) || !x.text?.trim()) fail('intake-sources', w, `site link that isn't a built page or has no text: ${JSON.stringify(x)}`);
+        else wordsFail(w, x.text, false);
+      }
       for (const x of line.ext ?? []) {
         if (!x.url?.startsWith('https://') || !x.text?.trim() || !x.incentive?.trim()) fail('intake-sources', w, `outbound link without https, text or incentive: ${JSON.stringify(x)}`);
         else wordsFail(w, `${x.text} ${x.incentive}`, false);
@@ -296,9 +321,11 @@ if (!existsSync(planFile)) {
     ];
     const OPEN = [['renting'], ['buying'], ['base-housing'], ['renting', 'buying'], ['renting', 'base-housing'], ['buying', 'base-housing'], ['renting', 'buying', 'base-housing'], ['unsure']];
     const BASES = [...data.bases.map((b) => b.code), 'unsure'];
+    // The MHA of the chosen base, for checkBahSection's grade count (not part of the plan itself).
+    const withMha = (plan, a) => ({ ...plan, base_mha: data.bases.find((b) => b.code === a.base)?.mha ?? null });
     const make = (o) => rules.cleanAnswers({ ...rules.emptyAnswers(), ...o }, data, config);
     const build = (a, where) => {
-      try { checkPlan(rules.buildPlan(a, data, config), where); } catch (e) { fail('intake-sources', where, `rules threw: ${e.message}`); }
+      try { checkPlan(withMha(rules.buildPlan(a, data, config), a), where, a); } catch (e) { fail('intake-sources', where, `rules threw: ${e.message}`); }
     };
     let i = 0;
     let noLead = 0;
@@ -316,7 +343,7 @@ if (!existsSync(planFile)) {
       const plan = rules.buildPlan(a, data, config);
       if (plan.sections.some((s) => s.id === 'lead-missing')) noLead++;
       else if (plan.sections.find((s) => s.id === 'lead')?.note?.includes('leads with your second priority')) fallbackLead++;
-      checkPlan(plan, where);
+      checkPlan(withMha(plan, a), where, a);
     }
     // "Watch for" in full: every base × band × bedrooms × report window × "open to" set that includes base housing.
     for (const base of BASES) for (const band of data.bands) for (const bedrooms of ['2', '3', '4plus', 'help']) for (const t of rules.TIMELINES) for (const open of OPEN.filter((o) => o.includes('base-housing') || o.includes('unsure'))) {

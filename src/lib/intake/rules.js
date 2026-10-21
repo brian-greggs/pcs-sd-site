@@ -18,7 +18,7 @@ import { tierOf } from '../tiers.js';
 
 // A place's tier comes from the top of its drive range (src/lib/tiers.js, shared with the base pages):
 // "under 30 minutes" means every zip in it is under 30, so Vista at 14–35 is a 30–44 place.
-export const RULES_VERSION = 'v0.7';
+export const RULES_VERSION = 'v0.8';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
@@ -484,12 +484,25 @@ function bedroomSection(c) {
 
 // The BAH for the family's band at their base (rules v0.6, Brian 2026-10-20): one line per grade in the
 // band, with dependents first, each with its year and MHA, citing the base page's BAH table and its date.
-// No base chosen: no line (the two MHAs differ, and the plan doesn't know which applies).
+// No base chosen (rules v0.8, QUESTIONS 63): one line with no figures, linking to the base list. It cites
+// the neighborhood pages' Cost section, which states the rule, with its BAH date.
+export const NO_BASE_BAH_TEXT = 'BAH depends on your duty station, not where you live. Pick a base to see your rates';
 export function bahLine(t, g) {
   return `${g.grade}: $${g.with.toLocaleString('en-US')} a month with dependents, $${g.without.toLocaleString('en-US')} without (${t.year} BAH, ${t.area} area, MHA ${t.mha})`;
 }
 function bahSection(c) {
-  if (!c.base) return [];
+  if (!c.base) {
+    return [{
+      id: 'bah',
+      heading: 'Your housing allowance',
+      note: '',
+      lines: [{
+        text: NO_BASE_BAH_TEXT,
+        links: [{ url: '/', text: 'The eight bases' }], // a page on this site, shown in the line
+        sources: [{ url: '/neighborhoods/', title: 'Neighborhood pages, Cost section', dates: `${DATE_LABEL.bah}: ${c.data.dates.bah}` }],
+      }],
+    }];
+  }
   const t = c.data.bah[c.base.mha];
   if (!t) return [];
   const source = { url: `/base/${c.base.slug}/#bah`, title: `${c.base.short} (base page, Housing allowance)`, dates: `${DATE_LABEL.bah}: ${c.data.dates.bah}` };

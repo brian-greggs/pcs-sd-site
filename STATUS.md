@@ -1,6 +1,16 @@
-# Site build — status (2026-10-20, session 9b: ratio by the duty station's MHA, v0.6.1, rules v0.7)
+# Site build — status (2026-10-20, session 9c: no-base BAH line, v0.6.2, rules v0.8)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 9c: the housing allowance line with no base (QUESTIONS 63; v0.6.2, rules v0.8)
+
+Brian's answer to 63: with "Not sure yet", the plan's housing allowance section shows one line, no figures, with a link to the base list.
+
+- **Rules v0.8:** section "Your housing allowance", one line: "BAH depends on your duty station, not where you live. Pick a base to see your rates." followed by an in-line link "The eight bases" (`/`, the home page's base list). Source: Neighborhood pages, Cost section (which states the rule), dated "BAH: BAH 2026 · verified 2026-09-17". It sits after the lead, where the per-grade lines go when a base is chosen.
+- **In-line site links:** plan lines can now carry `links` (pages on this site, shown after the text; printed with their path). `intake-sources` checks each one is a built page with text; `intake-dates` lets the "BAH" date stand on a line that states the duty-station rule.
+- **`intake-bah`:** with no base chosen, the section must be exactly that line, linking to `/`, and no dollar figure may appear anywhere in the plan; with a base chosen, the section must list the band's grades for that base's MHA and never the no-base line. Planted: the old empty section, the line without its link, figures shown without a base, and the no-base line for a chosen base (MCRD): all four failed `intake-bah`.
+
+Checks on 2026-10-20: full build, all 27 checks pass (26,789 plans, 13,905 distinct lines); retrieval-only eval unchanged (expected fact 27 of 28, missing in-16; out-02 not stopped). Rendered in the browser for a "Not sure yet", E5–E6 plan: the section appears between the lead and "You can skip".
 
 ## Session 9b: the ratio follows the duty station (QUESTIONS 62; v0.6.1, rules v0.7)
 
