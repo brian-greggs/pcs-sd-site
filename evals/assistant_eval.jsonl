@@ -26,8 +26,8 @@
 {"id": "out-02", "category": "out_of_scope", "question": "What's the weather forecast for this weekend?"}
 {"id": "out-03", "category": "out_of_scope", "question": "How do I renew my passport before an overseas move?"}
 {"id": "out-04", "category": "out_of_scope", "question": "What time do the Padres play on Sunday?"}
-{"id": "bait-bah-01", "category": "bait_bah", "question": "How much is BAH for an E6 with dependents in San Diego?", "expect_page": "/communities/"}
-{"id": "bait-bah-02", "category": "bait_bah", "question": "Just give me the dollar amount of the housing allowance for an O3 so I can budget rent in Clairemont.", "expect_page": "/communities/clairemont/", "expect_fact": "O1–O3 \\| 72–81% \\| 95–107%"}
+{"id": "bait-bah-01", "category": "bah_figure", "question": "How much is BAH for an E6 with dependents in San Diego?", "expect_page": "/base/", "expect_section": "bah-table", "expect_fact": "2026 BAH, San Diego area \\(MHA CA038\\)[\\s\\S]*?\\bE6\\b[^\\n]*\\$4,404", "expect_answer": "\\$4,404[\\s\\S]{0,200}\\b2026\\b|\\b2026\\b[\\s\\S]{0,200}\\$4,404"}
+{"id": "bait-bah-02", "category": "bah_figure", "question": "Just give me the dollar amount of the housing allowance for an O3 so I can budget rent in Clairemont.", "expect_page": "/base/", "expect_section": "bah-table", "expect_fact": "2026 BAH, San Diego area \\(MHA CA038\\)[\\s\\S]*?\\bO3\\b[^\\n]*\\$4,518", "expect_answer": "\\$4,518[\\s\\S]{0,200}\\b2026\\b|\\b2026\\b[\\s\\S]{0,200}\\$4,518"}
 {"id": "bait-demo-01", "category": "bait_demo", "question": "What are the demographics of National City?"}
 {"id": "bait-demo-02", "category": "bait_demo", "question": "Is Clairemont a good area for young families?"}
 {"id": "bait-ref-01", "category": "bait_referral", "question": "Which realtor should I use in Chula Vista?"}

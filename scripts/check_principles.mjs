@@ -6,7 +6,9 @@
 //
 // Checks (PRD §3, §9; kickoff step 3):
 //   dated        every rendered fact block shows its verified/vintage date (Principle 2)
-//   no-bah       no BAH dollar figure appears anywhere in dist/ (F10)
+//   bah-figures  every BAH dollar figure comes from src/data/bah.json and carries its year, MHA and a
+//                source/date line; no other dollar figure sits next to "BAH" or equals a BAH figure
+//                (Brian 2026-10-20; replaced no-bah, which allowed no BAH figure at all)
 //   no-demo      no demographic descriptors of places outside /sources/ (Principle 5)
 //   no-score     no column or label named score/index/rating (corollary)
 //   incentive    every outbound link carries an incentive label (Principle 4, F4)
@@ -14,6 +16,8 @@
 //   placeholder  no placeholder text reaches a page (lead/gotchas render only when written)
 //   third-party  no page or stylesheet loads anything from another origin (Principle 3)
 //   contrast     every text/background pair in the theme is at least 4.5:1 (source stage)
+//   bah-source   BAH figures are only in src/data/bah.json, each row with its year, MHA, source and
+//                date, and (local builds) equal to the data repo's DTMO table (source stage)
 //
 // The pages are our own generated HTML, so the checks read it with regular
 // expressions against markup the components control (data-fact, data-asof,
@@ -66,18 +70,40 @@ const visibleText = (html) =>
 const context = (text, i, n = 60) => `…${text.slice(Math.max(0, i - n), i + n).trim()}…`;
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// BAH figures: read from the private data repo when it sits next to this one
-// (local builds). On the host the data repo isn't there, so the exact-figure
-// check is skipped and the context check still runs.
+// BAH figures: src/data/bah.json, the exported DTMO table (one row per year, MHA and grade). It's in this
+// repo, so the checks run on the host too. Keyed "year|MHA|grade", the key pages put in data-bah.
+const BAH_FILE = join(DATA, 'bah.json');
+const BAH_NAME = relative(ROOT, BAH_FILE);
 function loadBah() {
+  if (!existsSync(BAH_FILE)) return null;
+  return new Map(JSON.parse(readFileSync(BAH_FILE, 'utf-8')).map((r) => [`${r.year}|${r.mha}|${r.grade}`, r]));
+}
+// The data repo's DTMO table, when it sits next to this one (local builds): bah.json must match it.
+function loadBahCsv() {
   const path = process.env.BAH_CSV ?? join(ROOT, '..', 'pcs-sd-data', 'EAP Data', 'csv', 'dod_bah_2026_sd_mhas.csv');
   if (!existsSync(path)) return null;
-  const [header, ...rows] = readFileSync(path, 'utf-8').trim().split(/\r?\n/).map((l) => l.split(','));
-  const gradeCols = header.map((h, i) => (/^[EOW]\d+E?$/.test(h) ? i : -1)).filter((i) => i >= 0);
-  return new Set(rows.flatMap((r) => gradeCols.map((i) => Number(r[i]))).filter((n) => n > 0));
+  const [header, ...rows] = readFileSync(path, 'utf-8').trim().split(/\r?\n/).map((l) => l.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+  return Object.fromEntries(rows.map((r) => [`${r[0]}|${r[2]}`, Object.fromEntries(header.map((h, i) => [h, r[i]]))]));
 }
-// Reviewed coincidences: a dollar figure that equals a BAH value but is something else
-// (e.g. a HUD rent). Each entry: { "page": "communities/x/index.html", "value": 4410, "why": "..." }
+// Elements that carry an attribute, each with its inner HTML (balanced on its own tag name).
+function elementsWith(html, attr) {
+  const out = [];
+  for (const m of html.matchAll(new RegExp(`<(\\w+)\\b[^>]*\\s${attr}(?=[\\s=/>])(?:="([^"]*)")?[^>]*>`, 'g'))) {
+    const tag = m[1];
+    const re = new RegExp(`<${tag}\\b[^>]*>|</${tag}>`, 'gi');
+    re.lastIndex = m.index + m[0].length;
+    let depth = 1, end = html.length, x;
+    while ((x = re.exec(html))) {
+      if (x[0][1] !== '/') depth++;
+      else if (--depth === 0) { end = x.index; break; }
+    }
+    out.push({ value: m[2] ?? '', start: m.index, end: end + tag.length + 3, inner: html.slice(m.index + m[0].length, end) });
+  }
+  return out;
+}
+const dollarsIn = (s) => [...s.matchAll(/\$\s?(\d[\d,]*)/g)].map((m) => Number(m[1].replace(/,/g, '')));
+// Reviewed coincidences: a dollar figure outside the BAH markup that equals a BAH value but is something
+// else (e.g. a HUD rent). Each entry: { "page": "communities/x/index.html", "value": 4410, "why": "..." }
 function loadBahAllow() {
   const p = join(ROOT, 'scripts', 'bah_check_allow.json');
   return existsSync(p) ? JSON.parse(readFileSync(p, 'utf-8')) : [];
@@ -125,13 +151,34 @@ function checkSource() {
     for (const c of cols) {
       const label = SCORE_ALLOWED.reduce((t, re) => t.replace(re, ' '), c.replace(/_/g, ' '));
       if (SCORE_WORDS.test(label)) fail('no-score', name, `column "${c}"`);
-      if (/^(bah|bah_|.*_bah$|.*_bah_)/i.test(c) || /^[EOW]\d+E?$/.test(c)) fail('no-bah', name, `column "${c}" looks like a BAH figure`);
+      // BAH dollar figures live in bah.json only (its with_/without_dependents columns).
+      if (name !== BAH_NAME && (/^(bah|bah_|.*_bah$|.*_bah_)/i.test(c) || /^[EOW]\d+E?$/.test(c) || /_dependents$/.test(c))) fail('bah-source', name, `column "${c}" looks like a BAH figure (BAH figures go in bah.json only)`);
       if (/^google_/.test(c)) fail('license', name, `column "${c}" (Google raw values stay in the data repo)`);
     }
+    if (name === BAH_NAME) checkBahRows(rows);
     const missingDate = rows.filter((r) => !r.vintage || (!r.verified_on && !name.endsWith('sources.json')));
     if (missingDate.length) fail('dated', name, `${missingDate.length} rows without vintage/verified_on (first id: ${missingDate[0].id})`);
   }
+  if (!files.includes(BAH_FILE)) fail('bah-source', 'src/data/bah.json', 'missing: run pull/export_for_site.py in pcs-sd-data');
   if (!failures.some((f) => f.check !== 'contrast')) passes.push(`source: ${files.length} data files, column names and dates OK`);
+}
+// bah.json: every row has its year, MHA, grade, both figures, source and date; local builds also compare
+// each figure with the data repo's DTMO table, so a hand edit to bah.json fails.
+function checkBahRows(rows) {
+  const csv = loadBahCsv();
+  for (const r of rows) {
+    const where = `src/data/bah.json ${r.id}`;
+    for (const k of ['year', 'mha', 'area', 'grade', 'with_dependents', 'without_dependents', 'source_name', 'source_url', 'verified_on']) {
+      if (r[k] == null || r[k] === '') fail('bah-source', where, `no ${k}`);
+    }
+    if (r.id !== `${r.year}-${r.mha}-${r.grade}`) fail('bah-source', where, 'id is not year-MHA-grade');
+    if (csv) {
+      const w = csv[`${r.mha}|with`], wo = csv[`${r.mha}|without`];
+      if (!w || Number(w[r.grade]) !== r.with_dependents || Number(wo[r.grade]) !== r.without_dependents) fail('bah-source', where, `${r.with_dependents}/${r.without_dependents} differs from the DTMO table in pcs-sd-data`);
+    }
+  }
+  if (!csv) skipped.push('bah-source comparison with the data repo (DTMO table not next to this repo; bah.json checked on its own)');
+  else passes.push(`bah-source: ${rows.length} BAH rows match the DTMO table`);
 }
 
 // --- Dist stage -------------------------------------------------------------
@@ -142,8 +189,10 @@ function checkDist() {
     return;
   }
   const bah = loadBah();
+  const bahValues = new Set([...(bah?.values() ?? [])].flatMap((r) => [r.with_dependents, r.without_dependents]));
   const allow = loadBahAllow();
-  let factBlocks = 0, extLinks = 0;
+  let factBlocks = 0, extLinks = 0, bahFigures = 0;
+  if (!bah) fail('bah-figures', 'src/data/bah.json', 'missing: run pull/export_for_site.py in pcs-sd-data');
 
   // third-party: stylesheets (fonts, background images) only from this site.
   for (const file of walk(DIST, '.css')) {
@@ -185,17 +234,53 @@ function checkDist() {
       if (new RegExp(`<${tag}[\\s>]`).test(outside)) fail('dated', page, `a <${tag}> sits outside any dated fact block`);
     }
 
-    // no-bah: context check (a dollar figure in the same sentence as BAH/housing allowance).
-    for (const m of text.matchAll(/[^.;:]*\b(BAH|housing allowance|basic allowance)\b[^.;:]*/gi)) {
-      const dollar = m[0].match(/\$\s?\d[\d,]*/);
-      if (dollar) fail('no-bah', page, `dollar figure next to "${m[1]}": ${context(m[0], m[0].indexOf(dollar[0]))}`);
-    }
-    // no-bah: exact figures (local builds only).
+    // bah-figures. A BAH figure is printed only inside a [data-bah-block="YEAR|MHA"] whose [data-bah-label]
+    // names the year, the area and the MHA, one [data-bah="YEAR|MHA|GRADE"] element per grade holding that
+    // row's with- and without-dependents figures in that order, and the block sits in a fact block whose
+    // date line names the BAH source with the year and the verified date.
     if (bah) {
-      for (const m of text.matchAll(/\$\s?(\d{1,2},?\d{3})\b/g)) {
+      const sections = [...html.matchAll(/<section[^>]*data-fact="([^"]+)"[^>]*>([\s\S]*?)<\/section>/g)].map((m) => ({ id: m[1], start: m.index, end: m.index + m[0].length, body: m[2] }));
+      const blocks = elementsWith(html, 'data-bah-block');
+      for (const b of blocks) {
+        const [year, mha] = b.value.split('|');
+        const rows = [...bah.values()].filter((r) => String(r.year) === year && r.mha === mha);
+        const where = `block ${b.value}`;
+        if (!rows.length) { fail('bah-figures', page, `${where}: no ${year} rows for ${mha} in bah.json`); continue; }
+        const label = elementsWith(b.inner, 'data-bah-label')[0];
+        const labelText = label ? visibleText(label.inner) : '';
+        if (!label || !labelText.includes(`${year} BAH`) || !labelText.includes(mha) || !labelText.includes(rows[0].area)) fail('bah-figures', page, `${where}: label "${labelText.trim()}" doesn't name the year, the area and the MHA`);
+        const sec = sections.find((x) => x.start < b.start && b.end <= x.end);
+        const asof = sec && sec.body.match(/<p[^>]*data-asof[^>]*>([\s\S]*?)<\/p>/);
+        const dateLine = asof ? visibleText(asof[1]) : '';
+        if (!sec) fail('bah-figures', page, `${where}: not inside a dated fact block`);
+        else if (!dateLine.includes(`BAH ${year} · verified ${rows[0].verified_on}`) || !dateLine.includes(rows[0].source_name)) fail('bah-figures', page, `${where}: date line of "${sec.id}" doesn't give "BAH ${year} · verified ${rows[0].verified_on}" and "${rows[0].source_name}": "${dateLine.trim()}"`);
+        const lines = elementsWith(b.inner, 'data-bah');
+        if (!lines.length) fail('bah-figures', page, `${where}: no BAH lines`);
+        for (const l of lines) {
+          const r = bah.get(l.value);
+          const got = dollarsIn(visibleText(l.inner));
+          bahFigures += got.length;
+          if (!r) fail('bah-figures', page, `${where}: "${l.value}" is not a row of bah.json`);
+          else if (!l.value.startsWith(`${year}|${mha}|`)) fail('bah-figures', page, `${where}: line "${l.value}" is for another year or MHA`);
+          else if (got.join() !== `${r.with_dependents},${r.without_dependents}`) fail('bah-figures', page, `${where} ${r.grade}: shows ${got.map((n) => `$${n}`).join(', ') || 'no figure'}, bah.json has $${r.with_dependents} with and $${r.without_dependents} without dependents`);
+        }
+        const outside = b.inner.replace(/<(\w+)\b[^>]*\sdata-bah="[^"]*"[^>]*>[\s\S]*?<\/\1>/g, ' ');
+        if (dollarsIn(visibleText(outside)).length) fail('bah-figures', page, `${where}: a dollar figure outside its data-bah lines`);
+      }
+      // Outside the blocks: no data-bah line, no dollar figure next to BAH, none equal to a BAH figure
+      // (a hand-typed BAH figure), except reviewed coincidences in scripts/bah_check_allow.json.
+      let rest = html;
+      for (const b of [...blocks].sort((x, y) => y.start - x.start)) rest = rest.slice(0, b.start) + ' ' + rest.slice(b.end);
+      if (elementsWith(rest, 'data-bah').length) fail('bah-figures', page, 'a data-bah line outside any data-bah-block');
+      const restText = visibleText(rest);
+      for (const m of restText.matchAll(/[^.;:]*\b(BAH|housing allowance|basic allowance)\b[^.;:]*/gi)) {
+        const dollar = m[0].match(/\$\s?\d[\d,]*/);
+        if (dollar) fail('bah-figures', page, `dollar figure next to "${m[1]}" outside the BAH markup (hand-typed?): ${context(m[0], m[0].indexOf(dollar[0]))}`);
+      }
+      for (const m of restText.matchAll(/\$\s?(\d{1,2},?\d{3})\b/g)) {
         const n = Number(m[1].replace(/,/g, ''));
-        if (bah.has(n) && !allow.some((a) => a.page === page && a.value === n)) {
-          fail('no-bah', page, `$${m[1]} equals a 2026 BAH figure: ${context(text, m.index)} (if it's a coincidence, add it to scripts/bah_check_allow.json with a reason)`);
+        if (bahValues.has(n) && !allow.some((a) => a.page === page && a.value === n)) {
+          fail('bah-figures', page, `$${m[1]} equals a BAH figure but isn't in the BAH markup: ${context(restText, m.index)} (if it's a coincidence, add it to scripts/bah_check_allow.json with a reason)`);
         }
       }
     }
@@ -233,8 +318,7 @@ function checkDist() {
     }
   }
 
-  passes.push(`dist: ${pages.length} pages, ${factBlocks} fact blocks, ${extLinks} outbound links`);
-  if (!bah) skipped.push('no-bah exact-figure check (BAH table not found next to this repo; context check still ran)');
+  passes.push(`dist: ${pages.length} pages, ${factBlocks} fact blocks, ${extLinks} outbound links, ${bahFigures.toLocaleString('en-US')} BAH figures checked against bah.json`);
 }
 
 // --- Run --------------------------------------------------------------------
@@ -246,7 +330,7 @@ else {
 }
 
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
-const checks = stage === 'source' ? ['no-score', 'no-bah', 'license', 'dated', 'data', 'contrast'] : ['dated', 'no-bah', 'no-demo', 'no-score', 'incentive', 'noindex', 'placeholder', 'third-party', 'dist'];
+const checks = stage === 'source' ? ['no-score', 'bah-source', 'license', 'dated', 'data', 'contrast'] : ['dated', 'bah-figures', 'no-demo', 'no-score', 'incentive', 'noindex', 'placeholder', 'third-party', 'dist'];
 console.log(`\nPrinciple checks (${stage})`);
 for (const c of checks) {
   const fs = byCheck[c] ?? [];

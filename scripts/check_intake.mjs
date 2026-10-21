@@ -7,8 +7,11 @@
 //                    WebSocket, EventSource, history or location writes, and there is no <form>
 //   intake-sources   every line the plan can print names a source (a page on this site that exists
 //                    in dist/, or an official link with its incentive label) and that source's dates
-//   intake-no-bah    no plan text shows a dollar figure at all (the plan speaks in ratios only), and
-//                    the embedded data has no dollar field
+//   intake-bah       every dollar figure in plan text is a BAH line from src/data/bah.json: the grade's
+//                    with- and without-dependents figures, its year and MHA on the line, and a source
+//                    dated "BAH: BAH <year> · verified <date>"; no other dollar figure anywhere (headings,
+//                    notes, sources, links). The embedded BAH table equals bah.json, and no other field
+//                    could carry a dollar figure (Brian 2026-10-20; replaced intake-no-bah)
 //   intake-words     plan text passes the same word lists as the pages (scripts/principle_lists.mjs):
 //                    no demographic descriptors, no score/index labels, no placeholder text
 //   intake-config    the Q8 priority list and the tradeoff table are well formed
@@ -46,6 +49,11 @@ const fail = (check, where, what) => failures.push({ check, where, what });
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const YEAR = /\b(19|20)\d{2}\b/;
 const DOLLAR = /\$\s?\d/;
+// The exported BAH table (Brian 2026-10-20): the only place a plan's dollar figures may come from.
+const BAH_ROWS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'bah.json'), 'utf-8'));
+const bahRow = (year, mha, grade) => BAH_ROWS.find((r) => r.year === year && r.mha === mha && r.grade === grade);
+const BAH_LINE = /^(\w+): \$([\d,]+) a month with dependents, \$([\d,]+) without \((\d{4}) BAH, (.+) area, MHA (CA\d{3})\)$/;
+let bahLines = 0;
 
 // --- intake-network ------------------------------------------------------------
 // Anything that can send data or change the URL. Matched in the page's inline scripts and in
@@ -108,7 +116,20 @@ function wordsFail(where, text, isLabel) {
     for (const re of SCORE_ALLOWED) label = label.replace(re, ' ');
     if (SCORE_WORDS.test(label)) fail('intake-words', where, `score word in a heading: "${text}"`);
   }
-  if (DOLLAR.test(text)) fail('intake-no-bah', where, `dollar figure in plan text: "${text}"`);
+  if (DOLLAR.test(text)) fail('intake-bah', where, `dollar figure outside a BAH line: "${text}"`);
+}
+// A line with a dollar figure must be a BAH line, its figures must be bah.json's for that year, MHA and grade,
+// and one of its sources must carry the BAH date.
+function checkBahLine(w, line) {
+  const m = line.text.match(BAH_LINE);
+  if (!m) { fail('intake-bah', w, `dollar figure that isn't a BAH line from the table: "${line.text}"`); return; }
+  bahLines++;
+  const [, grade, withD, withoutD, year, area, mha] = m;
+  const r = bahRow(Number(year), mha, grade);
+  if (!r) { fail('intake-bah', w, `no ${year} ${mha} ${grade} row in bah.json`); return; }
+  if (Number(withD.replace(/,/g, '')) !== r.with_dependents || Number(withoutD.replace(/,/g, '')) !== r.without_dependents) fail('intake-bah', w, `figures differ from bah.json ($${r.with_dependents} / $${r.without_dependents})`);
+  if (area !== r.area) fail('intake-bah', w, `area "${area}" is not bah.json's "${r.area}" for ${mha}`);
+  if (!line.sources.some((s) => s.dates.includes(`BAH: BAH ${year} · verified ${r.verified_on}`))) fail('intake-bah', w, `no source dated "BAH: BAH ${year} · verified ${r.verified_on}"`);
 }
 const pageExists = (url) => {
   const path = url.split('#')[0].split('?')[0];
@@ -126,6 +147,7 @@ function checkSource(where, s) {
 // Date labels the rules write, and what each one dates (matched in the line's text and link texts).
 const DATE_FACT = {
   'Commute': /\b\d+(?:–\d+)? min\b|0700 drive|minutes/,
+  'BAH': /\$[\d,]+ a month with dependents/,
   'Rent ratio': /allowance/,
   'Mello-Roos': /Mello-Roos/,
   'Schools': /school|serves/i,
@@ -141,6 +163,7 @@ const DATE_FACT = {
 const FACT_DATE = [
   [/\b\d+(?:–\d+)? min\b/, ['Commute']],
   [/\d+(?:–\d+)?% of the [^;]*allowance/, ['Rent ratio']],
+  [/\$\s?\d/, ['BAH']],
   [/\bmonths\b/, ['Waits', 'Wait times']],
   [/\b(?:pets?|dogs?|cats?)\b/i, ['Pets']],
   [/Mello-Roos/, ['Mello-Roos']],
@@ -193,7 +216,8 @@ function checkPlan(plan, where) {
       seenLines.add(key);
       const w = `${where} § ${s.id}: "${String(line.text).slice(0, 60)}"`;
       if (!line.text?.trim()) fail('intake-sources', w, 'empty line');
-      wordsFail(w, line.text, false);
+      wordsFail(w, line.text.replace(/\$/g, ''), false); // dollar figures: checkBahLine
+      if (DOLLAR.test(line.text)) checkBahLine(w, line);
       if (!Array.isArray(line.sources) || !line.sources.length) fail('intake-sources', w, 'line without a source');
       else { line.sources.forEach((src) => checkSource(w, src)); checkDates(w, line, s.id); }
       for (const x of line.ext ?? []) {
@@ -217,11 +241,26 @@ if (!existsSync(planFile)) {
     const { data, config } = JSON.parse(m[1]);
     const t0 = Date.now();
 
-    // Embedded data: ratios only.
-    if (DOLLAR.test(m[1])) fail('intake-no-bah', 'plan data', 'a dollar figure in the embedded data');
-    for (const k of new Set(JSON.stringify(data).match(/"[a-z_]+":/gi) ?? [])) {
-      if (/bah|allowance|dollar|rent_usd|price/i.test(k)) fail('intake-no-bah', 'plan data', `field ${k} could carry a dollar figure`);
+    // Embedded data: the BAH table is bah.json's, for each base's MHA; nothing else could carry a dollar figure.
+    if (DOLLAR.test(m[1])) fail('intake-bah', 'plan data', 'a dollar sign in the embedded data');
+    // dates.bah is the BAH date line ("BAH 2026 · verified …"), not a figure.
+    const { bah: embeddedBah, dates: { bah: bahDate, ...dates }, ...rest } = data;
+    if (!/^BAH \d{4} · verified \d{4}-\d{2}-\d{2}$/.test(bahDate ?? '')) fail('intake-bah', 'plan data', `dates.bah is not a BAH date line: "${bahDate}"`);
+    for (const k of new Set(JSON.stringify({ ...rest, dates }).match(/"[a-z_]+":/gi) ?? [])) {
+      if (/bah|allowance|dollar|rent_usd|price|dependents/i.test(k)) fail('intake-bah', 'plan data', `field ${k} outside data.bah could carry a dollar figure`);
     }
+    const basesJson = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'bases.json'), 'utf-8'));
+    for (const b of data.bases) {
+      if (b.mha !== basesJson.find((x) => x.id === b.code)?.mha) fail('intake-bah', 'plan data', `${b.code}: MHA ${b.mha} isn't bases.json's`);
+    }
+    for (const [mha, t] of Object.entries(embeddedBah ?? {})) {
+      for (const g of t.grades) {
+        const r = bahRow(t.year, mha, g.grade);
+        if (!r || r.with_dependents !== g.with || r.without_dependents !== g.without || r.pay_band !== g.band || r.area !== t.area || r.verified_on !== t.verified_on) fail('intake-bah', 'plan data', `${t.year} ${mha} ${g.grade} differs from bah.json`);
+      }
+      if (t.grades.length !== BAH_ROWS.filter((r) => r.mha === mha && r.year === t.year).length) fail('intake-bah', 'plan data', `${mha}: grades missing from the embedded table`);
+    }
+    if (!embeddedBah || !data.bases.every((b) => embeddedBah[b.mha])) fail('intake-bah', 'plan data', 'a base whose MHA has no BAH table');
 
     // Config.
     const ids = config.priorities.map((p) => p.id);
@@ -339,11 +378,12 @@ if (!existsSync(planFile)) {
     passes.push(`page-tiers: ${cards} base page cards in ${data.bases.length} base pages, ${tableRows} commute table rows`);
 
     passes.push(`intake: ${plans.toLocaleString('en-US')} plans, ${seenLines.size.toLocaleString('en-US')} distinct lines, ${seenSections.size} distinct section headings checked in ${((Date.now() - t0) / 1000).toFixed(1)} s; ${fallbackLead.toLocaleString('en-US')} lead with the second priority (the first has no lead yet), ${noLead.toLocaleString('en-US')} say they have no lead yet`);
+    passes.push(`intake-bah: ${bahLines.toLocaleString('en-US')} distinct BAH lines, each against bah.json`);
     passes.push(`intake: rules ${rules.RULES_VERSION}; ${config.priorities.length} priorities, ${config.tradeoffs.length} tradeoff pairs written`);
   }
 }
 
-const checks = ['intake-network', 'intake-sources', 'intake-no-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers', 'page-tiers'];
+const checks = ['intake-network', 'intake-sources', 'intake-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers', 'page-tiers'];
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
 console.log('\nStarting plan checks (dist)');
 for (const c of checks) {

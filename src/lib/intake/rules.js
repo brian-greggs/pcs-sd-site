@@ -18,7 +18,7 @@ import { tierOf } from '../tiers.js';
 
 // A place's tier comes from the top of its drive range (src/lib/tiers.js, shared with the base pages):
 // "under 30 minutes" means every zip in it is under 30, so Vista at 14–35 is a 30–44 place.
-export const RULES_VERSION = 'v0.5';
+export const RULES_VERSION = 'v0.6';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
@@ -231,7 +231,7 @@ function context(a, data, config) {
 }
 
 const DATE_LABEL = {
-  commute: 'Commute', ratio: 'Rent ratio', ownership: 'Mello-Roos', schools: 'Schools',
+  commute: 'Commute', ratio: 'Rent ratio', bah: 'BAH', ownership: 'Mello-Roos', schools: 'Schools',
   childcare: 'Child care', waits: 'Waits', bedroomRule: 'Bedroom rule',
 };
 
@@ -475,6 +475,25 @@ function bedroomSection(c) {
   }];
 }
 
+// The BAH for the family's band at their base (rules v0.6, Brian 2026-10-20): one line per grade in the
+// band, with dependents first, each with its year and MHA, citing the base page's BAH table and its date.
+// No base chosen: no line (the two MHAs differ, and the plan doesn't know which applies).
+export function bahLine(t, g) {
+  return `${g.grade}: $${g.with.toLocaleString('en-US')} a month with dependents, $${g.without.toLocaleString('en-US')} without (${t.year} BAH, ${t.area} area, MHA ${t.mha})`;
+}
+function bahSection(c) {
+  if (!c.base) return [];
+  const t = c.data.bah[c.base.mha];
+  if (!t) return [];
+  const source = { url: `/base/${c.base.slug}/#bah`, title: `${c.base.short} (base page, Housing allowance)`, dates: `${DATE_LABEL.bah}: ${c.data.dates.bah}` };
+  return [{
+    id: 'bah',
+    heading: `Your housing allowance at ${c.base.short}`,
+    note: 'BAH follows your duty station, not where you live.',
+    lines: t.grades.filter((g) => g.band === c.a.band).map((g) => ({ text: bahLine({ ...t, mha: c.base.mha }, g), sources: [source] })),
+  }];
+}
+
 function skipList(c) {
   const lines = [];
   if (!hasSchoolAge(c.a)) lines.push({ text: 'Schools sections: no children 6–18 in your household', sources: [{ url: '/neighborhoods/', title: 'Neighborhood pages, Schools section', dates: `Schools: ${c.data.dates.schools}` }] });
@@ -529,6 +548,7 @@ export function buildPlan(answers, data, config) {
     sections: [
       ...lead(c),
       ...bedroomSection(c),
+      ...bahSection(c),
       ...modifiers(c),
       ...tradeoff(c),
       ...skipList(c),

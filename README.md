@@ -20,8 +20,8 @@ npm run build    # principle checks + build into dist/ (this is what Cloudflare 
 1. `prebuild`: `scripts/check_principles.mjs source` checks the data files (column names, dates) and the theme
    (every text/background pair at least 4.5:1; no raw colors outside `src/styles/theme.css`).
 2. `astro build`: validates every data row against its schema in `src/content.config.ts`, then renders `dist/`.
-3. `postbuild`: `scripts/check_principles.mjs dist` checks the rendered pages: every fact block dated, no BAH
-   dollar figure, no demographic descriptors, no score/index/rating labels, an incentive label on every outbound
+3. `postbuild`: `scripts/check_principles.mjs dist` checks the rendered pages: every fact block dated, every BAH
+   dollar figure from `src/data/bah.json` with its year, MHA and date line, no demographic descriptors, no score/index/rating labels, an incentive label on every outbound
    link, `noindex` on every page, no placeholder text, nothing loaded from another origin. Then
    `scripts/check_intake.mjs` checks the starting plan (see the table below).
 
@@ -40,8 +40,9 @@ Cloudflare Pages runs npm run build → dist/ → live
 ```
 
 The column whitelist per file is at the top of `pull/export_for_site.py`. That script is the publish
-boundary: BAH dollar figures, raw Google commute columns, Zillow values and provider names never reach
-this repo.
+boundary: raw Google commute columns, Zillow values and provider names never reach this repo. BAH
+comes only as DTMO's table (`src/data/bah.json`, 2026, San Diego CA038 and Camp Pendleton CA024), and
+every BAH figure the site prints is checked against it.
 
 To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export, check the diff in
 `src/data/`, run `npm run build` here, then commit and push.
@@ -59,7 +60,7 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/pages/index.astro` | Home: the eight bases, the starting plan, then "Or just browse" |
 | `src/pages/plan.astro` | Starting plan (F5 intake v0): the eight questions and the printable plan, worked out in the browser; answers in localStorage only |
 | `src/lib/intake/rules.js` | The intake rules (pure JavaScript, shared by the page and the build check); `RULES_VERSION` and the list of rules with nothing to point at yet (`GAPS`) |
-| `src/lib/intake/digest.ts` | The data the rules run on, built from the collections and embedded in `/plan/` (ratios only) |
+| `src/lib/intake/digest.ts` | The data the rules run on, built from the collections and embedded in `/plan/` (ratios, plus the BAH table from `bah.json`) |
 | `src/config/intake/priorities.json` | The Q8 priority list (edit after the screener) |
 | `src/config/intake/tradeoffs.json` | The tradeoff table, one entry per first × second priority pair (empty until written) |
 | `src/pages/base/[base].astro` | Base pages: neighborhoods and base housing sorted by the 0700 drive; `src/lib/bases.ts` has the slugs |
@@ -72,7 +73,7 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/components/ExtLink.astro` | Every outbound link, with its incentive label |
 | `scripts/check_principles.mjs` | The build-time principle checks |
 | `scripts/principle_lists.mjs` | The word lists every check uses (demographic terms, score words, placeholder patterns) |
-| `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes, and every line the rules can print (built across the answer space) has a source and a date, no dollar figure, and passes the word lists |
+| `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes, and every line the rules can print (built across the answer space) has a source and a date, every dollar figure is a BAH line from `bah.json` with its year, MHA and BAH date, and passes the word lists |
 | `scripts/check_functions.mjs` | Postbuild: the code `functions/` reaches uses no syntax Cloudflare's wrangler 3 can't parse, no JSON or Node built-in imports, no `process.env`; the bundled Function fits the free-plan size limit |
 | `scripts/build_corpus.mjs` | Postbuild: chunks every published page by dated section into `dist/assistant/corpus.json` with BM25 postings (the assistant's only knowledge) |
 | `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, intake context, daily cap) |
@@ -80,4 +81,5 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/pages/ask.astro` | `/ask/`: the assistant page; not linked anywhere; conversation in page memory only |
 | `evals/assistant_eval.jsonl`, `scripts/eval_assistant.mjs` | 36 test questions and the runner: `npm run eval:assistant` (retrieval only), `-- --live`, or `-- --url <deployed site>` |
 | `scripts/check_layout.mjs` | Layout check, run by hand: every page at 390/768/1280/1440 px, no sideways scroll (needs Chrome; usage at the top) |
-| `scripts/bah_check_allow.json` | Reviewed coincidences where a rent equals a BAH figure (empty) |
+| `scripts/bah_check_allow.json` | Reviewed coincidences where a HUD rent equals a BAH figure (two, each for one page) |
+| `src/lib/bah.ts`, `src/components/BahLines.astro` | The BAH table by MHA and the per-band lines on neighborhood and base housing pages (marked up for the `bah-figures` check) |

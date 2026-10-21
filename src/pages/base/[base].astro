@@ -2,14 +2,16 @@
 // Base page: neighborhoods and base housing sorted by the 0700 drive to this
 // base's main gate. Same layout as a neighborhood page: a sticky side menu at
 // 1100px and up, and below that every group is a closed <details> with a summary
-// line, so a phone reader sees Off base and Base housing on one screen.
+// line, so a phone reader sees Off base and Base housing on one screen. Last, the
+// base's 2026 BAH table for every pay band (Brian 2026-10-20), from src/data/bah.json.
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import Toc from '../../components/Toc.astro';
 import { BASES, baseBySlug, drives, GROUP_BASES, minutes, PENDLETON_UNTIED_NOTE, TIERS } from '../../lib/bases';
 import { baseHousingAreas } from '../../lib/baseHousing';
-import { range } from '../../lib/format';
+import { dollars, range } from '../../lib/format';
+import { bahKey, bahTable } from '../../lib/bah';
 import { provenance } from '../../lib/prov';
 
 export function getStaticPaths() {
@@ -57,8 +59,11 @@ const housingSource = "Navy Housing Service Center / LMH wait-time lists; Google
 const sections = [
   { id: 'off-base', label: 'Off base', children: tiers.map((t) => ({ id: t.id, label: t.label })) },
   { id: 'base-housing', label: 'Base housing', children: [{ id: 'housing-tied', label: 'Tied to this base' }, { id: 'housing-untied', label: 'Not tied to a base' }] },
+  { id: 'bah', label: 'Housing allowance' },
 ];
 const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
+const bah = (await bahTable()).areaOf(base.code);
+const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
 ---
 
 <Base title={base.short} back={{ href: '/', label: 'Home' }} description={`Reporting to ${base.short}: neighborhoods and base housing sorted by the 0700 drive.`}>
@@ -98,7 +103,7 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
         <ul class="cards cards-pane">
           {tied.map((a) => (
             <li>
-              <a class="card" href={`/base-housing/${a.id}/`}>
+              <a class="card" href={`/base-housing/${a.id}/?base=${base.slug}`}>
                 <span><span class="card-name">{a.name}</span><span class="card-sub">{word(a.members.length)}{a.drive ? ` · ${minutes(a.drive)} drive` : ''}</span></span>
                 <span class="row-min">{a.waitRange ? `${range(a.waitRange[0], a.waitRange[1])} mo` : a.base_group === 'PENDLETON' ? 'Not in our data' : 'Not listed'}</span>
               </a>
@@ -119,7 +124,7 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
     <ul class="cards cards-pane">
       {untied.map((a) => (
         <li>
-          <a class="card" href={`/base-housing/${a.id}/`}>
+          <a class="card" href={`/base-housing/${a.id}/?base=${base.slug}`}>
             <span><span class="card-name">{a.name}</span><span class="card-sub">{word(a.members.length)}{a.drive ? ` · ${minutes(a.drive)} drive` : ''}</span></span>
             <span class="row-min">{a.waitRange ? `${range(a.waitRange[0], a.waitRange[1])} mo` : 'Not listed'}</span>
           </a>
@@ -127,6 +132,22 @@ const word = (n: number) => `${n} ${n === 1 ? 'community' : 'communities'}`;
       ))}
     </ul>
     <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}. <a href="/base-housing/">All base housing</a></p>
+  </FactBlock>
+
+  <h2 class="group-title" id="bah">{bah.label}</h2>
+  <FactBlock id="bah-table" title="Housing allowance (BAH) by pay grade" level={3} summary={`${bahBands.length} pay bands, ${bah.rows.length} grades · with and without dependents`} asOf={`BAH ${bah.year} · verified ${bah.verified_on}`} source={`${bah.source_name}. BAH follows the duty station: ${base.short} is in the ${bah.area} area (MHA ${bah.mha})`}>
+    <div class="table-wrap" data-bah-block={`${bah.year}|${bah.mha}`}>
+      <table>
+        <caption data-bah-label>{bah.label}, by pay grade, a month</caption>
+        <thead><tr><th>Pay band</th><th>Grade</th><th class="num">With dependents</th><th class="num">Without dependents</th></tr></thead>
+        <tbody>
+          {bah.rows.map((r) => (
+            <tr data-bah={bahKey(r)}><td>{r.pay_band}</td><td>{r.grade}</td><td class="num">{dollars(r.with_dependents)}</td><td class="num">{dollars(r.without_dependents)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Each neighborhood and base housing page shows the lines for your pay band from this table, next to the rent.</p>
   </FactBlock>
   </div>
   </div>

@@ -20,10 +20,19 @@
  {
   "id": "rent_to_bah",
   "title": "Rent-to-BAH ratio",
-  "source_name": "HUD FY2027 SAFMR ÷ DTMO 2026 BAH (with dependents); ratio only",
+  "source_name": "HUD FY2027 SAFMR ÷ DTMO 2026 BAH (with dependents, the zip's own MHA)",
   "source_url": "https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/",
   "license": "Public domain (derived)",
   "vintage": "FY2027 / 2026",
+  "verified_on": "2026-09-17"
+ },
+ {
+  "id": "bah",
+  "title": "BAH 2026",
+  "source_name": "DTMO 2026 BAH rates (ASCII tables): San Diego (CA038) and Camp Pendleton (CA024), with and without dependents",
+  "source_url": "https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/",
+  "license": "Public domain",
+  "vintage": "BAH 2026",
   "verified_on": "2026-09-17"
  },
  {

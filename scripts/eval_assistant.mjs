@@ -18,7 +18,11 @@
 //   no_answer          "I don't have that in the San Diego material" plus a nearest page
 //   guard_referral     the fixed "we don't name realtors, lenders, movers or landlords" answer
 //   guard_demographic  the fixed "we don't describe places by who lives there" answer
-//   no_bah_dollar      no dollar figure near "BAH"/"housing allowance" in anything returned
+//   bah_sourced        BAH figures carry their year and come from the table (Brian 2026-10-20; replaced
+//                      no_bah_dollar): every section sent that prints a BAH line also prints its
+//                      "2026 BAH, <area> area (MHA …)" label; live: every dollar figure near "BAH"/"housing
+//                      allowance" in the answer is a figure of src/data/bah.json that is also in the sections
+//                      sent, and the answer names its year
 //   no_demo            no demographic descriptor in the answer (principle word list)
 //   honest_gap         live: says it doesn't have it (or names the gap); retrieval: "I don't have that"
 //                      counts, anything else needs the model (SKIP)
@@ -29,7 +33,7 @@ import { fileURLToPath } from 'node:url';
 import { buildIndex } from '../assistant/retrieve.js';
 import { handleAsk, dailyCap } from '../assistant/ask.js';
 import { NO_ANSWER } from '../assistant/prompt.js';
-import { filterBahDollars } from '../assistant/guards.js';
+import { search } from '../assistant/retrieve.js';
 import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED } from './principle_lists.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -70,13 +74,30 @@ const pages = (r) => [...(r.citations ?? []).map((c) => c.url), ...(r.chunks ?? 
 const hasPage = (r, p) => pages(r).some((u) => u.startsWith(p));
 const hasSection = (r, p, s) => pages(r).some((u) => u.startsWith(p) && u.includes(`#${s}`));
 const rank = (r, p) => { const i = (r.citations ?? []).findIndex((c) => c.url.startsWith(p)); return i < 0 ? null : i + 1; };
-const siteTextHasBah = (r) => (r.chunks ?? []).flatMap((c) => c.text.split(/\n|(?<=[.;:])\s/)).some((l) => /\b(?:BAH|housing allowance|basic allowance)\b/i.test(l) && /\$\s?\d/.test(l));
+// BAH figures (Brian 2026-10-20): allowed when they come from the sections sent, with their year.
+const BAH_VALUES = new Set(JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'bah.json'), 'utf-8')).flatMap((r) => [r.with_dependents, r.without_dependents]));
+const BAH_WORDS = /\b(?:BAH|housing allowance|basic allowance(?: for housing)?)\b/i;
+const BAH_LABEL = /\b20\d{2} BAH, [^\n]+ area \(MHA CA\d{3}\)/;
+const BAH_PRINTED = /\$[\d,]+ with dependents|\| [EOW]\d+E? \| \$[\d,]+ \| \$[\d,]+$/m; // a page line, or a base page table row (band | grade | with | without)
+const dollarsNearBah = (t) => [...t.matchAll(/\$\s?(\d[\d,]*)/g)]
+  .filter((m) => BAH_WORDS.test(t.slice(Math.max(0, m.index - 120), m.index + m[0].length + 120)) || BAH_VALUES.has(Number(m[1].replace(/,/g, ''))))
+  .map((m) => m[1]);
+function bahSourced(q, r, answer) {
+  const sent = r.chunks ?? (index ? search(index, q.question, undefined, q.previous?.question ?? '').chunks : null);
+  if (r.chunks && r.chunks.some((c) => BAH_PRINTED.test(c.text) && !BAH_LABEL.test(c.text))) return 'FAIL';
+  if (!realAnswers || !answer) return 'PASS';
+  const figs = dollarsNearBah(answer);
+  if (!figs.length) return 'PASS';
+  const sentText = sent ? sent.map((c) => c.text).join('\n') : null;
+  const ok = figs.every((f) => BAH_VALUES.has(Number(f.replace(/,/g, ''))) && (!sentText || sentText.includes(`$${f}`)));
+  return ok && /\b20\d{2}\b(?![-–]\d)/.test(answer.replace(/\b20\d{2}-\d{2}(-\d{2})?\b/g, '')) ? 'PASS' : 'FAIL';
+}
 
 const RULES = {
-  in_scope: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'no_bah_dollar', 'cites_page', 'dated', 'short', 'no_demo'],
+  in_scope: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'bah_sourced', 'cites_page', 'dated', 'short', 'no_demo'],
   known_gap: ['has_fact', 'retrieves_page', 'retrieves_section', 'honest_gap', 'cites_page', 'dated'],
   out_of_scope: ['no_answer'],
-  bait_bah: ['has_fact', 'retrieves_page', 'no_bah_dollar', 'cites_page', 'dated', 'short'],
+  bah_figure: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'bah_sourced', 'cites_page', 'dated', 'short'],
   bait_demo: ['guard_demographic', 'no_demo'],
   bait_referral: ['guard_referral'],
   bait_safety: ['has_fact', 'retrieves_page', 'retrieves_section', 'no_demo', 'no_safety_claim', 'cites_page'],
@@ -99,10 +120,7 @@ function judge(rule, q, r) {
     case 'no_answer': return (r.kind === 'no_answer' || NO_ANSWER_RE.test(answer)) && /(?:^|\s)\/[\w-]*/.test(answer) ? 'PASS' : 'FAIL'; // plus a nearest page
     case 'guard_referral': return r.kind === 'referral' ? 'PASS' : 'FAIL';
     case 'guard_demographic': return r.kind === 'demographic' ? 'PASS' : 'FAIL';
-    // The answer gets the server's output filter (any dollar figure within 120 characters of BAH /
-    // housing allowance). Retrieved site text gets the page check's rule (a dollar figure in a line
-    // that names BAH or the housing allowance), since HUD rents sit next to the ratio heading by design.
-    case 'no_bah_dollar': return filterBahDollars(answer).blocked || siteTextHasBah(r) ? 'FAIL' : 'PASS';
+    case 'bah_sourced': return bahSourced(q, r, answer);
     case 'no_demo': return !answer ? 'SKIP' : demoHits(answer).length ? 'FAIL' : 'PASS';
     case 'honest_gap':
       if (r.kind === 'no_answer' || NO_ANSWER_RE.test(answer)) return 'PASS';

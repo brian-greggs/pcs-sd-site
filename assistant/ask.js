@@ -1,13 +1,15 @@
 // /api/ask request handling, kept out of the Pages Function file so the eval can run
 // it in Node. Order: validate → fixed answers (referral, demographic) → retrieve →
 // "I don't have that" when nothing relevant → STUB (no key or no model set: return the
-// chunks and the assembled prompt) or LIVE (call the model, filter its output).
+// chunks and the assembled prompt) or LIVE (call the model). BAH figures may appear in an
+// answer when they come from the sections sent (Brian 2026-10-20), so there's no BAH filter;
+// the eval checks each figure against those sections.
 //
 // Nothing here logs a question or an answer. Errors are logged by type and status only.
 import Anthropic from '@anthropic-ai/sdk';
 import { search } from './retrieve.js';
 import { SYSTEM_PROMPT, NO_ANSWER, userMessage } from './prompt.js';
-import { isReferral, isDemographic, GUARD_TEXT, filterBahDollars } from './guards.js';
+import { isReferral, isDemographic, GUARD_TEXT } from './guards.js';
 
 export const MAX_QUESTION = 500;
 
@@ -108,8 +110,7 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
   if (out.refused || !out.text) {
     return { status: 200, json: { mode, kind: 'declined', answer: `I can’t answer that one here. ${pointTo}`, citations } };
   }
-  const filtered = filterBahDollars(out.text);
-  return { status: 200, json: { mode, kind: 'answer', answer: filtered.text, blocked: filtered.blocked, citations } };
+  return { status: 200, json: { mode, kind: 'answer', answer: out.text, citations } };
 }
 
 // One Messages API call. The model comes from ASSISTANT_MODEL (no default in code), so the

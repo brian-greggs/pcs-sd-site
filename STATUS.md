@@ -1,6 +1,30 @@
-# Site build — status (2026-10-11, session 8: tiers by the top of the range everywhere; rules v0.5, v0.5.5)
+# Site build — status (2026-10-20, session 9: BAH dollar figures, v0.6, rules v0.6)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 9: BAH dollar figures (v0.6, rules v0.6)
+
+On `main` (fast-forwarded 12 commits to `origin/main` first: the local branch was behind, and `node_modules` lacked `@anthropic-ai/sdk` until `npm ci`). Decision change from Brian, 2026-10-20 (PRD §16): show BAH in dollars; the ratio stays as a second reading.
+
+**Data.** `pull/export_for_site.py` exports `src/data/bah.json`: 2026, MHAs CA038 (San Diego) and CA024 (Camp Pendleton), one row per grade E1–O6 and O1E–O3E (46 rows), with and without dependents, source (DTMO 2026 BAH rates) and `verified_on` 2026-09-17. `bases.json` gains `mha` (from each installation's zip); `rent_to_bah.json` rows gain `mha` (the zip's own, which the ratio divides by). New collection `bah` in `content.config.ts`.
+
+**Pages.**
+- Neighborhood pages, Cost → Rent: under the rent table, "2026 BAH, San Diego area (MHA CA038)" (or Camp Pendleton, CA024) and one line per grade in the band, e.g. "E5: $3,975 with dependents, $3,147 without dependents". Base: `?base=` from a base page, else the nearest base. Band: the page's picker. Every MHA × band is rendered; scripts toggle (`src/components/BahLines.astro`, `src/lib/bah.ts`). The ratio note now names the MHA the ratio uses and says the other area differs by at most 3.1% (QUESTIONS 62). Cost date line adds "BAH: BAH 2026 · verified 2026-09-17"; source adds DTMO.
+- Base housing area pages, Cost: the same lines (rent is your BAH), for the area's base or `?base=`. These pages gained the pay band picker (same storage key as neighborhoods). Base pages' area links now carry `?base=`.
+- Base pages: "Housing allowance" at the end (TOC entry, `#bah`): the base's table, every band and grade, with and without dependents.
+- Interpretation: "selected base" on a neighborhood or area page = the base the reader came from, else the nearest (the area's own base for tied areas).
+
+**Plan (rules v0.6).** With a base chosen, a "Your housing allowance at <base>" section after the lead (and bedroom helper): one line per grade in the band, e.g. "E5: $3,975 a month with dependents, $3,147 without (2026 BAH, San Diego area, MHA CA038)", citing `/base/<slug>/#bah` dated "BAH: BAH 2026 · verified 2026-09-17". No base chosen: no lines (QUESTIONS 63). Cross-checked against a build of the previous commit over the same answers: 184 lines added (8 bases × 23 grades), no other line or source changed.
+
+**Checks.** Retired `no-bah` (pages), `intake-no-bah` (plan: no dollar figure at all) and the source-stage BAH column rule. New:
+- `bah-source` (source): BAH-like columns only in `bah.json`; every row has year, MHA, grade, both figures, source and date; local builds compare every figure with the data repo's DTMO CSV.
+- `bah-figures` (dist): every BAH figure sits in a `data-bah-block` whose label names year, area and MHA, in a fact block whose date line gives "BAH 2026 · verified 2026-09-17" and the DTMO source; each `data-bah` line's figures equal `bah.json`'s, with first. Outside the blocks, a dollar figure next to "BAH" or equal to a BAH figure fails (hand-typed), except the two reviewed HUD-rent coincidences. 5,888 figures on 75 pages. It now runs on Cloudflare too (the table is in this repo).
+- `intake-bah` (plan): every dollar figure in plan text is a BAH line whose grade, figures, year, area and MHA match `bah.json`, with a source dated "BAH: …"; headings, notes, sources and links have none; the embedded table equals `bah.json`. `intake-dates` knows the "BAH" label.
+- Proved by planting: pages (a wrong figure, a hand-typed "$4,404" next to "BAH", a label without the year, a date line without the BAH date, a bare $5,082, a `data-bah` line outside a block: all 6 caught); plan (tampered embedded figure, BAH source without its date, a rent dollar figure on a lead line, a line without its year: all caught). Clean rebuilds passed.
+
+**Assistant.** Prompt: BAH figures allowed when printed in the sections sent, always with year and area, with dependents first; never computed or adjusted; BAH follows the duty station; the ratio stays. The output filter (`filterBahDollars`) is gone. The neighborhood and area BAH lines are marked `data-unranked`: sent with their subsection but left out of ranking (`rank_text` in the corpus), because 60 copies swamped BAH questions (in-09 went to Alpine). Base pages' tables are the ranked source; their heading is "Housing allowance (BAH) by pay grade". Eval: `no_bah_dollar` → `bah_sourced` (every section sent that prints BAH lines also prints the "2026 BAH, … (MHA …)" label; live: every BAH figure in the answer is in `bah.json` and in the sections sent, and the answer names the year). bait-bah-01/02 are now `bah_figure` items expecting E6 $4,404 and O3 $4,518 (CA038) with the label.
+
+Checks on 2026-10-20: all page checks; all eight intake checks (26,789 plans, 13,902 distinct lines, 184 BAH lines); the three Functions checks; layout clean on 75 pages at four widths (browser check of `?base=` and the band picker on Oceanside). Retrieval-only eval, 41 questions: expected fact in the sections sent 27 of 28 (missing in-16, as before); expected page 27 of 28 (first for 25); expected section 24 of 24; out-of-scope stopped 3 of 4 (out-02, as before); fixed answers 4 of 4; `bah_sourced` 24 of 24. No live model run (no key here).
 
 ## Session 8: answers to QUESTIONS 59–61 (rules v0.5, v0.5.5)
 
@@ -269,10 +293,12 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian) and the LMH call list in the data repo's STATUS. Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
+See `QUESTIONS.md` (open: 62–64 from session 9, 21–24, plus 14 and 16 with Brian) and the LMH call list in the data repo's STATUS. Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
 ## Next session
 
-Brian reviews the branch preview: `/plan/` (try a few households, print one), the "Starting plan" cards on home and the base pages, and `/ask/` (STUB until the key and model are set). Then the tradeoff table (`src/config/intake/tradeoffs.json`), and the writing list above. Going live with the assistant: the steps above, then the live eval.
+Session 9 (BAH figures): Brian looks at a neighborhood page from two bases (e.g. `/communities/oceanside/?base=naval-base-san-diego` and `?base=camp-pendleton`), a base housing page, a base page's Housing allowance table and a plan with a base chosen; answers QUESTIONS 62–64; spot-checks a few figures in DTMO's calculator (data repo STATUS item 12). With a key set, rerun the eval live: the two BAH questions now expect "$4,404" and "$4,518" with "2026".
+
+Before session 9: Brian reviews the branch preview: `/plan/` (try a few households, print one), the "Starting plan" cards on home and the base pages, and `/ask/` (STUB until the key and model are set). Then the tradeoff table (`src/config/intake/tradeoffs.json`), and the writing list above. Going live with the assistant: the steps above, then the live eval.
 
 Still open from session 4: Brian writes leads and gotchas (one `.md` per community; the page picks it up). FHSZ files (QUESTIONS 25), the NASNI/NOLF IB hand-assignment, Coronado's boundary lookup (29), beach-link placement (30).

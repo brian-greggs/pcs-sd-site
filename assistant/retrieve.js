@@ -55,8 +55,9 @@ export function indexChunks(chunks) {
   const postings = {};
   const lens = chunks.map((c, i) => {
     const head = tokens(`${c.page_title} ${c.section_heading}`);
-    // Not the date/source line: every Cost section's names "DTMO BAH", which swamps BAH questions.
-    const all = [...Array(TITLE_WEIGHT).fill(head).flat(), ...tokens(c.text)];
+    // Not the date/source line: every Cost section's names "DTMO BAH", which swamps BAH questions. A chunk's
+    // rank_text, when it has one, leaves out text the page marks data-unranked (the repeated BAH lines).
+    const all = [...Array(TITLE_WEIGHT).fill(head).flat(), ...tokens(c.rank_text ?? c.text)];
     const tf = new Map();
     for (const t of all) tf.set(t, (tf.get(t) ?? 0) + 1);
     for (const [t, f] of tf) (postings[t] ??= []).push(i, f);

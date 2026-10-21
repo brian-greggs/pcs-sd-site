@@ -22,11 +22,13 @@ import Hazards from '../../components/sections/Hazards.astro';
 import Notes from '../../components/sections/Notes.astro';
 import Toc from '../../components/Toc.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
+import BahLines from '../../components/BahLines.astro';
 import { acsDollars, dollars, pct, range, PAY_BAND_ORDER } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { writtenNotes } from '../../lib/notes';
 import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 import { baseByCode, drives, minutes } from '../../lib/bases';
+import { bahTable } from '../../lib/bah';
 
 export async function getStaticPaths() {
   return (await getCollection('communities')).map((c) => ({ params: { slug: c.id } }));
@@ -90,6 +92,15 @@ const melloLine = !ownership.length ? 'Mello-Roos not matched yet'
   : cfd.has('Y') ? 'Mello-Roos charge on the tax bill'
   : 'no Mello-Roos district listed';
 const costSummary = `3-bed HUD rent ${rent3Text} · ${melloLine}`;
+// BAH (Brian 2026-10-20): the figures for the reader's base (?base=, else the nearest) and pay band, next to
+// the rent. The ratio below divides by the zip's own MHA, which can be the other one; the note says so.
+const bah = await bahTable();
+const bahDefault = ds[0] ? bah.areaOf(ds[0].code).mha : bah.areas[0].mha;
+const zipMhas = [...new Set(ratios.map((r) => r.mha))];
+const mhaName = (m: string) => `${bah.areas.find((a) => a.mha === m)!.area} (${m})`;
+const ratioMhaText = zipMhas.length === 1
+  ? `the ${mhaName(zipMhas[0])} area, where ${multiZip ? 'these zips are' : 'this zip is'}`
+  : zipMhas.map((m) => `${mhaName(m)} for ${[...new Set(ratios.filter((r) => r.mha === m).map((r) => r.zip))].join(', ')}`).join(' and ');
 
 const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 const sections = [
@@ -158,7 +169,7 @@ const sections = [
     <p class="asof" data-asof>Commute: {asOf('commute')}. Rent ratio: {asOf('rent_to_bah')}. Schools: {asOf('schools')}. Fire: {fireDate ? `CAL FIRE maps, downloaded ${fireDate}` : asOf('hazards')}.</p>
   </section>
 
-  <FactBlock id="cost" title="Cost" open summary={costSummary} asOf={`Rent: ${asOf('rent')}. Ratio: ${asOf('rent_to_bah')}`} source="HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; DTMO BAH 2026 (used for the ratio only)">
+  <FactBlock id="cost" title="Cost" open summary={costSummary} asOf={`Rent: ${asOf('rent')}. BAH: ${asOf('bah')}. Ratio: ${asOf('rent_to_bah')}`} source={`HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; ${bah.areas[0].source_name}`}>
     <h3>Rent</h3>
     {rentGap && <p class="gap">{rentGap}</p>}
     {rent.map((r) => (
@@ -171,10 +182,16 @@ const sections = [
       </div>
       <p class="note">Census median rent across all rented homes here: {acsDollars(r.acs_median_gross_rent)}. <span class="muted">{ACS_NOTE}</span> For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" />.</p>
     ))}
+    {/* Next to the rent (Brian 2026-10-20). data-unranked: sent to the assistant with this subsection but
+        left out of its ranking, so 40 copies of the same lines don't outrank the base pages' tables. */}
+    <div class="bah" data-unranked>
+      <BahLines areas={bah.areas} bands={bands.length ? bands : PAY_BAND_ORDER} mha={bahDefault} band={DEFAULT_BAND} />
+      <p class="note">BAH follows your duty station, not where you live. Every base on this site is in the San Diego area (CA038) except Camp Pendleton (CA024). This shows your base's area if you came from its base page, and otherwise the area of the nearest base. Pick your pay band above.</p>
+    </div>
 
     <h3>Rent as a share of your housing allowance</h3>
     {ratioGap && <p class="gap">{ratioGap}</p>}
-    <p class="note">HUD reference rent for that many bedrooms, divided by the 2026 housing allowance with dependents. Under 100% means the reference rent fits inside the allowance. A band shows a range when its grades get different allowances. We don't show the allowance itself.</p>
+    <p class="note">HUD reference rent for that many bedrooms, divided by the 2026 allowance with dependents for {ratioMhaText}. Under 100% means the reference rent fits inside the allowance. A band shows a range when its grades get different allowances. If your base is in the other housing area, its allowance differs from the one in the ratio by at most {bah.maxGapPct.toFixed(1)}% for any grade.</p>
     {rent.filter((r) => ratios.some((x) => x.zip === r.zip)).map((r) => (
       <div class="table-wrap">
         <table>
@@ -211,7 +228,7 @@ const sections = [
   <Climate zips={zips} name={community.name} />
   <Hazards zips={zips} waterQuality={WATER_QUALITY.includes(slug!)} />
   <Notes notes={notes} part="gotchas" />
-  <SourcesTable ids={['rent', 'rent_to_bah', 'ownership', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} />
+  <SourcesTable ids={['rent', 'bah', 'rent_to_bah', 'ownership', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} />
   </div>
   </div>
 </Base>

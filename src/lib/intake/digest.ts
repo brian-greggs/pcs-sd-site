@@ -1,11 +1,13 @@
 // The data the intake rules run on, built at build time from the same collections
-// the pages use and embedded in /plan/ as JSON. Ratios only: no BAH figure, no rent
-// dollar figure. Every value here is shown on a page the plan cites.
+// the pages use and embedded in /plan/ as JSON. The only dollar figures are the BAH
+// table (`bah`, from src/data/bah.json, Brian 2026-10-20), which the base pages show
+// in full; no rent dollar figure. Every value here is shown on a page the plan cites.
 import { getCollection, getEntry } from 'astro:content';
 import { BASES, GROUP_BASES, PENDLETON_UNTIED_NOTE, drives } from '../bases';
 import { baseHousingAreas, parseWait } from '../baseHousing';
 import { PAY_BAND_ORDER } from '../format';
 import { provenance } from '../prov';
+import { bahTable } from '../bah';
 
 // Outbound links a rule can cite (each keeps its incentive label and verified date).
 const LINK_IDS = [
@@ -49,6 +51,13 @@ export async function intakeDigest() {
 
   const districts = Object.fromEntries((await getCollection('districts')).map((d) => [d.id, d.data.boundary_url]));
 
+  // BAH by MHA, as the base pages' tables show it: [with, without dependents] per grade, by band.
+  const bahT = await bahTable();
+  const bah = Object.fromEntries(bahT.areas.map((a) => [a.mha, {
+    year: a.year, area: a.area, verified_on: a.verified_on,
+    grades: a.rows.map((r) => ({ grade: r.grade, band: r.pay_band, with: r.with_dependents, without: r.without_dependents })),
+  }]));
+
   const { areas, month, verifiedOn } = await baseHousingAreas();
   const areaRows = await Promise.all(areas.filter((a) => a.has_page).map(async (a) => {
     // Pet policy per community, as the area page shows it: the wait list's printed policy wins, else LMH's
@@ -89,7 +98,8 @@ export async function intakeDigest() {
   }
 
   return {
-    bases: BASES.map((b) => ({ code: b.code, slug: b.slug, short: b.short })),
+    bases: BASES.map((b) => ({ code: b.code, slug: b.slug, short: b.short, mha: bahT.mhaOfBase[b.code] })),
+    bah,
     groupBases: GROUP_BASES,
     bands: PAY_BAND_ORDER,
     neighborhoods,
@@ -102,6 +112,7 @@ export async function intakeDigest() {
     dates: {
       commute: asOf('commute'),
       ratio: asOf('rent_to_bah'),
+      bah: asOf('bah'),
       ownership: asOf('ownership'),
       schools: asOf('schools'),
       childcare: asOf('childcare'),

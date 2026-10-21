@@ -120,3 +120,13 @@
 - **Check the page against the plan, not each against itself.** `intake-tiers` proved the plan was consistent with its headings, and the base pages were consistent with their own (old) rule; neither caught the disagreement. `page-tiers` reads the built base pages and compares each group with the tier the plan computes from the same data.
 - **Count a change two ways before reporting it.** The 67 moves were counted from the data before the change, then again by rebuilding the pages with the old rule and running the new check. Both gave the same per-base numbers.
 - **A caveat a family reads on the page should be the same one the plan cites.** The Pendleton line's text and date live in one constant used by the base page and the digest, so the plan can quote and date it exactly.
+
+## Session 9 (2026-10-20): BAH figures
+
+- **Turn a ban into a provenance check, don't just delete it.** "No BAH figure" became "every BAH figure is from `bah.json`, with its year, MHA and date": the old context and exact-figure rules survive, applied outside the marked-up BAH blocks, so a hand-typed figure still fails. Marking figures up (`data-bah="2026|CA038|E5"`) is what lets the check compare each one with the table instead of guessing from nearby words.
+- **Put the table where the host can read it.** The exact-figure check used to skip on Cloudflare because the table lived in the data repo. With `bah.json` exported, it runs everywhere; the data-repo comparison is a local extra.
+- **Repeated text distorts ranking.** The same BAH lines on 60 pages, under a heading weighted 3×, turned every BAH question into a 40-way tie that Alpine won alphabetically, and pushed the base housing cost question off its page. The fix keeps the lines in what's sent and out of what's ranked (`data-unranked` → `rank_text`), and leaves one canonical table per base to rank.
+- **A new number next to an old one exposes the old one's assumptions.** The ratio was always computed on the home zip's MHA. That never showed while the allowance was hidden; printing the reader's own BAH beside it made the mismatch visible (QUESTIONS 62).
+- **A pull is not an update.** The local branch was 12 commits behind `origin/main` with a clean tree, and `node_modules` was missing a dependency the new commits added; the Functions bundle check caught it. Check `git status -sb` and run `npm ci` after pulling.
+- **Diff the plan, not just the checks.** Building the previous commit in a worktree and diffing every line over the same answers showed exactly 184 new lines and nothing else changed, which the checks alone can't say.
+

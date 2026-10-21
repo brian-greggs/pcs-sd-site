@@ -2,7 +2,9 @@
 // Base housing area page: the LMH communities in one area, their wait times,
 // pet policy, how to apply and cost as the sources print it, then the same
 // zip-based facts as a neighborhood page. No Mello-Roos, no rent-to-BAH ratio,
-// no Census medians here: those are about renting or buying off base.
+// no Census medians here: those are about renting or buying off base. The Cost
+// section shows the 2026 BAH (rent is your BAH) for the area's base, or the base
+// in ?base=, and the pay band picked at the top (kept on this device only).
 import { getEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
@@ -17,8 +19,10 @@ import Notes from '../../components/sections/Notes.astro';
 import Toc from '../../components/Toc.astro';
 import BedroomRules from '../../components/sections/BedroomRules.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
+import BahLines from '../../components/BahLines.astro';
 import { baseHousingAreas } from '../../lib/baseHousing';
-import { range, tidyRange } from '../../lib/format';
+import { PAY_BAND_ORDER, range, tidyRange } from '../../lib/format';
+import { bahTable } from '../../lib/bah';
 import { writtenNotes } from '../../lib/notes';
 import { provenance } from '../../lib/prov';
 import { baseByCode, drives, GROUP_BASES, minutes } from '../../lib/bases';
@@ -88,6 +92,10 @@ const drive = candidates.length ? ds.find((d) => candidates.includes(d.code)) : 
 const driveLabel = drive ? `to ${baseByCode(drive.code).short}${candidates.length ? '' : ' (nearest; LMH names no base)'}` : 'No drive times in our data';
 const waitSummary = area.waitRange ? `${waitText} · ${estimate}` : isPendleton ? 'Pendleton wait times aren’t in our data' : `Not on the ${month} list`;
 const memberWord = `${area.members.length} ${area.members.length === 1 ? 'community' : 'communities'}`;
+// BAH for the area's base (the nearest, for areas LMH ties to no base), or ?base= from a base page.
+const DEFAULT_BAND = 'E5–E6';
+const bah = await bahTable();
+const bahDefault = drive ? bah.areaOf(drive.code).mha : bah.areas[0].mha;
 
 const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii', 'san-onofre-iii']);
 const sections = [
@@ -111,7 +119,14 @@ const sections = [
   <Notes notes={notes} part="lead" />
 
   <section class="glance" id="glance" data-fact="glance">
-    <div class="glance-head"><h2>At a glance</h2></div>
+    <div class="glance-head">
+      <h2>At a glance</h2>
+      <label class="band-pick" data-band-picker hidden>Pay band
+        <select data-band-select>
+          {PAY_BAND_ORDER.map((b) => <option value={b} selected={b === DEFAULT_BAND}>{b}</option>)}
+        </select>
+      </label>
+    </div>
     <dl class="tiles">
       <div class="tile mauve">
         <dt>Wait, latest list</dt>
@@ -188,8 +203,13 @@ const sections = [
     </ol>
   </FactBlock>
 
-  <FactBlock id="cost" title="Cost" summary={`Rent is your BAH, by allotment${costShown.length ? ` · ${costShown.length} discounted ${costShown.length === 1 ? 'rate' : 'rates'} printed` : ''}`} asOf={`Rule: CNIC Privatized Housing page, verified ${cnicRule.verified_on}. Discounts: Military OneSource NBSD housing page, retrieved ${oneSource.verified_on}${costShown.length ? `. Rates as printed: ${estimate}` : ''}`} source="CNIC Navy Housing; Military OneSource; Navy Housing Service Center / LMH wait-time lists">
+  <FactBlock id="cost" title="Cost" summary={`Rent is your BAH, by allotment${costShown.length ? ` · ${costShown.length} discounted ${costShown.length === 1 ? 'rate' : 'rates'} printed` : ''}`} asOf={`Rule: CNIC Privatized Housing page, verified ${cnicRule.verified_on}. BAH: ${asOf('bah')}. Discounts: Military OneSource NBSD housing page, retrieved ${oneSource.verified_on}${costShown.length ? `. Rates as printed: ${estimate}` : ''}`} source={`CNIC Navy Housing; ${bah.areas[0].source_name}; Military OneSource; Navy Housing Service Center / LMH wait-time lists`}>
     <p>Rent is your BAH, paid to Liberty Military Housing by allotment <span class="muted">(<ExtLink id="cnic-privatized-housing" text="CNIC" />)</span>. Some sites list discounted rates <span class="muted">(<ExtLink id="mi-nbsd-housing" text="Military OneSource" />)</span>; those are shown below as printed.</p>
+    {/* data-unranked: sent to the assistant with this section, left out of its ranking (see the neighborhood page). */}
+    <div class="bah" data-unranked>
+      <BahLines areas={bah.areas} bands={PAY_BAND_ORDER} mha={bahDefault} band={DEFAULT_BAND} />
+      <p class="note">BAH follows your duty station: every base on this site is in the San Diego area (CA038) except Camp Pendleton (CA024). This shows {drive ? `${baseByCode(drive.code).short}'s area` : 'the nearest base’s area'}{candidates.length ? '' : ' (LMH ties this area to no base)'}, or your base's if you came from its base page. Pick your pay band at the top.</p>
+    </div>
     {isPendleton && <p class="note">Both sources are Navy pages (CNIC Navy Housing and Naval Base San Diego). Camp Pendleton's own terms aren't in our material.</p>}
     {costShown.length > 0 ? (
       <>
@@ -216,7 +236,27 @@ const sections = [
   <Climate zips={zips} name={area.name} />
   <Hazards zips={zips} waterQuality={['coronado', 'imperial-beach'].includes(area.id)} />
   <Notes notes={notes} part="gotchas" />
-  <SourcesTable ids={['base_housing', 'base_housing_waits', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} extra={[{ title: 'Area grouping', source: 'Curated from LMH leasing-office zips and addresses', vintage: area.vintage, verified: area.verified_on, license: 'Ours' }]} />
+  <SourcesTable ids={['base_housing', 'base_housing_waits', 'bah', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} extra={[{ title: 'Area grouping', source: 'Curated from LMH leasing-office zips and addresses', vintage: area.vintage, verified: area.verified_on, license: 'Ours' }]} />
   </div>
   </div>
 </Base>
+
+<script>
+  // Pay band: remembered on this device only (localStorage, wrapped so blocked storage is fine). Same key as
+  // the neighborhood pages, so the band follows the reader between pages.
+  const KEY = 'pcs-sd:pay-band';
+  const select = document.querySelector<HTMLSelectElement>('[data-band-select]');
+  const showBand = (band: string) => {
+    document.querySelectorAll<HTMLElement>('[data-band-show]').forEach((el) => { el.hidden = el.dataset.bandShow !== band; });
+  };
+  if (select) {
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(KEY); } catch { /* storage blocked */ }
+    if (saved && [...select.options].some((o) => o.value === saved)) { select.value = saved; showBand(saved); }
+    select.addEventListener('change', () => {
+      showBand(select.value);
+      try { localStorage.setItem(KEY, select.value); } catch { /* storage blocked */ }
+    });
+    document.querySelector<HTMLElement>('[data-band-picker]')!.hidden = false;
+  }
+</script>

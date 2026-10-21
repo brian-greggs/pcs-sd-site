@@ -48,6 +48,8 @@ const dated = {
 };
 const zip = z.string().regex(/^9\d{4}$/);
 const baseCode = z.enum(['NBSD', 'NASNI', 'NAB', 'NBPL', 'NMCSD', 'MIRAMAR', 'MCRD', 'PENDLETON']);
+const mha = z.enum(['CA038', 'CA024']); // the two MHAs our bases use (San Diego, Camp Pendleton)
+const payBand = z.enum(['E1–E4', 'E5–E6', 'E7–E9', 'W1–W5', 'O1–O3E', 'O1–O3', 'O4–O6']);
 const pct = z.number().min(0).max(100).nullable();
 const minutes = z.number().min(0).max(240).nullable();
 const urlOrBlank = z.union([z.url(), z.literal('')]);
@@ -66,7 +68,26 @@ const communities = defineCollection({
 
 const bases = defineCollection({
   loader: strictJson('bases'),
-  schema: z.object({ installation: z.string().min(1), gate: z.string().min(1), ...dated }),
+  schema: z.object({ installation: z.string().min(1), gate: z.string().min(1), mha, ...dated }),
+});
+
+// DTMO's BAH table for the MHAs our bases use (Brian 2026-10-20). Every BAH figure a page or
+// plan line prints comes from here (src/lib/bah.ts); scripts/check_principles.mjs checks it.
+const bah = defineCollection({
+  loader: strictJson('bah'),
+  schema: z.object({
+    year: z.number().int().min(2026).max(2100),
+    mha,
+    mha_name: z.string().min(1),
+    area: z.string().min(1),
+    grade: z.string().regex(/^[EOW]\d+E?$/),
+    pay_band: payBand,
+    with_dependents: z.number().int().min(1000).max(15000),
+    without_dependents: z.number().int().min(1000).max(15000),
+    source_name: z.string().min(1),
+    source_url: z.url(),
+    ...dated,
+  }).refine((r) => r.without_dependents <= r.with_dependents, 'without dependents is more than with'),
 });
 
 const commute = defineCollection({
@@ -104,11 +125,12 @@ const rentToBah = defineCollection({
   loader: strictJson('rent_to_bah'),
   schema: z.object({
     zip,
-    pay_band: z.enum(['E1–E4', 'E5–E6', 'E7–E9', 'W1–W5', 'O1–O3E', 'O1–O3', 'O4–O6']),
+    pay_band: payBand,
     bedrooms: z.union([z.literal(2), z.literal(3), z.literal(4)]),
     ratio_low_pct: z.number().int().min(20).max(400),
     ratio_high_pct: z.number().int().min(20).max(400),
     dependents: z.literal('with'),
+    mha, // the zip's own MHA, which the ratio divides by
     ...dated,
   }).refine((r) => r.ratio_low_pct <= r.ratio_high_pct, 'ratio range is inverted'),
 });
@@ -363,7 +385,7 @@ const changelog = defineCollection({
 });
 
 export const collections = {
-  communities, bases, commute, rent, rentToBah, ownership, schools, districts, childcare,
+  communities, bases, bah, commute, rent, rentToBah, ownership, schools, districts, childcare,
   baseHousing, baseHousingWaits, baseHousingAreas, housingRules, militaryAccess, climate, hazards, links, provenance, sources,
   communityNotes, baseHousingNotes, changelog,
 };

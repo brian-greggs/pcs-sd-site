@@ -60,13 +60,28 @@ function split(body) {
     last = m.index + m[0].length;
   }
   parts.push({ sub: heading, html: body.slice(last) });
-  return parts.map((p) => ({ sub: p.sub, text: text(p.html) })).filter((p) => p.text.length > 0);
+  return parts.map((p) => ({ sub: p.sub, text: text(p.html), unranked: unrankedLines(p.html) })).filter((p) => p.text.length > 0);
 }
 // Split a long section without breaking a table: lines are grouped into blocks (a whole table, or
 // one line of text) and blocks are packed into parts of about MAX_CHARS. Only a table that is itself
 // longer than that (the school lists) is split, between rows, and each part repeats its header row.
 // Retrieval sends every part of a section together (assistant/retrieve.js), so parts are for ranking,
 // never for cutting a section in half.
+// Text a page marks data-unranked (the BAH lines on neighborhood and base housing pages, which repeat the
+// base pages' tables 60 times) is sent with its section but left out of the ranking text (rank_text).
+function unrankedLines(html) {
+  const lines = new Set();
+  let out = html, m;
+  while ((m = out.match(/<(\w+)\b[^>]*\sdata-unranked(?=[\s=>])[^>]*>/))) {
+    const re = new RegExp(`<${m[1]}\\b[^>]*>|</${m[1]}>`, 'gi');
+    re.lastIndex = m.index + m[0].length;
+    let depth = 1, end = out.length, x;
+    while ((x = re.exec(out))) { if (x[0][1] !== '/') depth++; else if (--depth === 0) { end = x.index + x[0].length; break; } }
+    for (const l of text(out.slice(m.index, end)).split('\n')) lines.add(l);
+    out = out.slice(0, m.index) + ' ' + out.slice(end);
+  }
+  return lines;
+}
 // Of the per-base and per-band variants a page renders (the page script shows one), keep the visible default.
 const stripHidden = (html) => html.replace(/<(\w+)\b[^>]*\shidden(?:="")?[^>]*>[\s\S]*?<\/\1>/g, ' ');
 const isRow = (l) => l.includes(' | ');
@@ -128,6 +143,7 @@ for (const file of walk(DIST)) {
     const parts = split(body);
     parts.forEach((p, pi) => {
       const ws = windows(pi === 0 && summary ? `${summary}\n${p.text}` : p.text);
+
       ws.forEach((w, wi) => {
         chunks.push({
           id: `${url}#${id}${parts.length > 1 ? `-${pi}` : ''}${ws.length > 1 ? `-${wi + 1}` : ''}`,
@@ -136,6 +152,7 @@ for (const file of walk(DIST)) {
           section_heading: [heading, p.sub].filter(Boolean).join(' › ') + (ws.length > 1 ? ` (part ${wi + 1} of ${ws.length})` : ''),
           group: `${url}#${id}${parts.length > 1 ? `-${pi}` : ''}`, // all parts of one (sub)section; retrieval sends them together
           text: w,
+          ...(p.unranked.size ? { rank_text: w.split('\n').filter((l) => !p.unranked.has(l)).join('\n') } : {}), // ranking only; `text` is what's sent
           verified_on: verified,
           dates,
         });

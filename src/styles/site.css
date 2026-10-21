@@ -248,3 +248,8 @@ textarea:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 .ask-context { margin-top: 8px; }
 .ask-pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; max-height: 24rem; overflow-y: auto; }
 .ask-stub summary { cursor: pointer; color: var(--link); min-height: var(--touch); display: flex; align-items: center; }
+
+/* BAH lines (src/components/BahLines.astro): label, then one line per grade */
+.bah-label { font-weight: 700; margin: 0.6rem 0 0.2rem; }
+ul.bah-lines { list-style: none; padding: 0; margin: 0 0 0.6rem; }
+ul.bah-lines li { margin: 4px 0; font-variant-numeric: tabular-nums; }

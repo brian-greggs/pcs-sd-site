@@ -3,6 +3,7 @@
   "installation": "Naval Base San Diego (32nd St)",
   "gate": "32nd St gate, Harbor Dr",
   "id": "NBSD",
+  "mha": "CA038",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  },
@@ -10,6 +11,7 @@
   "installation": "NAS North Island",
   "gate": "Main gate, 3rd St & Alameda Blvd, Coronado",
   "id": "NASNI",
+  "mha": "CA038",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  },
@@ -17,6 +19,7 @@
   "installation": "Naval Amphibious Base Coronado",
   "gate": "Main gate, Hwy 75 (Silver Strand)",
   "id": "NAB",
+  "mha": "CA038",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  },
@@ -24,6 +27,7 @@
   "installation": "Naval Base Point Loma",
   "gate": "Main gate, Rosecrans St",
   "id": "NBPL",
+  "mha": "CA038",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  },
@@ -31,6 +35,7 @@
   "installation": "Naval Medical Center San Diego (Balboa)",
   "gate": "Main entrance, Bob Wilson Dr",
   "id": "NMCSD",
+  "mha": "CA038",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  },
@@ -38,6 +43,7 @@
   "installation": "MCAS Miramar",
   "gate": "Main gate, Miramar Way at I-15",
   "id": "MIRAMAR",
+  "mha": "CA038",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  },
@@ -45,6 +51,7 @@
   "installation": "MCRD San Diego",
   "gate": "Main gate, Pacific Hwy / Chosin Ave",
   "id": "MCRD",
+  "mha": "CA038",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  },
@@ -52,6 +59,7 @@
   "installation": "Camp Pendleton",
   "gate": "Main gate, Vandegrift Blvd at I-5, Oceanside",
   "id": "PENDLETON",
+  "mha": "CA024",
   "vintage": "2026-09",
   "verified_on": "2026-09-18"
  }

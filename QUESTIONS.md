@@ -1,5 +1,11 @@
 # Questions — site build
 
+## Open (session 9, BAH figures, 2026-10-20)
+
+62. **The ratio divides by the home zip's MHA; BAH follows the duty station.** `rent_to_bah` has always used the allowance of the housing area the zip is in. Now that the page prints the reader's own BAH (by their base) beside it, the two can disagree: an NBSD family looking at Oceanside sees San Diego's $3,975 (E5) next to a ratio computed on Camp Pendleton's $3,963, and a Pendleton family sees the reverse on every San Diego-area neighborhood. Six neighborhoods have Camp Pendleton zips (Carlsbad, Escondido, Fallbrook / Bonsall, Oceanside, San Marcos, Vista). The two areas differ by at most 3.1% for any grade (W3 and O3 with dependents), so a ratio is off by about 3 points at most. Built for now: the ratio note names the MHA it uses ("…for the Camp Pendleton (CA024) area, where these zips are") and says the other area differs by at most 3.1%. Re-base the ratio on the reader's base instead? That doubles `rent_to_bah` (one row per MHA), adds a per-base variant to the ratio table, and changes the plan's ratio lines and its cost lead for those pairs (rules bump).
+63. **"Not sure yet" base: no BAH lines in the plan.** The plan can't know which area applies, so it shows none. Alternative: both areas' lines, labeled. The neighborhood page shows the nearest base's area in that case.
+64. **The BAH figures carry verified 2026-09-17**, the round-1 DTMO download. travel.dod.mil returns 403 to scripts, so they weren't re-checked; spot-checking a few in DTMO's calculator is on the data repo's STATUS (item 12).
+
 ## Open (session 4c, base page layout, 2026-09-30)
 
 40. **Base page groups start closed at every width.** That's what lets a phone reader see Base housing without scrolling past 40 neighborhoods, and it matches the neighborhood pattern. On desktop it means six closed cards beside the side menu. If you'd rather have "Under 30 min" and "Tied to this base" open on desktop only, that takes a small script (closed without JavaScript); opening them for everyone brings back the long phone scroll.
