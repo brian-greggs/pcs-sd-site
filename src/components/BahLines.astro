@@ -1,7 +1,8 @@
 ---
 // The BAH for the reader's base and pay band (Brian 2026-10-20): one line per grade in the band, with
 // dependents first and without second, under the label "2026 BAH, <area> area (MHA <code>)". Every
-// MHA and band is rendered and the page shows one (data-mha for the base, data-band-show for the band),
+// MHA and band is rendered and the page shows one (data-mha-bases for the base, data-band-show for the band;
+// the page runs src/scripts/variants.ts),
 // so the checks read every figure and the page works with JavaScript off. data-bah-block, data-bah-label
 // and data-bah mark the figures for the bah-figures check (scripts/check_principles.mjs). The section
 // this sits in must carry the BAH date and source in its date line.
@@ -29,12 +30,3 @@ const { areas, bands, mha, band } = Astro.props;
     ))}
   </div>
 ))}
-
-<script>
-  // ?base=<slug> (from a base page) picks the MHA shown. Without it, the page's default base.
-  const base = new URLSearchParams(location.search).get('base');
-  const blocks = [...document.querySelectorAll<HTMLElement>('[data-mha-bases]')];
-  if (base && blocks.some((el) => el.dataset.mhaBases!.split(' ').includes(base))) {
-    blocks.forEach((el) => { el.hidden = !el.dataset.mhaBases!.split(' ').includes(base); });
-  }
-</script>

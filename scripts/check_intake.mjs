@@ -20,6 +20,11 @@
 //   page-tiers       base pages group each neighborhood by the top of its drive range (every card's range fits
 //                    its group, and each group holds exactly the neighborhoods the plan puts in that tier for
 //                    that base), and every commute table's Tier column matches its row's range (QUESTIONS 59)
+//   page-ratios      the rent-to-BAH ratio divides by the reader's duty station's MHA (QUESTIONS 62): recomputed
+//                    here from rent.json ÷ bah.json for every zip, band, bedroom count and MHA, it must equal
+//                    rent_to_bah.json, every neighborhood page's ratio tables (one set per MHA, shown for that
+//                    MHA's bases) and the plan's embedded ratios; and a plan line's ratio is the one for the
+//                    MHA of the base it cites
 //   (failures print the first 20 per check; ALL=1 node scripts/check_intake.mjs prints every one)
 //   intake-dates     a line's source dates are only for facts on that line, and every fact it shows
 //                    is dated: each date label ("Commute: …", "Pets: …") needs its fact in the line,
@@ -377,13 +382,88 @@ if (!existsSync(planFile)) {
     }
     passes.push(`page-tiers: ${cards} base page cards in ${data.bases.length} base pages, ${tableRows} commute table rows`);
 
+    // page-ratios. Python's round() (the export's) rounds halves to even; so does this.
+    const roundEven = (x) => { const f = Math.floor(x); const d = x - f; return Math.abs(d - 0.5) < 1e-9 ? (f % 2 ? f + 1 : f) : Math.round(x); };
+    const readData = (n) => JSON.parse(readFileSync(join(ROOT, 'src', 'data', `${n}.json`), 'utf-8'));
+    const rentRows = Object.fromEntries(readData('rent').map((r) => [r.zip, r]));
+    const ratioRows = readData('rent_to_bah');
+    const BANDS = { 'E1–E4': ['E1', 'E2', 'E3', 'E4'], 'E5–E6': ['E5', 'E6'], 'E7–E9': ['E7', 'E8', 'E9'], 'W1–W5': ['W1', 'W2', 'W3', 'W4', 'W5'], 'O1–O3E': ['O1E', 'O2E', 'O3E'], 'O1–O3': ['O1', 'O2', 'O3'], 'O4–O6': ['O4', 'O5', 'O6'] };
+    const mhas = [...new Set(basesJson.map((b) => b.mha))];
+    const want = (zip, band, br, mha) => {
+      const rent = rentRows[zip]?.[`fy27_${br}br`];
+      if (rent == null) return null;
+      const ps = BANDS[band].map((g) => roundEven((100 * rent) / bahRow(BAH_ROWS[0].year, mha, g).with_dependents)).sort((x, y) => x - y);
+      return [ps[0], ps.at(-1)];
+    };
+    let ratioCells = 0;
+    const exported = new Map(ratioRows.map((r) => [`${r.zip}|${r.pay_band}|${r.bedrooms}|${r.mha}`, r]));
+    for (const zip of Object.keys(rentRows)) for (const band of Object.keys(BANDS)) for (const br of [2, 3, 4]) for (const mha of mhas) {
+      const w = want(zip, band, br, mha);
+      const r = exported.get(`${zip}|${band}|${br}|${mha}`);
+      if (w && (!r || r.ratio_low_pct !== w[0] || r.ratio_high_pct !== w[1])) fail('page-ratios', 'src/data/rent_to_bah.json', `${zip} ${band} ${br}-bed ${mha}: ${r ? `${r.ratio_low_pct}–${r.ratio_high_pct}%` : 'missing'}, rent ÷ BAH gives ${w[0]}–${w[1]}%`);
+    }
+    if (ratioRows.some((r) => !mhas.includes(r.mha))) fail('page-ratios', 'src/data/rent_to_bah.json', 'a row for an MHA no base uses');
+    const fmt = (w) => (w[0] === w[1] ? `${w[0]}%` : `${w[0]}–${w[1]}%`);
+    const communities = Object.fromEntries(readData('communities').map((c) => [c.slug, c]));
+    for (const n of data.neighborhoods) {
+      const rel = `communities/${n.slug}/index.html`;
+      const sec = (htmlOf(rel).match(/<section[^>]*data-fact="cost"[^>]*>([\s\S]*?)<\/section>/) ?? [])[1] ?? '';
+      const zips = communities[n.slug].zips;
+      const seen = new Set();
+      for (const [, bases, body] of sec.matchAll(/<div class="ratio-area" data-mha-bases="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*(?=<div class="ratio-area"|<h3)/g)) {
+        for (const [, caption, rows] of body.matchAll(/<caption>([\s\S]*?)<\/caption>([\s\S]*?)<\/table>/g)) {
+          const mha = (caption.match(/\(MHA (CA\d{3})\)/) ?? [])[1];
+          const zip = (caption.match(/Zip (\d{5})/) ?? [])[1] ?? (zips.length === 1 ? zips[0] : null);
+          if (!mha || !zip) { fail('page-ratios', rel, `ratio table without its MHA or zip: "${caption}"`); continue; }
+          seen.add(mha);
+          const slugs = data.bases.filter((b) => b.mha === mha).map((b) => b.slug).sort().join(' ');
+          if (bases.split(' ').sort().join(' ') !== slugs) fail('page-ratios', rel, `${mha} ratio tables shown for "${bases}", not that MHA's bases`);
+          for (const [, band, cells] of rows.matchAll(/<tr data-band-row="([^"]+)"[^>]*>([\s\S]*?)<\/tr>/g)) {
+            const vals = [...cells.matchAll(/<td class="num">([^<]*)<\/td>/g)].map((m) => m[1]);
+            [2, 3, 4].forEach((br, i) => {
+              ratioCells++;
+              const w = want(zip, band, br, mha);
+              if ((w ? fmt(w) : '—') !== vals[i]) fail('page-ratios', rel, `${zip} ${band} ${br}-bed against ${mha}: page "${vals[i]}", rent ÷ BAH ${w ? fmt(w) : '—'}`);
+            });
+          }
+        }
+      }
+      if (seen.size !== mhas.length) fail('page-ratios', rel, `ratio tables for ${[...seen].join(', ') || 'no MHA'}, need ${mhas.join(', ')}`);
+      // The plan's ratios: the range across the zips, per MHA.
+      for (const mha of mhas) for (const band of Object.keys(BANDS)) for (const br of [2, 3, 4]) {
+        const ws = zips.map((z) => want(z, band, br, mha)).filter(Boolean);
+        const got = n.ratios[mha]?.[band]?.[br];
+        const exp = ws.length ? [Math.min(...ws.map((w) => w[0])), Math.max(...ws.map((w) => w[1]))] : undefined;
+        if (JSON.stringify(got) !== JSON.stringify(exp)) fail('page-ratios', `plan data ${n.slug}`, `${band} ${br}-bed ${mha}: ${JSON.stringify(got)}, rent ÷ BAH ${JSON.stringify(exp)}`);
+      }
+    }
+    // Plan lines: the ratio shown is the one for the MHA of the base the line's source names (?base=).
+    let ratioLines = 0;
+    for (const base of [...data.bases.map((b) => b.code), 'unsure']) for (const band of data.bands) for (const bedrooms of ['2', '3', '4plus']) {
+      const a = make({ partner: false, kids: kids({}), cats: 0, dogs: 0, base, band, bedrooms, open: ['renting'], timeline: '60-90', priorities: ['where', 'cost'] });
+      const br = rules.bedroomRow(a);
+      for (const s of rules.buildPlan(a, data, config).sections) for (const line of s.lines) {
+        const m = line.text.match(/^(.+?): .*?(\d+)(?:–(\d+))?% of the [^;]*allowance/);
+        if (!m) continue;
+        ratioLines++;
+        const n = data.neighborhoods.find((x) => x.name === m[1]);
+        const slug = (line.sources[0].url.match(/\?base=([\w-]+)/) ?? [])[1];
+        const b = data.bases.find((x) => x.slug === slug);
+        const exp = n && b ? n.ratios[b.mha]?.[band]?.[br] : null;
+        if (!b) fail('page-ratios', `${base} ${band} ${s.id}`, `ratio line without ?base= on its source: "${line.text.slice(0, 70)}"`);
+        else if (base !== 'unsure' && b.code !== base) fail('page-ratios', `${base} ${band} ${s.id}`, `ratio line cites ${b.short}, not the chosen base`);
+        else if (!exp || exp[0] !== Number(m[2]) || exp[1] !== Number(m[3] ?? m[2])) fail('page-ratios', `${base} ${band} ${s.id}`, `"${line.text.slice(0, 80)}": expected ${JSON.stringify(exp)} for ${b.mha}`);
+      }
+    }
+    passes.push(`page-ratios: ${ratioRows.length.toLocaleString('en-US')} exported ratios, ${ratioCells.toLocaleString('en-US')} page cells and ${ratioLines.toLocaleString('en-US')} plan lines against rent ÷ BAH for the duty station's MHA`);
+
     passes.push(`intake: ${plans.toLocaleString('en-US')} plans, ${seenLines.size.toLocaleString('en-US')} distinct lines, ${seenSections.size} distinct section headings checked in ${((Date.now() - t0) / 1000).toFixed(1)} s; ${fallbackLead.toLocaleString('en-US')} lead with the second priority (the first has no lead yet), ${noLead.toLocaleString('en-US')} say they have no lead yet`);
     passes.push(`intake-bah: ${bahLines.toLocaleString('en-US')} distinct BAH lines, each against bah.json`);
     passes.push(`intake: rules ${rules.RULES_VERSION}; ${config.priorities.length} priorities, ${config.tradeoffs.length} tradeoff pairs written`);
   }
 }
 
-const checks = ['intake-network', 'intake-sources', 'intake-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers', 'page-tiers'];
+const checks = ['intake-network', 'intake-sources', 'intake-bah', 'intake-words', 'intake-config', 'intake-dates', 'intake-tiers', 'page-tiers', 'page-ratios'];
 const byCheck = failures.reduce((acc, f) => ((acc[f.check] ??= []).push(f), acc), {});
 console.log('\nStarting plan checks (dist)');
 for (const c of checks) {

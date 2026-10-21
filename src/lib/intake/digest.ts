@@ -26,13 +26,16 @@ export async function intakeDigest() {
   const ownership = (await getCollection('ownership')).map((r) => r.data);
   const care = (await getCollection('childcare')).map((r) => r.data);
   const schools = (await getCollection('schools')).map((r) => r.data);
+  const bahT = await bahTable();
 
   const neighborhoods = await Promise.all((await getCollection('communities')).map(async ({ data: c }) => {
+    // Ratios by duty-station MHA (the reader's base decides which; QUESTIONS 62), then band and bedrooms:
+    // the range across the neighborhood's zips, as the page's table shows it.
     const rs = ratios.filter((r) => c.zips.includes(r.zip));
-    const bandRatios = Object.fromEntries(PAY_BAND_ORDER.map((band) => [band, Object.fromEntries([2, 3, 4].flatMap((br) => {
-      const xs = rs.filter((r) => r.pay_band === band && r.bedrooms === br);
+    const bandRatios = Object.fromEntries(bahT.areas.map(({ mha }) => [mha, Object.fromEntries(PAY_BAND_ORDER.map((band) => [band, Object.fromEntries([2, 3, 4].flatMap((br) => {
+      const xs = rs.filter((r) => r.mha === mha && r.pay_band === band && r.bedrooms === br);
       return xs.length ? [[br, [Math.min(...xs.map((r) => r.ratio_low_pct)), Math.max(...xs.map((r) => r.ratio_high_pct))]]] : [];
-    }))]));
+    }))]))]));
     // Same wording rule as the neighborhood page's Cost summary.
     const cfd = new Set(ownership.filter((o) => o.community_slug === c.slug).map((o) => o.has_cfd));
     const mello = !cfd.size ? 'unmatched' : cfd.has('unknown') || cfd.has('mixed') ? 'check' : cfd.has('Y') ? 'charge' : 'none';
@@ -52,7 +55,6 @@ export async function intakeDigest() {
   const districts = Object.fromEntries((await getCollection('districts')).map((d) => [d.id, d.data.boundary_url]));
 
   // BAH by MHA, as the base pages' tables show it: [with, without dependents] per grade, by band.
-  const bahT = await bahTable();
   const bah = Object.fromEntries(bahT.areas.map((a) => [a.mha, {
     year: a.year, area: a.area, verified_on: a.verified_on,
     grades: a.rows.map((r) => ({ grade: r.grade, band: r.pay_band, with: r.with_dependents, without: r.without_dependents })),

@@ -130,3 +130,10 @@
 - **A pull is not an update.** The local branch was 12 commits behind `origin/main` with a clean tree, and `node_modules` was missing a dependency the new commits added; the Functions bundle check caught it. Check `git status -sb` and run `npm ci` after pulling.
 - **Diff the plan, not just the checks.** Building the previous commit in a worktree and diffing every line over the same answers showed exactly 184 new lines and nothing else changed, which the checks alone can't say.
 
+## Session 9b (2026-10-20): the ratio follows the duty station
+
+- **Two scripts toggling `hidden` on the same elements fight.** The band script and the base script each set `hidden` from one attribute, so an element that varies by both would show whenever either matched. One module (`src/scripts/variants.ts`) now decides from all of an element's variant attributes at once.
+- **A non-greedy regex isn't an HTML parser.** The corpus stripped hidden variants with `<div hidden>…</div>`, matching to the first closing tag. That was safe only while no hidden element held a nested div. The per-MHA ratio wrapper does, so it's now balanced on the tag.
+- **Recompute, don't compare a thing with itself.** `page-ratios` doesn't trust the export: it divides rent by BAH again (rounding halves to even, as Python does) and checks the export, the pages and the plan against that.
+- **Repeated words still rank.** One "BAH" in the ratio note and "allowance" in every caption were enough to send BAH questions back to 40 Cost sections. Wording on repeated sections is part of retrieval tuning.
+

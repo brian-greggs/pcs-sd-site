@@ -83,7 +83,18 @@ function unrankedLines(html) {
   return lines;
 }
 // Of the per-base and per-band variants a page renders (the page script shows one), keep the visible default.
-const stripHidden = (html) => html.replace(/<(\w+)\b[^>]*\shidden(?:="")?[^>]*>[\s\S]*?<\/\1>/g, ' ');
+// Balanced on the element's own tag, so a hidden wrapper takes its nested divs (the ratio tables per MHA) with it.
+function stripHidden(html) {
+  let out = html, m;
+  while ((m = out.match(/<(\w+)\b[^>]*\shidden(?:="")?(?=[\s>])[^>]*>/))) {
+    const re = new RegExp(`<${m[1]}\\b[^>]*>|</${m[1]}>`, 'gi');
+    re.lastIndex = m.index + m[0].length;
+    let depth = 1, end = m.index + m[0].length, x; // no closing tag (a void element): drop the tag alone
+    while ((x = re.exec(out))) { if (x[0][1] !== '/') depth++; else if (--depth === 0) { end = x.index + x[0].length; break; } }
+    out = out.slice(0, m.index) + ' ' + out.slice(end);
+  }
+  return out;
+}
 const isRow = (l) => l.includes(' | ');
 function windows(t) {
   if (t.length <= MAX_CHARS) return [t];

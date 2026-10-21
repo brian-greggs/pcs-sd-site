@@ -35,11 +35,5 @@ export async function bahTable() {
   });
   for (const b of BASES) if (!areas.some((a) => a.mha === mhaOfBase[b.code])) throw new Error(`bah.json has no rows for ${b.short}'s MHA ${mhaOfBase[b.code]}`);
   const areaOf = (code: string) => areas.find((a) => a.mha === mhaOfBase[code])!;
-  // The most the two areas' with-dependents figures differ for any one grade, as a share of the lower one.
-  const grades = [...new Set(rows.map((r) => r.grade))];
-  const maxGapPct = Math.max(0, ...grades.map((g) => {
-    const vs = rows.filter((r) => r.grade === g).map((r) => r.with_dependents);
-    return vs.length > 1 ? (100 * (Math.max(...vs) - Math.min(...vs))) / Math.min(...vs) : 0;
-  }));
-  return { rows, areas, areaOf, mhaOfBase, maxGapPct };
+  return { rows, areas, areaOf, mhaOfBase };
 }

@@ -18,7 +18,7 @@ import { tierOf } from '../tiers.js';
 
 // A place's tier comes from the top of its drive range (src/lib/tiers.js, shared with the base pages):
 // "under 30 minutes" means every zip in it is under 30, so Vista at 14–35 is a 30–44 place.
-export const RULES_VERSION = 'v0.6';
+export const RULES_VERSION = 'v0.7';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
@@ -166,18 +166,23 @@ function context(a, data, config) {
     housing: unsureOpen || a.open.includes('base-housing'),
   };
   const baseName = base ? base.short : 'the nearest base';
+  // Base not chosen: a place's nearest bases by drive (the same order the line lists them in).
+  const nearestOf = (place) => Object.entries(place.drives).map(([code, d]) => ({ code, ...d })).sort((x, y) => x.lo - y.lo || x.code.localeCompare(y.code));
   // A neighborhood's drive for this plan: to the chosen base, or (base not chosen) to its two nearest bases.
   const driveOf = (place) => {
     if (base) {
       const d = place.drives[base.code];
       return d ? { lo: d.lo, hi: d.hi, tier: tierOf(d.hi), text: `${mins(d)} to ${base.short}` } : null;
     }
-    const near = Object.entries(place.drives).map(([code, d]) => ({ code, ...d })).sort((x, y) => x.lo - y.lo || x.code.localeCompare(y.code)).slice(0, 2);
+    const near = nearestOf(place).slice(0, 2);
     if (!near.length) return null;
     const name = (code) => data.bases.find((b) => b.code === code).short;
     return { lo: near[0].lo, hi: near[0].hi, tier: tierOf(near[0].hi), text: near.map((d) => `${mins(d)} to ${name(d.code)}`).join(', ') };
   };
-  const ratioOf = (n) => n.ratios[a.band]?.[br] ?? null;
+  // The ratio divides by the BAH of the duty station's housing area (rules v0.7, QUESTIONS 62): the chosen
+  // base's MHA, or (base not chosen) the nearest base's, which the line then names.
+  const ratioBase = (n) => base ?? data.bases.find((b) => b.code === nearestOf(n)[0]?.code) ?? null;
+  const ratioOf = (n) => { const b = ratioBase(n); return b ? n.ratios[b.mha]?.[a.band]?.[br] ?? null : null; };
   const placesIn = (tiers) => data.neighborhoods
     .map((n) => ({ n, drive: driveOf(n) }))
     .filter((x) => x.drive && tiers.includes(x.drive.tier))
@@ -205,8 +210,9 @@ function context(a, data, config) {
     return { rows: rows.length, lo: Math.min(...known.map((w) => w.lo)), hi: Math.max(...known.map((w) => w.hi)), first: { lo: first.lo, hi: first.hi } };
   };
   const brText = `${br}-bed`;
+  // A line with a ratio links the page with ?base= for the base the ratio uses, so the page shows that table.
   const nbSource = (n, ...what) => ({
-    url: `/communities/${n.slug}/`, title: n.name,
+    url: `/communities/${n.slug}/${what.includes('ratio') && ratioBase(n) ? `?base=${ratioBase(n).slug}` : ''}`, title: n.name,
     dates: what.map((w) => `${DATE_LABEL[w]}: ${data.dates[w]}`).join('. '),
   });
   // A base housing area page, dated only by the facts the line uses: 'waits' (Camp Pendleton isn't on the
@@ -227,7 +233,7 @@ function context(a, data, config) {
   const baseSource = (what) => (base
     ? { url: `/base/${base.slug}/`, title: base.short, dates: what.map((w) => `${DATE_LABEL[w]}: ${data.dates[w]}`).join('. ') }
     : { url: '/neighborhoods/', title: 'Neighborhoods', dates: what.map((w) => `${DATE_LABEL[w]}: ${data.dates[w]}`).join('. ') });
-  return { a, data, config, base, baseName, br, brText, open, driveOf, ratioOf, placesIn, areas, caveat, waitOf, nbSource, areaSource, linkSource, ext, baseSource };
+  return { a, data, config, base, baseName, br, brText, open, driveOf, ratioBase, ratioOf, placesIn, areas, caveat, waitOf, nbSource, areaSource, linkSource, ext, baseSource };
 }
 
 const DATE_LABEL = {
@@ -246,7 +252,8 @@ const MELLO = {
 
 function placeLine(c, { n, drive }, firstFact) {
   const r = c.ratioOf(n);
-  const ratio = r ? `${c.brText} rent is ${span(r[0], r[1], '%')} of the ${c.a.band} housing allowance` : `no rent-to-allowance ratio for ${c.brText}`;
+  const at = c.base || !c.ratioBase(n) ? '' : ` at ${c.ratioBase(n).short}`; // base not chosen: say whose allowance
+  const ratio = r ? `${c.brText} rent is ${span(r[0], r[1], '%')} of the ${c.a.band} housing allowance${at}` : `no rent-to-allowance ratio for ${c.brText}`;
   const parts = firstFact === 'drive' ? [drive.text, ratio] : [ratio, drive.text];
   if (c.open.buying) parts.push(MELLO[n.mello]);
   return {
@@ -278,7 +285,7 @@ function leadPlaces(c) {
   const sections = [{
     id: 'lead',
     heading: c.base ? `Neighborhoods under 30 minutes from ${c.base.short}` : 'Neighborhoods under 30 minutes from their nearest base',
-    note: `Sorted by the weekday drive at 0700.${c.base ? '' : ' You’re not sure of your base yet, so each one shows its two nearest bases.'} Rent is HUD’s reference rent for ${c.br} bedrooms${c.br === 4 && c.a.bedrooms !== 'help' ? ' (the largest row we have)' : ''} as a share of the ${c.a.band} housing allowance.`,
+    note: `Sorted by the weekday drive at 0700.${c.base ? '' : ' You’re not sure of your base yet, so each one shows its two nearest bases.'} Rent is HUD’s reference rent for ${c.br} bedrooms${c.br === 4 && c.a.bedrooms !== 'help' ? ' (the largest row we have)' : ''} as a share of the ${c.a.band} housing allowance${c.base ? ` at ${c.base.short}` : ' at each neighborhood’s nearest base'} (BAH follows your duty station).`,
     lines: rows.map((x) => placeLine(c, x, 'drive')),
   }];
   if (c.open.housing && c.areas.length) {

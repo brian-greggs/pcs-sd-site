@@ -1,6 +1,20 @@
-# Site build — status (2026-10-20, session 9: BAH dollar figures, v0.6, rules v0.6)
+# Site build — status (2026-10-20, session 9b: ratio by the duty station's MHA, v0.6.1, rules v0.7)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). Not built, by design: F2 sequence, F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 9b: the ratio follows the duty station (QUESTIONS 62; v0.6.1, rules v0.7)
+
+Brian's answer to 62: re-base the rent-to-BAH ratio on the reader's base, on the pages and in the plan.
+
+- **Data:** `rent_to_bah.json` has one row per zip × band × bedrooms × duty-station MHA (CA038, CA024): 4,074 rows, was 2,037. `mha` now means the MHA divided by, i.e. the reader's base's.
+- **Neighborhood pages:** the ratio tables and the "3-bed rent vs. BAH" tile are rendered once per MHA and shown for that MHA's bases (`data-mha-bases`), like the BAH lines: `?base=` from a base page, else the nearest base. Each table's caption names the area ("Zip 92054 · San Diego area (MHA CA038)"). The note now says the ratio uses the same figures as the BAH lines above. The old "differs by at most 3.1%" note is gone.
+- **One variant script:** `src/scripts/variants.ts` handles band, base-specific MHA variants and the commute tile on neighborhood and base housing pages (an element shows only when every variant attribute it has matches). It replaces each page's own script and the one in `BahLines.astro`.
+- **Plan (rules v0.7):** a ratio uses the chosen base's MHA. With no base chosen, it uses the nearest base's MHA and the line says so ("…of the E5–E6 housing allowance at Camp Pendleton"). Ratio lines cite `/communities/<slug>/?base=<that base>`. Diff against the v0.6 build over the same answers: 472 lines changed ratio, almost all North County places and Camp Pendleton plans (Encinitas 92, San Marcos 88, Carlsbad 76, Del Mar / Solana Beach 46, Carmel Valley 46, …). Also 8,434 lines gained `?base=` on their source, and not-sure lines gained "at <base>". No other line changed.
+- **New check `page-ratios`** (`check_intake.mjs`): recomputes every ratio from `rent.json` ÷ `bah.json` (round half to even, like the export) and compares the 4,074 exported rows, the 3,234 page cells (and that each MHA's tables are shown for exactly that MHA's bases), the plan's embedded ratios, and 2,898 plan lines (the ratio for the MHA of the base the line cites). Planting a wrong exported row, swapped base lists on Vista's page, and the plan always using San Diego's ratios: all caught.
+- **Corpus:** `stripHidden` is now balanced on the element's tag, so a hidden wrapper takes its nested divs with it (the old non-greedy match would have leaked the hidden MHA's tables). The ratio note and captions avoid the words "BAH" and "allowance" repeated per table, which had pulled BAH questions back to the neighborhood Cost sections (in-09, bait-bah-02).
+- **Eval:** cr-03 (Escondido, E7–E9, 3 bed) now expects 73–77% for zip 92025 against the San Diego area (its default base is Miramar); it was 72–76% against Camp Pendleton's.
+
+Checks on 2026-10-20: all page checks; all nine intake checks (`page-ratios` new); the three Functions checks; layout clean on 75 pages at four widths; in the browser, Oceanside from NBSD and from Camp Pendleton shows the matching area's BAH lines, ratio tables and tile, and the band follows; Murphy Canyon from Camp Pendleton shows CA024. Retrieval-only eval: expected fact 27 of 28 (in-16), expected section 24 of 24, out-of-scope 3 of 4 (out-02), `bah_sourced` 24 of 24: same as session 9.
 
 ## Session 9: BAH dollar figures (v0.6, rules v0.6)
 

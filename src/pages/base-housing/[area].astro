@@ -110,7 +110,7 @@ const sections = [
 <Base title={`${area.name} base housing`} back={{ href: '/base-housing/', label: 'Base housing' }} description={`Base housing in ${area.name}: communities, wait times, pet policy, how to apply, and the commute, schools and hazards around it.`}>
   <div class="page-grid">
   <Toc items={sections} />
-  <div class="page-main">
+  <div class="page-main" data-default-base={drive ? baseByCode(drive.code).slug : undefined}>
   <p class="eyebrow">Base housing</p>
   <h1>{area.name}</h1>
   <p class="kicker">{memberWord} · {zips.join(', ')}{area.base_tie_note ? ` · ${area.base_tie_note}` : ''}</p>
@@ -242,21 +242,8 @@ const sections = [
 </Base>
 
 <script>
-  // Pay band: remembered on this device only (localStorage, wrapped so blocked storage is fine). Same key as
-  // the neighborhood pages, so the band follows the reader between pages.
-  const KEY = 'pcs-sd:pay-band';
-  const select = document.querySelector<HTMLSelectElement>('[data-band-select]');
-  const showBand = (band: string) => {
-    document.querySelectorAll<HTMLElement>('[data-band-show]').forEach((el) => { el.hidden = el.dataset.bandShow !== band; });
-  };
-  if (select) {
-    let saved: string | null = null;
-    try { saved = localStorage.getItem(KEY); } catch { /* storage blocked */ }
-    if (saved && [...select.options].some((o) => o.value === saved)) { select.value = saved; showBand(saved); }
-    select.addEventListener('change', () => {
-      showBand(select.value);
-      try { localStorage.setItem(KEY, select.value); } catch { /* storage blocked */ }
-    });
-    document.querySelector<HTMLElement>('[data-band-picker]')!.hidden = false;
-  }
+  // Pay band (kept on this device, same key as the neighborhood pages) and ?base=<slug> from a base page,
+  // which pick the BAH lines shown: src/scripts/variants.ts.
+  import { initVariants } from '../../scripts/variants';
+  initVariants();
 </script>

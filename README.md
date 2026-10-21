@@ -73,7 +73,7 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/components/ExtLink.astro` | Every outbound link, with its incentive label |
 | `scripts/check_principles.mjs` | The build-time principle checks |
 | `scripts/principle_lists.mjs` | The word lists every check uses (demographic terms, score words, placeholder patterns) |
-| `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes, and every line the rules can print (built across the answer space) has a source and a date, every dollar figure is a BAH line from `bah.json` with its year, MHA and BAH date, and passes the word lists |
+| `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes, and every line the rules can print (built across the answer space) has a source and a date, every dollar figure is a BAH line from `bah.json` with its year, MHA and BAH date, and passes the word lists; `page-ratios` recomputes every rent-to-BAH ratio (rent ÷ the duty station's BAH) and checks the export, the pages and the plan against it |
 | `scripts/check_functions.mjs` | Postbuild: the code `functions/` reaches uses no syntax Cloudflare's wrangler 3 can't parse, no JSON or Node built-in imports, no `process.env`; the bundled Function fits the free-plan size limit |
 | `scripts/build_corpus.mjs` | Postbuild: chunks every published page by dated section into `dist/assistant/corpus.json` with BM25 postings (the assistant's only knowledge) |
 | `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, intake context, daily cap) |
@@ -82,4 +82,5 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `evals/assistant_eval.jsonl`, `scripts/eval_assistant.mjs` | 36 test questions and the runner: `npm run eval:assistant` (retrieval only), `-- --live`, or `-- --url <deployed site>` |
 | `scripts/check_layout.mjs` | Layout check, run by hand: every page at 390/768/1280/1440 px, no sideways scroll (needs Chrome; usage at the top) |
 | `scripts/bah_check_allow.json` | Reviewed coincidences where a HUD rent equals a BAH figure (two, each for one page) |
+| `src/scripts/variants.ts` | Which per-base and per-band variants a neighborhood or base housing page shows (pay band, the base's MHA for BAH and ratios, the commute tile) |
 | `src/lib/bah.ts`, `src/components/BahLines.astro` | The BAH table by MHA and the per-band lines on neighborhood and base housing pages (marked up for the `bah-figures` check) |

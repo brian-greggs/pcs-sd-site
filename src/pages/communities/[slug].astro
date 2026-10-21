@@ -6,9 +6,10 @@
 // own pages (/base-housing/<area>/) and isn't on this one.
 //
 // "At a glance" and the pay-band picker: every variant (each base, each pay
-// band) is rendered into the page and the script only toggles which one shows,
-// so the principle checks see every word, and with JavaScript off or storage
-// blocked the page shows the nearest base and E5–E6. Nothing leaves the device.
+// band, and for BAH and the rent-to-BAH ratio each duty-station MHA) is rendered
+// into the page and src/scripts/variants.ts only toggles which one shows, so the
+// principle checks see every word, and with JavaScript off or storage blocked the
+// page shows the nearest base and E5–E6. Nothing leaves the device.
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
@@ -47,8 +48,9 @@ const { asOf } = await provenance();
 const rent = (await getCollection('rent')).filter(inZips).map((r) => r.data);
 const ratios = (await getCollection('rentToBah')).filter(inZips).map((r) => r.data);
 const bands = PAY_BAND_ORDER.filter((b) => ratios.some((r) => r.pay_band === b));
-const ratioCell = (zip: string, band: string, br: number) => {
-  const r = ratios.find((x) => x.zip === zip && x.pay_band === band && x.bedrooms === br);
+// The ratio divides by the BAH of the reader's duty station (one row per MHA; Brian 2026-10-20, QUESTIONS 62).
+const ratioCell = (zip: string, band: string, br: number, mha: string) => {
+  const r = ratios.find((x) => x.zip === zip && x.pay_band === band && x.bedrooms === br && x.mha === mha);
   return r ? range(r.ratio_low_pct, r.ratio_high_pct, '%') : '—';
 };
 const ownership = (await getCollection('ownership')).filter((r) => r.data.community_slug === slug).map((r) => r.data);
@@ -70,8 +72,8 @@ const DEFAULT_BAND = 'E5–E6';
 const ds = await drives(zips);
 const spanOf = (lo: number[], hi: number[], unit: string) =>
   lo.length ? range(Math.min(...lo), Math.max(...hi), unit) : '—';
-const ratio3 = (band: string) => {
-  const rs = ratios.filter((r) => r.pay_band === band && r.bedrooms === 3);
+const ratio3 = (band: string, mha: string) => {
+  const rs = ratios.filter((r) => r.pay_band === band && r.bedrooms === 3 && r.mha === mha);
   return spanOf(rs.map((r) => r.ratio_low_pct), rs.map((r) => r.ratio_high_pct), '%');
 };
 const schoolRows = (await getCollection('schools')).filter(inZips).map((r) => r.data);
@@ -95,12 +97,8 @@ const costSummary = `3-bed HUD rent ${rent3Text} · ${melloLine}`;
 // BAH (Brian 2026-10-20): the figures for the reader's base (?base=, else the nearest) and pay band, next to
 // the rent. The ratio below divides by the zip's own MHA, which can be the other one; the note says so.
 const bah = await bahTable();
+const defaultBase = ds[0] ? baseByCode(ds[0].code).slug : null;
 const bahDefault = ds[0] ? bah.areaOf(ds[0].code).mha : bah.areas[0].mha;
-const zipMhas = [...new Set(ratios.map((r) => r.mha))];
-const mhaName = (m: string) => `${bah.areas.find((a) => a.mha === m)!.area} (${m})`;
-const ratioMhaText = zipMhas.length === 1
-  ? `the ${mhaName(zipMhas[0])} area, where ${multiZip ? 'these zips are' : 'this zip is'}`
-  : zipMhas.map((m) => `${mhaName(m)} for ${[...new Set(ratios.filter((r) => r.mha === m).map((r) => r.zip))].join(', ')}`).join(' and ');
 
 const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 const sections = [
@@ -114,7 +112,7 @@ const sections = [
 <Base title={community.name} back={{ href: '/neighborhoods/', label: 'Neighborhoods' }} description={`${community.name}: cost, commute, schools, child care and hazards, side by side with dates.`}>
   <div class="page-grid">
   <Toc items={sections} />
-  <div class="page-main">
+  <div class="page-main" data-default-base={defaultBase}>
   <h1>{community.name}</h1>
   <p class="kicker">{community.corridor} · {zips.join(', ')}</p>
 
@@ -142,12 +140,12 @@ const sections = [
       </div>
       <div class="tile mauve">
         <dt>3-bed rent vs. BAH</dt>
-        {bands.map((b) => (
-          <dd data-band-show={b} hidden={b !== DEFAULT_BAND}>
-            <span class="tile-value">{ratio3(b)}</span>
-            <span class="tile-sub">HUD rent, {b}</span>
+        {bah.areas.map((a) => bands.map((b) => (
+          <dd data-band-show={b} data-mha-bases={a.bases.join(' ')} hidden={b !== DEFAULT_BAND || a.mha !== bahDefault}>
+            <span class="tile-value">{ratio3(b, a.mha)}</span>
+            <span class="tile-sub">HUD rent, {b}, {a.area} area BAH</span>
           </dd>
-        ))}
+        )))}
         {bands.length === 0 && <dd><span class="tile-value">—</span><span class="tile-sub">No HUD rent for this zip</span></dd>}
       </div>
       <div class="tile blue">
@@ -191,18 +189,22 @@ const sections = [
 
     <h3>Rent as a share of your housing allowance</h3>
     {ratioGap && <p class="gap">{ratioGap}</p>}
-    <p class="note">HUD reference rent for that many bedrooms, divided by the 2026 allowance with dependents for {ratioMhaText}. Under 100% means the reference rent fits inside the allowance. A band shows a range when its grades get different allowances. If your base is in the other housing area, its allowance differs from the one in the ratio by at most {bah.maxGapPct.toFixed(1)}% for any grade.</p>
-    {rent.filter((r) => ratios.some((x) => x.zip === r.zip)).map((r) => (
-      <div class="table-wrap">
-        <table>
-          {multiZip && <caption>Zip {r.zip}</caption>}
-          <thead><tr><th>Pay band</th><th class="num">2 bed</th><th class="num">3 bed</th><th class="num">4 bed</th></tr></thead>
-          <tbody>
-            {bands.map((band) => (
-              <tr data-band-row={band} class={band === DEFAULT_BAND ? 'picked' : undefined}><td>{band}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, band, br)}</td>)}</tr>
-            ))}
-          </tbody>
-        </table>
+    <p class="note">HUD reference rent for that many bedrooms, divided by the 2026 allowance with dependents for your base's housing area, the same figures as the lines above: the allowance follows your duty station, not where you live. Under 100% means the reference rent fits inside the allowance. A band shows a range when its grades get different allowances.</p>
+    {bah.areas.map((a) => (
+      <div class="ratio-area" data-mha-bases={a.bases.join(' ')} hidden={a.mha !== bahDefault}>
+        {rent.filter((r) => ratios.some((x) => x.zip === r.zip && x.mha === a.mha)).map((r) => (
+          <div class="table-wrap">
+            <table>
+              <caption>{multiZip ? `Zip ${r.zip} · ` : ''}{a.area} area (MHA {a.mha})</caption>
+              <thead><tr><th>Pay band</th><th class="num">2 bed</th><th class="num">3 bed</th><th class="num">4 bed</th></tr></thead>
+              <tbody>
+                {bands.map((band) => (
+                  <tr data-band-row={band} class={band === DEFAULT_BAND ? 'picked' : undefined}><td>{band}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, band, br, a.mha)}</td>)}</tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
       </div>
     ))}
 
@@ -234,29 +236,10 @@ const sections = [
 </Base>
 
 <script>
-  // Pay band: remembered on this device only (localStorage, wrapped so blocked storage is fine).
-  // Base: ?base=<slug> from a base page picks the commute shown and the back link.
-  const KEY = 'pcs-sd:pay-band';
-  const select = document.querySelector<HTMLSelectElement>('[data-band-select]');
-  const showBand = (band: string) => {
-    document.querySelectorAll<HTMLElement>('[data-band-show]').forEach((el) => { el.hidden = el.dataset.bandShow !== band; });
-    document.querySelectorAll<HTMLElement>('[data-band-row]').forEach((el) => el.classList.toggle('picked', el.dataset.bandRow === band));
-  };
-  if (select) {
-    let saved: string | null = null;
-    try { saved = localStorage.getItem(KEY); } catch { /* storage blocked */ }
-    if (saved && [...select.options].some((o) => o.value === saved)) { select.value = saved; showBand(saved); }
-    select.addEventListener('change', () => {
-      showBand(select.value);
-      try { localStorage.setItem(KEY, select.value); } catch { /* storage blocked */ }
-    });
-    document.querySelector<HTMLElement>('[data-band-picker]')!.hidden = false;
-  }
-
-  const base = new URLSearchParams(location.search).get('base');
-  const els = base ? [...document.querySelectorAll<HTMLElement>('[data-base]')] : [];
-  if (base && els.some((el) => el.dataset.base === base)) {
-    els.forEach((el) => { el.hidden = el.dataset.base !== base; });
+  // Pay band and base (?base=<slug> from a base page): src/scripts/variants.ts. The base also sets the back link.
+  import { initVariants } from '../../scripts/variants';
+  const { base } = initVariants();
+  if (base) {
     const back = document.querySelector<HTMLAnchorElement>('[data-back]');
     if (back) { back.href = `/base/${base}/`; back.setAttribute('aria-label', 'Back to your base'); }
   }

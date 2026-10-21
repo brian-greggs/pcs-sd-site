@@ -20,7 +20,7 @@
  {
   "id": "rent_to_bah",
   "title": "Rent-to-BAH ratio",
-  "source_name": "HUD FY2027 SAFMR ÷ DTMO 2026 BAH (with dependents, the zip's own MHA)",
+  "source_name": "HUD FY2027 SAFMR ÷ DTMO 2026 BAH (with dependents, for your base's housing area)",
   "source_url": "https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/",
   "license": "Public domain (derived)",
   "vintage": "FY2027 / 2026",
