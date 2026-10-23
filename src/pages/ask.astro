@@ -41,7 +41,8 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <script>
-  const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
+  import { parseAnswer } from '../../assistant/format.js';
+  const $ =<T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
   const root = $('[data-ask]');
   const log = $('[data-log]');
   const q = $<HTMLTextAreaElement>('[data-q]');
@@ -91,6 +92,27 @@ import Base from '../layouts/Base.astro';
     if (text != null) e.textContent = text;
     return e;
   };
+  // An answer's bold, lists and site links (assistant/format.js); everything else stays text.
+  const fill = (parent: HTMLElement, tokens: { type: string; text: string; href?: string }[]) => {
+    for (const t of tokens) {
+      if (t.type === 'strong') parent.append(el('strong', undefined, t.text));
+      else if (t.type === 'link') {
+        const link = el('a', undefined, t.text) as HTMLAnchorElement;
+        link.href = t.href!;
+        parent.append(link);
+      } else parent.append(t.text);
+    }
+  };
+  const answerText = (text: string) => {
+    const box = el('div', 'ask-text');
+    for (const b of parseAnswer(text)) {
+      if (b.type === 'p') { const p = el('p'); fill(p, b.inline); box.append(p); continue; }
+      const list = el(b.type);
+      for (const item of b.items) { const li = el('li'); fill(li, item); list.append(li); }
+      box.append(list);
+    }
+    return box;
+  };
   const render = () => {
     log.replaceChildren();
     for (const { question, reply } of history) {
@@ -98,15 +120,17 @@ import Base from '../layouts/Base.astro';
       li.append(el('p', 'ask-you', question));
       const a = el('div', 'ask-answer');
       if (reply.error) a.append(el('p', 'gap', reply.error));
-      if (reply.answer) a.append(el('p', 'ask-text', reply.answer));
+      if (reply.answer) a.append(answerText(reply.answer));
       if (reply.note) a.append(el('p', 'note', reply.note));
+      // Only the sections the answer cites, under the label it cites them by (assistant/cite.js).
       if (reply.citations?.length) {
         const ul = el('ul', 'links');
         for (const c of reply.citations) {
           const item = el('li');
-          const link = el('a', undefined, `${c.title}: ${c.section}`) as HTMLAnchorElement;
+          const link = el('a', undefined, c.label ?? `${c.title}: ${c.section}`) as HTMLAnchorElement;
           link.href = c.url;
-          item.append(link, ` · verified ${c.verified_on}`);
+          item.append(link);
+          if (c.verified_on) item.append(` · verified ${c.verified_on}`);
           ul.append(item);
         }
         a.append(el('p', 'note', 'From:'), ul);

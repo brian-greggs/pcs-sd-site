@@ -240,7 +240,9 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outl
 .ask-turn { margin: 12px 0; }
 .ask-you { margin: 0 0 6px; padding: 10px 14px; border-radius: var(--radius); background: var(--mauve-bg); color: var(--text); }
 .ask-answer { padding: 10px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-.ask-text { white-space: pre-line; margin: 0.4rem 0; }
+.ask-text { margin: 0.4rem 0; }
+.ask-text :is(p, ul, ol) { margin: 0.4rem 0; }
+.ask-text :is(ul, ol) { padding-left: 1.3rem; }
 .ask-box { margin-top: 16px; }
 .ask-label { display: block; font-weight: 700; margin-bottom: 6px; }
 textarea {

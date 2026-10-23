@@ -1,5 +1,11 @@
 # Questions — site build
 
+## Session 11e (2026-10-22): first live eval, answer display
+
+65. **Three eval rules fail answers that are right** (first live run, STATUS session 11e). (a) `expect_answer` patterns want digits: in-04 failed on "Five of the 25". Allow number words, or tell the model to write numbers as digits? (b) `bah_sourced` counts any dollar figure within 120 characters of "allowance", so HUD rents in a rent-vs-allowance answer fail it (in-15, cr-03), the eval-side twin of 52. Narrow it to figures that equal a `bah.json` value or sit in the same clause as "BAH"? (c) `honest_gap` missed "covers base housing, not private apartment complexes" (nyc-02). Add "covers … not" and "can't name" to its list? I left all three as they were.
+66. **The model's "I don't have that" lists the nearest page, not every section sent.** You asked for the full list when no label matches. For an answer that says the material doesn't cover it, six unrelated sections under "From:" read as sources for an answer that has none, so it lists just the nearest page, as the fixed "I don't have that" does. Keep, or full list there too?
+67. **Labels instead of dates in the answer.** The model used to write "(Santee, verified 2026-09-18, /communities/santee/#cost)"; now it writes "(Santee: Cost)", and the date sits beside the link under the answer. Every answer still shows a verified date for each section it cites, just not in the sentence. The eval's `dated` rule now checks the From list. OK, or keep the date in the sentence too?
+
 ## Session 11d (2026-10-22): DLA rates, effective date, F2-12
 
 Nothing new for the site. F2-19 (DLA rates) and F2-12 (DFAS) are closed in the data repo's QUESTIONS; no F2 question is open there.

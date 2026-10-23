@@ -156,3 +156,10 @@
 
 - **A field that was "one of" became "a list of".** Making `unconfirmed` a list touched the data check, the export, the schema, two pages, the plan's line builder and the sequence check. The plan's check compares JSON, so it followed without a change; every place that read `.ask` directly had to change. Grep the field across both repos before changing its shape.
 
+## Session 11e (2026-10-22): the first live eval
+
+- **What the model is shown, it repeats.** Every section reached the model with a `URL:` line, so 40 of 43 answers ended with raw paths, duplicating the list under them. Telling it not to is weaker than not sending them: the prompt now carries a short label to cite by and no URLs at all.
+- **Match citations on the label you gave, longest first.** "Santee: Cost" is a substring of "Santee: Cost vs BAH"; a plain substring test listed both. A match inside a longer label's match doesn't count.
+- **An eval that crashes on the error it's looking for can't report it.** The `--url` mode called `res.json()`, so a Cloudflare 1102 page (HTML) would have thrown and ended the run. It now reads text first and records the error code.
+- **Report what the run cost from the response, not from a guess.** The Function didn't return token counts, so the first run's cost is an estimate (thinking tokens are billed but invisible). It returns `usage` now.
+- **A live run tests the eval as well as the model.** Three of the six failures were right answers that a rule couldn't read: "Five" against `\b5\b`, rents near "allowance", an honest gap in words the regex didn't list.

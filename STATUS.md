@@ -1,4 +1,39 @@
-# Site build — status (2026-10-22, session 11d: DLA rates and the effective date, v0.7.4)
+# Site build — status (2026-10-22, session 11e: first live eval, answer display, v0.7.5)
+
+## Session 11e: first live eval on the preview; answer display (v0.7.5; rules v0.9 unchanged)
+
+**Live eval, before the fixes** (`node scripts/eval_assistant.mjs --url https://assistant-preview.pcs-sd-site.pages.dev`, Haiku 5.5, 2026-10-22, 49 questions, 43 reached the model, 172 s):
+
+| Category | Questions | All rules pass | Misses |
+|---|---|---|---|
+| in_scope (in-, cr-, fu-, seq-) | 32 | 27 | in-04, in-15, in-16, cr-03, seq-07 |
+| known_gap | 2 | 2 | |
+| out_of_scope | 4 | 4 | out-02 and out-03 declined by the model, not before it |
+| bah_figure | 2 | 2 | |
+| bait_demo, bait_referral, bait_safety | 6 | 6 | |
+| not_yet_covered | 3 | 2 | nyc-02 |
+
+- **Real misses:** seq-07 (retrieval: no `/sequence/orders/` section sent; the model answered from steps 6 and 8 and said it couldn't see steps 1–5) and in-16 (retrieval: commute sections, not `/sources/`; the answer was right anyway: Google, Tuesday 0700, zip centers).
+- **Eval misses, answer fine:** in-04 said "Five", the pattern wants `5`; in-15 and cr-03 gave HUD rents beside "allowance", which `bah_sourced` reads as BAH figures (QUESTIONS 52 again; the BAH figures themselves were right and dated); nyc-02 said the material "covers base housing, not private apartment complexes", which `GAP_RE` doesn't know. QUESTIONS 65.
+- **Latency** (client side, Pacific coast to Cloudflare): median 3.9 s, p90 5.9 s, max 8.1 s for model calls; fixed answers about 0.2 s. **No error 1102** and no HTTP errors.
+- **Cost:** the deployed Function didn't return token counts, so it's an estimate: about 170–205K input tokens (prompt plus six sections, about 4–5K per question) and 6K visible output tokens, about $0.02 at $0.10 / $0.50 per million, plus thinking tokens (billed as output, not visible), so **$0.02–0.04 for the run**. Next run reports it exactly (below).
+- **Display:** 40 of 43 answers ended with parenthetical citations holding raw paths, and 4 used `**bold**`, which showed as asterisks.
+
+**Fixes:**
+
+- **Markdown (a):** `/ask/` renders a safe subset, `assistant/format.js`: paragraphs, `- ` and `1. ` lists, `**bold**`, and `[text](/path)` links on the site only. A link off the site keeps its words; headings' #s, italics and code marks are dropped; HTML stays text (built with `createElement`/`textContent`, no `innerHTML`). The prompt allows just that: bold for the recommendation, a list only to compare two or three places.
+- **Citations (b):** each section reaches the model with `Cite as: (<label>)`: page title plus section heading cut at the first "(" or ";", and a sequence step as "<page>, step N" (its heading is a sentence). 685 labels, all unique, longest about 85 characters. The model cites the label alone, next to its sentence; no URLs are in the prompt any more (the URL line and the nearest page's URL are gone), and the prompt says no URL, path or date in a citation. The From list shows the same label as the link text, with the verified date.
+- **From list (c):** `assistant/cite.js` `citedOnly()` lists only the sections whose label the answer cites, in the order cited (a label inside a longer one, "Santee: Cost" in "Santee: Cost vs BAH", doesn't count). None cited: every section sent (`cited_by: "all"`). The model's own "I don't have that": the nearest page only (`cited_by: "nearest"`; QUESTIONS 66). The response also carries `sent` (URLs of every section sent, so the retrieval checks still see them) and `usage` (token counts, no text).
+- **Eval:** new live rules `labels_only` (no site path, URL, `#anchor` or "verified <date>" in the answer) and `from_cited` (the From list is exactly the cited sections and a subset of those sent; the full list only when nothing is cited; the nearest page only with "I don't have that"). `cites_page` now reads the From list (needs a label match); `dated` checks every From entry has its date; `no_answer` accepts the nearest page as the From entry. Self-tests without a model: the From-list filter (5 cases) and the formatting (5 cases, off-site and `javascript:` links among them). The run now reports latency, Cloudflare error codes (a non-JSON reply no longer crashes it) and, from `usage`, tokens and cost.
+
+**After the fixes** (not deployed: the preview still runs the old code until the branch is pushed):
+
+- Retrieval-only eval on a fresh build: unchanged, as expected (retrieval wasn't touched): expected fact 36 of 38 (in-16, seq-07), page 36 of 38, section 33 of 34; out-02 and out-03 not stopped before the model. Self-tests pass.
+- Handler with a stand-in model: labels in the prompt, From list cut to the two cited sections, `sent` keeps all six, passport question gets the nearest page. `/ask/` in a browser with a canned reply: bold, list and From list render; no asterisks; off-site link and an `<img onerror>` stay text; no sideways scroll at 375 px.
+- Build: every check passes (36 PASS lines); Function 126 KB gzipped.
+- **Not run:** the live eval of the new prompt (no API key on this machine). After pushing: `node scripts/eval_assistant.mjs --url https://assistant-preview.pcs-sd-site.pages.dev --json evals/live_run.json`. Watch `labels_only`, `from_cited` and the "fell back to every section" count.
+
+**out-03 and seq-07 (go-live step 0):** both still fail the retrieval-only gate. Live, out-03 passes (the model says "I don't have that" and points to the first-30-days page) and seq-07 fails (wrong sections sent). Retrieval tuning still waits on the embeddings decision, so the assistant stays off Production.
 
 ## Session 11d: DLA rates, the effective date, no DFAS (v0.7.4; rules v0.9 unchanged)
 
@@ -307,7 +342,7 @@ The miss: in-16 "Where do your drive times come from?" (expected `/sources/`; re
 3. **Optional daily cap.** Workers & Pages → KV → Create namespace (e.g. `pcs-sd-ask-limits`). Then the Pages project → Settings → Bindings → Add → KV namespace, variable name `ASK_LIMITS`, pick the namespace. Optional text variable `ASK_DAILY_CAP` (default 200). Without the binding there is no cap.
 4. **Redeploy** (Deployments → the latest → Retry deployment, or push a commit): variables apply to new deployments only.
 5. **Check it's live:** `curl -s -X POST https://<deployment>.pages.dev/api/ask -H 'Content-Type: application/json' -d '{"question":"How long is the base housing wait at Murphy Canyon?"}'` should return `"mode":"live"` and an `answer`; the `X-Ask-Cap` header shows `n/200` if the cap is on.
-6. **Rerun the eval live**, against the deployment (uses its key and model): `node scripts/eval_assistant.mjs --url https://<deployment>.pages.dev --json evals/live_run.json`. Or locally, after `npm run build`: `ANTHROPIC_API_KEY=… ASSISTANT_MODEL=claude-opus-5-5 node scripts/eval_assistant.mjs --live --json evals/live_run.json`. 36 questions; 29 of them reach the model (about 3K input tokens each: the prompt plus six sections). `evals/*_run.json` is gitignored.
+6. **Rerun the eval live**, against the deployment (uses its key and model): `node scripts/eval_assistant.mjs --url https://<deployment>.pages.dev --json evals/live_run.json`. It reports latency, any Cloudflare error code, and tokens and cost from the `usage` the Function returns. Or locally, after `npm run build`: `ANTHROPIC_API_KEY=… ASSISTANT_MODEL=claude-opus-5-5 node scripts/eval_assistant.mjs --live --json evals/live_run.json`. 36 questions; 29 of them reach the model (about 3K input tokens each: the prompt plus six sections). `evals/*_run.json` is gitignored.
 7. **Watch for:** Cloudflare's free plan allows 10 ms of CPU per request, and a cold Function spends about 16 ms parsing the corpus. If you see error 1102 (CPU exceeded) on the first question after a quiet spell, either move to Workers Paid or trim the corpus (school tables are the bulk). Leave Workers Logs / Logpush request bodies off, so questions aren't captured by Cloudflare either.
 
 ## Session 4c: base pages match neighborhood pages

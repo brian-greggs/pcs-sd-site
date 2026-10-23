@@ -10,6 +10,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { search } from './retrieve.js';
 import { SYSTEM_PROMPT, NO_ANSWER, userMessage } from './prompt.js';
 import { isReferral, isDemographic, GUARD_TEXT } from './guards.js';
+import { sectionOf, labelOf, citedOnly } from './cite.js';
 
 export const MAX_QUESTION = 500;
 
@@ -55,8 +56,9 @@ export function householdLine(c, PRIORITY = {}) {
   ].filter(Boolean).join('; ');
 }
 
-// Whole sections are sent (every part of a split one), so a citation names the section, not a part.
-const citation = (c) => ({ url: c.url, title: c.page_title, section: c.section_heading.replace(/ \(part \d+ of \d+\)$/, ''), verified_on: c.verified_on });
+// Whole sections are sent (every part of a split one), so a citation names the section, not a part,
+// and carries the label the model cites it by (assistant/cite.js).
+const citation = (c) => ({ url: c.url, title: c.page_title, section: sectionOf(c), label: labelOf(c), verified_on: c.verified_on });
 const citationsOf = (chunks) => [...new Map(chunks.map((c) => [c.url, citation(c)])).values()];
 const nearestChunk = (r) => r.chunks[0] ?? null;
 
@@ -108,20 +110,23 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
     return { status: busy ? 503 : 502, json: { error: busy ? 'The assistant is busy. Try again in a minute.' : 'The assistant isn’t working right now.', citations } };
   }
   if (out.refused || !out.text) {
-    return { status: 200, json: { mode, kind: 'declined', answer: `I can’t answer that one here. ${pointTo}`, citations } };
+    return { status: 200, json: { mode, kind: 'declined', answer: `I can’t answer that one here. ${pointTo}`, citations, usage: out.usage } };
   }
-  return { status: 200, json: { mode, kind: 'answer', answer: out.text, citations } };
+  return { status: 200, json: { mode, kind: 'answer', answer: out.text, ...citedOnly(out.text, citations, r.nearest), sent: citations.map((c) => c.url), usage: out.usage } };
 }
 
 // One Messages API call. The model comes from ASSISTANT_MODEL (no default in code), so the
 // request uses only parameters every current model accepts; thinking and effort stay at the
 // model's defaults. A refusal comes back as stop_reason "refusal" and is answered with a pointer.
+// Token counts go back with the answer (no text), so the eval can report what a run cost.
 export async function callClaude({ apiKey, model, system, messages }) {
   const client = new Anthropic({ apiKey, maxRetries: 1, timeout: 60_000 });
   const res = await client.messages.create({ model, max_tokens: 4096, system, messages });
-  if (res.stop_reason === 'refusal') return { refused: true, text: '' };
+  const u = res.usage ?? {};
+  const usage = { model: res.model, input_tokens: u.input_tokens ?? 0, output_tokens: u.output_tokens ?? 0, cache_read_input_tokens: u.cache_read_input_tokens ?? 0, cache_creation_input_tokens: u.cache_creation_input_tokens ?? 0 };
+  if (res.stop_reason === 'refusal') return { refused: true, text: '', usage };
   const text = res.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n').trim();
-  return { refused: false, text };
+  return { refused: false, text, usage };
 }
 
 // Global daily cap, if the ASK_LIMITS KV namespace is bound. One counter per UTC day, no IPs or
