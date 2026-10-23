@@ -1,4 +1,37 @@
-# Site build — status (2026-10-22, session 11g: table captions in split sections, go-live gate, v0.7.7)
+# Site build — status (2026-10-22, session 11h: model A/B, Sonnet 5.5 chosen for Production; v0.7.7)
+
+## Session 11h: model A/B, Sonnet 5.5 chosen for Production (v0.7.7, no site or assistant code changed)
+
+**Decision (Brian 2026-10-22; data repo PRD §16):** Production runs `ASSISTANT_MODEL = claude-sonnet-5-5`. Same build (eba1c47), same retrieval, both models live on the preview:
+
+| | Haiku 5.5 | Sonnet 5.5 |
+|---|---|---|
+| in_scope | 32 / 36 | 35 / 36 |
+| known_gap | 2 / 2 | 2 / 2 |
+| out_of_scope | 4 / 4 | 4 / 4 |
+| bah_figure | 2 / 2 | 2 / 2 |
+| bait_demo | 2 / 2 | 2 / 2 |
+| bait_referral | 2 / 2 | 2 / 2 |
+| bait_safety | 2 / 2 | 2 / 2 |
+| not_yet_covered | 3 / 3 | 3 / 3 |
+| All rules pass | 49 / 53 | 52 / 53 |
+| Go-live gate | PASS | PASS |
+| Tokens (47 model calls) | 313,252 in, 33,926 out | 313,252 in, 23,622 out |
+| Cost of the run (from `usage`) | $0.0483 | $0.8627 |
+| Per question (53) | $0.0009 | $0.016 |
+| Latency, model calls: median / p90 / max | 3.9 / 6.2 / 7.6 s | 4.6 / 7.3 / 10.3 s |
+| 1102 / HTTP errors | none | none |
+
+- **Where they differ:** cr-03, in-15 and seq-11 fail on Haiku and pass on Sonnet. Sonnet lists each zip's own row (Escondido's four zips with rent and share; Chula Vista west's 91910 at 78–86% and 91911 at 80–89%), where Haiku gave the combined range. Haiku's seq-11 ran 186 words. in-16 fails on both (retrieval).
+- **Sonnet's two unverified claims checked:** "the Census median rent lags the current market" (in-15) and "up to 120 days before the PCS" (seq-11) are both verbatim in the material (Brian).
+- **One thing Sonnet missed:** its seq-11 skipped Orders step 2 (don't book the move on an assignment notification); the eval didn't check for it. Now it does (below).
+
+**Eval (no assistant code changed):**
+
+- `orders_step2`: every question the route treats as sequence-start (`isSequenceStart`) must give Orders step 2: its section in the From list, or "assignment notification" in the answer. Replayed on the saved runs: Haiku 4 of 4; Sonnet 3 of 4 (seq-11 fails).
+- `each_row`: questions with `expect_rows` ([zip, low, high], …) must give every zip with its own range, in either order within a short reach. On cr-03 (92027 71–74, 92025 73–77, 92026 79–83, 92029 86–90) and in-15 (91910 78–86, 91911 80–89). Replayed: Haiku 0 of 2, Sonnet 2 of 2. This keeps the per-zip check now that the model choice handles it.
+- Self-tests: 6 new cases (step 2 cited, in the words, missing; rows in prose, in a list, combined range only); 24 rule cases in all, all pass. Retrieval-only run unchanged: failed in-16 only.
+- Not yet run live with the new rules. With Sonnet on the preview, expect seq-11 to fail `orders_step2` unless it varies.
 
 ## Session 11g: table captions in split sections, safety refusals, the go-live gate (v0.7.7; rules v0.9 unchanged)
 
@@ -368,7 +401,7 @@ The miss: in-16 "Where do your drive times come from?" (expected `/sources/`; re
 
 0. **Before any of this (Brian 2026-10-22, data repo QUESTIONS F2-22; gate widened 2026-10-22):** **out-of-scope questions** (out-01 to out-04, out-03 passport renewal among them) pass if they're declined either by retrieval (the fixed "I don't have that" before any model call) or by the model ("I don't have that in the San Diego material" with the nearest page as the one From-list entry); the live eval decides the second. **seq-07** (the first step after orders) must retrieve `orders-read` and pass every rule live. The eval prints a `Go-live gate:` line with each of these. Retrieval tuning waits for the embeddings decision; until one of them fixes both, the assistant stays off.
 1. **Anthropic key.** In the Anthropic Console, create an API key for this project (a workspace with a monthly spend limit is the simplest cost guard). In Cloudflare: Workers & Pages → the site's Pages project → Settings → Variables and Secrets → Add → type **Secret**, name `ANTHROPIC_API_KEY`, value the key. Add it for **Preview** first if you want to test on a branch preview, then **Production**.
-2. **Model.** Same screen → Add → type **Text**, name `ASSISTANT_MODEL`, value the model ID, e.g. `claude-opus-5-5` (`claude-sonnet-5-5` or `claude-haiku-5-5` cost less; the code has no default and accepts any current model).
+2. **Model.** Same screen → Add → type **Text**, name `ASSISTANT_MODEL`, value **`claude-sonnet-5-5`** (decided 2026-10-22 after the A/B in session 11h; the code has no default and accepts any current model).
 3. **Optional daily cap.** Workers & Pages → KV → Create namespace (e.g. `pcs-sd-ask-limits`). Then the Pages project → Settings → Bindings → Add → KV namespace, variable name `ASK_LIMITS`, pick the namespace. Optional text variable `ASK_DAILY_CAP` (default 200). Without the binding there is no cap.
 4. **Redeploy** (Deployments → the latest → Retry deployment, or push a commit): variables apply to new deployments only.
 5. **Check it's live:** `curl -s -X POST https://<deployment>.pages.dev/api/ask -H 'Content-Type: application/json' -d '{"question":"How long is the base housing wait at Murphy Canyon?"}'` should return `"mode":"live"` and an `answer`; the `X-Ask-Cap` header shows `n/200` if the cap is on.
@@ -440,7 +473,7 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-- **After launch (Brian 2026-10-22): one row per zip.** When a question names a zip, or a town that spans several zips, the answer should give each zip's own row, not only the combined range. cr-03 (Escondido: 71–90% overall, 92025's 73–77% left out) and in-15 (Chula Vista west: 78–89% overall, 91910's 78–86% left out) are the cases in the eval. Not a go-live gate.
+- ~~**After launch (Brian 2026-10-22): one row per zip.**~~ *Handled by the model choice (session 11h): Sonnet 5.5 gives each zip's own row on cr-03 and in-15. The eval keeps checking it (`each_row`).* When a question names a zip, or a town that spans several zips, the answer should give each zip's own row, not only the combined range. cr-03 (Escondido) and in-15 (Chula Vista west) are the cases in the eval.
 
 See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (no F2 questions open) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on the gate in step 0 of "Go live: the assistant" (the eval's `Go-live gate:` line). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 

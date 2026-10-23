@@ -37,6 +37,11 @@
 //   from_cited         live: the From list is exactly the sections the answer cites by label, a subset of
 //                      the sections sent; the full list only when the answer cites none of them, the nearest
 //                      page only for the model's "I don't have that"
+//   orders_step2       live, sequence-start questions only (the route's isSequenceStart): the answer gives
+//                      Orders step 2, don't book the move on an assignment notification (its section in the
+//                      From list, or "assignment notification" in the text)
+//   each_row           live, questions with expect_rows: the answer gives every zip's own row (each zip with
+//                      its own range), not only the combined range (cr-03, in-15)
 //   short, no_safety_claim   live only
 // Self-tests (no model): the daily cap, the From-list filter (assistant/cite.js), the answer formatting
 // the page renders (assistant/format.js), the rules fixed for QUESTIONS 65 and 68 (number words in
@@ -107,6 +112,14 @@ const safetyClaim = (t) => [...t.matchAll(SAFETY_CLAIM)].some((m) => {
   const clause = before.slice(Math.max(...['.', ';', '!', '?', ',', '\n'].map((c) => before.lastIndexOf(c))) + 1);
   return !REFUSAL_FRAME.test(clause);
 });
+// Orders step 2 (Brian 2026-10-22): a sequence-start answer must say not to book the move on an assignment
+// notification. Its section cited (the From list), or the words themselves.
+const STEP2_URL = '/sequence/orders/#orders-no-moves-before-orders';
+const ordersStep2 = (r) => (r.citations ?? []).some((c) => c.url === STEP2_URL) || /assignment notification/i.test(r.answer ?? '');
+// One row per zip (Brian 2026-10-22, the per-zip item): expect_rows is [[zip, low, high], …]; the answer
+// must put each zip and its own range within a short reach of each other, in either order.
+const RANGE = (lo, hi) => `${lo}%?\\s*(?:–|-|to)\\s*${hi}%`;
+const everyRow = (rows, answer) => rows.every(([zip, lo, hi]) => new RegExp(`${zip}[^\\n]{0,80}?${RANGE(lo, hi)}|${RANGE(lo, hi)}[^\\n]{0,40}?${zip}`).test(answer));
 const answerMatches = (pattern, answer) => new RegExp(pattern).test(answer) || new RegExp(pattern).test(digitsFor(answer));
 const demoHits = (t) => {
   let s = t;
@@ -148,7 +161,7 @@ function bahSourced(q, r, answer) {
 }
 
 const RULES = {
-  in_scope: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'bah_sourced', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
+  in_scope: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'bah_sourced', 'cites_page', 'dated', 'labels_only', 'from_cited', 'orders_step2', 'each_row', 'short', 'no_demo'],
   known_gap: ['has_fact', 'retrieves_page', 'retrieves_section', 'honest_gap', 'cites_page', 'dated', 'labels_only', 'from_cited'],
   out_of_scope: ['no_answer', 'labels_only', 'from_cited'],
   bah_figure: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'bah_sourced', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short'],
@@ -206,6 +219,8 @@ function judge(rule, q, r) {
       if (r.cited_by === 'all') return list.length === sent.size && !list.some(cites) ? 'PASS' : 'FAIL';
       return 'FAIL';
     }
+    case 'orders_step2': if (!isSequenceStart(q.question)) return null; if (!realAnswers) return 'SKIP'; return ordersStep2(r) ? 'PASS' : 'FAIL';
+    case 'each_row': if (!q.expect_rows) return null; if (!realAnswers) return 'SKIP'; return everyRow(q.expect_rows, answer) ? 'PASS' : 'FAIL';
     case 'short': if (!realAnswers) return 'SKIP'; return words(answer) <= 180 ? 'PASS' : 'FAIL';
     case 'no_safety_claim': if (!realAnswers) return 'SKIP'; return safetyClaim(answer) ? 'FAIL' : 'PASS';
     default: throw new Error(`unknown rule ${rule}`);
@@ -287,6 +302,13 @@ const ruleCases = [
   ['safety: "is not safe"', safetyClaim('El Cajon is not safe at night.'), true],
   ['safety: claim after a "whether" clause', safetyClaim('Whether you rent or buy, it’s safe.'), true],
   ['safety: a refusal and a claim', safetyClaim('I can’t tell you whether it’s safe. Honestly, Santee is safe.'), true],
+  // Orders step 2 and per-zip rows (Brian 2026-10-22).
+  ['step 2: cited', ordersStep2({ answer: 'Read your orders (Move sequence: Orders in hand, step 1).', citations: [{ url: STEP2_URL }] }), true],
+  ['step 2: in the words', ordersStep2({ answer: 'Don’t book anything on an assignment notification.', citations: [] }), true],
+  ['step 2: missing', ordersStep2({ answer: 'Read your orders, then request a sponsor.', citations: [{ url: '/sequence/orders/#orders-sponsor' }] }), false],
+  ['rows: each zip with its range', everyRow([['91910', 78, 86], ['91911', 80, 89]], 'About 78–86% in 91910 and 80–89% in 91911.'), true],
+  ['rows: list form', everyRow([['92025', 73, 77]], '- 92025: $3,430, about 73–77% (Escondido: Cost)'), true],
+  ['rows: combined range only', everyRow([['91910', 78, 86], ['91911', 80, 89]], 'About 78% to 89% of the allowance; zip 91911 runs higher, at 80% to 89%.'), false],
 ];
 const ruleBad = ruleCases.filter(([, got, want]) => got !== want);
 // The sequence-start route (assistant/retrieve.js): these always get Orders steps 1-3; these don't.
@@ -320,7 +342,7 @@ console.log(`Retrieval: expected page first for ${hit1}/${withPage.length}, in t
 console.log(`Daily cap self-test (fake KV, cap 3; no binding = off): ${capOk ? 'PASS' : 'FAIL'}`);
 console.log(`From-list filter and label self-test (${filterCases.length + labelCases.length} cases): ${filterBad.length ? `FAIL: ${filterBad.map(([a]) => JSON.stringify(a)).join('; ')}` : 'PASS'}`);
 console.log(`Answer formatting self-test (${formatCases.length} cases): ${formatBad.length ? `FAIL: ${formatBad.map(([t]) => `${JSON.stringify(t)} → ${fmt(t)}`).join('; ')}` : 'PASS'}`);
-console.log(`Eval rule self-test, QUESTIONS 65 and 68 (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
+console.log(`Eval rule self-test, QUESTIONS 65 and 68, Orders step 2, per-zip rows (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
 console.log(`Sequence-start route self-test (${routeCases.length} cases): ${routeBad.length ? `FAIL: ${routeBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
 const answered = results.filter((r) => r.kind === 'answer' && r.cited_by);
 if (answered.length) {
