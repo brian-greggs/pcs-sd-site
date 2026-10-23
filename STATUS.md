@@ -1,4 +1,8 @@
-# Site build — status (2026-10-22, session 11b: F2-24 to F2-28, v0.7.2)
+# Site build — status (2026-10-22, session 11c: exact source links, v0.7.3)
+
+## Session 11c: exact source links (F2-27; v0.7.3)
+
+Re-export after Brian's address-bar URLs went into the data repo's MANIFEST.csv: every PPA and NAVSUP citation links to its own page (no more ppa.mil home-page links); nothing else in the sequence data changed. Full build, every check, sequence plants 17/17, layout clean on 82 pages at four widths; eval unchanged (35 of 37 facts; in-16, out-02, out-03, seq-07).
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). F2 move sequence (Navy rules; session 10). Not built, by design: F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
 
@@ -361,7 +365,7 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (F2-12, F2-19 rest, F2-27) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
+See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (F2-12, F2-19 rest) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
 ## Next session
 
