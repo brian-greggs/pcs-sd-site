@@ -8,8 +8,8 @@
 //                    line is the row's anchor; a deadline outside a step or form block fails
 //   seq-sources      every step and form block has a date line naming every retrieval date of its sources, and
 //                    one quote per citation (sources, side-by-side rules, superseded)
-//   seq-unconfirmed  a row with a "Not yet confirmed" line (partial, confirm with the HSC) shows it, naming who
-//                    to ask (CPPA, PPPO, HSC); no other row shows one
+//   seq-unconfirmed  a row with "Not yet confirmed" lines (partial, confirm with the HSC) shows each, in order,
+//                    naming who to ask (CPPA, PPPO, HSC, Navy Household Goods); no other row shows one
 //   seq-notes        every sequence page opens with the disclaimer and the Navy-rules note; the Camp Pendleton,
 //                    MCAS Miramar and MCRD San Diego base pages carry the Navy-rules note; the sequence page
 //                    links Plan My Move as "build your personal checklist"
@@ -111,10 +111,13 @@ function check({ pages, steps, forms, weights }) {
     for (const c of [...row.sources, ...(row.alternatives ?? []).flatMap((a) => a.sources)]) {
       if (!decode(b.html).includes(`“${c.quote}”`)) fail('seq-sources', where, `quote missing: "${c.quote.slice(0, 50)}"`);
     }
+    // One "Not yet confirmed" line per entry, in order, each asking its own office.
     const un = attr(b.html, 'data-unconfirmed');
-    if (row.unconfirmed) {
-      if (un.length !== 1 || un[0][1] !== row.unconfirmed.ask || decode(un[0][2]) !== unconfirmedLine(row.unconfirmed)) fail('seq-unconfirmed', where, `no "Not yet confirmed" line asking the ${row.unconfirmed.ask}`);
-    } else if (un.length) fail('seq-unconfirmed', where, '"Not yet confirmed" line on a row that has none');
+    const wantUn = row.unconfirmed ?? [];
+    if (un.length !== wantUn.length) fail('seq-unconfirmed', where, `${un.length} "Not yet confirmed" lines shown, the row has ${wantUn.length}`);
+    wantUn.forEach((u, i) => {
+      if (!un[i] || un[i][1] !== u.ask || decode(un[i][2]) !== unconfirmedLine(u)) fail('seq-unconfirmed', where, `no "Not yet confirmed" line asking ${u.ask}: ${u.text.slice(0, 40)}`);
+    });
   };
 
   // Steps: each phase page holds exactly its rows, in order.
@@ -192,7 +195,8 @@ const PLANTS = {
   'no date line': (s) => { const k = 'sequence/transit/index.html'.replace('transit', 'on-the-road'); s.pages[k] = s.pages[k].replace(/<p class="asof" data-asof>[^<]*<\/p>/, ''); },
   'quote missing': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/<li data-cite>[\s\S]*?<\/li>/, ''); },
   'no "Not yet confirmed" line': (s) => { const k = 'sequence/first-30-days/index.html'; s.pages[k] = s.pages[k].replace(/<p class="gap" data-unconfirmed="PPPO">[^<]*<\/p>/, ''); },
-  'asks the wrong office': (s) => { const r = s.forms.find((x) => x.id === 'navy-ppm-paperwork'); r.unconfirmed = { ...r.unconfirmed, ask: 'HSC' }; },
+  'asks the wrong office': (s) => { const r = s.forms.find((x) => x.id === 'navy-ppm-paperwork'); r.unconfirmed[0] = { ...r.unconfirmed[0], ask: 'HSC' }; },
+  'second "Not yet confirmed" line dropped': (s) => { const k = 'sequence/first-30-days/index.html'; s.pages[k] = s.pages[k].replace(/<p class="gap" data-unconfirmed="NAVY_HHG">[^<]*<\/p>/, ''); },
   'no Navy note on a Marine base': (s) => { const k = 'base/miramar/index.html'; s.pages[k] = s.pages[k].replace(/data-navy-note/g, 'data-x'); },
   'no disclaimer on a phase page': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('data-seq-disclaimer', 'data-x'); },
   'USMC row on a page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('</main>', '<a href="#usmc-travel-voucher">x</a></main>'); },

@@ -152,3 +152,7 @@
 - **A three-column table still needs a phone check.** `th.num` doesn't wrap, so "Without dependents" pushed the table past 375 px and clipped its caption; the layout check passed because tables scroll inside `.table-wrap` by design. Looking at the page at phone width is what found it.
 - **Re-citing can move retrieval.** A longer quote on the travel claim step dropped seq-01. Swapping duplicate quotes for the higher source, and ordering the step's quotes, fixed it without touching the retriever; run the eval after every data re-export, not only after code changes.
 
+## Session 11b (2026-10-22): two "Not yet confirmed" lines
+
+- **A field that was "one of" became "a list of".** Making `unconfirmed` a list touched the data check, the export, the schema, two pages, the plan's line builder and the sequence check. The plan's check compares JSON, so it followed without a change; every place that read `.ask` directly had to change. Grep the field across both repos before changing its shape.
+

@@ -1,6 +1,15 @@
-# Site build — status (2026-10-22, session 11: the sequence re-cited, weight allowances, v0.7.1)
+# Site build — status (2026-10-22, session 11b: F2-24 to F2-28, v0.7.2)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). F2 move sequence (Navy rules; session 10). Not built, by design: F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 11b: F2-24 to F2-28 answered (v0.7.2; rules v0.9 unchanged)
+
+Brian's answers (data repo QUESTIONS, "second round"):
+- **Two "Not yet confirmed" lines on one row.** The PPM closeout step and the PPM form now ask the PPPO about the 45 days and Navy Household Goods (855-444-6683) about NAVSUP's started/approved wording. `unconfirmed` is a list in the export, the schema (new ask `NAVY_HHG`, label in `src/lib/sequence.js`), the step and form pages and the plan's sequence lines (`sequenceLine` adds every entry). `seq-unconfirmed` checks each line in order; new plant "second line dropped" (17/17 caught).
+- **Separate notes.** A row's `note` can hold several notes (one per line in the export; `noteParas` renders each as its own paragraph): the PPM step's NAVSUP advance note sits under the clock note.
+- **Quick claim:** the web page's "five business days" is a source note and a quoted source, no longer superseded.
+
+Checks on 2026-10-22: `check_f2.py` PASS, selftest 20/20; full build and every check pass (intake 26,789 plans, 99,902 sequence lines); sequence plants 17/17; layout clean on 82 pages at four widths. Retrieval-only eval unchanged: expected fact 35 of 37 (in-16, seq-07), out-02 and out-03 not stopped.
 
 ## Session 11: the sequence on the JTR, NAVSUP and PPA (v0.7.1; rules v0.9 unchanged)
 
@@ -352,7 +361,7 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (F2-12, F2-19 rest, F2-24 to F2-28) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
+See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (F2-12, F2-19 rest, F2-27) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
 ## Next session
 

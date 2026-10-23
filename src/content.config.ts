@@ -346,7 +346,8 @@ const cite = z.object({
   quote: z.string().min(1),
   reason: z.string().min(1).optional(), // superseded entries only
 });
-const unconfirmed = z.object({ text: z.string().min(1), ask: z.enum(['CPPA', 'PPPO', 'HSC']) }).nullable();
+// One line per thing that isn't confirmed, each naming who to ask (a row can have two, e.g. the PPM closeout).
+const unconfirmed = z.array(z.object({ text: z.string().min(1), ask: z.enum(['CPPA', 'PPPO', 'HSC', 'NAVY_HHG']) }));
 const sequenceSteps = defineCollection({
   loader: strictJson('sequence_steps'),
   schema: z.object({
@@ -373,7 +374,7 @@ const sequenceSteps = defineCollection({
     superseded: z.array(cite.required({ reason: true })),
     forms: z.array(z.string()),
     ...dated,
-  }).refine((s) => ['partial', 'confirm_with_hsc'].includes(s.status) === !!s.unconfirmed, 'partial and confirm_with_hsc steps need an unconfirmed line; others none'),
+  }).refine((s) => ['partial', 'confirm_with_hsc'].includes(s.status) === s.unconfirmed.length > 0, 'partial and confirm_with_hsc steps need an unconfirmed line; others none'),
 });
 const sequenceForms = defineCollection({
   loader: strictJson('sequence_forms'),
@@ -393,7 +394,7 @@ const sequenceForms = defineCollection({
     sources: z.array(cite).min(1),
     superseded: z.array(cite.required({ reason: true })),
     ...dated,
-  }).refine((f) => (f.status === 'partial') === !!f.unconfirmed, 'partial forms need an unconfirmed line; others none'),
+  }).refine((f) => (f.status === 'partial') === f.unconfirmed.length > 0, 'partial forms need an unconfirmed line; others none'),
 });
 
 // JTR Table 5-37, one row per pay grade line (content/f2_weight_allowances.yml; check_f2.py proves each figure is on

@@ -21,7 +21,7 @@
   ],
   "status": "newest_authority",
   "note": "Source note: the Travel Processing Center's routing guidance words the deadline “within 5 days of completing PCS travel”.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "DD Form 1351-2 Travel Voucher or Subvoucher",
@@ -195,7 +195,7 @@
   ],
   "status": "newest_authority",
   "note": "San Diego is not an extended-TLE (60-day) location on the list dated 9 October 2026. The JTR allows a TLE advance (up to 21 days for CONUS), but Navy policy pays no travel advances to GTCC holders except DLA, PPM and non-concurrent travel; TLE goes on the GTCC.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Joint Travel Regulations",
@@ -295,7 +295,7 @@
   ],
   "status": "newest_authority",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Joint Travel Regulations",
@@ -416,7 +416,7 @@
   ],
   "status": "newest_authority",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
@@ -524,7 +524,7 @@
   ],
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "MILPCS Travel Advance Request Processing SOP (May 2025)",
@@ -584,7 +584,7 @@
   ],
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Joint Travel Regulations",
@@ -681,11 +681,17 @@
    "f30-ppm-closeout"
   ],
   "status": "partial",
-  "note": "",
-  "unconfirmed": {
-   "text": "The 45 days come from PPA's PPM page, which shows no date; NAVSUP's own 45-day rule (June 2023) is for Sailors who got an advance, and its current pages state no deadline.",
-   "ask": "PPPO"
-  },
+  "note": "If you took a PPM advance: NAVSUP's June 2023 handout gives 45 days to submit the package to Navy HHG Audit, and says late paperwork can put your pay into collection.",
+  "unconfirmed": [
+   {
+    "text": "The 45 days come from PPA's PPM page, which shows no date.",
+    "ask": "PPPO"
+   },
+   {
+    "text": "NAVSUP's PPM page sends a PPM “started on or after May 15, 2026” to DPS and one “approved before May 15, 2026” to email; which applies to a PPM approved before that date and started after it isn't stated.",
+    "ask": "NAVY_HHG"
+   }
+  ],
   "sources": [
    {
     "title": "Joint Travel Regulations",
@@ -776,6 +782,14 @@
     "quote": "If you received a funds advance, you have 45 days to submit your completed/signed package to Navy HHG Audit Team"
    },
    {
+    "title": "Top 10 things to consider when deciding to do a PPM",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Failure to submit your paperwork could result in your pay going into a collection status."
+   },
+   {
     "title": "Personally Procured Move (PPM) information page",
     "agency": "NAVSUP GLS Navy Household Goods",
     "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
@@ -806,6 +820,14 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-22",
     "quote": "They will provide you with a DoD SAFE link so you can securely submit your required documentation"
+   },
+   {
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Call: 855-HHG-MOVE (855-444-6683)"
    },
    {
     "title": "Personally Procured Move (PPM) Documents",
@@ -940,7 +962,7 @@
   ],
   "status": "ok",
   "note": "The weight allowance by pay grade (JTR Table 5-37) is in the table after this form.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Arranging a Personal Property Shipment",
@@ -1013,7 +1035,7 @@
   ],
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "The Claims Process",
@@ -1069,7 +1091,7 @@
   ],
   "status": "newest_authority",
   "note": "The MyNavy HR PCS Guide 2026 says nine months; it predates the May 15, 2026 change.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Personal Property Claims",
@@ -1175,8 +1197,8 @@
    "f30-delivery-check"
   ],
   "status": "newest_authority",
-  "note": "",
-  "unconfirmed": null,
+  "note": "Source note: PPA's claims web page (no date shown) words the payment “within five business days”; its claims guide dated October 2026 says five calendar days, which is used here.",
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Personal Property Claims",
@@ -1193,18 +1215,17 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-22",
     "quote": "It is important to know that by accepting a quick claim payment for an item, you give up your right to file any further claims on that specific item."
-   }
-  ],
-  "superseded": [
+   },
    {
     "title": "The Claims Process",
     "agency": "DoW Personal Property Activity",
     "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-22",
-    "quote": "If you agree to a quick claim, you'll fill out paperwork directly with the movers before they leave, and you should receive payment within five business days.",
-    "reason": "PPA's claims web page (no date shown) says five business days; PPA's Personal Property Claims guide dated October 2026 says five calendar days. The dated guide is used."
-   },
+    "quote": "If you agree to a quick claim, you'll fill out paperwork directly with the movers before they leave, and you should receive payment within five business days."
+   }
+  ],
+  "superseded": [
    {
     "title": "Understanding Moving Claims",
     "agency": "Military OneSource (DoD)",
@@ -1235,7 +1256,7 @@
   ],
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Inconvenience Claims",
@@ -1317,7 +1338,7 @@
   ],
   "status": "ok",
   "note": "Exempt from mandatory use are accession, separation and retirement orders, IMAs, IRR and anyone not eligible for a GTCC.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Joint Travel Regulations",
@@ -1398,7 +1419,7 @@
   ],
   "status": "newest_authority",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Joint Travel Regulations",
@@ -1461,7 +1482,7 @@
   "sequence_step": [],
   "status": "not_yet_covered",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Marine Corps PCS Moving Assistance",
@@ -1489,7 +1510,7 @@
   "sequence_step": [],
   "status": "not_yet_covered",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Marine Corps PCS Moving Assistance",
@@ -1517,7 +1538,7 @@
   "sequence_step": [],
   "status": "not_yet_covered",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Marine Corps PCS Moving Assistance",
@@ -1545,7 +1566,7 @@
   "sequence_step": [],
   "status": "not_yet_covered",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Marine Corps PCS Moving Assistance",
@@ -1573,7 +1594,7 @@
   "sequence_step": [],
   "status": "not_yet_covered",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "sources": [
    {
     "title": "Personal Property Claims",

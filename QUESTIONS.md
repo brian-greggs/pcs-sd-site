@@ -1,5 +1,9 @@
 # Questions — site build
 
+## Session 11b (2026-10-22): F2-24 to F2-28 answered
+
+All five answered in the data repo's QUESTIONS ("second round") and built as v0.7.2; F2-27 (page URLs) waits on Brian's list.
+
 ## Session 11 (2026-10-22): nothing new here
 
 The F2 questions live in the data repo's QUESTIONS.md: F2-24 (PPM deadline), F2-25 (quick claim calendar vs business days), F2-26 (NAVSUP's started/approved wording), F2-27 (page URLs for the hand-saved prints) and F2-28 (the pets row now states the JTR's limits instead of "not yet confirmed") all show on `/sequence/` pages as built. F2-22's go-live condition is step 0 of "Go live: the assistant" in STATUS.

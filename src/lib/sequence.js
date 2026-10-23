@@ -41,8 +41,11 @@ export const ASK_LABEL = {
   CPPA: 'your CPPA (Command Pay and Personnel Administrator)',
   PPPO: 'your PPPO (the personal property office at your transportation office)',
   HSC: 'the Housing Service Center (HSC)',
+  NAVY_HHG: 'Navy Household Goods, 855-444-6683', // Brian 2026-10-22 (F2-26); the number is on NAVSUP's PPM page
 };
 export const unconfirmedLine = (u) => `Not yet confirmed: ${u.text.replace(/\.$/, '')}. Ask ${ASK_LABEL[u.ask]}.`;
+// A row's notes: one paragraph per line of `note` (the export joins separate notes with a newline).
+export const noteParas = (note) => (note ? note.split('\n').filter(Boolean) : []);
 
 const BASE_NAMES = {
   NBSD: 'Naval Base San Diego', NASNI: 'NAS North Island', NAB: 'Naval Amphibious Base Coronado', NBPL: 'Naval Base Point Loma',

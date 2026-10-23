@@ -5,7 +5,7 @@
 // scripts/check_sequence.mjs compares the rendered deadline with the row (data-step / data-deadline).
 import FactBlock from '../FactBlock.astro';
 import Cites from './Cites.astro';
-import { ANCHOR_LABEL, appliesText, citeDates, citeNames, formHref, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import { ANCHOR_LABEL, appliesText, citeDates, citeNames, formHref, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
 import type { SequenceData, Step } from '../../lib/sequenceData';
 
 interface Props { step: Step; data: SequenceData }
@@ -35,7 +35,7 @@ const applies = appliesText(step.applies_to);
       ))}
     </div>
   )}
-  {step.note && <p class="note">{step.note}</p>}
-  {step.unconfirmed && <p class="gap" data-unconfirmed={step.unconfirmed.ask}>{unconfirmedLine(step.unconfirmed)}</p>}
+  {noteParas(step.note).map((n) => <p class="note">{n}</p>)}
+  {step.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
   <Cites sources={step.sources} superseded={step.superseded} />
 </FactBlock>

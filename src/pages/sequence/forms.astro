@@ -7,7 +7,7 @@ import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import Cites from '../../components/sequence/Cites.astro';
 import SequenceTop from '../../components/sequence/SequenceTop.astro';
-import { ANCHOR_LABEL, citeDates, citeNames, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import { ANCHOR_LABEL, citeDates, citeNames, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
 import { sequenceData } from '../../lib/sequenceData';
 
 const data = await sequenceData();
@@ -37,8 +37,8 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
           return <li><a href={stepHref(s)}>{phaseByKey(s.phase).label}, step {s.order}</a></li>;
         })}</ul></dd></>}
       </dl>
-      {f.note && <p class="note">{f.note}</p>}
-      {f.unconfirmed && <p class="gap" data-unconfirmed={f.unconfirmed.ask}>{unconfirmedLine(f.unconfirmed)}</p>}
+      {noteParas(f.note).map((n) => <p class="note">{n}</p>)}
+      {f.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
       <Cites sources={f.sources} superseded={f.superseded} />
     </FactBlock>
     {f.id === WEIGHTS_AFTER && w && (

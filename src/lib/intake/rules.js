@@ -407,7 +407,7 @@ const TIMELINE_WORDS = {
   under30: 'You report in under 30 days', '30-60': 'You report in 30–60 days', '60-90': 'You report in 60–90 days',
   '90plus': 'You report in 90 days or more', 'no-orders': 'You don’t have orders yet',
 };
-export const sequenceLine = (s) => `${s.step} Deadline: ${s.deadline}${s.unconfirmed ? ` ${unconfirmedLine(s.unconfirmed)}` : ''}`;
+export const sequenceLine = (s) => `${s.step} Deadline: ${s.deadline}${(s.unconfirmed ?? []).map((u) => ` ${unconfirmedLine(u)}`).join('')}`;
 function leadSequence(c) {
   const ph = phaseByKey(TIMELINE_PHASE[c.a.timeline]);
   const fits = (w) => (!w.bases || (c.base && w.bases.includes(c.base.code))) && (!w.housing || c.open.housing)

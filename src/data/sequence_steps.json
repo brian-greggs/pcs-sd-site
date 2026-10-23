@@ -18,7 +18,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -70,7 +70,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -116,7 +116,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -154,7 +154,7 @@
   },
   "status": "ok",
   "note": "For San Diego shore orders this applies only if the orders are operational; overseas and remote screening doesn't apply to a move to San Diego.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -200,7 +200,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -238,7 +238,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -310,7 +310,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -374,7 +374,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -422,7 +422,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -474,7 +474,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -520,7 +520,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -558,7 +558,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -606,7 +606,7 @@
   },
   "status": "newest_authority",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -705,7 +705,7 @@
   },
   "status": "newest_authority",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -799,7 +799,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -880,7 +880,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -942,7 +942,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -988,7 +988,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1042,7 +1042,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1078,7 +1078,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1114,7 +1114,7 @@
   },
   "status": "newest_authority",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1180,7 +1180,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1234,7 +1234,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1270,7 +1270,7 @@
   },
   "status": "newest_authority",
   "note": "The extended-TLE list dated 9 October 2026 names Laughlin AFB, NAS Fallon and Vance AFB only. Check the list again before relying on it.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1350,7 +1350,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1396,7 +1396,7 @@
   },
   "status": "ok",
   "note": "Source note: the Travel Processing Center's routing guidance words it “within 5 days of completing PCS travel”; the DoD FMR and the other Navy sources say five working days of arrival or check-in.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1472,7 +1472,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1518,10 +1518,12 @@
   },
   "status": "confirm_with_hsc",
   "note": "CNIC M-11103.3 says it does not cover privatized housing, and San Diego family housing is privatized (PPV).",
-  "unconfirmed": {
-   "text": "Which control-date rule applies to San Diego privatized housing.",
-   "ask": "HSC"
-  },
+  "unconfirmed": [
+   {
+    "text": "Which control-date rule applies to San Diego privatized housing.",
+    "ask": "HSC"
+   }
+  ],
   "alternatives": [
    {
     "rule": "Rule 1 (CNIC, Applying for Housing): your control date is the actual date of detachment stamped on your PCS orders, not the estimated date.",
@@ -1632,7 +1634,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1678,7 +1680,7 @@
   },
   "status": "ok",
   "note": "In the words of the MilitaryINSTALLATIONS MCRD San Diego government housing page.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1716,7 +1718,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1754,7 +1756,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1808,7 +1810,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1844,7 +1846,7 @@
   },
   "status": "ok",
   "note": "The clock starts when you enter California; this page counts it from your report date.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1883,7 +1885,7 @@
   },
   "status": "ok",
   "note": "The MilitaryINSTALLATIONS page is undated; check with base Pass and ID before relying on it.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1921,7 +1923,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -1986,7 +1988,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -2042,7 +2044,7 @@
   },
   "status": "newest_authority",
   "note": "The MyNavy HR PCS Guide 2026 says nine months; it predates the May 15, 2026 change. A claim filed late gets only the item's depreciated value.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -2107,7 +2109,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -2164,7 +2166,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -2212,7 +2214,7 @@
   },
   "status": "ok",
   "note": "",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
@@ -2259,11 +2261,17 @@
    "service": "navy"
   },
   "status": "partial",
-  "note": "The clock starts when you complete the move; this page counts it from your detachment date, which comes first.",
-  "unconfirmed": {
-   "text": "The 45 days come from PPA's PPM page, which shows no date; NAVSUP's own 45-day rule (June 2023) is for Sailors who got an advance, and its current pages state no deadline.",
-   "ask": "PPPO"
-  },
+  "note": "The clock starts when you complete the move; this page counts it from your detachment date, which comes first.\nIf you took a PPM advance: NAVSUP's June 2023 handout gives 45 days to submit the package to Navy HHG Audit, and says late paperwork can put your pay into collection.",
+  "unconfirmed": [
+   {
+    "text": "The 45 days come from PPA's PPM page, which shows no date.",
+    "ask": "PPPO"
+   },
+   {
+    "text": "NAVSUP's PPM page sends a PPM “started on or after May 15, 2026” to DPS and one “approved before May 15, 2026” to email; which applies to a PPM approved before that date and started after it isn't stated.",
+    "ask": "NAVY_HHG"
+   }
+  ],
   "alternatives": [],
   "sources": [
    {
@@ -2281,6 +2289,14 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-22",
     "quote": "If you received a funds advance, you have 45 days to submit your completed/signed package to Navy HHG Audit Team"
+   },
+   {
+    "title": "Top 10 things to consider when deciding to do a PPM",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Failure to submit your paperwork could result in your pay going into a collection status."
    },
    {
     "title": "Personally Procured Move (PPM) information page",
@@ -2313,6 +2329,14 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-22",
     "quote": "They will provide you with a DoD SAFE link so you can securely submit your required documentation"
+   },
+   {
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Call: 855-HHG-MOVE (855-444-6683)"
    },
    {
     "title": "Personally Procured Move (PPM) Documents",
@@ -2427,7 +2451,7 @@
   },
   "status": "ok",
   "note": "The NBSD MilitaryINSTALLATIONS page also names the previous PPV operator; confirm with the HSC.",
-  "unconfirmed": null,
+  "unconfirmed": [],
   "alternatives": [],
   "sources": [
    {
