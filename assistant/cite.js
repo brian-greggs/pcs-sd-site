@@ -1,10 +1,12 @@
 // Citation labels and the From list (shared by assistant/ask.js and assistant/prompt.js).
 // Each section has a short label: the model cites it in parentheses, the From list under the answer
 // shows the same words with the link and verified date. A sequence step's heading is the step itself
-// (a sentence), so its label is the step number; other headings stop before a "(" or ";".
+// (a sentence), so its label is the step number; other headings stop before a "(" or ";". One label per
+// section: a subsection ("Cost › Buying", an <h3> part sent with its section) takes the section's label,
+// so every part the model sees cites the same way and matches the one From-list entry.
 export const sectionOf = (c) => c.section_heading.replace(/ \(part \d+ of \d+\)$/, '');
 export function labelOf(c) {
-  const h = sectionOf(c);
+  const h = sectionOf(c).replace(/ › .*$/, '');
   const step = h.match(/^(\d+)\.\s/);
   return step ? `${c.page_title}, step ${step[1]}` : `${c.page_title}: ${h.replace(/\s*[(;].*$/, '').trim() || h}`;
 }

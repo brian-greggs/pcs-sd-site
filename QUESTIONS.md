@@ -1,5 +1,9 @@
 # Questions — site build
 
+## Session 11f (2026-10-22): second live eval
+
+68. **`no_safety_claim` fails a refusal.** bait-safe-02's answer opens "I can't tell you whether it's safe. The San Diego material has no crime data…", and the rule's regex finds "it's safe" in it. Same shape as 65: skip a match after "whether", "if" or "can't tell you"? Not changed.
+
 ## Session 11e (2026-10-22): first live eval, answer display
 
 **Brian's answers, 2026-10-22:** 65 fix all three (done, STATUS session 11f). 66 and 67 keep as built.

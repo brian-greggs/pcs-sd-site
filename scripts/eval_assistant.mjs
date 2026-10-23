@@ -44,7 +44,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildIndex } from '../assistant/retrieve.js';
 import { handleAsk, dailyCap } from '../assistant/ask.js';
-import { citedOnly } from '../assistant/cite.js';
+import { citedOnly, labelOf } from '../assistant/cite.js';
 import { parseAnswer } from '../assistant/format.js';
 import { NO_ANSWER } from '../assistant/prompt.js';
 import { search, isSequenceStart } from '../assistant/retrieve.js';
@@ -224,8 +224,18 @@ const filterCases = [
   ['Move sequence: Arrival, step 50 is not a step.', 'all:cost,cost-bah,commute,arrival-hsc'],
   ['Santee runs 18 minutes to Miramar.', 'all:cost,cost-bah,commute,arrival-hsc'],
   ['I don’t have that in the San Diego material. The nearest page is Santee.', 'nearest:/communities/santee/'],
+  // A subsection label as an older prompt gave it (in-03 live, 2026-10-22) still matches its section.
+  ['Older core: no district (Santee: Cost › Buying).', 'label:cost'],
 ];
+// Labels: one per section, subsections and parts folded in; a sequence step by its number.
+const labelCases = [
+  [{ page_title: 'Rancho Bernardo', section_heading: 'Cost › Buying (part 2 of 2)' }, 'Rancho Bernardo: Cost'],
+  [{ page_title: 'Forms and claims', section_heading: 'Personally Procured Move (DD 2278; DD 3166)' }, 'Forms and claims: Personally Procured Move'],
+  [{ page_title: 'Move sequence: Arrival', section_heading: '5. Contact the HSC within 30 days of arrival' }, 'Move sequence: Arrival, step 5'],
+];
+const labelBad = labelCases.filter(([c, want]) => labelOf(c) !== want);
 const filterBad = filterCases.filter(([a, want]) => urls(citedOnly(a, cit, near)) !== want);
+if (labelBad.length) filterBad.push(...labelBad.map(([c]) => [`label of ${c.section_heading}`]));
 // The answer formatting /ask/ renders: bold, lists and site links only.
 const fmt = (t) => JSON.stringify(parseAnswer(t));
 const formatCases = [
@@ -280,7 +290,7 @@ const withSec = results.filter((r) => r.rules.retrieves_section);
 if (withFact.length) console.log(`\nExpected fact in the sections sent: ${withFact.filter((r) => r.rules.has_fact === 'PASS').length}/${withFact.length}${withFact.some((r) => r.rules.has_fact === 'FAIL') ? ` (missing: ${withFact.filter((r) => r.rules.has_fact === 'FAIL').map((r) => r.id).join(', ')})` : ''}`);
 console.log(`Retrieval: expected page first for ${hit1}/${withPage.length}, in the sections sent for ${hitK}/${withPage.length}; expected section for ${withSec.filter((r) => r.rules.retrieves_section === 'PASS').length}/${withSec.length}`);
 console.log(`Daily cap self-test (fake KV, cap 3; no binding = off): ${capOk ? 'PASS' : 'FAIL'}`);
-console.log(`From-list filter self-test (${filterCases.length} cases): ${filterBad.length ? `FAIL: ${filterBad.map(([a]) => JSON.stringify(a)).join('; ')}` : 'PASS'}`);
+console.log(`From-list filter and label self-test (${filterCases.length + labelCases.length} cases): ${filterBad.length ? `FAIL: ${filterBad.map(([a]) => JSON.stringify(a)).join('; ')}` : 'PASS'}`);
 console.log(`Answer formatting self-test (${formatCases.length} cases): ${formatBad.length ? `FAIL: ${formatBad.map(([t]) => `${JSON.stringify(t)} → ${fmt(t)}`).join('; ')}` : 'PASS'}`);
 console.log(`Eval rule self-test, QUESTIONS 65 (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
 console.log(`Sequence-start route self-test (${routeCases.length} cases): ${routeBad.length ? `FAIL: ${routeBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
