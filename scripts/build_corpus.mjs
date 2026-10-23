@@ -60,11 +60,13 @@ function split(body) {
     last = m.index + m[0].length;
   }
   parts.push({ sub: heading, html: body.slice(last) });
-  return parts.map((p) => ({ sub: p.sub, text: text(p.html), unranked: unrankedLines(p.html) })).filter((p) => p.text.length > 0);
+  return parts.map((p) => ({ sub: p.sub, text: text(p.html), unranked: unrankedLines(p.html), captions: captionLines(p.html) })).filter((p) => p.text.length > 0);
 }
-// Split a long section without breaking a table: lines are grouped into blocks (a whole table, or
-// one line of text) and blocks are packed into parts of about MAX_CHARS. Only a table that is itself
-// longer than that (the school lists) is split, between rows, and each part repeats its header row.
+// Split a long section without breaking a table: lines are grouped into blocks (a whole table with its
+// caption, or one line of text) and blocks are packed into parts of about MAX_CHARS. Only a table that is
+// itself longer than that (the school lists) is split, between rows, and each part repeats its caption and
+// header row. The caption carries what the rows need to be read (the zip, the housing area, the units):
+// before, a caption could end one part while its table opened the next (in-11, Oceanside's access table).
 // Retrieval sends every part of a section together (assistant/retrieve.js), so parts are for ranking,
 // never for cutting a section in half.
 // Text a page marks data-unranked (the BAH lines on neighborhood and base housing pages, which repeat the
@@ -96,13 +98,17 @@ function stripHidden(html) {
   return out;
 }
 const isRow = (l) => l.includes(' | ');
-function windows(t) {
+// A table's <caption> text, one line each, as text() writes it.
+const captionLines = (html) => new Set([...html.matchAll(/<caption\b[^>]*>([\s\S]*?)<\/caption>/gi)].map((m) => text(m[1])).filter(Boolean));
+// `attach: false` is the old packing, kept only for --plant caption (the check must catch it).
+function windows(t, captions = new Set(), { attach = true } = {}) {
   if (t.length <= MAX_CHARS) return [t];
   const blocks = [];
   for (const l of t.split('\n')) {
     const last = blocks.at(-1);
     if (last && isRow(l) && last.table) last.lines.push(l);
-    else blocks.push({ table: isRow(l), lines: [l] });
+    else if (attach && last?.caption && !last.table && isRow(l)) { last.table = true; last.lines.push(l); }
+    else blocks.push({ table: isRow(l), caption: !isRow(l) && captions.has(l), lines: [l] });
   }
   const out = [];
   let cur = [];
@@ -112,10 +118,10 @@ function windows(t) {
     if (size([...cur, ...b.lines]) <= MAX_CHARS) { cur.push(...b.lines); continue; }
     flush();
     if (size(b.lines) <= MAX_CHARS || !b.table) { cur.push(...b.lines); continue; }
-    const [header, ...rows] = b.lines;
-    let part = [header];
-    for (const r of rows) {
-      if (part.length > 1 && size([...part, r]) > MAX_CHARS) { out.push(part.join('\n')); part = [header]; }
+    const head = b.lines.slice(0, b.caption ? 2 : 1); // caption (if any) and header row
+    let part = [...head];
+    for (const r of b.lines.slice(head.length)) {
+      if (part.length > head.length && size([...part, r]) > MAX_CHARS) { out.push(part.join('\n')); part = [...head]; }
       part.push(r);
     }
     cur = part;
@@ -123,8 +129,19 @@ function windows(t) {
   flush();
   return out;
 }
+// The check (corpus-captions): in a split section, every run of table rows in every part sits right under
+// its table's caption. Every captioned section on the site captions all its tables (none mixes), so a
+// run with no caption above it is a table that lost its context.
+function uncaptioned(ws, captions) {
+  if (ws.length < 2 || !captions.size) return [];
+  return ws.flatMap((w, wi) => w.split('\n').flatMap((l, i, ls) => (isRow(l) && !isRow(ls[i - 1] ?? '') && !captions.has(ls[i - 1] ?? '') ? [`part ${wi + 1}: "${l.slice(0, 50)}"`] : [])));
+}
 
+const args = process.argv.slice(2);
+const plant = args.includes('--plant') ? args[args.indexOf('--plant') + 1] : null;
+if (plant && plant !== 'caption') { console.error('build_corpus: --plant takes "caption"'); process.exit(2); }
 const chunks = [];
+const missing = [];
 let pages = 0, undatedChars = 0;
 for (const file of walk(DIST)) {
   const rel = relative(DIST, file);
@@ -153,7 +170,8 @@ for (const file of walk(DIST)) {
     body = stripHidden(body);
     const parts = split(body);
     parts.forEach((p, pi) => {
-      const ws = windows(pi === 0 && summary ? `${summary}\n${p.text}` : p.text);
+      const ws = windows(pi === 0 && summary ? `${summary}\n${p.text}` : p.text, p.captions, { attach: plant !== 'caption' });
+      for (const m of uncaptioned(ws, p.captions)) missing.push(`${url}#${id}${p.sub ? ` › ${p.sub}` : ''} ${m}`);
 
       ws.forEach((w, wi) => {
         chunks.push({
@@ -172,6 +190,16 @@ for (const file of walk(DIST)) {
   }
 }
 
+// --plant caption builds with the old packing in memory and must fail the check; it writes nothing.
+if (plant) {
+  console.log(`\nAssistant corpus, --plant caption: ${missing.length ? `caught, ${missing.length} uncaptioned table run(s):\n    ${missing.join("\n    ")}` : 'NOT caught'}`);
+  process.exit(missing.length ? 0 : 1);
+}
+if (missing.length) {
+  console.error(`  FAIL  corpus-captions: ${missing.length} table run(s) in a split section without their caption:\n    ${missing.slice(0, 10).join('\n    ')}`);
+  process.exit(1);
+}
+console.log('  PASS  corpus-captions (every table in a split section keeps its caption)');
 if (!existsSync(dirname(OUT))) mkdirSync(dirname(OUT), { recursive: true });
 // The BM25 postings go in the same file, built with the same tokenizer the Function uses.
 // The Q8 priority labels ride along for /api/ask's intake context (the Function can't import JSON

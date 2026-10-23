@@ -1,4 +1,13 @@
-# Site build — status (2026-10-22, session 11f: eval rules, sequence-start route, v0.7.6)
+# Site build — status (2026-10-22, session 11g: table captions in split sections, go-live gate, v0.7.7)
+
+## Session 11g: table captions in split sections, safety refusals, the go-live gate (v0.7.7; rules v0.9 unchanged)
+
+- **Captions (in-11):** `scripts/build_corpus.mjs` now treats a table's `<caption>` (the zip, the housing area, the CNRSW list date) as part of the table. It moves with its table when a long section is packed into parts, and a table split between rows repeats caption and header row in every part. Before, a caption could end one part while its table opened the next; 7 sections had that (Carlsbad cost and access; Eastlake / Otay Ranch, Escondido, North Park / Normal Heights, Oceanside and Southeastern / Paradise Hills access).
+- **New check `corpus-captions`** (in `build_corpus.mjs`, the last postbuild step): in a split section, every run of table rows in every part must sit right under one of the section's captions (no section mixes captioned and uncaptioned tables, so the rule is strict). `node scripts/build_corpus.mjs --plant caption` packs the old way in memory and must fail: it caught all 7; it writes nothing.
+- **Eval:** in-18 "From Oceanside zip 92058, how long is the drive to the commissary?" (the 92058 table is in part 2; expected fact is caption + header + the 32-minute row). `has_fact` now matches within one part, the way the model reads them (each part comes under its own heading), so a fact split across parts no longer passes by the parts being joined.
+- **QUESTIONS 68 (Brian 2026-10-22):** `no_safety_claim` judges each "is / it's / feels … safe / unsafe / dangerous" in its own clause; "whether", "if", "can't tell / say", "doesn't rate" in that clause make it a refusal. Also catches "it’s" with a curly apostrophe, "is not safe" and "a safe area", which the old pattern missed. Self-tests, 8 cases: 3 refusals that pass, 5 claims that fail (including a claim after a "whether" clause, and a refusal followed by a claim).
+- **Go-live gate (Brian 2026-10-22):** out-of-scope questions pass if declined by retrieval or by the model with the nearest page (step 0 below). In a retrieval-only run, an out-of-scope question that would reach the model is SKIP, not FAIL. The eval prints a `Go-live gate:` line.
+- **Retrieval-only eval:** 53 questions; expected fact 41 of 42 (in-16 only); failed: in-16 only; every self-test passes.
 
 ## Session 11f: eval rules, the sequence-start route (v0.7.6; rules v0.9 unchanged)
 
@@ -350,7 +359,7 @@ The miss: in-16 "Where do your drive times come from?" (expected `/sources/`; re
 
 ## Go live: the assistant (steps for Brian)
 
-0. **Before any of this (Brian 2026-10-22, data repo QUESTIONS F2-22):** the retrieval-only eval must pass **out-03** (passport renewal is refused, not answered from the housing-renewal step) and **seq-07** (the first step after orders retrieves `orders-read`). seq-07 passes since session 11f (the sequence-start route); out-03 still fails (`node scripts/eval_assistant.mjs`). Retrieval tuning waits for the embeddings decision; until one of them fixes both, the assistant stays off.
+0. **Before any of this (Brian 2026-10-22, data repo QUESTIONS F2-22; gate widened 2026-10-22):** **out-of-scope questions** (out-01 to out-04, out-03 passport renewal among them) pass if they're declined either by retrieval (the fixed "I don't have that" before any model call) or by the model ("I don't have that in the San Diego material" with the nearest page as the one From-list entry); the live eval decides the second. **seq-07** (the first step after orders) must retrieve `orders-read` and pass every rule live. The eval prints a `Go-live gate:` line with each of these. Retrieval tuning waits for the embeddings decision; until one of them fixes both, the assistant stays off.
 1. **Anthropic key.** In the Anthropic Console, create an API key for this project (a workspace with a monthly spend limit is the simplest cost guard). In Cloudflare: Workers & Pages → the site's Pages project → Settings → Variables and Secrets → Add → type **Secret**, name `ANTHROPIC_API_KEY`, value the key. Add it for **Preview** first if you want to test on a branch preview, then **Production**.
 2. **Model.** Same screen → Add → type **Text**, name `ASSISTANT_MODEL`, value the model ID, e.g. `claude-opus-5-5` (`claude-sonnet-5-5` or `claude-haiku-5-5` cost less; the code has no default and accepts any current model).
 3. **Optional daily cap.** Workers & Pages → KV → Create namespace (e.g. `pcs-sd-ask-limits`). Then the Pages project → Settings → Bindings → Add → KV namespace, variable name `ASK_LIMITS`, pick the namespace. Optional text variable `ASK_DAILY_CAP` (default 200). Without the binding there is no cap.
@@ -424,7 +433,7 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (no F2 questions open) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
+See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (no F2 questions open) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on the gate in step 0 of "Go live: the assistant" (the eval's `Go-live gate:` line). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
 ## Next session
 

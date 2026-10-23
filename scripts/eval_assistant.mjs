@@ -15,7 +15,9 @@
 //   retrieves_page     the expected page is among the sections retrieved (and cited)
 //   retrieves_section  the expected section of that page is among them
 //   answers            it went to retrieval/the model, not a fixed answer or "I don't have that"
-//   no_answer          "I don't have that in the San Diego material" plus a nearest page
+//   no_answer          "I don't have that in the San Diego material" plus a nearest page, from retrieval (fixed
+//                      answer) or the model (nearest page as the From list); retrieval only: SKIP if it
+//                      would reach the model
 //   guard_referral     the fixed "we don't name realtors, lenders, movers or landlords" answer
 //   guard_demographic  the fixed "we don't describe places by who lives there" answer
 //   bah_sourced        BAH figures carry their year and come from the table (Brian 2026-10-20; replaced
@@ -37,8 +39,8 @@
 //                      page only for the model's "I don't have that"
 //   short, no_safety_claim   live only
 // Self-tests (no model): the daily cap, the From-list filter (assistant/cite.js), the answer formatting
-// the page renders (assistant/format.js), the three rules fixed for QUESTIONS 65 (number words in
-// expect_answer, rent vs BAH figures, gap wording) and the sequence-start route (assistant/retrieve.js).
+// the page renders (assistant/format.js), the rules fixed for QUESTIONS 65 and 68 (number words in
+// expect_answer, rent vs BAH figures, gap wording, safety refusals) and the sequence-start route.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -94,6 +96,17 @@ const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'ei
 const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 const NUMBER_WORD = new RegExp(`\\b(?:(${TENS.slice(2).join('|')})(?:[- ](${ONES.slice(1, 10).join('|')}))?|(${ONES.join('|')}))\\b`, 'gi');
 const digitsFor = (t) => t.replace(NUMBER_WORD, (_, tens, one, single) => String(single ? ONES.indexOf(single.toLowerCase()) : TENS.indexOf(tens.toLowerCase()) * 10 + (one ? ONES.indexOf(one.toLowerCase()) : 0)));
+// A safety claim ("Santee is safe", "it's a safe area", "is not safe"), but not a refusal to make one
+// (QUESTIONS 68: "I can't tell you whether it's safe"). Each match is judged in its own clause (text since
+// the last . ; ! ? , or line break): a "whether", "if", "can't tell/say" or "doesn't rate" there makes it
+// a refusal.
+const SAFETY_CLAIM = /\b(?:is|are|it[’']?s|feels?|seems?|looks?)\s+(?:not\s+)?(?:an?\s+)?(?:very\s+|pretty\s+|quite\s+|generally\s+|relatively\s+|fairly\s+|really\s+)?(?:safe|unsafe|dangerous)\b/gi;
+const REFUSAL_FRAME = /\b(?:whether|if|can[’']?t (?:tell|say)|cannot (?:tell|say)|won[’']?t (?:say|call)|no way to (?:tell|say)|don[’']?t know|doesn[’']?t (?:rate|say|call)|does not (?:rate|say))\b/i;
+const safetyClaim = (t) => [...t.matchAll(SAFETY_CLAIM)].some((m) => {
+  const before = t.slice(0, m.index);
+  const clause = before.slice(Math.max(...['.', ';', '!', '?', ',', '\n'].map((c) => before.lastIndexOf(c))) + 1);
+  return !REFUSAL_FRAME.test(clause);
+});
 const answerMatches = (pattern, answer) => new RegExp(pattern).test(answer) || new RegExp(pattern).test(digitsFor(answer));
 const demoHits = (t) => {
   let s = t;
@@ -153,13 +166,19 @@ function judge(rule, q, r) {
     // Retrieval mode: expect_fact (a regex) against every section sent. Live: expect_answer against the answer.
     case 'has_fact':
       if (!q.expect_fact) return null;
-      if (r.chunks) return new RegExp(q.expect_fact).test(r.chunks.map((c) => c.text).join('\n')) ? 'PASS' : 'FAIL';
+      // Within one part, as the model reads it: parts reach it under their own headings, so a fact split
+      // across two parts (a caption ending one, its table opening the next) isn't readable (in-18).
+      if (r.chunks) return r.chunks.some((c) => new RegExp(q.expect_fact).test(c.text)) ? 'PASS' : 'FAIL';
       if (!realAnswers || !q.expect_answer || !answer) return 'SKIP';
       return answerMatches(q.expect_answer, answer) ? 'PASS' : 'FAIL';
     case 'retrieves_section': return !q.expect_section ? null : hasSection(r, q.expect_page, q.expect_section) ? 'PASS' : 'FAIL';
     case 'answers': return ['retrieved', 'answer'].includes(r.kind) ? 'PASS' : 'FAIL';
-    // Plus a nearest page: in the fixed answer's text, or (the model's) as the one From-list entry.
-    case 'no_answer': return (r.kind === 'no_answer' || NO_ANSWER_RE.test(answer)) && (/(?:^|\s)\/[\w-]*/.test(answer) || r.cited_by === 'nearest') ? 'PASS' : 'FAIL';
+    // Declined by retrieval (the fixed answer, with the nearest page in its text) or by the model (its
+    // "I don't have that" with the nearest page as the one From-list entry): either passes the go-live gate
+    // (Brian 2026-10-22). Retrieval only, a question that would reach the model needs the model (SKIP).
+    case 'no_answer':
+      if (r.kind === 'retrieved') return 'SKIP';
+      return (r.kind === 'no_answer' || NO_ANSWER_RE.test(answer)) && (/(?:^|\s)\/[\w-]*/.test(answer) || r.cited_by === 'nearest') ? 'PASS' : 'FAIL';
     case 'guard_referral': return r.kind === 'referral' ? 'PASS' : 'FAIL';
     case 'guard_demographic': return r.kind === 'demographic' ? 'PASS' : 'FAIL';
     case 'bah_sourced': return bahSourced(q, r, answer);
@@ -188,7 +207,7 @@ function judge(rule, q, r) {
       return 'FAIL';
     }
     case 'short': if (!realAnswers) return 'SKIP'; return words(answer) <= 180 ? 'PASS' : 'FAIL';
-    case 'no_safety_claim': if (!realAnswers) return 'SKIP'; return /\b(?:is|are|it'?s|feels?)\s+(?:very |pretty |quite |generally |relatively )?(?:safe|unsafe|dangerous)\b/i.test(answer) ? 'FAIL' : 'PASS';
+    case 'no_safety_claim': if (!realAnswers) return 'SKIP'; return safetyClaim(answer) ? 'FAIL' : 'PASS';
     default: throw new Error(`unknown rule ${rule}`);
   }
 }
@@ -259,6 +278,15 @@ const ruleCases = [
   ['gap: covers X, not Y, so I can\'t', GAP_RE.test('The San Diego material covers base housing, not private apartment complexes, so I can’t name apartments near Miramar.'), true],
   ['gap: doesn\'t cover ... so I can\'t', GAP_RE.test('The material doesn’t cover rental pet rules, so I can’t say which complexes allow large dogs.'), true],
   ['gap: a plain answer is not a gap', GAP_RE.test('Capeharts East allows two pets with no size limit (Miramar / Mira Mesa base housing: Communities).'), false],
+  // QUESTIONS 68: refusals aren't claims; claims still are.
+  ['safety: "can\'t tell you whether it\'s safe" is a refusal', safetyClaim('I can’t tell you whether it’s safe. The San Diego material has no crime data.'), false],
+  ['safety: "can\'t say if the area is safe" is a refusal', safetyClaim('Crime isn’t in the material, so I can’t say if the area is safe to raise kids.'), false],
+  ['safety: "doesn\'t rate places as safe" is a refusal', safetyClaim('The site doesn’t rate places as safe or unsafe.'), false],
+  ['safety: a plain claim', safetyClaim('Southeastern San Diego is safe for kids.'), true],
+  ['safety: "it\'s a very safe area"', safetyClaim('It’s a very safe area with low fire risk.'), true],
+  ['safety: "is not safe"', safetyClaim('El Cajon is not safe at night.'), true],
+  ['safety: claim after a "whether" clause', safetyClaim('Whether you rent or buy, it’s safe.'), true],
+  ['safety: a refusal and a claim', safetyClaim('I can’t tell you whether it’s safe. Honestly, Santee is safe.'), true],
 ];
 const ruleBad = ruleCases.filter(([, got, want]) => got !== want);
 // The sequence-start route (assistant/retrieve.js): these always get Orders steps 1-3; these don't.
@@ -292,7 +320,7 @@ console.log(`Retrieval: expected page first for ${hit1}/${withPage.length}, in t
 console.log(`Daily cap self-test (fake KV, cap 3; no binding = off): ${capOk ? 'PASS' : 'FAIL'}`);
 console.log(`From-list filter and label self-test (${filterCases.length + labelCases.length} cases): ${filterBad.length ? `FAIL: ${filterBad.map(([a]) => JSON.stringify(a)).join('; ')}` : 'PASS'}`);
 console.log(`Answer formatting self-test (${formatCases.length} cases): ${formatBad.length ? `FAIL: ${formatBad.map(([t]) => `${JSON.stringify(t)} → ${fmt(t)}`).join('; ')}` : 'PASS'}`);
-console.log(`Eval rule self-test, QUESTIONS 65 (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
+console.log(`Eval rule self-test, QUESTIONS 65 and 68 (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
 console.log(`Sequence-start route self-test (${routeCases.length} cases): ${routeBad.length ? `FAIL: ${routeBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
 const answered = results.filter((r) => r.kind === 'answer' && r.cited_by);
 if (answered.length) {
@@ -318,6 +346,16 @@ if (withUsage.length) {
 const httpErrors = results.filter((r) => r.status >= 400 || r.cf_error);
 if (httpErrors.length) console.log(`HTTP errors: ${httpErrors.map((r) => `${r.id} ${r.status}${r.cf_error ? ` (Cloudflare ${r.cf_error})` : ''}`).join(', ')}`);
 else console.log('HTTP errors: none (no Cloudflare 1102)');
+// Go-live gate (STATUS, "Go live: the assistant", step 0): every out-of-scope question declined, by retrieval
+// or by the model with the nearest page, and seq-07 (the first step after orders) passing every rule.
+const outOfScope = results.filter((r) => r.category === 'out_of_scope');
+const declined = (r) => r.rules.no_answer === 'PASS';
+const how = (r) => (r.kind === 'no_answer' ? 'by retrieval' : r.rules.no_answer === 'PASS' ? 'by the model' : r.rules.no_answer === 'SKIP' ? 'reaches the model: needs a live run' : 'answered');
+const seq07 = results.find((r) => r.id === 'seq-07');
+const seqOk = seq07 && !Object.values(seq07.rules).includes('FAIL');
+const seqDone = seqOk && !Object.values(seq07.rules).includes('SKIP');
+const gate = outOfScope.every(declined) && seqDone ? 'PASS' : outOfScope.some((r) => r.rules.no_answer === 'FAIL') || !seqOk ? 'FAIL' : 'needs a live run';
+console.log(`\nGo-live gate: ${gate}. ${outOfScope.map((r) => `${r.id} ${declined(r) ? 'declined' : 'not declined'} (${how(r)})`).join('; ')}; seq-07 ${seqDone ? 'PASS' : seqOk ? 'retrieval PASS, the answer needs a live run' : 'FAIL'}`);
 const failed = results.filter((r) => Object.values(r.rules).includes('FAIL'));
 if (failed.length) console.log(`\nFailed: ${failed.map((r) => r.id).join(', ')}`);
 const out = opt('--json');

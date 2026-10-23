@@ -170,3 +170,8 @@
 - **Replay the old answers through the new rule.** It showed cr-03 was a real miss (BAH figures with no year) that the old rule had passed only because citation dates looked like a year.
 - **Route what ranking can't see.** "What do I do first?" has no word that's on the first step's page, so no BM25 tuning finds it without disturbing other questions. A fixed rule for that question shape adds the steps and leaves ranking alone.
 
+## Session 11g (2026-10-22): captions
+
+- **A caption is part of its table.** The text conversion turned `<caption>` into an ordinary line, so packing treated "Zip 92058" as a paragraph and could leave it at the end of one part with its table in the next. Rows without their caption are numbers without a zip; seven sections had it, and the model misread one live.
+- **An eval that joins what the model sees separately can't see a split.** `has_fact` joined every part with a newline, which glued the caption back onto its table. Matching within one part is what the model actually gets.
+
