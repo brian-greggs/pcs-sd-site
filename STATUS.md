@@ -12,6 +12,9 @@
   - seq-07: "Read your orders in full … Don't book the move on an assignment notification … Then request a sponsor at the gaining command", citing Orders steps 1, 2 and 3. seq-11 to seq-13 pass too.
   - in-11 and in-18 passed on the old corpus (the model read the zips right this time: 92054 29 min, 92058 32 min, both correct); the caption fix makes that not depend on luck.
   - Misses: in-16 (retrieval: commute sections, not `/sources/`; the answer was right); cr-03 (`expect_answer` wants 92025's 73–77%; the answer gave the 71–90% span with 92027 and 92029 but skipped 92025); fu-01 (`short`: 192 words, over 180; the model also "corrected" the eval's scripted previous answer, whose 30–45 min isn't in the sections).
+- **Live eval on the preview at 11c289a** (v0.7.7: everything above deployed, the caption fix included: Oceanside's access part 2 opens with "Zip 92058"; no code changes since; 53 questions, 47 model calls): in_scope 32 of 36, known_gap 2/2, out_of_scope 4/4, bah_figure 2/2, bait_demo 2/2, bait_referral 2/2, bait_safety 2/2, not_yet_covered 3/3. **Go-live gate: PASS** (out-01 and out-04 declined by retrieval, out-02 and out-03 by the model with the nearest page; seq-07 passes every rule). **Exact cost from `usage`: 313,252 input and 33,926 output tokens, $0.0483.** Model calls: median 3.9 s, p90 6.2 s, max 7.6 s. No 1102, no HTTP errors. From lists: 44 cited sections only (1.8 on average of 6.2 sent), 3 nearest page, 0 fell back to every section.
+  - in-11: all four Oceanside zips with the right minutes and miles (92054 29 min, 92056 38, 92057 39, 92058 32; 6 to 24 miles). in-18: "about 32 minutes away, 6 miles, with no traffic" from 92058. Both pass every rule, now on the fixed corpus.
+  - Misses: in-16 (same: retrieval; the answer was right); cr-03 (same: the combined 71–90% and two zips, not 92025's 73–77%); in-15 (new: the combined 78–89% and 91911's 80–89%, not 91910's own 78–86%); seq-11 (new: `short`, 186 words, over 180; content right, Orders steps 1–3 first). fu-01, which failed `short` last run, passed. The two new ones vary run to run; no code they touch changed.
 
 ## Session 11f: eval rules, the sequence-start route (v0.7.6; rules v0.9 unchanged)
 
@@ -436,6 +439,8 @@ Session 2: dated (240 fact blocks), no-bah (exact figures + context), no-demo, n
 Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, the base housing design change).
 
 ## Open
+
+- **After launch (Brian 2026-10-22): one row per zip.** When a question names a zip, or a town that spans several zips, the answer should give each zip's own row, not only the combined range. cr-03 (Escondido: 71–90% overall, 92025's 73–77% left out) and in-15 (Chula Vista west: 78–89% overall, 91910's 78–86% left out) are the cases in the eval. Not a go-live gate.
 
 See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (no F2 questions open) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on the gate in step 0 of "Go live: the assistant" (the eval's `Go-live gate:` line). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
