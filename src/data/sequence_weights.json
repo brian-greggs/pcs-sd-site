@@ -1,0 +1,808 @@
+[
+ {
+  "grade": "O-10 to O-6",
+  "with_dependents_lb": 18000,
+  "without_dependents_lb": 18000,
+  "quote": "1 0-10 to 0-6 18,000 18,000",
+  "id": "weight-allowances-01",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-5 or W-5",
+  "with_dependents_lb": 17500,
+  "without_dependents_lb": 16000,
+  "quote": "2 0-5 or W-5 17,500 16,000",
+  "id": "weight-allowances-02",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-4 or W-4",
+  "with_dependents_lb": 17000,
+  "without_dependents_lb": 14000,
+  "quote": "3 0-4 or W-4 17,000 14,000",
+  "id": "weight-allowances-03",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-3 or W-3",
+  "with_dependents_lb": 14500,
+  "without_dependents_lb": 13000,
+  "quote": "4 0-3 or W-3 14,500 13,000",
+  "id": "weight-allowances-04",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-2 or W-2",
+  "with_dependents_lb": 13500,
+  "without_dependents_lb": 12500,
+  "quote": "5 0-2 or W-2 13,500 12,500",
+  "id": "weight-allowances-05",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-1, W-1, or Service Academy Graduate",
+  "with_dependents_lb": 12000,
+  "without_dependents_lb": 10000,
+  "quote": "6 0-1, W-1, or Service Academy Graduate 12,000 10,000",
+  "id": "weight-allowances-06",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-9",
+  "with_dependents_lb": 15000,
+  "without_dependents_lb": 13000,
+  "quote": "7 E-9 15,000 13,000",
+  "id": "weight-allowances-07",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-8",
+  "with_dependents_lb": 14000,
+  "without_dependents_lb": 12000,
+  "quote": "8 E-8 14,000 12,000",
+  "id": "weight-allowances-08",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-7",
+  "with_dependents_lb": 13000,
+  "without_dependents_lb": 11000,
+  "quote": "9 E-7 13,000 11,000",
+  "id": "weight-allowances-09",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-6",
+  "with_dependents_lb": 11000,
+  "without_dependents_lb": 8000,
+  "quote": "10 E-6 11,000 8,000",
+  "id": "weight-allowances-10",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-5",
+  "with_dependents_lb": 9000,
+  "without_dependents_lb": 7000,
+  "quote": "11 E-5 9,000 7,000",
+  "id": "weight-allowances-11",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-4",
+  "with_dependents_lb": 8000,
+  "without_dependents_lb": 7000,
+  "quote": "12 E-4 8,000 7,000",
+  "id": "weight-allowances-12",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-3 to E-1",
+  "with_dependents_lb": 8000,
+  "without_dependents_lb": 5000,
+  "quote": "13 E-3 to E-1 8,000 5,000",
+  "id": "weight-allowances-13",
+  "title": "Household goods weight allowance by pay grade",
+  "caption": "Table 5-37. PCS and NTS Weight Allowances (Pounds)",
+  "paragraph": "JTR par. 051401",
+  "source": {
+   "title": "Joint Travel Regulations",
+   "agency": "DTMO (DoD)",
+   "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "Table 5-37. PCS and NTS Weight Allowances (Pounds) Pay Grade With Dependents Without Dependents"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight allowance for a Service member authorized in this table is the total combined weight of any HHG shipped, plus any unaccompanied baggage shipped, and any HHG in storage."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For Table 5-37, a Service member with dependents is one who has a dependent eligible to travel at Government expense due to a PCS, regardless if the dependent actually travels."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The weight of PBP&E, required medical equipment, and gun safes are not included in the HHG weight allowance authorized."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Service members are authorized up to 2,000 lbs. of pro-gear. Spouses are authorized up to 500 lbs. of pro-gear related to their profession."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ }
+]

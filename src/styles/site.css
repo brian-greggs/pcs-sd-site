@@ -125,6 +125,9 @@ th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border);
 th { font-weight: 700; color: var(--muted); }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 caption { text-align: left; font-size: 0.85rem; color: var(--muted); padding-bottom: 4px; }
+/* The weight allowance table (sequence forms page): number headers wrap so all three columns fit a phone. */
+table[data-weights] th.num { white-space: normal; }
+.nowrap { white-space: nowrap; }
 tr.picked td { background: var(--mauve-bg); color: var(--mauve-fg); }
 tr.picked td:first-child { font-weight: 700; }
 

@@ -1,6 +1,19 @@
-# Site build — status (2026-10-20, session 10: the move sequence, v0.7)
+# Site build — status (2026-10-22, session 11: the sequence re-cited, weight allowances, v0.7.1)
 
 **Scope done:** F1 skeleton, all 40 neighborhood pages, 20 base housing area pages, the Cowork UI, and the F5 intake v0 (starting plan, rules under test). F2 move sequence (Navy rules; session 10). Not built, by design: F3 decision pages. F6 assistant: groundwork only (session 5b), no model connected.
+
+## Session 11: the sequence on the JTR, NAVSUP and PPA (v0.7.1; rules v0.9 unchanged)
+
+Brian saved the JTR, the NAVADMIN 210/25 message, NAVSUP's PPM pages and PPA's pages and guides by hand (data repo STATUS, "F2 sources saved by hand"); the rows were re-cited by the authority order JTR → MyNavy HR and NAVSUP → PPA → Military OneSource and re-exported. Decisions F2-17, F2-21, F2-22 and F2-23 (data repo QUESTIONS, PRD §16) are in.
+
+- **Data:** `sequence_steps.json` and `sequence_forms.json` re-exported (273 citations; of the 5 Navy form rows marked "Not yet confirmed", four no longer are: travel voucher, dependent travel, household goods counseling, pets; PPM paperwork stays partial). New `sequence_weights.json` (JTR Table 5-37, 13 grade rows, columns `with_dependents_lb` / `without_dependents_lb` so the BAH column guard doesn't mistake them) and collection `sequenceWeights`.
+- **Forms page:** "Household goods weight allowance by pay grade" right after the household goods counseling form: pay grade, with and without dependents in pounds, the JTR and PPA quotes and the date line. Number headers wrap and grade tokens stay whole so the three columns fit 375 px.
+- **F2-23:** `Cites.astro` marks each verbatim quote `<blockquote data-official-quote>`; `no-demo` skips those blocks only when the text is a quote in the sequence export (steps, forms, weights), and fails any other text in such a block. The restored counseling quote ("…separating service members and retirees must contact their local transportation office…") and PPA's version pass; planted "retirees" in step prose and a fake quote block both failed.
+- **Checks:** `check_sequence.mjs` gains `seq-weights` (the table once, right after the counseling form; every row equal to the export, in order; no figure printed outside the rows; date line; one quote per citation). `--plant all`: 16/16 caught (5 new: wrong figure, dropped row, figure typed outside the rows, table moved, no date line). The "asks the wrong office" plant moved to `navy-ppm-paperwork` (pets no longer has a "Not yet confirmed" line).
+- **Assistant:** the prompt's known gaps now say DLA rates aren't on the site and weight allowances are; eval adds seq-08 (E-6 weight allowance, 11,000 lb) and seq-09 (pet costs, $550).
+- **Retrieval near-miss, fixed in the data:** citing the NAVADMIN message next to its fact sheet lengthened the travel claim step and pushed its deadline into the second part of the split section, so seq-01 stopped retrieving it. The duplicate fact-sheet quotes were dropped (the message is the higher source) and the message quote placed after the shorter ones; seq-01 passes again. Retrieval code untouched (F2-22).
+
+Checks on 2026-10-22: `check_f2.py` PASS and `--selftest` 18/18 (data repo); full build, every principle, intake (26,789 plans; 99,902 sequence lines), sequence and Functions check passes; layout clean on 82 pages at 390/768/1280/1440 (and the weight table looked at by eye at 375 px). Retrieval-only eval, 48 questions: expected fact in the sections sent 35 of 37 (missing in-16 and seq-07, as before); expected section 32 of 33; out-02 and out-03 still not stopped; seq-08 and seq-09 pass. No live model run (no key here).
 
 ## Session 10: the move sequence (F2; v0.7, rules v0.9)
 
@@ -265,6 +278,7 @@ The miss: in-16 "Where do your drive times come from?" (expected `/sources/`; re
 
 ## Go live: the assistant (steps for Brian)
 
+0. **Before any of this (Brian 2026-10-22, data repo QUESTIONS F2-22):** the retrieval-only eval must pass **out-03** (passport renewal is refused, not answered from the housing-renewal step) and **seq-07** (the first step after orders retrieves `orders-read`). Both fail today (`node scripts/eval_assistant.mjs`). Retrieval tuning waits for the embeddings decision; until one of them fixes both, the assistant stays off.
 1. **Anthropic key.** In the Anthropic Console, create an API key for this project (a workspace with a monthly spend limit is the simplest cost guard). In Cloudflare: Workers & Pages → the site's Pages project → Settings → Variables and Secrets → Add → type **Secret**, name `ANTHROPIC_API_KEY`, value the key. Add it for **Preview** first if you want to test on a branch preview, then **Production**.
 2. **Model.** Same screen → Add → type **Text**, name `ASSISTANT_MODEL`, value the model ID, e.g. `claude-opus-5-5` (`claude-sonnet-5-5` or `claude-haiku-5-5` cost less; the code has no default and accepts any current model).
 3. **Optional daily cap.** Workers & Pages → KV → Create namespace (e.g. `pcs-sd-ask-limits`). Then the Pages project → Settings → Bindings → Add → KV namespace, variable name `ASK_LIMITS`, pick the namespace. Optional text variable `ASK_DAILY_CAP` (default 200). Without the binding there is no cap.
@@ -338,7 +352,7 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian) and the LMH call list in the data repo's STATUS. Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
+See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (F2-12, F2-19 rest, F2-24 to F2-28) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
 ## Next session
 

@@ -144,3 +144,11 @@
 - **The collection doesn't keep the file's order.** The forms page came out in id order; the check caught it. Order that means something has to come from the data, not from the loader.
 - **New pages change retrieval for old questions.** Adding 81 chunks of official wording turned two out-of-scope questions into matches ("weekends", "renew"). Taking the quotes out of ranking made it worse (a schools question lost its page), so it was reverted; the eval is what showed both.
 - **A string shared by a page, a plan rule and a check lives in one module.** The disclaimer, the Navy-rules line, the phase map and the "Not yet confirmed" wording are in `src/lib/sequence.js`, imported by all three, so the check compares against the words the page prints.
+
+## Session 11 (2026-10-22): re-citing the sequence
+
+- **An exemption needs its own proof.** Skipping the word list inside quote blocks would let any text dodge it by sitting in a blockquote. The exemption is keyed to the export instead: a `data-official-quote` block passes only if its text is an exported official quote, and anything else in one fails. Planting "retirees" in prose and in a fake quote block proved both halves.
+- **A guard built for one figure caught a different one.** The BAH column guard flags any `*_dependents` column outside `bah.json`; the weight table tripped it. Renaming to `*_lb` kept the guard intact and made the unit part of the name.
+- **A three-column table still needs a phone check.** `th.num` doesn't wrap, so "Without dependents" pushed the table past 375 px and clipped its caption; the layout check passed because tables scroll inside `.table-wrap` by design. Looking at the page at phone width is what found it.
+- **Re-citing can move retrieval.** A longer quote on the travel claim step dropped seq-01. Swapping duplicate quotes for the higher source, and ordering the step's quotes, fixed it without touching the retriever; run the eval after every data re-export, not only after code changes.
+

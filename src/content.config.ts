@@ -396,6 +396,24 @@ const sequenceForms = defineCollection({
   }).refine((f) => (f.status === 'partial') === !!f.unconfirmed, 'partial forms need an unconfirmed line; others none'),
 });
 
+// JTR Table 5-37, one row per pay grade line (content/f2_weight_allowances.yml; check_f2.py proves each figure is on
+// its line of the saved table). Every row carries the table's citation and the quotes shown with it.
+const sequenceWeights = defineCollection({
+  loader: strictJson('sequence_weights'),
+  schema: z.object({
+    grade: z.string().min(1),
+    with_dependents_lb: z.number().int().positive(),
+    without_dependents_lb: z.number().int().positive(),
+    quote: z.string().min(1),
+    title: z.string().min(1),
+    caption: z.string().min(1),
+    paragraph: z.string().min(1),
+    source: cite,
+    sources: z.array(cite).min(1),
+    ...dated,
+  }),
+});
+
 const provenance = defineCollection({
   loader: strictJson('provenance'),
   schema: z.object({
@@ -452,6 +470,6 @@ const changelog = defineCollection({
 export const collections = {
   communities, bases, bah, commute, rent, rentToBah, ownership, schools, districts, childcare,
   baseHousing, baseHousingWaits, baseHousingAreas, housingRules, militaryAccess, climate, hazards, links, provenance, sources,
-  sequenceSteps, sequenceForms,
+  sequenceSteps, sequenceForms, sequenceWeights,
   communityNotes, baseHousingNotes, changelog,
 };

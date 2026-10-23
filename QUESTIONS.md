@@ -1,5 +1,9 @@
 # Questions — site build
 
+## Session 11 (2026-10-22): nothing new here
+
+The F2 questions live in the data repo's QUESTIONS.md: F2-24 (PPM deadline), F2-25 (quick claim calendar vs business days), F2-26 (NAVSUP's started/approved wording), F2-27 (page URLs for the hand-saved prints) and F2-28 (the pets row now states the JTR's limits instead of "not yet confirmed") all show on `/sequence/` pages as built. F2-22's go-live condition is step 0 of "Go live: the assistant" in STATUS.
+
 ## Answered (session 9, BAH figures, 2026-10-20)
 
 **Brian's answer, 2026-10-20:** 62 re-base the ratio on the reader's base (duty station MHA), on the pages and in the plan (done: v0.6.1, rules v0.7, STATUS session 9b). 63: with "Not sure yet", the section shows one line with no figures, "BAH depends on your duty station, not where you live. Pick a base to see your rates.", linking to the base list; `intake-bah` requires it (done: v0.6.2, rules v0.8, STATUS session 9c). 64: Brian checked 5 figures in DTMO's calculator on 2026-10-20, all match; BAH `verified_on` is now 2026-10-20 with the note "spot-checked by hand, 5 figures, DTMO calculator" (done: v0.6.3, STATUS session 9d). All of 62–64 answered.

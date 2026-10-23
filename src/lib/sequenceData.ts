@@ -1,5 +1,6 @@
 // The move sequence (F2) as the pages use it: every step and form from src/data/sequence_*.json, in order.
 // USMC rows are "not yet covered" and never render (Brian 2026-10-20); the Navy-rules note says so instead.
+// The weight allowance table (JTR Table 5-37) comes from src/data/sequence_weights.json.
 // A link to a step or form that doesn't exist fails the build here.
 import { getCollection } from 'astro:content';
 import { PHASES } from './sequence.js';
@@ -23,7 +24,13 @@ export async function sequenceData() {
     for (const f of s.forms) if (!formById.has(f)) throw new Error(`sequence step ${s.id}: unknown form ${f}`);
   }
   for (const f of forms) for (const s of f.sequence_step) if (!stepById.has(s)) throw new Error(`form ${f.id}: unknown step ${s}`);
-  return { steps, forms, stepById, formById };
+  // JTR Table 5-37 in table order (the row ids number the lines).
+  const weightRows = (await getCollection('sequenceWeights')).map((w) => ({ ...w.data, id: w.id })).sort((a, b) => a.id.localeCompare(b.id));
+  const weights = weightRows.length ? {
+    id: 'weight-allowances', title: weightRows[0].title, caption: weightRows[0].caption, paragraph: weightRows[0].paragraph,
+    sources: [weightRows[0].source, ...weightRows[0].sources], superseded: [], rows: weightRows,
+  } : null;
+  return { steps, forms, stepById, formById, weights };
 }
 export type SequenceData = Awaited<ReturnType<typeof sequenceData>>;
 export type Step = SequenceData['steps'][number];

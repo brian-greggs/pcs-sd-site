@@ -48,7 +48,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -74,6 +74,14 @@
   "alternatives": [],
   "sources": [
    {
+    "title": "PCS 101: Your Complete Moving Guide",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "They contain your timeline, new duty station, and authorizations for moving your family and personal property. You cannot schedule your move without them."
+   },
+   {
     "title": "Arranging a Personal Property Shipment",
     "agency": "Military OneSource (DoD)",
     "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
@@ -84,8 +92,8 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "orders-sponsor",
@@ -122,7 +130,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -168,7 +176,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -206,16 +214,16 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
   "id": "orders-hhg-counseling",
   "phase": "orders",
   "order": 6,
-  "step": "Contact the transportation office for household goods counseling.",
+  "step": "Contact the transportation office for household goods counseling (first-time movers must, before using DPS).",
   "anchor": "orders_in_hand",
-  "deadline": "Once you have orders; MyNavy HR places personal property 3-6 months before the PCS.",
+  "deadline": "As soon as you have orders; MyNavy HR places personal property 3-6 months before the PCS.",
   "depends_on": [
    "orders-no-moves-before-orders"
   ],
@@ -234,12 +242,36 @@
   "alternatives": [],
   "sources": [
    {
+    "title": "PCS 101: Your Complete Moving Guide",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "They will counsel you on your specific entitlements and help you navigate the process. Make an appointment with them as soon as you have your orders."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "First-time movers, separating members, and retirees: You have unique entitlements. It is required that you contact your local Personal Property Office for specific counseling on what is authorized for your move."
+   },
+   {
     "title": "Arranging a Personal Property Shipment",
     "agency": "Military OneSource (DoD)",
     "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "Now that you have orders in hand, you get to choose how to ship your goods and schedule your move dates. You should contact your local transportation office to schedule an info/counseling session and discover options for transporting your goods."
+   },
+   {
+    "title": "Arranging a Personal Property Shipment",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Note: First time movers, separating service members and retirees must contact their local transportation office before scheduling a move in DPS."
    },
    {
     "title": "MyNavy HR PCS Guide 2026",
@@ -254,16 +286,16 @@
   "forms": [
    "navy-hhg-counseling-shipment"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "orders-dps-shipment",
   "phase": "orders",
   "order": 7,
-  "step": "Upload orders and create the shipment(s) in DPS; pick packing and pickup dates (a seven-day spread window).",
+  "step": "Upload orders and create the shipment(s) in DPS. You request a latest pickup date; the moving company picks up within the 7 days ending on it.",
   "anchor": "orders_in_hand",
-  "deadline": "not stated",
+  "deadline": "As soon as you receive orders (PPA's advice).",
   "depends_on": [
    "orders-hhg-counseling"
   ],
@@ -290,20 +322,36 @@
     "quote": "DPS is the online system you use to upload your orders and create shipment(s) (e.g. household goods, unaccompanied baggage, non-temporary storage, personally procured move, etc.)."
    },
    {
-    "title": "Arranging a Personal Property Shipment",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/preparing-to-move-or-pcs/",
+    "title": "7-Day Scheduling Window",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "When creating your shipment, you will select the packing and pickup dates. This will be a seven-day spread window during which your moving company is required to pick up your shipment."
+    "retrieved_on": "2026-10-22",
+    "quote": "It is suggested to schedule your move as soon as you receive your PCS orders so that you are more likely to get moving dates that work for your schedule."
+   },
+   {
+    "title": "7-Day Scheduling Window",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Your 7-day window is calculated from the “Latest Pickup Date” you request in the Defense Personal Property System (DPS). For example, if you select 20 April as your latest pickup date, your 7-day window will be from 14-20 April."
+   },
+   {
+    "title": "7-Day Scheduling Window",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Remember, the moving company is not authorized to pick up outside of your 7-day window."
    }
   ],
   "superseded": [],
   "forms": [
    "navy-hhg-counseling-shipment"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "orders-ppm-approval",
@@ -330,20 +378,28 @@
   "alternatives": [],
   "sources": [
    {
-    "title": "Personally Procured Moves fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Before moving, you must have your official orders and get approval from your local Personal Property Office (PPO)."
+   },
+   {
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Before you do anything else, you must contact your local Personal Property Office for counseling. A counselor will explain the process and authorize the PPM."
    }
   ],
   "superseded": [],
   "forms": [
    "navy-ppm-paperwork"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "orders-command-items",
@@ -396,7 +452,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -440,7 +496,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-09-30"
  },
  {
@@ -478,7 +534,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-09-30"
  },
  {
@@ -526,7 +582,7 @@
   "forms": [
    "navy-dependent-travel"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -553,6 +609,22 @@
   "unconfirmed": null,
   "alternatives": [],
   "sources": [
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Except for non-concurrent travel and Personally Procured Move (PPM) advances, travel advances are not authorized for Sailors who have a GTCC. Sailors ineligible for a GTCC may be paid travel advances to cover anticipated PCS related costs. Dislocation Allowance is an unauthorized use for the GTCC and will be provided as an advance."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "See the DoD Financial Management Regulation, Vol. 9, for travel advances when the traveler is not issued a GTCC."
+   },
    {
     "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
     "agency": "MyNavy HR (Navy)",
@@ -609,8 +681,8 @@
   "forms": [
    "navy-travel-advance"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "pre-dla-advance",
@@ -637,6 +709,22 @@
   "alternatives": [],
   "sources": [
    {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA may be paid in advance."
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Dislocation Allowance is an unauthorized use for the GTCC and will be provided as an advance."
+   },
+   {
     "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
     "agency": "MyNavy HR (Navy)",
     "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
@@ -661,7 +749,7 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "The GTCC is authorized for dislocation allowance (DLA) expenses.",
-    "reason": "NAVADMIN 286/21 (Dec 2021). The NAVADMIN 210/25 fact sheet (Oct 2025) says DLA cannot be charged to the GTCC."
+    "reason": "NAVADMIN 286/21 (Dec 2021). NAVADMIN 210/25 (Oct 2025) makes DLA an unauthorized use of the GTCC, paid as an advance."
    },
    {
     "title": "GTCC for PCS FAQ (Aug 2025)",
@@ -686,14 +774,14 @@
    "navy-dla",
    "navy-travel-advance"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "pre-ppm-advance",
   "phase": "90_60_30",
   "order": 6,
-  "step": "For a PPM advance (up to 60% of the incentive), give your CPPA a rental reservation or moving company estimate and the DD 2278 signed by you and the housing (transportation) office.",
+  "step": "For a PPM advance (up to 60% of the PPM incentive), give your CPPA a rental reservation or moving company estimate and the DD 2278 signed by you and the housing (transportation) office. First-time movers can't get a PPM advance.",
   "anchor": "detachment",
   "deadline": "Same as the advance request; PPM advances are paid about 10 days before detachment.",
   "depends_on": [
@@ -710,17 +798,41 @@
    "service": "navy"
   },
   "status": "ok",
-  "note": "The Military OneSource Navy page carrying the 60% rule is dated March 21, 2022.",
+  "note": "",
   "unconfirmed": null,
   "alternatives": [],
   "sources": [
    {
-    "title": "Navy PCS Moving Assistance",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/navy-pcs-moving-assistance/",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
+    "quote": "An amount equal to 60% of the PPM monetary allowance when the Service member chooses the PPM monetary allowance."
+   },
+   {
+    "title": "Service-Specific Entitlements (Navy tab)",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
     "quote": "Generally, Navy personnel requesting an advance of up to 60% for a PPM, must provide a copy of a vehicle rental reservation or moving company estimate to be eligible for a funds advance."
+   },
+   {
+    "title": "Service-Specific Entitlements (Navy tab)",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "First time movers and separating navy personnel in a “non-pay status” are not eligible for an advance payment."
+   },
+   {
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "DD2278 This form is REQUIRED to request a PPM travel advance to PSD."
    },
    {
     "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
@@ -744,8 +856,8 @@
    "navy-travel-advance",
    "navy-ppm-paperwork"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "pre-gtcc-ready",
@@ -771,6 +883,14 @@
   "unconfirmed": null,
   "alternatives": [],
   "sources": [
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Sailors must check-out with their detaching APC to confirm a zero dollar balance on the GTCC, provide updated contact information, and verify their GTCC is ready for use."
+   },
    {
     "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
     "agency": "MyNavy HR (Navy)",
@@ -800,8 +920,8 @@
   "forms": [
    "navy-gtcc-pcs"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "pre-passenger-travel",
@@ -846,14 +966,14 @@
   "forms": [
    "navy-dependent-travel"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
   "id": "pre-pets",
   "phase": "90_60_30",
   "order": 9,
-  "step": "Plan pet travel, vaccinations and documents; movers can't ship animals.",
+  "step": "Plan pet travel, vaccinations and documents; movers can't ship animals. Keep receipts; the JTR reimburses some costs for one cat or dog.",
   "anchor": "detachment",
   "deadline": "not stated",
   "depends_on": [],
@@ -880,20 +1000,28 @@
     "quote": "Plan pet travel, vaccinations, and documentation."
    },
    {
-    "title": "Understand Your Military PCS Entitlements",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/benefits/pcs-entitlements/",
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Your moving company cannot ship any live animals as part of your move."
+    "retrieved_on": "2026-10-22",
+    "quote": "Your moving company cannot transport any live animals."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "may be authorized reimbursement for the costs related to the relocation of one household pet that arises from a permanent change of station. A household pet is a cat or a dog, owned for personal companionship."
    }
   ],
   "superseded": [],
   "forms": [
    "navy-pet-expenses"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "pre-schools",
@@ -928,7 +1056,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -964,14 +1092,14 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
   "id": "transit-receipts",
   "phase": "transit",
   "order": 1,
-  "step": "Keep itemized, zero-balance receipts; lodging needs a receipt at any amount, other single expenses over $75.",
+  "step": "Keep itemized, zero-balance receipts; lodging needs a receipt at any amount, other single expenses of $75 or more.",
   "anchor": "detachment",
   "deadline": "During travel.",
   "depends_on": [],
@@ -984,18 +1112,26 @@
    "vehicles": "any",
    "service": "navy"
   },
-  "status": "ok",
+  "status": "newest_authority",
   "note": "",
   "unconfirmed": null,
   "alternatives": [],
   "sources": [
    {
-    "title": "MyNavy HR PCS Guide 2026",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "DoD Financial Management Regulation, Vol. 9, “Travel Policy,” requires an itemized receipt for each lodging expense, regardless of the amount, and any individual expenditure of $75 or more."
+   },
+   {
+    "title": "DoD Financial Management Regulation, Volume 9 (Travel Policy)",
+    "agency": "Office of the Under Secretary (Comptroller) (DoD)",
+    "url": "https://comptroller.defense.gov/Portals/45/documents/fmr/Volume_09.pdf",
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
-    "quote": "You must provide receipts for lodging regardless of the amount, and any single expense greater than $75 to be reimbursed."
+    "quote": "The traveler must attach all lodging receipts regardless of amount and any other receipts for expenses of $75 or more to the claim."
    },
    {
     "title": "MyNavy HR PCS Guide 2026",
@@ -1006,12 +1142,22 @@
     "quote": "Submit all receipts with a zero balance, and itemized to show things like taxes and fees separately."
    }
   ],
-  "superseded": [],
+  "superseded": [
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You must provide receipts for lodging regardless of the amount, and any single expense greater than $75 to be reimbursed.",
+    "reason": "The PCS Guide 2026 says \"greater than $75\"; the JTR (par. 010301) and the DoD FMR, Vol. 9 require a receipt for any expense of $75 or more."
+   }
+  ],
   "forms": [
    "navy-dd1351-2-travel-voucher"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "transit-gtcc-use",
@@ -1066,7 +1212,7 @@
   "forms": [
    "navy-gtcc-pcs"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1102,14 +1248,14 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
   "id": "transit-tle",
   "phase": "transit",
   "order": 4,
-  "step": "Temporary lodging (TLE) near the old or new duty station, split as you choose. San Diego isn't on the extended-TLE list. Use Navy Lodge first, or get a certificate of non-availability.",
+  "step": "Temporary lodging (TLE) near the old or new duty station, split as you choose; up to $290 a day. San Diego isn't on the extended-TLE list. Use government lodging (Navy Lodge) first, or get a certificate of non-availability.",
   "anchor": "report_date",
   "deadline": "Up to 21 days for a CONUS move.",
   "depends_on": [],
@@ -1128,12 +1274,28 @@
   "alternatives": [],
   "sources": [
    {
-    "title": "UTD for MAP 66-24(R) Temporary Lodging Expense (TLE) Period Increase",
-    "agency": "Defense Travel Management Office (DoD)",
-    "url": "https://media.defense.gov/2024/Dec/03/2003597426/-1/-1/0/UTD_FOR_MAP_66-24(R)%2C_TEMPORARY_LODGING_EXPENSE_(TLE)_PERIOD_INCREASE.PDF",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "A Service member may be authorized TLE for either 7 or 21 days, depending on whether the new PDS location is in the CONUS. The days may be split between multiple authorized locations and at the Service member’s or dependent’s discretion."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A Service member and his or her dependent may be reimbursed up to a maximum of $290 per day and may occupy temporary lodging on the same or different days up to the authorized number of days."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Government quarters must be used, if available, before commercial lodging and is subject to the rules outlined in Table 5-16."
    },
    {
     "title": "JTR Supplement: Locations with Approved TLE Extensions",
@@ -1160,14 +1322,14 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "Cannot exceed a total of 14 days.",
-    "reason": "The MILPCS Travel Claim Settlement SOP (Rev Jun 2024) predates the JTR change (UTD for MAP 66-24(R)) that raised CONUS TLE from 14 to 21 days."
+    "reason": "The MILPCS Travel Claim Settlement SOP (Rev Jun 2024) predates the JTR's 21-day rule for a new duty station in the CONUS (JTR par. 050601)."
    }
   ],
   "forms": [
    "navy-tle-claim"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "arrival-check-in",
@@ -1210,7 +1372,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1246,14 +1408,6 @@
     "quote": "The traveler must submit all claims within five working days of return to or arrival at the PDS."
    },
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
-    "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Sailors must check in with the gaining CPPA to submit their travel voucher within five working days and before executing Permissive Temporary Duty (PTDY)."
-   },
-   {
     "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
     "agency": "MyNavy HR (Navy)",
     "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/SOP/MILPCS_Travel_Claim_Settlement_SOP_Rev_Jun_2024.pdf?ver=zlUS5BsOrcC-rZuSEQtAzg%3D%3D",
@@ -1276,6 +1430,14 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "Submit travel claim once PCS travel is complete. Do not submit partial travel claims."
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Sailors will check-in with the gaining CPPA to submit their travel voucher to Transaction Service Center (TSC) Memphis via Enterprise Customer Relationship Management (eCRM) within 5 working days and before executing any permissive TDY."
    }
   ],
   "superseded": [],
@@ -1286,8 +1448,8 @@
    "navy-dependent-travel",
    "navy-pet-expenses"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "arrival-ptdy-house-hunting",
@@ -1332,7 +1494,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1448,7 +1610,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1492,7 +1654,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-09-30"
  },
  {
@@ -1530,7 +1692,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1568,7 +1730,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1622,7 +1784,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1660,7 +1822,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-09-30"
  },
  {
@@ -1696,7 +1858,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1735,7 +1897,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1771,6 +1933,14 @@
     "quote": "Personally verify each HHG item by inventory number with movers, and document missing or damaged items."
    },
    {
+    "title": "Personal Property Quick Reference Guides",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Check-off each tag number from your inventory list as each item is offloaded from the truck."
+   },
+   {
     "title": "After a PCS Move Checklist (Resources to Help Settle in After a PCS)",
     "agency": "Military OneSource (DoD)",
     "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/moving-checklists-for-military-moves/",
@@ -1779,11 +1949,11 @@
     "quote": "Compare delivered items with your inventory list and take clear photos of damages."
    },
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "“Notification of Loss or Damage AT Delivery” form completed with moving company on delivery day."
    }
   ],
@@ -1792,8 +1962,8 @@
    "navy-hhg-loss-damage-notice",
    "navy-hhg-quick-claim"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "f30-loss-damage-notice",
@@ -1820,28 +1990,36 @@
   "alternatives": [],
   "sources": [
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
+    "quote": "Important: You have 180 calendar days from your delivery date to provide a notice."
+   },
+   {
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
     "quote": "Give written notice of loss/damage within 180 days from delivery date"
    },
    {
-    "title": "Understanding Moving Claims",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "You can give multiple notifications during that 180-day time frame if you discover additional items after your initial notification."
+    "retrieved_on": "2026-10-22",
+    "quote": "You can submit multiple notices as you unpack and discover more issues."
    }
   ],
   "superseded": [],
   "forms": [
    "navy-hhg-loss-damage-notice"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "f30-loss-damage-claim",
@@ -1863,25 +2041,25 @@
    "service": "navy"
   },
   "status": "newest_authority",
-  "note": "The MyNavy HR PCS Guide 2026 says nine months; it predates the May 15, 2026 change.",
+  "note": "The MyNavy HR PCS Guide 2026 says nine months; it predates the May 15, 2026 change. A claim filed late gets only the item's depreciated value.",
   "unconfirmed": null,
   "alternatives": [],
   "sources": [
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Important note: You have 9 months to file a claim for shipments picked up on or before May 14, 2026. For shipments picked up on or after May 15, 2026, the filing period is extended to 12 months."
    },
    {
-    "title": "Understanding Moving Claims",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "If your shipment was picked up on or after May 15, 2026, you have up to 12 months from your delivery date to file."
+    "retrieved_on": "2026-10-22",
+    "quote": "If you file after your deadline, you will only be eligible for the item's depreciated value, not the full replacement value."
    }
   ],
   "superseded": [
@@ -1892,7 +2070,7 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "file dps claim within nine months",
-    "reason": "The PCS Guide 2026 gives nine months only; the Personal Property Claims fact sheet (October 2026) extends it to 12 months for shipments picked up on or after May 15, 2026."
+    "reason": "The PCS Guide 2026 gives nine months only; PPA's Personal Property Claims guide (October 2026) extends it to 12 months for shipments picked up on or after May 15, 2026."
    },
    {
     "title": "Understanding Moving Claims",
@@ -1901,22 +2079,22 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "Up to nine months after delivery date: Submit your itemized claim for any lost or damaged items.",
-    "reason": "The same page's timeline section wasn't updated for the May 15, 2026 change stated earlier on the page."
+    "reason": "The timeline section of this Military OneSource page wasn't updated for the May 15, 2026 change stated earlier on the page; PPA's claims guide and claims page give 9 or 12 months by pickup date."
    }
   ],
   "forms": [
    "navy-hhg-claim"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "f30-inconvenience-claim",
   "phase": "first_30_days",
   "order": 4,
-  "step": "If the moving company missed the pickup or delivery dates and you lacked household items, tell the company you intend to file an inconvenience claim.",
+  "step": "If the moving company missed the pickup date or the required delivery date and you lacked household items, tell the company you intend to file an inconvenience claim; it gives you the claim form.",
   "anchor": "delivery_date",
-  "deadline": "The company must acknowledge within five business days of your contact.",
+  "deadline": "The moving company must acknowledge within five government business days of your contact.",
   "depends_on": [],
   "applies_to": {
    "base": "all",
@@ -1933,28 +2111,36 @@
   "alternatives": [],
   "sources": [
    {
-    "title": "Understanding Moving Claims",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Notify your TSP that you intend to file a claim and ask for the inconvenience claim form if they have not already offered it to you."
+    "retrieved_on": "2026-10-22",
+    "quote": "Notify your moving company that you intend to file an inconvenience claim."
    },
    {
-    "title": "Understanding Moving Claims",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "The TSP must acknowledge your intent to file an inconvenience claim within five business days of being contacted by you or your local transportation office."
+    "retrieved_on": "2026-10-22",
+    "quote": "They will provide the DP3 Shipment Inconvenience Claim Form. Complete and return the form to them."
+   },
+   {
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Your moving company must acknowledge your intent to file an inconvenience claim within five government business days of being contacted by you or your local PPO."
    }
   ],
   "superseded": [],
   "forms": [
    "navy-hhg-inconvenience-claim"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "f30-tle-supplemental",
@@ -1982,12 +2168,12 @@
   "alternatives": [],
   "sources": [
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Temporary Lodging Expense (TLE) at old or new CONUS PDS (file supplemental voucher after stay)."
+    "retrieved_on": "2026-10-22",
+    "quote": "Service Members who use their GTCC for TLE expenses to their PDS should file a supplemental Travel Voucher upon completion of their temporary lodging stay."
    },
    {
     "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
@@ -2002,8 +2188,8 @@
   "forms": [
    "navy-tle-claim"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "f30-gtcc-pay-off",
@@ -2030,11 +2216,11 @@
   "alternatives": [],
   "sources": [
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "GTCC must be paid in full upon travel claim liquidation."
    },
    {
@@ -2050,16 +2236,16 @@
   "forms": [
    "navy-gtcc-pcs"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "f30-ppm-closeout",
   "phase": "first_30_days",
   "order": 7,
-  "step": "Close out the PPM. Turn in weight tickets (empty and full), receipts and the DD 3166 checklist; Navy packages go to the NAVSUP HHG Audit Division.",
+  "step": "Close out the PPM. If it started on or after May 15, 2026, upload the documents to your DPS shipment and submit the PPM for closeout in DPS; if it was approved before then, email NAVSUP's HHG Audit team for a DoD SAFE upload link. The Navy package: the signed PPM checklist (DD 3166), DD 2278, signed DD 1351-2, NPPSC 7000/1, orders, and certified empty and full weight tickets for each trip, with rental contracts and receipts.",
   "anchor": "detachment",
-  "deadline": "45 days from the planned move start date (Military OneSource FAQ dated Oct. 6, 2023). Confirm with your PPPO.",
+  "deadline": "45 days after you complete the move (PPA). Confirm with your PPPO.",
   "depends_on": [
    "orders-ppm-approval"
   ],
@@ -2073,36 +2259,108 @@
    "service": "navy"
   },
   "status": "partial",
-  "note": "The clock starts at the PPM's planned move start date; this page counts it from your detachment date.",
+  "note": "The clock starts when you complete the move; this page counts it from your detachment date, which comes first.",
   "unconfirmed": {
-   "text": "The 45-day rule comes from an all-services FAQ dated 2023; a Navy deadline isn't on this site yet.",
+   "text": "The 45 days come from PPA's PPM page, which shows no date; NAVSUP's own 45-day rule (June 2023) is for Sailors who got an advance, and its current pages state no deadline.",
    "ask": "PPPO"
   },
   "alternatives": [],
   "sources": [
    {
-    "title": "Personal Property FAQs",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "You have 45 days from the planned move start date to turn in all paperwork."
+    "retrieved_on": "2026-10-22",
+    "quote": "After you've completed your move, you have 45 days to submit your claim for payment."
    },
    {
-    "title": "Personal Property FAQs",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "title": "Top 10 things to consider when deciding to do a PPM",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Oct. 6, 2023"
+    "retrieved_on": "2026-10-22",
+    "quote": "If you received a funds advance, you have 45 days to submit your completed/signed package to Navy HHG Audit Team"
    },
    {
-    "title": "Personally Procured Moves fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Obtain empty and full weight tickets (based on Service Branch requirements) from a certified weigh station for each segment of your PPM, including multiple TDY trips en route."
+    "retrieved_on": "2026-10-22",
+    "quote": "If your PPM was started on or after May 15, 2026: Per the latest TRANSCOM/PPA guidance, you must upload your PPM documentation directly into your Defense Personal Property System (DPS) shipment."
+   },
+   {
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Once your documents have been uploaded, submit your PPM for closeout through DPS."
+   },
+   {
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "If your PPM was approved before May 15, 2026: Please email audit- hhgaudit.ppmclaims@us.navy.mil"
+   },
+   {
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "They will provide you with a DoD SAFE link so you can securely submit your required documentation"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Signed PPM Checklist"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "DD form 2278 (provided at the time of counseling from the personal property office)"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Signed DD Form 1351-2 (fill out blocks 1-8 and sign in block 20 a./b.)"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Complete and sign NPPSC 7000-1"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "2 CERTIFIED weight tickets"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "One empty and One full, for each trip/leg"
    },
    {
     "title": "Arranging a Personal Property Shipment",
@@ -2111,6 +2369,17 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "DD3166- Personally Procured Move Checklist and Expense Certification: This form will be generated by DPS during your transportation office counseling appointment."
+   }
+  ],
+  "superseded": [
+   {
+    "title": "Personal Property FAQs",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You have 45 days from the planned move start date to turn in all paperwork.",
+    "reason": "Military OneSource FAQ dated Oct. 6, 2023, counts the 45 days from the planned move start date; PPA's PPM page, higher in the authority order, counts them from completing the move."
    },
    {
     "title": "Navy PCS Moving Assistance",
@@ -2118,15 +2387,24 @@
     "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/navy-pcs-moving-assistance/",
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
-    "quote": "Email submissions: hhg_audit_ppm_claims.fct@navy.mil"
+    "quote": "Email submissions: hhg_audit_ppm_claims.fct@navy.mil",
+    "reason": "Military OneSource Navy page (March 21, 2022). NAVSUP's PPM page now sends PPMs started on or after May 15, 2026 to DPS, and earlier ones to hhgaudit.ppmclaims@us.navy.mil."
+   },
+   {
+    "title": "Service-Specific Entitlements (Navy tab)",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Email: hhg_audit_ppm_claims.fct@navy.mil",
+    "reason": "PPA's Navy page (no date shown) still gives the old address; NAVSUP, the Navy's household goods program office and higher in the authority order, moved PPM closeout into DPS for PPMs started on or after May 15, 2026."
    }
   ],
-  "superseded": [],
   "forms": [
    "navy-ppm-paperwork"
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "f30-housing-renewal",
@@ -2163,7 +2441,7 @@
   ],
   "superseded": [],
   "forms": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-09-30"
  }
 ]

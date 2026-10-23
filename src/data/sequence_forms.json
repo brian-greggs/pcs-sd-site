@@ -2,16 +2,16 @@
  {
   "id": "navy-dd1351-2-travel-voucher",
   "service": "navy",
-  "form": "DD Form 1351-2, Travel Voucher or Subvoucher (PCS travel claim)",
+  "form": "DD Form 1351-2 (May 2011), Travel Voucher or Subvoucher (PCS travel claim)",
   "pays_or_does": "Settles the PCS travel entitlements (mileage, per diem, TLE, DLA and the rest) and closes out any advances; split disbursement pays the GTCC first.",
   "who_files": "The Sailor prepares and signs it; the gaining command's CPPA reviews it and submits it.",
   "anchor": "report_date",
   "deadline": "Within 5 working days of reporting, and before house-hunting PTDY. One complete claim, no partials.",
-  "filed_where": "CPPA via eCRM to TPC Memphis (Navy Travel Processing Center); MyPCS Travel Voucher per NAVADMIN 286/21",
+  "filed_where": "Gaining CPPA via eCRM to TSC Memphis (the Navy's Travel Processing Center)",
   "attachments": [
    "PCS orders with every modification",
-   "Receipts for lodging at any amount and for any single expense over $75; zero balance, itemized",
-   "NPPSC 7000/1 Travel EFT Information if pay goes to a different account",
+   "Receipts for lodging at any amount and for any single expense of $75 or more; zero balance, itemized",
+   "NPPSC 7000/1 (02-2017) Travel EFT Information if pay goes to a different account",
    "NPPSC 1300/2 PCS Traveler Checklist (a guide, not a key supporting document)",
    "Dependents claimed must be verified in NSIPS"
   ],
@@ -19,13 +19,18 @@
    "arrival-travel-claim",
    "transit-receipts"
   ],
-  "status": "partial",
+  "status": "newest_authority",
   "note": "Source note: the Travel Processing Center's routing guidance words the deadline “within 5 days of completing PCS travel”.",
-  "unconfirmed": {
-   "text": "Whether the MyPCS Travel Voucher is still the required way to file.",
-   "ask": "CPPA"
-  },
+  "unconfirmed": null,
   "sources": [
+   {
+    "title": "DD Form 1351-2 Travel Voucher or Subvoucher",
+    "agency": "DoD",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "DD FORM 1351-2, MAY 2011 TRAVEL VOUCHER OR SUBVOUCHER"
+   },
    {
     "title": "DoD Financial Management Regulation, Volume 9 (Travel Policy)",
     "agency": "Office of the Under Secretary (Comptroller) (DoD)",
@@ -33,6 +38,30 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "The traveler must submit all claims within five working days of return to or arrival at the PDS."
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Sailors will check-in with the gaining CPPA to submit their travel voucher to Transaction Service Center (TSC) Memphis via Enterprise Customer Relationship Management (eCRM) within 5 working days and before executing any permissive TDY."
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "REF A IS NAVADMIN 129/22, MANDATORY USE OF THE NAVY PERSONNEL AND PAY (NP2) MYPCS TRAVEL VOUCHER SUBMISSION TOOL AND GOVERNMENT TRAVEL CHARGE CARD (GTCC) DURING PERMANENT CHANGE OF STATION (PCS) TRAVEL."
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "This cancels and replaces references (a) and (b)."
    },
    {
     "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
@@ -83,12 +112,20 @@
     "quote": "Service Member prepares and CPPA reviews NPPSC 7000/1, Travel Electronic Funds Transfer (EFT) Information"
    },
    {
-    "title": "MyNavy HR PCS Guide 2026",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "title": "NPPSC 7000/1 Travel EFT Information",
+    "agency": "NPPSC (MyNavy HR)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "You must provide receipts for lodging regardless of the amount, and any single expense greater than $75 to be reimbursed."
+    "retrieved_on": "2026-10-22",
+    "quote": "NPPSC TRAVEL ELECTRONIC FUNDS TRANSFER (EFT) INFORMATION NPPSC 7000/1 (02-2017)"
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "DoD Financial Management Regulation, Vol. 9, “Travel Policy,” requires an itemized receipt for each lodging expense, regardless of the amount, and any individual expenditure of $75 or more."
    },
    {
     "title": "MyNavy HR PCS Guide 2026",
@@ -99,20 +136,12 @@
     "quote": "Travel Processing Center processes payment for complete, accurate claims within a week."
    },
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Split disbursement is mandatory when using the GTCC for PCS travel."
-   },
-   {
-    "title": "NAVADMIN 286/21 (Dec 2021, PCS travel claim timeliness)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/NAV2021/NAV21286.txt?ver=ryeWvoEKNa7Z_iLRIve_9g%3D%3D",
-    "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "starting 1 January 2022, use of the GTCC for PCS travel and submission of travel claim vouchers via the MyPCS Travel Voucher will be mandatory as outlined in the below phases:"
+    "retrieved_on": "2026-10-22",
+    "quote": "Split Disbursement is mandatory when using GTCC for PCS travel."
    },
    {
     "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
@@ -123,15 +152,34 @@
     "quote": "A copy of the Summary Voucher will be sent to the e-mail address provided in block 6e of the DD Form 1351-2."
    }
   ],
-  "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "superseded": [
+   {
+    "title": "NAVADMIN 286/21 (Dec 2021, PCS travel claim timeliness)",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/NAV2021/NAV21286.txt?ver=ryeWvoEKNa7Z_iLRIve_9g%3D%3D",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "starting 1 January 2022, use of the GTCC for PCS travel and submission of travel claim vouchers via the MyPCS Travel Voucher will be mandatory as outlined in the below phases:",
+    "reason": "NAVADMIN 286/21 (Dec 2021) made the MyPCS Travel Voucher mandatory. NAVADMIN 210/25 (Oct 2025) cancels NAVADMIN 129/22, the later MyPCS mandate, and has the voucher go through the gaining CPPA via eCRM to TSC Memphis."
+   },
+   {
+    "title": "MyNavy HR PCS Guide 2026",
+    "agency": "MyNavy HR (Navy)",
+    "url": "https://www.mynavyhr.navy.mil/Portals/55/Documents/MyNavy%20HR%20PCS%20Guide%202026.pdf",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You must provide receipts for lodging regardless of the amount, and any single expense greater than $75 to be reimbursed.",
+    "reason": "The PCS Guide 2026 says \"greater than $75\"; the JTR (par. 010301) and the DoD FMR, Vol. 9 require a receipt for any expense of $75 or more."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-tle-claim",
   "service": "navy",
   "form": "Temporary Lodging Expense claim (NPPSC 7220/2 TLE Certification, on a supplemental DD 1351-2)",
-  "pays_or_does": "Partly reimburses lodging and meals in temporary lodging near the old or new duty station; up to 21 days for a CONUS move.",
+  "pays_or_does": "Partly reimburses lodging and meals in temporary lodging near the old or new duty station; up to 21 days for a CONUS move and $290 a day.",
   "who_files": "The Sailor; the CPPA reviews.",
   "anchor": "report_date",
   "deadline": "Supplemental voucher after the stay; no deadline stated.",
@@ -150,19 +198,27 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "UTD for MAP 66-24(R) Temporary Lodging Expense (TLE) Period Increase",
-    "agency": "Defense Travel Management Office (DoD)",
-    "url": "https://media.defense.gov/2024/Dec/03/2003597426/-1/-1/0/UTD_FOR_MAP_66-24(R)%2C_TEMPORARY_LODGING_EXPENSE_(TLE)_PERIOD_INCREASE.PDF",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "A Service member may be authorized TLE for either 7 or 21 days, depending on whether the new PDS location is in the CONUS."
    },
    {
-    "title": "UTD for MAP 66-24(R) Temporary Lodging Expense (TLE) Period Increase",
-    "agency": "Defense Travel Management Office (DoD)",
-    "url": "https://media.defense.gov/2024/Dec/03/2003597426/-1/-1/0/UTD_FOR_MAP_66-24(R)%2C_TEMPORARY_LODGING_EXPENSE_(TLE)_PERIOD_INCREASE.PDF",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
+    "quote": "A Service member and his or her dependent may be reimbursed up to a maximum of $290 per day and may occupy temporary lodging on the same or different days up to the authorized number of days."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
     "quote": "If the new PDS is in the CONUS, then the advance is limited to the maximum amount for 21 days."
    },
    {
@@ -174,12 +230,12 @@
     "quote": "9 October 2026 Locations with Approved TLE Extensions"
    },
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Temporary Lodging Expense (TLE) at old or new CONUS PDS (file supplemental voucher after stay)."
+    "retrieved_on": "2026-10-22",
+    "quote": "Service Members who use their GTCC for TLE expenses to their PDS should file a supplemental Travel Voucher upon completion of their temporary lodging stay."
    },
    {
     "title": "MILPCS Travel Claim Settlement SOP (Rev Jun 2024)",
@@ -214,17 +270,17 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "Cannot exceed a total of 14 days.",
-    "reason": "The SOP (Rev Jun 2024) predates the JTR change (UTD for MAP 66-24(R)) that set 21 days for a CONUS duty station. The PCS Guide 2026 also says 21 days."
+    "reason": "The SOP (Rev Jun 2024) predates the JTR's 21-day rule for a new duty station in the CONUS (JTR par. 050601). The PCS Guide 2026 also says 21 days."
    }
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-dla",
   "service": "navy",
   "form": "Dislocation Allowance (DLA), claimed on the DD 1351-2 or advanced on the NPPSC 1300/1",
-  "pays_or_does": "Partly reimburses the cost of moving a household on PCS orders; usually one per fiscal year. Rates are by grade and dependency status (DTMO table, not captured).",
+  "pays_or_does": "Partly reimburses the cost of moving a household on PCS orders; a flat amount, one per fiscal year unless an exception applies. Rates are by grade and dependency status (DTMO table, not captured).",
   "who_files": "The Sailor; the CPPA reviews DLA support documents.",
   "anchor": "detachment",
   "deadline": "Advance requested with the NPPSC 1300/1 (at least 45 days before transfer) and paid about 30 days before detachment; otherwise on the travel claim.",
@@ -242,12 +298,44 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Dislocation Allowance (DLA) cannot be charged to the GTCC and will be paid as an advance."
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA partially reimburses a Service member for expenses incurred in moving a household."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Only one DLA is permitted in a fiscal year, unless the situation qualifies as an exception in par. 050501. See the DTMO website for current DLA rates."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA may be paid in advance."
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Dislocation Allowance is an unauthorized use for the GTCC and will be provided as an advance."
    },
    {
     "title": "NPPSC OPS Alert 019-25 Mandatory GTCC (Rev 1)",
@@ -272,22 +360,6 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "For E5 and below requesting advance Single DLA, a letter from the gaining command indicating that government quarters will not be assigned is required."
-   },
-   {
-    "title": "GTCC for PCS FAQ (Aug 2025)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/GTCC/GTCC_%20for_PCS_FAQ_Aug_25.doc.pdf",
-    "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "JTR 050104 - A DLA partially reimburses a Service member for expenses incurred in moving a household."
-   },
-   {
-    "title": "Military Dislocation Allowance",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/benefits/military-dislocation-allowance/",
-    "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "In most cases, you may only receive one DLA per fiscal year."
    }
   ],
   "superseded": [
@@ -298,7 +370,7 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "The GTCC is authorized for dislocation allowance (DLA) expenses.",
-    "reason": "NAVADMIN 286/21 (Dec 2021); the NAVADMIN 210/25 fact sheet (Oct 2025) says DLA cannot be charged to the GTCC."
+    "reason": "NAVADMIN 286/21 (Dec 2021); NAVADMIN 210/25 (Oct 2025) makes DLA an unauthorized use of the GTCC, paid as an advance."
    },
    {
     "title": "GTCC for PCS FAQ (Aug 2025)",
@@ -316,11 +388,11 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "If approved, you’ll receive 80% of your estimated payment in advance, with the rest paid after you file for reimbursement at your new installation, following your move.",
-    "reason": "Military OneSource (all services) is below MyNavy HR; Navy DLA advance timing and routing follow the TPC guidance and OPS Alert 019-25. The 80% figure isn't in a Navy source we saved."
+    "reason": "Military OneSource (all services) is below MyNavy HR; Navy DLA advance timing and routing follow the TPC guidance and OPS Alert 019-25. Neither the JTR nor a Navy source we saved gives the 80% figure."
    }
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-travel-advance",
@@ -347,6 +419,22 @@
   "unconfirmed": null,
   "sources": [
    {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Except for non-concurrent travel and Personally Procured Move (PPM) advances, travel advances are not authorized for Sailors who have a GTCC. Sailors ineligible for a GTCC may be paid travel advances to cover anticipated PCS related costs."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "See the DoD Financial Management Regulation, Vol. 9, for travel advances when the traveler is not issued a GTCC."
+   },
+   {
     "title": "Case Routing Guidance: Travel Processing Center (10 Nov 2025)",
     "agency": "MyNavy HR (Navy)",
     "url": "https://www.mynavyhr.navy.mil/Portals/55/Support/PayPers/CPCResources/CRG_TPC_10NOV25.pdf",
@@ -369,22 +457,6 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "NPPSC 1300/1 Application for Transfer and Advances is the only authorized Travel Advance Request form. Earlier versions will not be accepted."
-   },
-   {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
-    "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Not authorized for Sailors with a GTCC except for non-concurrent travel and Personally Procured Move (PPM) advances."
-   },
-   {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
-    "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Sailors who are ineligible for GTCC may receive travel advances."
    },
    {
     "title": "MyNavy HR PCS Guide 2026",
@@ -431,8 +503,8 @@
     "reason": "NAVADMIN 286/21 (Dec 2021) did not list PPM advances; NAVADMIN 210/25 (Oct 2025) adds them."
    }
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-advance-settlement",
@@ -488,14 +560,14 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
   "id": "navy-dependent-travel",
   "service": "navy",
   "form": "Dependent travel (DD 884 Application for Transportation of Dependents; NPPSC 4650/1 Passenger Reservation Request; claimed on the DD 1351-2)",
-  "pays_or_does": "Pays authorized dependents' PCS travel; per diem and mileage advances only if dependents travel separately from the Sailor.",
+  "pays_or_does": "Pays authorized dependents' PCS travel, which must be because of the PCS. The JTR allows an advance; Navy pays per diem and mileage advances only if dependents travel separately from the Sailor. Travel before orders are issued is normally at your own expense.",
   "who_files": "The Sailor; the command checks these items before detachment.",
   "anchor": "detachment",
   "deadline": "Dependency data verified at least 30 days before requesting dependent travel; travel paid on the claim within five working days of reporting.",
@@ -510,13 +582,34 @@
    "pre-passenger-travel",
    "arrival-travel-claim"
   ],
-  "status": "partial",
+  "status": "ok",
   "note": "",
-  "unconfirmed": {
-   "text": "The JTR's dependent travel rules aren't on this site yet.",
-   "ask": "CPPA"
-  },
+  "unconfirmed": null,
   "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "However, dependent travel must be because of the Service member’s PCS and not for personal reasons."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A Service member authorized dependent travel and transportation allowances may receive an advance of funds for the allowances."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Ordinarily, travel that occurs before an order is issued is at personal expense and no reimbursement is authorized."
+   },
    {
     "title": "NPPSC 1300/3 PCS Transfer Checklist (Rev 05-24)",
     "agency": "MyNavy HR (Navy)",
@@ -559,24 +652,28 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-ppm-paperwork",
   "service": "navy",
-  "form": "Personally Procured Move (DD 2278 Application for Do It Yourself Move and Counseling Checklist; DD 3166 PPM Checklist and Expense Certification; weight tickets)",
-  "pays_or_does": "Pays 100% of the Government Constructed Cost for a member-elected PPM, based on weight actually moved (from weight tickets), up to the weight allowance.",
-  "who_files": "The Sailor; DPS generates the DD 2278 and DD 3166 at counseling; the Navy package goes to NAVSUP's HHG Audit Division.",
+  "form": "Personally Procured Move (DD 2278 Application for Do It Yourself Move and Counseling Checklist; DD 3166 PPM Checklist and Expense Certification; DD 1351-2; NPPSC 7000/1; weight tickets)",
+  "pays_or_does": "Pays 100% of the Government Constructed Cost for the weight actually moved (from certified weight tickets), up to the weight allowance. An advance of up to 60% is allowed; any profit is taxable.",
+  "who_files": "The Sailor; DPS generates the DD 2278 and DD 3166 at counseling; NAVSUP's HHG Audit Division reviews the Navy package.",
   "anchor": "detachment",
-  "deadline": "45 days from the planned move start date (Military OneSource FAQ dated Oct. 6, 2023). Confirm with your PPPO.",
-  "filed_where": "PPO counseling in DPS; claim package by email to NAVSUP HHG Audit Division (Navy)",
+  "deadline": "45 days after you complete the move (PPA). Confirm with your PPPO.",
+  "filed_where": "Started on or after May 15, 2026: upload to your DPS shipment and submit the PPM for closeout in DPS. Approved before May 15, 2026: email NAVSUP HHG Audit (hhgaudit.ppmclaims@us.navy.mil) for a DoD SAFE upload link.",
   "attachments": [
-   "Empty and full weight tickets from a certified scale for each segment",
-   "All receipts",
-   "DD 3166 PPM Checklist and Expense Certification",
-   "Justification for any missing document (for example an accident report for a missing weight ticket)",
-   "Submitted as one PDF, 10 MB or less (Navy)"
+   "Signed PPM checklist (DD 3166)",
+   "DD 2278 from your counseling",
+   "Signed DD 1351-2 (blocks 1-8 filled in, signed in block 20)",
+   "Signed NPPSC 7000/1",
+   "All orders and modifications",
+   "Two certified weight tickets, one empty and one full, for each trip",
+   "Registration or title for each vehicle or trailer used",
+   "Rental contracts (paid in full) and all receipts",
+   "Justification for any missing document (for example an accident report for a missing weight ticket)"
   ],
   "sequence_step": [
    "orders-ppm-approval",
@@ -586,40 +683,64 @@
   "status": "partial",
   "note": "",
   "unconfirmed": {
-   "text": "The 45-day rule comes from an all-services FAQ dated 2023; the Navy's own deadline and paperwork list aren't on this site yet.",
+   "text": "The 45 days come from PPA's PPM page, which shows no date; NAVSUP's own 45-day rule (June 2023) is for Sailors who got an advance, and its current pages state no deadline.",
    "ask": "PPPO"
   },
   "sources": [
    {
-    "title": "Personally Procured Moves fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
+    "quote": "Under the PPM monetary allowance, the Service member or next of kin, as appropriate, receives payment of an amount equal to 100% of the Government’s constructed “Best Value” cost for the actual HHG weight transported up to the Service member’s maximum authorized weight allowance."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Submit certified weight certificates or an acceptable constructed HHG weight with the claim for reimbursement."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "An amount equal to 60% of the PPM monetary allowance when the Service member chooses the PPM monetary allowance."
+   },
+   {
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
     "quote": "As an incentive, you will be paid 100% of the Government Constructed Cost (GCC), or the amount the government would have paid for the same move and/or storage if performed by a government-provided company."
    },
    {
-    "title": "Personally Procured Moves fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Your final payment is based on the actual weight of goods you transport, verified with weight tickets, not to exceed your authorized weight entitlement."
+    "retrieved_on": "2026-10-22",
+    "quote": "Any profit you make from a PPM (the amount left over after you deduct your actual expenses from the government's payment) is considered taxable income."
    },
    {
-    "title": "Personally Procured Moves fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Obtain empty and full weight tickets (based on Service Branch requirements) from a certified weigh station for each segment of your PPM, including multiple TDY trips en route."
    },
    {
-    "title": "Personally Procured Moves fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personally-procured-moves-and-rogue-operators-fact-sheet-d1375/",
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Provide justification for any missing documents. (For example, if you’re missing a weight ticket due to a vehicle accident, submit a copy of the accident report.)"
    },
    {
@@ -639,44 +760,124 @@
     "quote": "DD3166- Personally Procured Move Checklist and Expense Certification: This form will be generated by DPS during your transportation office counseling appointment."
    },
    {
-    "title": "Personal Property FAQs",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "title": "Personally Procured Moves",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "You have 45 days from the planned move start date to turn in all paperwork."
+    "retrieved_on": "2026-10-22",
+    "quote": "After you've completed your move, you have 45 days to submit your claim for payment."
    },
    {
-    "title": "Personal Property FAQs",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "title": "Top 10 things to consider when deciding to do a PPM",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Oct. 6, 2023"
+    "retrieved_on": "2026-10-22",
+    "quote": "If you received a funds advance, you have 45 days to submit your completed/signed package to Navy HHG Audit Team"
    },
    {
-    "title": "Navy PCS Moving Assistance",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/navy-pcs-moving-assistance/",
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Email submissions: hhg_audit_ppm_claims.fct@navy.mil"
+    "retrieved_on": "2026-10-22",
+    "quote": "If your PPM was started on or after May 15, 2026: Per the latest TRANSCOM/PPA guidance, you must upload your PPM documentation directly into your Defense Personal Property System (DPS) shipment."
    },
    {
-    "title": "Navy PCS Moving Assistance",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/navy-pcs-moving-assistance/",
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Submit the paperwork as a PDF file (protect PII information)"
+    "retrieved_on": "2026-10-22",
+    "quote": "Once your documents have been uploaded, submit your PPM for closeout through DPS."
    },
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Personally Procured Move (PPM) operating expenses (rental trucks/trailers, moving supplies, weight ticket fees)."
+    "retrieved_on": "2026-10-22",
+    "quote": "If your PPM was approved before May 15, 2026: Please email audit- hhgaudit.ppmclaims@us.navy.mil"
+   },
+   {
+    "title": "Personally Procured Move (PPM) information page",
+    "agency": "NAVSUP GLS Navy Household Goods",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "They will provide you with a DoD SAFE link so you can securely submit your required documentation"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Signed PPM Checklist"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Signed DD Form 1351-2 (fill out blocks 1-8 and sign in block 20 a./b.)"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Complete and sign NPPSC 7000-1"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "All applicable orders and modifications."
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "One empty and One full, for each trip/leg"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Registration/Title for any privately owned POVs or trailers used for moving"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Any rental contracts (paid in full)"
+   },
+   {
+    "title": "Personally Procured Move (PPM) Documents",
+    "agency": "NAVSUP GLS Navy Household Goods (Audit)",
+    "url": "https://www.navsup.navy.mil/NAVSUP-Household-Goods/PPM/PPM-Information/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "All applicable receipts (gas, packing material, etc.)"
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "PPM operating expenses (e.g. rental truck/trailers, moving supplies, weight ticket fees, etc.)."
    }
   ],
   "superseded": [
@@ -687,17 +888,44 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "GTCC use during personally procured moves (PPM) is authorized for Sailors conducting PCS moves within the 48 contiguous states and Washington, D.C.",
-    "reason": "NAVADMIN 286/21 (Dec 2021); the NAVADMIN 210/25 fact sheet (Oct 2025) lists PPM operating expenses as an unauthorized GTCC use."
+    "reason": "NAVADMIN 286/21 (Dec 2021); NAVADMIN 210/25 (Oct 2025) lists PPM operating expenses as an unauthorized GTCC use."
+   },
+   {
+    "title": "Personal Property FAQs",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/military-pcs-moving-faqs/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "You have 45 days from the planned move start date to turn in all paperwork.",
+    "reason": "Military OneSource FAQ dated Oct. 6, 2023, counts the 45 days from the planned move start date; PPA's PPM page, higher in the authority order, counts them from completing the move."
+   },
+   {
+    "title": "Navy PCS Moving Assistance",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/moving-pcs/plan-to-move/navy-pcs-moving-assistance/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Email submissions: hhg_audit_ppm_claims.fct@navy.mil",
+    "reason": "Military OneSource Navy page (March 21, 2022). NAVSUP's PPM page now sends PPMs started on or after May 15, 2026 to DPS, and earlier ones to hhgaudit.ppmclaims@us.navy.mil."
+   },
+   {
+    "title": "Service-Specific Entitlements (Navy tab)",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Email: hhg_audit_ppm_claims.fct@navy.mil Key information for submitting your package: 1. Submit the paperwork as a PDF file (protect PII information) 2. Size limit of 10MB",
+    "reason": "PPA's Navy page (no date shown) still gives the old address and the emailed-PDF rules; NAVSUP, the Navy's household goods program office and higher in the authority order, moved PPM closeout into DPS for PPMs started on or after May 15, 2026."
    }
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-hhg-counseling-shipment",
   "service": "navy",
   "form": "Household goods counseling and shipment (DD 1797 Personal Property Counseling Checklist; DD 1299 Application for Shipment and/or Storage of Personal Property)",
-  "pays_or_does": "Books the government-arranged household goods move (and NTS or PPM) within the weight allowance.",
+  "pays_or_does": "Books the government-arranged household goods move (and NTS or PPM) within the weight allowance; you pay for any weight over it.",
   "who_files": "The Sailor in DPS; first-time movers through the transportation office first. DPS generates both forms at counseling.",
   "anchor": "orders_in_hand",
   "deadline": "After orders; MyNavy HR places personal property 3-6 months before the PCS.",
@@ -710,12 +938,9 @@
    "orders-hhg-counseling",
    "orders-dps-shipment"
   ],
-  "status": "partial",
-  "note": "",
-  "unconfirmed": {
-   "text": "Weight allowances by grade aren't on this site yet.",
-   "ask": "PPPO"
-  },
+  "status": "ok",
+  "note": "The weight allowance by pay grade (JTR Table 5-37) is in the table after this form.",
+  "unconfirmed": null,
   "sources": [
    {
     "title": "Arranging a Personal Property Shipment",
@@ -742,12 +967,20 @@
     "quote": "Once your shipment application (DD Form 1299) has been created and submitted, the local transportation office, will review and submit for routing and awarding to a transportation service provider, or TSP."
    },
    {
-    "title": "Understand Your Military PCS Entitlements",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/benefits/pcs-entitlements/",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "The rank specified on your job/travel orders will be used to determine your total weight allowance."
+    "retrieved_on": "2026-10-22",
+    "quote": "The authorized PCS weight allowance is normally determined by a Service member’s pay grade on the effective date of the PCS order, and whether the Service member has dependents on the effective date of the PCS order."
+   },
+   {
+    "title": "Personal Property Entitlements",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is crucial to stay within your weight allowance, as you will be required to pay for any overages."
    },
    {
     "title": "MyNavy HR PCS Guide 2026",
@@ -759,14 +992,14 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-hhg-loss-damage-notice",
   "service": "navy",
   "form": "Notification of Loss or Damage AT Delivery / AFTER Delivery",
-  "pays_or_does": "Puts the moving company on notice of lost or damaged items; required before an itemized claim.",
+  "pays_or_does": "Puts the moving company on notice of lost or damaged items, which preserves your right to full replacement value; required before an itemized claim.",
   "who_files": "The member (or family member at delivery).",
   "anchor": "delivery_date",
   "deadline": "Within 180 days of delivery; several notices allowed.",
@@ -783,47 +1016,47 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Give written notice of loss/damage within 180 days from delivery date"
+    "retrieved_on": "2026-10-22",
+    "quote": "Important: You have 180 calendar days from your delivery date to provide a notice."
    },
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "“Notification of Loss or Damage AFTER Delivery” form in the Defense Personal Property System (DPS)."
    },
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Email, fax, or USPS and obtain a proof of receipt to verify date of delivery to your moving company."
    },
    {
-    "title": "Understanding Moving Claims",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "You do not need to give the full details about each item (which is done during the itemized claim filing process), but you do need to at least name each item, provide its inventory number and include a brief description of loss or damage in your notification before the 180-day deadline in order to qualify"
+    "retrieved_on": "2026-10-22",
+    "quote": "This notice is what preserves your right to get Full Replacement Value (FRV) for your belongings. For this initial notice, you need to list the item name, its inventory number, and a brief description of the damage. You can submit multiple notices as you unpack and discover more issues."
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-hhg-claim",
   "service": "navy",
   "form": "Household goods loss or damage claim (itemized claim in DPS)",
-  "pays_or_does": "Claims repair or replacement from the moving company; can be transferred to the Military Claims Office if denied, unanswered for 30 days, or the offer is refused.",
+  "pays_or_does": "Claims repair or replacement from the moving company; a claim filed after the deadline gets only depreciated value. Can be transferred to the Military Claims Office if denied, unanswered for 30 days, or the offer is refused; two years from delivery to file with the MCO.",
   "who_files": "The member.",
   "anchor": "delivery_date",
   "deadline": "12 months from delivery for shipments picked up on or after May 15, 2026; 9 months for shipments picked up on or before May 14, 2026.",
@@ -839,43 +1072,59 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "For any lost or damaged goods, you must file an itemized claim in DPS."
    },
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Important note: You have 9 months to file a claim for shipments picked up on or before May 14, 2026. For shipments picked up on or after May 15, 2026, the filing period is extended to 12 months."
    },
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
+    "quote": "If you file after your deadline, you will only be eligible for the item's depreciated value, not the full replacement value."
+   },
+   {
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
     "quote": "The moving company must confirm receipt of your claim within 15 days."
    },
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Consider transferring your claim to the MCO if the moving company has denied your claim, they have not contacted you in 30 days, and/or you choose not to accept their offer."
    },
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
+    "quote": "You have two years from your delivery date to submit a claim to your MCO."
+   },
+   {
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
     "quote": "Navy & Marine Corps: norfolkclaims@us.navy.mil"
    },
    {
@@ -895,7 +1144,7 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "file dps claim within nine months",
-    "reason": "The PCS Guide 2026 gives nine months; the claims fact sheet (October 2026) extends filing to 12 months for shipments picked up on or after May 15, 2026."
+    "reason": "The PCS Guide 2026 gives nine months; PPA's Personal Property Claims guide (October 2026) extends filing to 12 months for shipments picked up on or after May 15, 2026."
    },
    {
     "title": "Understanding Moving Claims",
@@ -904,17 +1153,17 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "Up to nine months after delivery date: Submit your itemized claim for any lost or damaged items.",
-    "reason": "Timeline section of the same Military OneSource page, not updated for the May 15, 2026 change the page states above it."
+    "reason": "Timeline section of the Military OneSource moving claims page, not updated for the May 15, 2026 change the page states above it; PPA's claims guide and claims page give 9 or 12 months by pickup date."
    }
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-hhg-quick-claim",
   "service": "navy",
   "form": "Quick Claim Settlement (on delivery day)",
-  "pays_or_does": "Settles minor loss or damage with the moving company in person, up to $2,000 per shipment; paid within five calendar days of delivery.",
+  "pays_or_does": "Settles minor loss or damage with the moving company in person, up to $2,000 per shipment; paid within five calendar days of delivery. Items settled this way can't be claimed again.",
   "who_files": "The member, if the moving company offers it on delivery day.",
   "anchor": "delivery_date",
   "deadline": "On delivery day.",
@@ -930,15 +1179,32 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Quick Claim amounts will not exceed $2,000 total for shipments. Payment is made within five calendar days of delivery."
+   },
+   {
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "It is important to know that by accepting a quick claim payment for an item, you give up your right to file any further claims on that specific item."
    }
   ],
   "superseded": [
+   {
+    "title": "The Claims Process",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "If you agree to a quick claim, you'll fill out paperwork directly with the movers before they leave, and you should receive payment within five business days.",
+    "reason": "PPA's claims web page (no date shown) says five business days; PPA's Personal Property Claims guide dated October 2026 says five calendar days. The dated guide is used."
+   },
    {
     "title": "Understanding Moving Claims",
     "agency": "Military OneSource (DoD)",
@@ -946,23 +1212,23 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "Quick claim amounts will not exceed $1,000 total for shipments picked up before May 15, 2022, or $1,500 total for shipments picked up on or after May 15, 2022.",
-    "reason": "The Personal Property Claims fact sheet (October 2026) gives $2,000; the moving claims page gives $1,500. Same publisher; the fact sheet is newer."
+    "reason": "PPA's claims guide (October 2026) and claims page give $2,000; the Military OneSource moving claims page gives $1,500."
    }
   ],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-hhg-inconvenience-claim",
   "service": "navy",
-  "form": "Inconvenience claim (moving company's form)",
-  "pays_or_does": "Paid by the moving company to offset costs when it misses the pickup or delivery dates and you can't use needed household items.",
+  "form": "Inconvenience claim (DP3 Shipment Inconvenience Claim Form, from the moving company)",
+  "pays_or_does": "Paid by the moving company when it misses the agreed pickup date or the required delivery date. Per diem is 100% of the M&IE rate for you, and for moves picked up on or after May 15, 2026, 75% for each dependent traveling with you; other expenses need receipts.",
   "who_files": "The member.",
   "anchor": "delivery_date",
-  "deadline": "The moving company must acknowledge your intent within five business days.",
-  "filed_where": "Moving company (TSP); transportation office if the TSP doesn't offer the form",
+  "deadline": "The moving company must acknowledge your intent within five government business days and reimburse you within 30 days of your first contact.",
+  "filed_where": "Moving company (TSP); your local PPO if you need help",
   "attachments": [
-   "The TSP's inconvenience claim form"
+   "The DP3 Shipment Inconvenience Claim Form, with an itemized list and receipts for any other expenses"
   ],
   "sequence_step": [
    "f30-inconvenience-claim"
@@ -972,25 +1238,65 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "Understanding Moving Claims",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "If TSP does not meet required pickup and delivery dates and you were not able to use necessary items to establish your new household, you may qualify for an inconvenience claim, paid by TSP, to offset expenses caused by that inconvenience."
+    "retrieved_on": "2026-10-22",
+    "quote": "The moving company fails to deliver on or before the required delivery date (RDD), you have possession of a residence and are available to receive delivery."
    },
    {
-    "title": "Understanding Moving Claims",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/resources/millife-guides/moving-claims/",
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "The TSP must acknowledge your intent to file an inconvenience claim within five business days of being contacted by you or your local transportation office."
+    "retrieved_on": "2026-10-22",
+    "quote": "They will provide the DP3 Shipment Inconvenience Claim Form. Complete and return the form to them."
+   },
+   {
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Your moving company must acknowledge your intent to file an inconvenience claim within five government business days of being contacted by you or your local PPO."
+   },
+   {
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Reimbursement is calculated based on 100% of the M&IE per diem rate for the customer."
+   },
+   {
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For moves picked up on or after May 15, 2026, all dependents traveling with you on approved, funded relocation orders are also authorized reimbursement calculated at 75% of the M&IE for the number of days at the affected location."
+   },
+   {
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Your moving company must reimburse you within 30 days of your initial contact of the intent to file a claim."
+   },
+   {
+    "title": "Inconvenience Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "You are required to document any miscellaneous expense claim fully on the inconvenience claim form with an itemized list of charges and accompanying receipts for expenses incurred."
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-gtcc-pcs",
@@ -1014,12 +1320,20 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Use of the GTCC for Permanent Change of Station (PCS) is mandatory for all Navy travelers eligible for or who already possess a GTCC."
+    "retrieved_on": "2026-10-22",
+    "quote": "The Government Travel Charge Card (GTCC) Regulations in DoDI 5154.31, Vol. 4, require a traveler to use the individually billed GTCC account to pay for all authorized expenses related to Government travel."
+   },
+   {
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "Effective immediately, use of the Government Travel Charge Card (GTCC) for Permanent Change of Station (PCS) is mandatory for all Navy travelers who are eligible for or already possess a GTCC."
    },
    {
     "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
@@ -1038,11 +1352,11 @@
     "quote": "Detaching command APCs must ensure the GTCC is in PCS mission-critical status at least five days before detachment and throughout the travel period."
    },
    {
-    "title": "Required Use of GTCC for PCS fact sheet (NAVADMIN 210/25)",
-    "agency": "MyNavy HR (Navy)",
-    "url": "https://www.mynavyhr.navy.mil/Portals/55/Messages/NAVADMIN/FACT_SHEETS/Fact_Sheet_NAV_210_25.pdf",
+    "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",
+    "agency": "MyNavy HR (CNO N1)",
+    "url": "https://www.mynavyhr.navy.mil/References/Messages/NAVADMIN-2025/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "GTCC must be paid in full upon travel claim liquidation."
    },
    {
@@ -1063,14 +1377,14 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "navy-pet-expenses",
   "service": "navy",
   "form": "Pet relocation expenses (supplemental DD 1351-2)",
-  "pays_or_does": "May be reimbursed on a supplemental claim; limits not yet confirmed, ask your CPPA.",
+  "pays_or_does": "For one household pet (a cat or dog) on PCS orders effective January 1, 2024 or later: the documented cost of mandatory microchipping, boarding, hotel pet fees, licensing at the new duty station, and shipping if you fly or the pet ships separately; up to $550 for a move within the U.S.",
   "who_files": "The Sailor; the CPPA reviews.",
   "anchor": "report_date",
   "deadline": "Supplemental claim after the main claim is approved; no deadline stated.",
@@ -1082,13 +1396,26 @@
    "pre-pets",
    "arrival-travel-claim"
   ],
-  "status": "partial",
+  "status": "newest_authority",
   "note": "",
-  "unconfirmed": {
-   "text": "Which pet costs are covered, and the limits.",
-   "ask": "CPPA"
-  },
+  "unconfirmed": null,
   "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A Service member or Service member’s dependent on a PCS order with an effective date of January 1, 2024 or later, as defined in Appendix A, may be authorized reimbursement for the costs related to the relocation of one household pet that arises from a permanent change of station. A household pet is a cat or a dog, owned for personal companionship."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A Service member or Service member’s dependent may be authorized the reasonable and substantiated cost of mandatory microchipping, boarding fees, hotel service charges, licensing fees at the new PDS, and pet shipping fees if the member flies rather than drives, or the pet is shipped separately from the member. Reimbursement for the actual cost of all expenses is limited to $550 per PCS move."
+   },
    {
     "title": "MyNavy HR PCS Guide 2026",
     "agency": "MyNavy HR (Navy)",
@@ -1096,6 +1423,17 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
     "quote": "For things like pet shipment, you can still submit a supplemental claim after your claim is approved."
+   }
+  ],
+  "superseded": [
+   {
+    "title": "Understand Your Military PCS Entitlements",
+    "agency": "Military OneSource (DoD)",
+    "url": "https://www.militaryonesource.mil/benefits/pcs-entitlements/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-20",
+    "quote": "Pets or animals are allowed if they are travelling with you at your expense.",
+    "reason": "Military OneSource's PCS entitlements page; the JTR (par. 050107) reimburses some costs for one cat or dog, up to $550 for a move within the U.S."
    },
    {
     "title": "Passenger and Pet Transportation for PCS Moves",
@@ -1103,20 +1441,12 @@
     "url": "https://www.militaryonesource.mil/benefits/passenger-and-pet-transportation-for-pcs-moves/",
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-20",
-    "quote": "Relocation fees (e.g., microchipping, quarantine, and boarding fees, hotel service charges, etc.) may now be reimbursed."
-   },
-   {
-    "title": "Understand Your Military PCS Entitlements",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/benefits/pcs-entitlements/",
-    "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
-    "quote": "Pets or animals are allowed if they are travelling with you at your expense."
+    "quote": "Relocation fees (e.g., microchipping, quarantine, and boarding fees, hotel service charges, etc.) may now be reimbursed.",
+    "reason": "Military OneSource lists quarantine among the fees; for a move within the U.S. the JTR (par. 050107-A2) doesn't, and covers quarantine only for moves overseas."
    }
   ],
-  "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "usmc-travel-voucher",
@@ -1143,7 +1473,7 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1171,7 +1501,7 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1199,7 +1529,7 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1210,7 +1540,7 @@
   "who_files": "not yet covered",
   "anchor": "detachment",
   "deadline": "not yet covered",
-  "filed_where": "Marine Corps household goods/transportation office, or email to the Logistics Command PPM section (Military OneSource; not a Marine Corps source)",
+  "filed_where": "Marine Corps household goods/transportation office, or email to the Logistics Command PPM section (Military OneSource Marine Corps page; no deadline or paperwork stated)",
   "attachments": [],
   "sequence_step": [],
   "status": "not_yet_covered",
@@ -1227,7 +1557,7 @@
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
+  "vintage": "F2 sequence, built 2026-10-22",
   "verified_on": "2026-10-20"
  },
  {
@@ -1237,7 +1567,7 @@
   "pays_or_does": "not yet covered",
   "who_files": "not yet covered",
   "anchor": "delivery_date",
-  "deadline": "not yet covered (the DoD-wide 180-day notice and 9/12-month claim rules in the Navy rows come from Military OneSource and the October 2026 fact sheet, which cover all services)",
+  "deadline": "not yet covered (the 180-day notice and 9/12-month claim rules in the Navy rows come from PPA's claims guide and claims page, which cover all services; Marine Corps text not saved)",
   "filed_where": "not yet covered",
   "attachments": [],
   "sequence_step": [],
@@ -1246,16 +1576,16 @@
   "unconfirmed": null,
   "sources": [
    {
-    "title": "Personal Property Claims fact sheet (October 2026)",
-    "agency": "Military OneSource (DoD)",
-    "url": "https://www.militaryonesource.mil/documents/personal-property-claims-fact-sheet-d1244/",
+    "title": "Personal Property Claims",
+    "agency": "DoW Personal Property Activity",
+    "url": "https://www.ppa.mil/",
     "incentive": "Government: no commercial interest",
-    "retrieved_on": "2026-10-20",
+    "retrieved_on": "2026-10-22",
     "quote": "Navy & Marine Corps: norfolkclaims@us.navy.mil"
    }
   ],
   "superseded": [],
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  }
 ]

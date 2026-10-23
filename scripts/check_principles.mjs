@@ -9,7 +9,10 @@
 //   bah-figures  every BAH dollar figure comes from src/data/bah.json and carries its year, MHA and a
 //                source/date line; no other dollar figure sits next to "BAH" or equals a BAH figure
 //                (Brian 2026-10-20; replaced no-bah, which allowed no BAH figure at all)
-//   no-demo      no demographic descriptors of places outside /sources/ (Principle 5)
+//   no-demo      no demographic descriptors of places outside /sources/ (Principle 5). The one exemption
+//                (Brian 2026-10-22, F2-23): a verbatim official quote in a move-sequence quote block
+//                (<blockquote data-official-quote>), and only if its text is a quote in the sequence export;
+//                page prose, notes and step text are always checked
 //   no-score     no column or label named score/index/rating (corollary)
 //   incentive    every outbound link carries an incentive label (Principle 4, F4)
 //   noindex      every page is noindex until week 5
@@ -188,6 +191,16 @@ function checkDist() {
     fail('dist', 'dist/', 'no pages built');
     return;
   }
+  // Every verbatim quote the move sequence exports (steps, side-by-side rules, superseded, forms, the weight table).
+  const officialQuotes = new Set();
+  for (const f of ['sequence_steps', 'sequence_forms', 'sequence_weights']) {
+    const p = join(DATA, `${f}.json`);
+    if (!existsSync(p)) continue;
+    const add = (c) => c && c.quote && officialQuotes.add(c.quote.replace(/\s+/g, ' ').trim());
+    for (const r of JSON.parse(readFileSync(p, 'utf-8'))) {
+      for (const c of [...(r.sources ?? []), ...(r.superseded ?? []), ...(r.alternatives ?? []).flatMap((a) => a.sources), r.source]) add(c);
+    }
+  }
   const bah = loadBah();
   const bahValues = new Set([...(bah?.values() ?? [])].flatMap((r) => [r.with_dependents, r.without_dependents]));
   const allow = loadBahAllow();
@@ -285,9 +298,17 @@ function checkDist() {
       }
     }
 
-    // no-demo (skip /sources/)
+    // no-demo (skip /sources/). Official quote blocks are left out only when their text is an exported quote;
+    // a data-official-quote blockquote holding anything else is itself a failure.
     if (!page.startsWith('sources/')) {
-      let t = text;
+      let prose = html;
+      for (const m of html.matchAll(/<blockquote\b[^>]*\bdata-official-quote\b[^>]*>([\s\S]*?)<\/blockquote>/g)) {
+        const q = visibleText(m[1]).replace(/&quot;|&#34;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+          .trim().replace(/^“|”$/g, '').trim();
+        if (officialQuotes.has(q)) prose = prose.replace(m[0], ' ');
+        else fail('no-demo', page, `a quote block that isn't an exported official quote: ${q.slice(0, 80)}`);
+      }
+      let t = visibleText(prose);
       for (const re of DEMOGRAPHIC_ALLOWED) t = t.replace(re, ' ');
       for (const term of DEMOGRAPHIC_TERMS) {
         const re = new RegExp(`\\b${escapeRe(term)}\\b`, 'gi');

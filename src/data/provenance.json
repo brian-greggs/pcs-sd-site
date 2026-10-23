@@ -40,11 +40,11 @@
  {
   "id": "sequence",
   "title": "Move sequence and forms",
-  "source_name": "Official pages: JTR changes (PDTATAC), DoD FMR, MyNavy HR, Military OneSource, CNIC, CHP; each step and form names its own",
+  "source_name": "Official pages: JTR (with PDTATAC changes), DoD FMR, MyNavy HR, NAVSUP, PPA, Military OneSource, CNIC, CHP; each step and form names its own",
   "source_url": "",
   "license": "Public domain (US government works), quoted; CHP page quoted",
-  "vintage": "F2 sequence, built 2026-10-20",
-  "verified_on": "2026-10-20"
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
  },
  {
   "id": "ownership",

@@ -1,7 +1,8 @@
 ---
 // Every form and claim in the move sequence (F2): what it pays or does, who files, the deadline, where it's
 // filed, what to attach, the steps it belongs to, and the official quotes. Navy rows only; USMC rows are
-// "not yet covered" and the Navy-rules note at the top says so (Brian 2026-10-20).
+// "not yet covered" and the Navy-rules note at the top says so (Brian 2026-10-20). The weight allowance table (JTR
+// Table 5-37) follows the household goods counseling form it belongs to.
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import Cites from '../../components/sequence/Cites.astro';
@@ -10,6 +11,10 @@ import { ANCHOR_LABEL, citeDates, citeNames, phaseByKey, stepHref, unconfirmedLi
 import { sequenceData } from '../../lib/sequenceData';
 
 const data = await sequenceData();
+const w = data.weights;
+const WEIGHTS_AFTER = 'navy-hhg-counseling-shipment';
+const lb = (n: number) => `${n.toLocaleString('en-US')} lb`;
+if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form ${WEIGHTS_AFTER} not on the page`);
 ---
 
 <Base title="Forms and claims" back={{ href: '/sequence/', label: 'Move sequence' }} description="Every PCS form and claim in the move sequence: deadline, where to file, what to attach, with official sources.">
@@ -18,7 +23,7 @@ const data = await sequenceData();
   <SequenceTop />
   <p class="intro">{data.forms.length} forms and claims, each with its deadline, where it's filed and what goes with it.</p>
 
-  {data.forms.map((f) => (
+  {data.forms.map((f) => (<>
     <FactBlock plain id={f.id} title={f.form} asOf={citeDates(f)} source={citeNames(f)}>
       <dl class="facts" data-form={f.id}>
         <dt>What it pays or does</dt><dd>{f.pays_or_does}</dd>
@@ -36,5 +41,22 @@ const data = await sequenceData();
       {f.unconfirmed && <p class="gap" data-unconfirmed={f.unconfirmed.ask}>{unconfirmedLine(f.unconfirmed)}</p>}
       <Cites sources={f.sources} superseded={f.superseded} />
     </FactBlock>
-  ))}
+    {f.id === WEIGHTS_AFTER && w && (
+      <FactBlock plain id={w.id} title={w.title} asOf={citeDates(w)} source={citeNames(w)}>
+        <p class="note">By pay grade on the effective date of your PCS orders, in pounds. It covers everything the government ships or stores for you; professional gear (yours and your spouse's) doesn't count against it.</p>
+        <div class="table-wrap">
+          <table data-weights>
+            <caption>{w.caption.replace(/^Table 5-37\.\s*/, '')} ({w.paragraph}, Table 5-37)</caption>
+            <thead><tr><th>Pay grade</th><th class="num">With dependents</th><th class="num">Without dependents</th></tr></thead>
+            <tbody>
+              {w.rows.map((r) => (
+                <tr data-weight={r.id}><td>{r.grade.split(/(\s+)/).map((t) => (/-/.test(t) ? <span class="nowrap">{t}</span> : t))}</td><td class="num" data-with>{lb(r.with_dependents_lb)}</td><td class="num" data-without>{lb(r.without_dependents_lb)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Cites sources={w.sources} superseded={w.superseded} />
+      </FactBlock>
+    )}
+  </>))}
 </Base>

@@ -202,11 +202,11 @@
  {
   "id": "f2-sources-sequence-forms",
   "layer": "F2 sources, sequence, forms",
-  "source": "Military OneSource (pages + October 2026 fact sheets), MilitaryINSTALLATIONS (NBSD, NBC, MCRD), MyNavy HR PDFs (MILPCS claim settlement SOP Jun 2024, travel advance SOP May 2025, TPC routing guidance 10 Nov 2025, GTCC for PCS FAQ Aug 2025, OPS Alert 019-25, NAVADMIN 210/25 fact sheet, NAVADMIN 286/21, PCS Guide 2026, NPPSC 1300/3), PDTATAC UTD for MAP 66-24(R) and Locations with Approved TLE Extensions (9 Oct 2026), DTMO GTCC Regulations, DoD FMR Vol 9, CNIC M-11103.3, CHP, SDUSD, PUSD; URLs per row in manual/f2_pages.csv",
-  "vintage": "as published",
-  "retrieved": "2026-10-20",
+  "source": "Rev 1 pages (Military OneSource, MilitaryINSTALLATIONS, MyNavy HR PDFs, PDTATAC, DTMO GTCC Regulations, DoD FMR Vol 9, CNIC, CHP, SDUSD, PUSD; retrieved 2026-10-20) plus, saved by hand from a browser 2026-10-22: the Joint Travel Regulations (change effective 2026-10-01; paragraphs 010204, 010301, 050104-050107, 0504, 0505, 0506, 051401 with Table 5-37, 051502 extracted), the NAVADMIN 210/25 message, PPA (ppa.mil) pages (browser prints, no page date) and Quick Reference Guides (October 2026), NAVSUP Navy household goods PPM pages and handouts (Required PPM Docs Feb 2026; Top 10 June 2023), DD 1351-2 (May 2011), NPPSC 7000/1 (02-2017), DD 3166 (Feb 2023, XFA: no text)",
+  "vintage": "as published; JTR change 2026-10-01",
+  "retrieved": "2026-10-22",
   "license": "Public domain (US government works), quoted; California and school district pages quoted",
   "published_as": "Values, attributed",
-  "verified_on": "2026-10-20"
+  "verified_on": "2026-10-22"
  }
 ]

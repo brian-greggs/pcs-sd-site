@@ -13,6 +13,9 @@
 //   seq-notes        every sequence page opens with the disclaimer and the Navy-rules note; the Camp Pendleton,
 //                    MCAS Miramar and MCRD San Diego base pages carry the Navy-rules note; the sequence page
 //                    links Plan My Move as "build your personal checklist"
+//   seq-weights      the weight allowance table (JTR Table 5-37) is on the forms page once, right after the
+//                    household goods counseling form: every row of src/data/sequence_weights.json in order, each
+//                    figure equal to the export, with its date line and one quote per citation
 //
 //   node scripts/check_sequence.mjs                 check dist/
 //   node scripts/check_sequence.mjs --plant <kind>  plant one violation in memory first (it must fail);
@@ -28,9 +31,12 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
 const STEPS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_steps.json'), 'utf-8'));
 const FORMS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_forms.json'), 'utf-8'));
+const WEIGHTS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_weights.json'), 'utf-8'));
+const WEIGHTS_ID = 'weight-allowances';
+const WEIGHTS_AFTER = 'navy-hhg-counseling-shipment';
 const BASE_SLUG = { PENDLETON: 'camp-pendleton', MIRAMAR: 'miramar', MCRD: 'mcrd' };
 const NAVY_BASE_SLUGS = ['naval-base-san-diego', 'north-island', 'naval-amphibious-base', 'point-loma', 'naval-medical-center'];
-const CHECKS = ['seq-export', 'seq-deadlines', 'seq-sources', 'seq-unconfirmed', 'seq-notes'];
+const CHECKS = ['seq-export', 'seq-deadlines', 'seq-sources', 'seq-unconfirmed', 'seq-notes', 'seq-weights'];
 
 const decode = (s) => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;|&#34;/g, '"')
   .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
@@ -45,10 +51,12 @@ function load() {
   read('sequence/forms/index.html');
   for (const p of PHASES) read(`sequence/${p.slug}/index.html`);
   for (const slug of [...Object.values(BASE_SLUG), ...NAVY_BASE_SLUGS]) read(`base/${slug}/index.html`);
-  return { pages, steps: structuredClone(STEPS), forms: structuredClone(FORMS) };
+  return { pages, steps: structuredClone(STEPS), forms: structuredClone(FORMS), weights: structuredClone(WEIGHTS) };
 }
 
-function check({ pages, steps, forms }) {
+const lb = (n) => `${n.toLocaleString('en-US')} lb`;
+
+function check({ pages, steps, forms, weights }) {
   const failures = [];
   const fail = (c, where, what) => failures.push({ check: c, where, what });
   const seqPages = Object.keys(pages).filter((k) => k.startsWith('sequence/'));
@@ -129,8 +137,36 @@ function check({ pages, steps, forms }) {
   // Forms: the forms page holds exactly the Navy rows, in export order.
   const fk = 'sequence/forms/index.html';
   if (pages[fk]) {
-    const bs = blocks(pages[fk]);
+    const all = blocks(pages[fk]);
+    const bs = all.filter((b) => b.id !== WEIGHTS_ID);
     const want = forms.filter((f) => f.status !== 'not_yet_covered');
+    // The weight table: once, right after the household goods counseling form, every exported row in order.
+    const wb = all.filter((b) => b.id === WEIGHTS_ID);
+    const wi = all.findIndex((b) => b.id === WEIGHTS_ID);
+    if (wb.length !== 1) fail('seq-weights', fk, `${wb.length} weight allowance tables (want 1)`);
+    else {
+      if (wi < 1 || all[wi - 1].id !== WEIGHTS_AFTER) fail('seq-weights', fk, `weight table isn't right after ${WEIGHTS_AFTER}`);
+      const h = wb[0].html;
+      const rows = [...h.matchAll(/<tr[^>]*\bdata-weight="([^"]+)"[^>]*>([\s\S]*?)<\/tr>/g)];
+      const ordered = [...weights].sort((a, b) => a.id.localeCompare(b.id));
+      if (JSON.stringify(rows.map((m) => m[1])) !== JSON.stringify(ordered.map((r) => r.id))) fail('seq-weights', fk, `rows on the page (${rows.length}) aren't the ${ordered.length} exported rows in order`);
+      for (const m of rows) {
+        const r = weights.find((x) => x.id === m[1]);
+        if (!r) continue;
+        const cells = [...m[2].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) => decode(c[1]));
+        const want = [r.grade, lb(r.with_dependents_lb), lb(r.without_dependents_lb)];
+        if (JSON.stringify(cells) !== JSON.stringify(want)) fail('seq-weights', fk, `${r.id}: page shows ${cells.join(' | ')}, export says ${want.join(' | ')}`);
+      }
+      // Every figure we print ("11,000 lb") is in a marked row; the official quotes below keep their own wording.
+      const loose = h.replace(/<tr[^>]*\bdata-weight="[^"]+"[^>]*>[\s\S]*?<\/tr>/g, '').replace(/<details class="cites">[\s\S]*?<\/details>/g, '');
+      if (/\d{1,2},\d{3} lb(?!s)/.test(decode(loose))) fail('seq-weights', fk, 'a weight figure outside the table rows');
+      const cites = [ordered[0].source, ...ordered[0].sources];
+      const asof = attr(h, 'data-asof')[0];
+      if (!asof || !decode(asof[2]).startsWith(`${citeDates({ sources: cites })}.`)) fail('seq-weights', fk, `weight table date line isn't "${citeDates({ sources: cites })}"`);
+      const n = (h.match(/\bdata-cite\b/g) ?? []).length;
+      if (n !== cites.length) fail('seq-weights', fk, `${n} quotes with the weight table, want ${cites.length}`);
+      for (const c of cites) if (!decode(h).includes(`“${c.quote}”`)) fail('seq-weights', fk, `quote missing: "${c.quote.slice(0, 50)}"`);
+    }
     for (const b of bs) {
       const row = want.find((f) => f.id === b.id);
       if (!row) fail('seq-export', fk, `block "${b.id}" is not a Navy row of sequence_forms.json`);
@@ -156,10 +192,15 @@ const PLANTS = {
   'no date line': (s) => { const k = 'sequence/transit/index.html'.replace('transit', 'on-the-road'); s.pages[k] = s.pages[k].replace(/<p class="asof" data-asof>[^<]*<\/p>/, ''); },
   'quote missing': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/<li data-cite>[\s\S]*?<\/li>/, ''); },
   'no "Not yet confirmed" line': (s) => { const k = 'sequence/first-30-days/index.html'; s.pages[k] = s.pages[k].replace(/<p class="gap" data-unconfirmed="PPPO">[^<]*<\/p>/, ''); },
-  'asks the wrong office': (s) => { const r = s.forms.find((x) => x.id === 'navy-pet-expenses'); r.unconfirmed = { ...r.unconfirmed, ask: 'HSC' }; },
+  'asks the wrong office': (s) => { const r = s.forms.find((x) => x.id === 'navy-ppm-paperwork'); r.unconfirmed = { ...r.unconfirmed, ask: 'HSC' }; },
   'no Navy note on a Marine base': (s) => { const k = 'base/miramar/index.html'; s.pages[k] = s.pages[k].replace(/data-navy-note/g, 'data-x'); },
   'no disclaimer on a phase page': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('data-seq-disclaimer', 'data-x'); },
   'USMC row on a page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('</main>', '<a href="#usmc-travel-voucher">x</a></main>'); },
+  'wrong weight figure': (s) => { s.weights.find((r) => r.grade === 'E-6').with_dependents_lb = 12000; },
+  'weight row dropped': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/<tr[^>]*data-weight="weight-allowances-10"[\s\S]*?<\/tr>/, ''); },
+  'weight figure typed outside the rows': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('<div class="table-wrap"><table data-weights>', '<p>E-6: 11,000 lb</p><div class="table-wrap"><table data-weights>'); },
+  'weight table moved': (s) => { const k = 'sequence/forms/index.html'; const m = s.pages[k].match(/<section[^>]*data-fact="weight-allowances"[\s\S]*?<\/section>/); s.pages[k] = s.pages[k].replace(m[0], '').replace('</main>', m[0] + '</main>'); },
+  'weight table without a date line': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/(<section[^>]*data-fact="weight-allowances"[\s\S]*?)<p class="asof" data-asof>[^<]*<\/p>/, '$1'); },
 };
 
 const plantArg = process.argv.includes('--plant') ? process.argv[process.argv.indexOf('--plant') + 1] : null;
@@ -190,7 +231,7 @@ for (const c of CHECKS) {
   }
 }
 const navy = FORMS.filter((f) => f.status !== 'not_yet_covered').length;
-console.log(`  ${STEPS.length} steps on ${PHASES.length} phase pages, ${navy} forms (${FORMS.length - navy} USMC rows hidden)`);
+console.log(`  ${STEPS.length} steps on ${PHASES.length} phase pages, ${navy} forms (${FORMS.length - navy} USMC rows hidden), weight table ${WEIGHTS.length} rows`);
 if (failures.length) {
   console.log(`\n${failures.length} sequence check failure(s). Build failed.\n`);
   process.exit(1);

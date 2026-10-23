@@ -1,6 +1,8 @@
 ---
 // What the official pages say, in their words: one quote per citation, with the page, its incentive label and
 // the date it was saved; then any older guidance that says otherwise and why it isn't used. Closed by default.
+// `data-official-quote` marks the verbatim quote itself: the demographic word check skips only these blockquotes,
+// and only when the text is a quote in the sequence export (Brian 2026-10-22, F2-23).
 import ExtLink from '../ExtLink.astro';
 
 type Cite = { title: string; agency: string; url: string; incentive: string; retrieved_on: string; quote: string; reason?: string };
@@ -13,7 +15,7 @@ const { sources, superseded = [] } = Astro.props;
   <ul class="quotes">
     {sources.map((c) => (
       <li data-cite>
-        <blockquote>“{c.quote}”</blockquote>
+        <blockquote data-official-quote>“{c.quote}”</blockquote>
         <span class="cite-from"><ExtLink href={c.url} incentive={c.incentive} text={`${c.agency}, ${c.title}`} /> · retrieved {c.retrieved_on}</span>
       </li>
     ))}
@@ -24,7 +26,7 @@ const { sources, superseded = [] } = Astro.props;
       <ul class="quotes">
         {superseded.map((c) => (
           <li data-superseded>
-            <blockquote>“{c.quote}”</blockquote>
+            <blockquote data-official-quote>“{c.quote}”</blockquote>
             <span class="cite-from"><ExtLink href={c.url} incentive={c.incentive} text={`${c.agency}, ${c.title}`} /> · retrieved {c.retrieved_on}</span>
             <span class="cite-why">{c.reason}</span>
           </li>
