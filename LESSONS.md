@@ -163,3 +163,10 @@
 - **An eval that crashes on the error it's looking for can't report it.** The `--url` mode called `res.json()`, so a Cloudflare 1102 page (HTML) would have thrown and ended the run. It now reads text first and records the error code.
 - **Report what the run cost from the response, not from a guess.** The Function didn't return token counts, so the first run's cost is an estimate (thinking tokens are billed but invisible). It returns `usage` now.
 - **A live run tests the eval as well as the model.** Three of the six failures were right answers that a rule couldn't read: "Five" against `\b5\b`, rents near "allowance", an honest gap in words the regex didn't list.
+
+## Session 11f (2026-10-22): fixing eval rules
+
+- **Fix a false positive with a test of what it must still catch.** Loosening `bah_sourced` for rents could have let a made-up allowance through; the self-test plants one. My first planted figure, $4,410, turned out to be a real `bah.json` value: check the plant against the data before trusting the test.
+- **Replay the old answers through the new rule.** It showed cr-03 was a real miss (BAH figures with no year) that the old rule had passed only because citation dates looked like a year.
+- **Route what ranking can't see.** "What do I do first?" has no word that's on the first step's page, so no BM25 tuning finds it without disturbing other questions. A fixed rule for that question shape adds the steps and leaves ranking alone.
+

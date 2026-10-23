@@ -36,8 +36,9 @@
 //                      the sections sent; the full list only when the answer cites none of them, the nearest
 //                      page only for the model's "I don't have that"
 //   short, no_safety_claim   live only
-// Self-tests (no model): the daily cap, the From-list filter (assistant/cite.js) and the answer
-// formatting the page renders (assistant/format.js).
+// Self-tests (no model): the daily cap, the From-list filter (assistant/cite.js), the answer formatting
+// the page renders (assistant/format.js), the three rules fixed for QUESTIONS 65 (number words in
+// expect_answer, rent vs BAH figures, gap wording) and the sequence-start route (assistant/retrieve.js).
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -46,7 +47,7 @@ import { handleAsk, dailyCap } from '../assistant/ask.js';
 import { citedOnly } from '../assistant/cite.js';
 import { parseAnswer } from '../assistant/format.js';
 import { NO_ANSWER } from '../assistant/prompt.js';
-import { search } from '../assistant/retrieve.js';
+import { search, isSequenceStart } from '../assistant/retrieve.js';
 import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED } from './principle_lists.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -85,7 +86,15 @@ async function ask(question, previous) {
 }
 
 const NO_ANSWER_RE = /I don[’']t have that in the San Diego material/i;
-const GAP_RE = /not in (?:our|the) (?:data|material)|don[’']t have|doesn[’']t (?:cover|publish|have)|aren[’']t (?:in|published)|isn[’']t (?:in|on)|no (?:data|information) on/i;
+// An honest gap, in the words models use for one (QUESTIONS 65c: "covers base housing, not private apartment
+// complexes, so I can't name apartments").
+const GAP_RE = /not in (?:our|the) (?:data|material)|don[’']t have|doesn[’']t (?:cover|publish|have|list|include|say)|does not (?:cover|have|list)|aren[’']t (?:in|published|covered|listed)|isn[’']t (?:in|on|covered|listed)|no (?:data|information) on|\bcovers? [^.]{1,80}?, not [^.]{1,80}?\bso (?:i|we) can[’']?t\b|\bso (?:i|we) can[’']?t (?:name|tell|say|list|recommend|point|confirm|give)\b/i;
+// expect_answer patterns write numbers as digits; an answer may spell them (QUESTIONS 65a: "Five of the 25").
+const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+const NUMBER_WORD = new RegExp(`\\b(?:(${TENS.slice(2).join('|')})(?:[- ](${ONES.slice(1, 10).join('|')}))?|(${ONES.join('|')}))\\b`, 'gi');
+const digitsFor = (t) => t.replace(NUMBER_WORD, (_, tens, one, single) => String(single ? ONES.indexOf(single.toLowerCase()) : TENS.indexOf(tens.toLowerCase()) * 10 + (one ? ONES.indexOf(one.toLowerCase()) : 0)));
+const answerMatches = (pattern, answer) => new RegExp(pattern).test(answer) || new RegExp(pattern).test(digitsFor(answer));
 const demoHits = (t) => {
   let s = t;
   for (const re of DEMOGRAPHIC_ALLOWED) s = s.replace(re, ' ');
@@ -105,18 +114,24 @@ const BAH_VALUES = new Set(JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'ba
 const BAH_WORDS = /\b(?:BAH|housing allowance|basic allowance(?: for housing)?)\b/i;
 const BAH_LABEL = /\b20\d{2} BAH, [^\n]+ area \(MHA CA\d{3}\)/;
 const BAH_PRINTED = /\$[\d,]+ with dependents|\| [EOW]\d+E? \| \$[\d,]+ \| \$[\d,]+$/m; // a page line, or a base page table row (band | grade | with | without)
-const dollarsNearBah = (t) => [...t.matchAll(/\$\s?(\d[\d,]*)/g)]
-  .filter((m) => BAH_WORDS.test(t.slice(Math.max(0, m.index - 120), m.index + m[0].length + 120)) || BAH_VALUES.has(Number(m[1].replace(/,/g, ''))))
-  .map((m) => m[1]);
+// The figures to check: every figure that is a bah.json value, and any other figure in the same clause as
+// "BAH" / "housing allowance" (QUESTIONS 65b: a HUD rent beside "allowance" in the next clause is rent).
+// Clauses end at . ; ? ! a line break, or a comma followed by a space (so "$3,548" stays whole).
+const clauses = (t) => t.split(/(?<!\d)\.(?!\d)|[;?!\n]|,\s/);
+const dollarsNearBah = (t) => clauses(t).flatMap((c) => [...c.matchAll(/\$\s?(\d[\d,]*)/g)]
+  .filter((m) => BAH_VALUES.has(Number(m[1].replace(/,/g, ''))) || BAH_WORDS.test(c))
+  .map((m) => m[1]));
+const bahFiguresOk = (answer, sentText) => {
+  const figs = dollarsNearBah(answer);
+  if (!figs.length) return true;
+  const ok = figs.every((f) => BAH_VALUES.has(Number(f.replace(/,/g, ''))) && (!sentText || sentText.includes(`$${f}`)));
+  return ok && /\b20\d{2}\b(?![-–]\d)/.test(answer.replace(/\b20\d{2}-\d{2}(-\d{2})?\b/g, ''));
+};
 function bahSourced(q, r, answer) {
   const sent = r.chunks ?? (index ? search(index, q.question, undefined, q.previous?.question ?? '').chunks : null);
   if (r.chunks && r.chunks.some((c) => BAH_PRINTED.test(c.text) && !BAH_LABEL.test(c.text))) return 'FAIL';
   if (!realAnswers || !answer) return 'PASS';
-  const figs = dollarsNearBah(answer);
-  if (!figs.length) return 'PASS';
-  const sentText = sent ? sent.map((c) => c.text).join('\n') : null;
-  const ok = figs.every((f) => BAH_VALUES.has(Number(f.replace(/,/g, ''))) && (!sentText || sentText.includes(`$${f}`)));
-  return ok && /\b20\d{2}\b(?![-–]\d)/.test(answer.replace(/\b20\d{2}-\d{2}(-\d{2})?\b/g, '')) ? 'PASS' : 'FAIL';
+  return bahFiguresOk(answer, sent ? sent.map((c) => c.text).join('\n') : null) ? 'PASS' : 'FAIL';
 }
 
 const RULES = {
@@ -140,7 +155,7 @@ function judge(rule, q, r) {
       if (!q.expect_fact) return null;
       if (r.chunks) return new RegExp(q.expect_fact).test(r.chunks.map((c) => c.text).join('\n')) ? 'PASS' : 'FAIL';
       if (!realAnswers || !q.expect_answer || !answer) return 'SKIP';
-      return new RegExp(q.expect_answer).test(answer) ? 'PASS' : 'FAIL';
+      return answerMatches(q.expect_answer, answer) ? 'PASS' : 'FAIL';
     case 'retrieves_section': return !q.expect_section ? null : hasSection(r, q.expect_page, q.expect_section) ? 'PASS' : 'FAIL';
     case 'answers': return ['retrieved', 'answer'].includes(r.kind) ? 'PASS' : 'FAIL';
     // Plus a nearest page: in the fixed answer's text, or (the model's) as the one From-list entry.
@@ -221,6 +236,30 @@ const formatCases = [
   ['## Heading\nAn *aside* and `code` <b>tag</b>', '[{"type":"p","inline":[{"type":"text","text":"Heading An aside and code <b>tag</b>"}]}]'],
 ];
 const formatBad = formatCases.filter(([t, want]) => fmt(t) !== want);
+// QUESTIONS 65: the three rules that failed right answers in the first live run, and what they must still catch.
+const IN15 = 'A three-bedroom runs about 78% to 89% of the E5–E6 allowance. The HUD reference rent is $3,430 in 91910 and $3,530 in 91911. The allowances are $3,975 for E5 and $4,404 for E6, with dependents (2026 BAH, San Diego area, MHA CA038).';
+const ruleCases = [
+  ['number word', answerMatches('\\b5\\b', 'Five of the 25 licensed child care centers take infants.'), true],
+  ['number word, compound', answerMatches('21 days', 'You have twenty-one days to file.'), true],
+  ['number word, not a different number', answerMatches('\\b5\\b', 'Fifteen centers, none for infants.'), false],
+  ['rent beside "allowance" is rent', bahFiguresOk(IN15, null), true],
+  ['rent and "housing allowance" in separate clauses', bahFiguresOk('3-bed HUD rent is $3,430, about 78% of your housing allowance in 2026.', null), true],
+  ['made-up BAH figure', bahFiguresOk('Your housing allowance is $4,413 a month in 2026.', null), false],
+  ['real BAH figure, no year', bahFiguresOk('E6 with dependents gets $4,404 a month.', null), false],
+  ['gap: covers X, not Y, so I can\'t', GAP_RE.test('The San Diego material covers base housing, not private apartment complexes, so I can’t name apartments near Miramar.'), true],
+  ['gap: doesn\'t cover ... so I can\'t', GAP_RE.test('The material doesn’t cover rental pet rules, so I can’t say which complexes allow large dogs.'), true],
+  ['gap: a plain answer is not a gap', GAP_RE.test('Capeharts East allows two pets with no size limit (Miramar / Mira Mesa base housing: Communities).'), false],
+];
+const ruleBad = ruleCases.filter(([, got, want]) => got !== want);
+// The sequence-start route (assistant/retrieve.js): these always get Orders steps 1-3; these don't.
+const routeCases = [
+  ['What should I do first after I get orders to San Diego?', true], ['We just got orders. Where do we start?', true],
+  ['What is the first thing to do after we get our PCS orders?', true], ['I have orders to NAS North Island; what comes first?', true],
+  ['Where to begin with a PCS to San Diego?', true],
+  ['What do I do in the first 30 days?', false], ['Is Santee good for first-time home buyers?', false],
+  ['How long is the base housing wait at Murphy Canyon?', false], ['How do I renew my passport before an overseas move?', false],
+];
+const routeBad = routeCases.filter(([q, want]) => isSequenceStart(q) !== want);
 
 // --- Report -------------------------------------------------------------------------
 console.log(`\nAssistant eval: ${questions.length} questions, ${mode}\n`);
@@ -243,6 +282,8 @@ console.log(`Retrieval: expected page first for ${hit1}/${withPage.length}, in t
 console.log(`Daily cap self-test (fake KV, cap 3; no binding = off): ${capOk ? 'PASS' : 'FAIL'}`);
 console.log(`From-list filter self-test (${filterCases.length} cases): ${filterBad.length ? `FAIL: ${filterBad.map(([a]) => JSON.stringify(a)).join('; ')}` : 'PASS'}`);
 console.log(`Answer formatting self-test (${formatCases.length} cases): ${formatBad.length ? `FAIL: ${formatBad.map(([t]) => `${JSON.stringify(t)} → ${fmt(t)}`).join('; ')}` : 'PASS'}`);
+console.log(`Eval rule self-test, QUESTIONS 65 (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
+console.log(`Sequence-start route self-test (${routeCases.length} cases): ${routeBad.length ? `FAIL: ${routeBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
 const answered = results.filter((r) => r.kind === 'answer' && r.cited_by);
 if (answered.length) {
   const by = (k) => answered.filter((r) => r.cited_by === k);
@@ -271,4 +312,4 @@ const failed = results.filter((r) => Object.values(r.rules).includes('FAIL'));
 if (failed.length) console.log(`\nFailed: ${failed.map((r) => r.id).join(', ')}`);
 const out = opt('--json');
 if (out) writeFileSync(out, JSON.stringify({ mode, results, capOk }, null, 2));
-process.exit(failed.length || !capOk || filterBad.length || formatBad.length ? 1 : 0);
+process.exit(failed.length || !capOk || filterBad.length || formatBad.length || ruleBad.length || routeBad.length ? 1 : 0);

@@ -99,6 +99,23 @@ export const SETTINGS = {
   pageBoost: 1.6, // a chunk on a page the question names (all of the page title's words in the question)
 };
 
+// Where the move starts ("what do I do first?", "we just got orders"): BM25 alone sends later steps
+// (seq-07), so these questions always get steps 1-3 of the Orders phase as well, ahead of what BM25
+// picks. Only the new question counts, not the previous turn. Brian 2026-10-22.
+const SEQUENCE_START = [
+  /\bjust (?:got|gotten|received|been given) (?:my |our |the |new )?(?:pcs )?orders\b/i,
+  /\b(?:after|once|when|now that) (?:i|we)(?:['’]ve| have)? (?:get|got|gotten|receive|received|have) (?:my |our |the )?(?:pcs )?orders\b/i,
+  /\b(?:i|we) (?:have|got|received) (?:my |our |the )?(?:pcs )?orders\b.*\b(?:first|start|begin)\b/i,
+  /\bwhere (?:do|should|can|would) (?:i|we) (?:start|begin)\b/i,
+  /\bwhere to (?:start|begin)\b/i,
+  /\b(?:do|start with|tackle|handle) first\b/i,
+  /\bfirst (?:thing|things|step|steps)\b/i,
+  /\bwhat comes first\b/i,
+];
+export const isSequenceStart = (q) => SEQUENCE_START.some((re) => re.test(q));
+const START_PAGE = '/sequence/orders/';
+const START_STEPS = /^[123]\.\s/;
+
 export function search(index, question, settings = SETTINGS, context = '') {
   const { typed, terms } = queryTerms(question, context);
   const content = new Set(typed.filter((t) => !GENERIC.has(t)));
@@ -125,14 +142,25 @@ export function search(index, question, settings = SETTINGS, context = '') {
   });
   scored.sort((x, y) => y.s - x.s || x.d.chunk.id.localeCompare(y.d.chunk.id));
   const top = scored[0];
-  const relevant = !!top && top.s >= settings.minScore && top.contentHits > 0;
+  const routed = isSequenceStart(question) ? 'sequence-start' : null;
+  const relevant = !!routed || (!!top && top.s >= settings.minScore && top.contentHits > 0);
   // Pick sections, not chunks: k sections (at most perPage from one page), each sent whole, so a
   // table split across parts for ranking never reaches the model with half its rows.
   const perPage = new Map();
   const picked = new Set();
   const chunks = [];
+  if (routed) {
+    // Orders steps 1-3 first, by step number; BM25 still picks its k sections after them (no duplicates).
+    for (const [group, parts] of index.groups) {
+      const c = index.chunks[parts[0]];
+      if (c.url.split('#')[0] !== START_PAGE || !START_STEPS.test(c.section_heading)) continue;
+      picked.add(group);
+      for (const j of parts) chunks.push({ ...index.chunks[j], score: null, routed });
+    }
+  }
+  const forced = picked.size;
   for (const x of scored) {
-    if (picked.size >= settings.k) break;
+    if (picked.size - forced >= settings.k) break;
     const group = x.d.chunk.group ?? x.d.chunk.id;
     if (picked.has(group)) continue;
     const page = x.d.chunk.url.split('#')[0];
@@ -142,6 +170,7 @@ export function search(index, question, settings = SETTINGS, context = '') {
     for (const j of index.groups.get(group) ?? [x.i]) chunks.push({ ...index.chunks[j], score: Math.round(x.s * 100) / 100 });
   }
   // Nearest page: the best-scoring page even when nothing clears the bar; the home page if nothing matched at all.
-  const nearest = top ? { url: top.d.chunk.url.split('#')[0], title: top.d.chunk.page_title } : { url: '/', title: 'Home: start with your base' };
-  return { relevant, chunks: relevant ? chunks : [], nearest, top_score: top ? Math.round(top.s * 100) / 100 : 0, terms: [...terms.keys()] };
+  const nearest = routed ? { url: START_PAGE, title: chunks[0]?.page_title ?? 'Move sequence: Orders in hand' }
+    : top ? { url: top.d.chunk.url.split('#')[0], title: top.d.chunk.page_title } : { url: '/', title: 'Home: start with your base' };
+  return { relevant, chunks: relevant ? chunks : [], nearest, routed, top_score: top ? Math.round(top.s * 100) / 100 : 0, terms: [...terms.keys()] };
 }

@@ -1,4 +1,12 @@
-# Site build — status (2026-10-22, session 11e: first live eval, answer display, v0.7.5)
+# Site build — status (2026-10-22, session 11f: eval rules, sequence-start route, v0.7.6)
+
+## Session 11f: eval rules, the sequence-start route (v0.7.6; rules v0.9 unchanged)
+
+- **QUESTIONS 65 (Brian 2026-10-22: fix all three):** `expect_answer` also matches with number words turned into digits ("Five" → 5, "twenty-one" → 21; "fifteen" stays 15). `bah_sourced` checks every figure that is a `bah.json` value and any other figure in the same clause as "BAH" / "housing allowance" (clauses end at . ; ? ! a line break or ", "), so a HUD rent in the next clause is left alone. `honest_gap` also accepts "covers X, not Y, so I can't …", "so I can't name/tell/say/list …", "doesn't list/include", "isn't covered". Self-test, 10 cases, each fix and what it must still catch (a figure not in `bah.json` next to "housing allowance"; a real figure with no year; a plain answer that isn't a gap). Replayed on the session 11e answers: in-04, in-15 and nyc-02 now pass; cr-03 still fails, because it gives BAH figures without "2026" (see the correction above).
+- **QUESTIONS 66, 67:** accepted as built.
+- **Sequence-start route (seq-07):** `isSequenceStart()` in `assistant/retrieve.js`. Questions like "what do I do first", "first thing/step", "what comes first", "where do I/we start", "where to begin", "just got orders", "after I get orders", "I have orders … first" always get steps 1–3 of `/sequence/orders/` (picked by step number), ahead of the usual six BM25 sections, so up to nine are sent; BM25 weights and settings unchanged. Only the new question counts, not the previous turn. A routed question is never "I don't have that", and its nearest page is the Orders page. Self-test, 9 cases: 5 that route, 4 that mustn't ("first 30 days", "first-time home buyers", a housing wait question, the passport question).
+- **Eval:** seq-11 "We just got orders to San Diego. Where do we start?", seq-12 "What's the first thing to do after we get our PCS orders?", seq-13 "I have orders to NAS North Island. What comes first?" (names a base, so BM25 alone sends the base page). 52 questions.
+- **Retrieval-only eval:** expected fact 40 of 41 (in-16 only), page 40 of 41, section 37 of 37. seq-07 and seq-11 to seq-13 pass. out-02 and out-03 still reach the model (the model declined both live); in-16 unchanged.
 
 ## Session 11e: first live eval on the preview; answer display (v0.7.5; rules v0.9 unchanged)
 
@@ -14,7 +22,7 @@
 | not_yet_covered | 3 | 2 | nyc-02 |
 
 - **Real misses:** seq-07 (retrieval: no `/sequence/orders/` section sent; the model answered from steps 6 and 8 and said it couldn't see steps 1–5) and in-16 (retrieval: commute sections, not `/sources/`; the answer was right anyway: Google, Tuesday 0700, zip centers).
-- **Eval misses, answer fine:** in-04 said "Five", the pattern wants `5`; in-15 and cr-03 gave HUD rents beside "allowance", which `bah_sourced` reads as BAH figures (QUESTIONS 52 again; the BAH figures themselves were right and dated); nyc-02 said the material "covers base housing, not private apartment complexes", which `GAP_RE` doesn't know. QUESTIONS 65.
+- **Eval misses, answer fine:** in-04 said "Five", the pattern wants `5`; in-15 and cr-03 gave HUD rents beside "allowance", which `bah_sourced` reads as BAH figures (QUESTIONS 52 again); nyc-02 said the material "covers base housing, not private apartment complexes", which `GAP_RE` doesn't know. QUESTIONS 65. (Correction, session 11f: cr-03's BAH figures are real but the answer never names their year; the old rule accepted the citation dates as the year. It still fails, rightly.)
 - **Latency** (client side, Pacific coast to Cloudflare): median 3.9 s, p90 5.9 s, max 8.1 s for model calls; fixed answers about 0.2 s. **No error 1102** and no HTTP errors.
 - **Cost:** the deployed Function didn't return token counts, so it's an estimate: about 170–205K input tokens (prompt plus six sections, about 4–5K per question) and 6K visible output tokens, about $0.02 at $0.10 / $0.50 per million, plus thinking tokens (billed as output, not visible), so **$0.02–0.04 for the run**. Next run reports it exactly (below).
 - **Display:** 40 of 43 answers ended with parenthetical citations holding raw paths, and 4 used `**bold**`, which showed as asterisks.
@@ -336,7 +344,7 @@ The miss: in-16 "Where do your drive times come from?" (expected `/sources/`; re
 
 ## Go live: the assistant (steps for Brian)
 
-0. **Before any of this (Brian 2026-10-22, data repo QUESTIONS F2-22):** the retrieval-only eval must pass **out-03** (passport renewal is refused, not answered from the housing-renewal step) and **seq-07** (the first step after orders retrieves `orders-read`). Both fail today (`node scripts/eval_assistant.mjs`). Retrieval tuning waits for the embeddings decision; until one of them fixes both, the assistant stays off.
+0. **Before any of this (Brian 2026-10-22, data repo QUESTIONS F2-22):** the retrieval-only eval must pass **out-03** (passport renewal is refused, not answered from the housing-renewal step) and **seq-07** (the first step after orders retrieves `orders-read`). seq-07 passes since session 11f (the sequence-start route); out-03 still fails (`node scripts/eval_assistant.mjs`). Retrieval tuning waits for the embeddings decision; until one of them fixes both, the assistant stays off.
 1. **Anthropic key.** In the Anthropic Console, create an API key for this project (a workspace with a monthly spend limit is the simplest cost guard). In Cloudflare: Workers & Pages → the site's Pages project → Settings → Variables and Secrets → Add → type **Secret**, name `ANTHROPIC_API_KEY`, value the key. Add it for **Preview** first if you want to test on a branch preview, then **Production**.
 2. **Model.** Same screen → Add → type **Text**, name `ASSISTANT_MODEL`, value the model ID, e.g. `claude-opus-5-5` (`claude-sonnet-5-5` or `claude-haiku-5-5` cost less; the code has no default and accepts any current model).
 3. **Optional daily cap.** Workers & Pages → KV → Create namespace (e.g. `pcs-sd-ask-limits`). Then the Pages project → Settings → Bindings → Add → KV namespace, variable name `ASK_LIMITS`, pick the namespace. Optional text variable `ASK_DAILY_CAP` (default 200). Without the binding there is no cap.
