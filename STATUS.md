@@ -1,4 +1,14 @@
-# Site build — status (2026-10-22, session 11c: exact source links, v0.7.3)
+# Site build — status (2026-10-22, session 11d: DLA rates and the effective date, v0.7.4)
+
+## Session 11d: DLA rates, the effective date, no DFAS (v0.7.4; rules v0.9 unchanged)
+
+- **DLA rates:** new `sequence_dla.json` (DTMO primary rates, effective 2026-01-01, 27 grades; columns `*_usd`) and collection `sequenceDla`. `src/components/sequence/DlaRates.astro` shows them on the DLA step (`pre-dla-advance`, one line per grade in the reader's pay band, picker and storage key shared with the BAH lines via `variants.ts`) and as the whole table with the DLA form (the band's rows highlighted). The step and form cite the table, so their date lines carry its date. E5–E6: E-6 and E-5 $3,548.02 with dependents, $2,389.42 without. O3: $4,041.88 with dependents, $3,404.11 without. The PDF's secondary table (effective 2025-01-01, only for a second DLA under JTR par. 050507) isn't shown; the form's note says so.
+- **Effective date:** `sequence_effective_date.json`; a block on `/sequence/` (`#effective-date`) with the line and its quotes (DTMO computation example MPDT-22 and the JTR's weight and DLA rules). Every timing counted from the report or detachment date links to it ("how your orders’ effective date is figured"), as do the weight table and the DLA lines.
+- **Checks:** `seq-dla` (every DLA line and table row equals the export; every band's lines on the step; both rows cite the table; no dollars-and-cents figure on a sequence page outside the DLA lines or an official quote) and `seq-effective` (the block once, as exported, with quotes and date line; the link on exactly the report- and detachment-date timings). Plants 25/25 (8 new). The BAH guard (`bah-figures`) no longer reads "$3,147" out of "$3,147.54": BAH figures are whole dollars. The quote-block exemption knows the two new exports.
+- **Assistant:** known gaps no longer name DLA; eval adds seq-10 (E-5 DLA, $3,548.02), which passes.
+
+Checks on 2026-10-22: `check_f2.py` PASS, selftest 27/27; full build and every check (36 PASS lines; intake 26,789 plans, 99,902 sequence lines); layout clean on 82 pages at four widths (DLA step and table also looked at by eye at 375 px, band switch tested); retrieval-only eval, 49 questions: expected fact 36 of 38 (in-16, seq-07 as before), out-02 and out-03 still not stopped.
+
 
 ## Session 11c: exact source links (F2-27; v0.7.3)
 
@@ -365,7 +375,7 @@ Moved to PRD §16 in the data repo on 2026-09-30 (BAH ratio, CFD names, Q3, Q6, 
 
 ## Open
 
-See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (F2-12, F2-19 rest) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
+See `QUESTIONS.md` (open: 21–24, plus 14 and 16 with Brian), the data repo's QUESTIONS (no F2 questions open) and the LMH call list in the data repo's STATUS. Go-live for the assistant waits on out-03 and seq-07 (above). Before public: Brian writes the leads and gotchas (none render until written); clinics get placed (the clinic row reappears on its own).
 
 ## Next session
 

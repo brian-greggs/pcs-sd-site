@@ -30,7 +30,12 @@ export async function sequenceData() {
     id: 'weight-allowances', title: weightRows[0].title, caption: weightRows[0].caption, paragraph: weightRows[0].paragraph,
     sources: [weightRows[0].source, ...weightRows[0].sources], superseded: [], rows: weightRows,
   } : null;
-  return { steps, forms, stepById, formById, weights };
+  // DTMO's primary DLA table in its own order (O-10 … E-1); the effective-date line.
+  const dla = (await getCollection('sequenceDla')).map((d) => ({ ...d.data, id: d.id })).sort((a, b) => a.id.localeCompare(b.id));
+  const eff = (await getCollection('sequenceEffectiveDate'))[0];
+  const effective = eff ? { id: eff.id, ...eff.data, superseded: [] } : null;
+  if (!effective) throw new Error('sequence_effective_date.json is empty');
+  return { steps, forms, stepById, formById, weights, dla, effective };
 }
 export type SequenceData = Awaited<ReturnType<typeof sequenceData>>;
 export type Step = SequenceData['steps'][number];

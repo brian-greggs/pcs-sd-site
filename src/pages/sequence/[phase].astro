@@ -32,3 +32,9 @@ const next = PHASES[i + 1];
     {next ? <a href={`/sequence/${next.slug}/`}>{next.label} ›</a> : <a href="/sequence/forms/">Forms and claims ›</a>}
   </nav>
 </Base>
+
+<script>
+  // The DLA rates follow the reader's pay band (the same picker and storage key as the BAH lines).
+  import { initVariants } from '../../scripts/variants';
+  initVariants();
+</script>

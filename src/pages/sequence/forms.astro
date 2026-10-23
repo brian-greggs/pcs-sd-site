@@ -6,8 +6,9 @@
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import Cites from '../../components/sequence/Cites.astro';
+import DlaRates from '../../components/sequence/DlaRates.astro';
 import SequenceTop from '../../components/sequence/SequenceTop.astro';
-import { ANCHOR_LABEL, citeDates, citeNames, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import { ANCHOR_LABEL, DLA_FORM, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, citeDates, citeNames, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
 import { sequenceData } from '../../lib/sequenceData';
 
 const data = await sequenceData();
@@ -28,7 +29,7 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
       <dl class="facts" data-form={f.id}>
         <dt>What it pays or does</dt><dd>{f.pays_or_does}</dd>
         <dt>Who files</dt><dd>{f.who_files}</dd>
-        <dt>Timing</dt><dd data-anchor>{ANCHOR_LABEL[f.anchor]}</dd>
+        <dt>Timing</dt><dd><span data-anchor>{ANCHOR_LABEL[f.anchor]}</span>{EFFECTIVE_ANCHORS.includes(f.anchor) && <> · <a href={EFFECTIVE_HREF} data-effective-link>{EFFECTIVE_LINK_TEXT}</a></>}</dd>
         <dt>Deadline</dt><dd data-deadline>{f.deadline}</dd>
         <dt>Where it's filed</dt><dd data-filed>{f.filed_where}</dd>
         {f.attachments.length > 0 && <><dt>What to attach</dt><dd><ul class="plain">{f.attachments.map((x) => <li>{x}</li>)}</ul></dd></>}
@@ -37,13 +38,14 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
           return <li><a href={stepHref(s)}>{phaseByKey(s.phase).label}, step {s.order}</a></li>;
         })}</ul></dd></>}
       </dl>
+      {f.id === DLA_FORM && <DlaRates rows={data.dla} mode="table" />}
       {noteParas(f.note).map((n) => <p class="note">{n}</p>)}
       {f.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
       <Cites sources={f.sources} superseded={f.superseded} />
     </FactBlock>
     {f.id === WEIGHTS_AFTER && w && (
       <FactBlock plain id={w.id} title={w.title} asOf={citeDates(w)} source={citeNames(w)}>
-        <p class="note">By pay grade on the effective date of your PCS orders, in pounds. It covers everything the government ships or stores for you; professional gear (yours and your spouse's) doesn't count against it.</p>
+        <p class="note">By pay grade on <a href={EFFECTIVE_HREF}>the effective date of your PCS orders</a>, in pounds. It covers everything the government ships or stores for you; professional gear (yours and your spouse's) doesn't count against it.</p>
         <div class="table-wrap">
           <table data-weights>
             <caption>{w.caption.replace(/^Table 5-37\.\s*/, '')} ({w.paragraph}, Table 5-37)</caption>
@@ -60,3 +62,9 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
     )}
   </>))}
 </Base>
+
+<script>
+  // The DLA rates follow the reader's pay band (the same picker and storage key as the BAH lines).
+  import { initVariants } from '../../scripts/variants';
+  initVariants();
+</script>

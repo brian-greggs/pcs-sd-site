@@ -1,0 +1,1055 @@
+[
+ {
+  "grade": "O-10",
+  "pay_band": "",
+  "with_dependents_usd": 6385.58,
+  "without_dependents_usd": 5187.33,
+  "quote": "O-10 $5,187.33 $6,385.58",
+  "id": "dla-rates-01",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-9",
+  "pay_band": "",
+  "with_dependents_usd": 6385.58,
+  "without_dependents_usd": 5187.33,
+  "quote": "O-9 $5,187.33 $6,385.58",
+  "id": "dla-rates-02",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-8",
+  "pay_band": "",
+  "with_dependents_usd": 6385.58,
+  "without_dependents_usd": 5187.33,
+  "quote": "O-8 $5,187.33 $6,385.58",
+  "id": "dla-rates-03",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-7",
+  "pay_band": "",
+  "with_dependents_usd": 6385.58,
+  "without_dependents_usd": 5187.33,
+  "quote": "O-7 $5,187.33 $6,385.58",
+  "id": "dla-rates-04",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-6",
+  "pay_band": "O4–O6",
+  "with_dependents_usd": 5749.63,
+  "without_dependents_usd": 4758.96,
+  "quote": "O-6 $4,758.96 $5,749.63",
+  "id": "dla-rates-05",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-5",
+  "pay_band": "O4–O6",
+  "with_dependents_usd": 5542.06,
+  "without_dependents_usd": 4583.51,
+  "quote": "O-5 $4,583.51 $5,542.06",
+  "id": "dla-rates-06",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-4",
+  "pay_band": "O4–O6",
+  "with_dependents_usd": 4885.43,
+  "without_dependents_usd": 4247.61,
+  "quote": "O-4 $4,247.61 $4,885.43",
+  "id": "dla-rates-07",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-3",
+  "pay_band": "O1–O3",
+  "with_dependents_usd": 4041.88,
+  "without_dependents_usd": 3404.11,
+  "quote": "O-3 $3,404.11 $4,041.88",
+  "id": "dla-rates-08",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-2",
+  "pay_band": "O1–O3",
+  "with_dependents_usd": 3451.28,
+  "without_dependents_usd": 2700.31,
+  "quote": "O-2 $2,700.31 $3,451.28",
+  "id": "dla-rates-09",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-1",
+  "pay_band": "O1–O3",
+  "with_dependents_usd": 3085.23,
+  "without_dependents_usd": 2273.82,
+  "quote": "O-1 $2,273.82 $3,085.23",
+  "id": "dla-rates-10",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-3E",
+  "pay_band": "O1–O3E",
+  "with_dependents_usd": 4343.8,
+  "without_dependents_usd": 3675.83,
+  "quote": "O-3E $3,675.83 $4,343.80",
+  "id": "dla-rates-11",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-2E",
+  "pay_band": "O1–O3E",
+  "with_dependents_usd": 3919.27,
+  "without_dependents_usd": 3124.87,
+  "quote": "O-2E $3,124.87 $3,919.27",
+  "id": "dla-rates-12",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "O-1E",
+  "pay_band": "O1–O3E",
+  "with_dependents_usd": 3621.1,
+  "without_dependents_usd": 2687.09,
+  "quote": "O-1E $2,687.09 $3,621.10",
+  "id": "dla-rates-13",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "W-5",
+  "pay_band": "W1–W5",
+  "with_dependents_usd": 4715.58,
+  "without_dependents_usd": 4315.51,
+  "quote": "W-5 $4,315.51 $4,715.58",
+  "id": "dla-rates-14",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "W-4",
+  "pay_band": "W1–W5",
+  "with_dependents_usd": 4323.11,
+  "without_dependents_usd": 3832.45,
+  "quote": "W-4 $3,832.45 $4,323.11",
+  "id": "dla-rates-15",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "W-3",
+  "pay_band": "W1–W5",
+  "with_dependents_usd": 3960.78,
+  "without_dependents_usd": 3221.08,
+  "quote": "W-3 $3,221.08 $3,960.78",
+  "id": "dla-rates-16",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "W-2",
+  "pay_band": "W1–W5",
+  "with_dependents_usd": 3643.75,
+  "without_dependents_usd": 2860.7,
+  "quote": "W-2 $2,860.70 $3,643.75",
+  "id": "dla-rates-17",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "W-1",
+  "pay_band": "W1–W5",
+  "with_dependents_usd": 3151.31,
+  "without_dependents_usd": 2394.55,
+  "quote": "W-1 $2,394.55 $3,151.31",
+  "id": "dla-rates-18",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-9",
+  "pay_band": "E7–E9",
+  "with_dependents_usd": 4149.51,
+  "without_dependents_usd": 3147.54,
+  "quote": "E-9 $3,147.54 $4,149.51",
+  "id": "dla-rates-19",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-8",
+  "pay_band": "E7–E9",
+  "with_dependents_usd": 3824.94,
+  "without_dependents_usd": 2888.97,
+  "quote": "E-8 $2,888.97 $3,824.94",
+  "id": "dla-rates-20",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-7",
+  "pay_band": "E7–E9",
+  "with_dependents_usd": 3551.31,
+  "without_dependents_usd": 2468.19,
+  "quote": "E-7 $2,468.19 $3,551.31",
+  "id": "dla-rates-21",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-6",
+  "pay_band": "E5–E6",
+  "with_dependents_usd": 3548.02,
+  "without_dependents_usd": 2389.42,
+  "quote": "E-6 $2,389.42 $3,548.02",
+  "id": "dla-rates-22",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-5",
+  "pay_band": "E5–E6",
+  "with_dependents_usd": 3548.02,
+  "without_dependents_usd": 2389.42,
+  "quote": "E-5 $2,389.42 $3,548.02",
+  "id": "dla-rates-23",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-4",
+  "pay_band": "E1–E4",
+  "with_dependents_usd": 3548.02,
+  "without_dependents_usd": 2389.42,
+  "quote": "E-4 $2,389.42 $3,548.02",
+  "id": "dla-rates-24",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-3",
+  "pay_band": "E1–E4",
+  "with_dependents_usd": 3548.02,
+  "without_dependents_usd": 2355.48,
+  "quote": "E-3 $2,355.48 $3,548.02",
+  "id": "dla-rates-25",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-2",
+  "pay_band": "E1–E4",
+  "with_dependents_usd": 3548.02,
+  "without_dependents_usd": 2025.26,
+  "quote": "E-2 $2,025.26 $3,548.02",
+  "id": "dla-rates-26",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ },
+ {
+  "grade": "E-1",
+  "pay_band": "E1–E4",
+  "with_dependents_usd": 3548.02,
+  "without_dependents_usd": 1870.58,
+  "quote": "E-1 $1,870.58 $3,548.02",
+  "id": "dla-rates-27",
+  "title": "Dislocation allowance (DLA) by pay grade",
+  "caption": "Primary DLA rates, effective January 1, 2026",
+  "effective": "2026-01-01",
+  "source": {
+   "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+   "agency": "DTMO / PDTATAC (DoD)",
+   "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+   "incentive": "Government: no commercial interest",
+   "retrieved_on": "2026-10-22",
+   "quote": "PRIMARY DLA RATES Effective January 1, 2026 Grade Without-Dependent Rate With-Dependent Rate"
+  },
+  "sources": [
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "A DLA is a flat amount and may be paid as a primary DLA, a secondary DLA, or a partial DLA, depending upon the circumstances of the household move."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ }
+]

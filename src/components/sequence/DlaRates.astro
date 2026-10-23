@@ -1,0 +1,45 @@
+---
+// DTMO's primary DLA rates (src/data/sequence_dla.json) for the reader's pay band: `lines` on the DLA step (one
+// line per grade in the band, with dependents first), `table` on the DLA form (every grade, the band's rows
+// highlighted). Every band is rendered and src/scripts/variants.ts shows the reader's (the same picker and storage
+// key as the BAH lines), so the checks read every figure and the page works without JavaScript.
+// scripts/check_sequence.mjs (seq-dla) compares each data-dla line and row with the export. The block this sits in
+// cites the table, so its date line carries the table's date.
+import { DLA_DEFAULT_BAND, EFFECTIVE_HREF, dlaLine, usd } from '../../lib/sequence.js';
+import { PAY_BAND_ORDER } from '../../lib/format';
+import type { SequenceData } from '../../lib/sequenceData';
+
+interface Props { rows: SequenceData['dla']; mode: 'lines' | 'table' }
+const { rows, mode } = Astro.props;
+const caption = rows[0].caption;
+---
+
+<div class="dla" data-dla-block={mode}>
+  <div class="dla-head">
+    <p class="bah-label" data-dla-label>{caption}</p>
+    <label class="band-pick" data-band-picker hidden>Pay band
+      <select data-band-select>
+        {PAY_BAND_ORDER.map((b) => <option value={b} selected={b === DLA_DEFAULT_BAND}>{b}</option>)}
+      </select>
+    </label>
+  </div>
+  {mode === 'lines' ? (
+    PAY_BAND_ORDER.map((b) => (
+      <ul class="bah-lines" data-band-show={b} hidden={b !== DLA_DEFAULT_BAND}>
+        {rows.filter((r) => r.pay_band === b).map((r) => <li data-dla={r.grade}>{dlaLine(r)}</li>)}
+      </ul>
+    ))
+  ) : (
+    <div class="table-wrap">
+      <table data-dla-table>
+        <thead><tr><th>Pay grade</th><th class="num">With dependents</th><th class="num">Without dependents</th></tr></thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr data-dla={r.grade} data-band-row={r.pay_band || undefined}><td>{r.grade}</td><td class="num">{usd(r.with_dependents_usd)}</td><td class="num">{usd(r.without_dependents_usd)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+  <p class="note">Your rate depends on whether a dependent is authorized to move on <a href={EFFECTIVE_HREF}>your orders’ effective date</a>.{mode === 'lines' && <> Every grade, O-10 to E-1: <a href="/sequence/forms/#navy-dla">Forms and claims</a>.</>}</p>
+</div>

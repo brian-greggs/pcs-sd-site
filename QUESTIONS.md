@@ -1,5 +1,9 @@
 # Questions — site build
 
+## Session 11d (2026-10-22): DLA rates, effective date, F2-12
+
+Nothing new for the site. F2-19 (DLA rates) and F2-12 (DFAS) are closed in the data repo's QUESTIONS; no F2 question is open there.
+
 ## Session 11b (2026-10-22): F2-24 to F2-28 answered
 
 All five answered in the data repo's QUESTIONS ("second round") and built as v0.7.2; F2-27 (page URLs) waits on Brian's list.

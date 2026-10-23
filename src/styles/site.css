@@ -256,6 +256,10 @@ textarea:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 .bah-label { font-weight: 700; margin: 0.6rem 0 0.2rem; }
 ul.bah-lines { list-style: none; padding: 0; margin: 0 0 0.6rem; }
 ul.bah-lines li { margin: 4px 0; font-variant-numeric: tabular-nums; }
+/* DLA rates on the sequence pages: label and pay band picker on one line, wrapping on a phone. */
+.dla-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; }
+.dla-head .bah-label { margin-bottom: 0.2rem; }
+table[data-dla-table] th.num { white-space: normal; }
 
 /* --- Move sequence (/sequence/) ---------------------------------------------- */
 .fact.plain > h2 { font-size: 1.08rem; }

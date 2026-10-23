@@ -75,5 +75,19 @@ export function citeNames(row) {
   return [...new Set(all.map((c) => `${c.agency}, ${c.title}`))].join('; ');
 }
 
+// DLA rates (DTMO's primary table, src/data/sequence_dla.json): shown on this step and with this form, for the
+// reader's pay band (the same picker and storage key as the BAH lines).
+export const DLA_STEP = 'pre-dla-advance';
+export const DLA_FORM = 'navy-dla';
+export const DLA_DEFAULT_BAND = 'E5–E6';
+export const usd = (n) => `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+export const dlaLine = (r) => `${r.grade}: ${usd(r.with_dependents_usd)} with dependents, ${usd(r.without_dependents_usd)} without dependents`;
+
+// Every timing counted from the report or detachment date links to the effective-date line on /sequence/ (Brian
+// 2026-10-22), which quotes DTMO's computation example.
+export const EFFECTIVE_ANCHORS = ['report_date', 'detachment'];
+export const EFFECTIVE_HREF = '/sequence/#effective-date';
+export const EFFECTIVE_LINK_TEXT = 'how your orders’ effective date is figured';
+
 export const stepHref = (step) => `/sequence/${phaseByKey(step.phase).slug}/#${step.id}`;
 export const formHref = (id) => `/sequence/forms/#${id}`;

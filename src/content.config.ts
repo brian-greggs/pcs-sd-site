@@ -415,6 +415,30 @@ const sequenceWeights = defineCollection({
   }),
 });
 
+// DTMO's primary DLA rates (content/f2_dla_rates.yml; check_f2.py proves each figure is on its line of the saved
+// primary table). Columns end in _usd: *_dependents columns belong to bah.json (bah-source).
+const sequenceDla = defineCollection({
+  loader: strictJson('sequence_dla'),
+  schema: z.object({
+    grade: z.string().regex(/^[OWE]-\d+E?$/),
+    pay_band: z.string(),
+    with_dependents_usd: z.number().positive(),
+    without_dependents_usd: z.number().positive(),
+    quote: z.string().min(1),
+    title: z.string().min(1),
+    caption: z.string().min(1),
+    effective: day,
+    source: cite,
+    sources: z.array(cite).min(1),
+    ...dated,
+  }),
+});
+// How the effective date of PCS orders is figured: one row (content/f2_sequence.yml effective_date).
+const sequenceEffectiveDate = defineCollection({
+  loader: strictJson('sequence_effective_date'),
+  schema: z.object({ title: z.string().min(1), line: z.string().min(1), sources: z.array(cite).min(1), ...dated }),
+});
+
 const provenance = defineCollection({
   loader: strictJson('provenance'),
   schema: z.object({
@@ -471,6 +495,6 @@ const changelog = defineCollection({
 export const collections = {
   communities, bases, bah, commute, rent, rentToBah, ownership, schools, districts, childcare,
   baseHousing, baseHousingWaits, baseHousingAreas, housingRules, militaryAccess, climate, hazards, links, provenance, sources,
-  sequenceSteps, sequenceForms, sequenceWeights,
+  sequenceSteps, sequenceForms, sequenceWeights, sequenceDla, sequenceEffectiveDate,
   communityNotes, baseHousingNotes, changelog,
 };

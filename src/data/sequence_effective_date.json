@@ -1,0 +1,43 @@
+[
+ {
+  "id": "effective-date",
+  "title": "Your PCS orders' effective date",
+  "line": "The effective date of your PCS orders is the day you report, minus the days of travel time you actually used, plus one day: report on 10 June after 7 days on the road and it's 4 June. Your weight allowance and whether DLA is paid at the with-dependent rate are set as of that date.",
+  "sources": [
+   {
+    "title": "How to Compute a PCS Order’s Effective Date (computation example CE-MPDT-22)",
+    "agency": "DTMO / PDTATAC (DoD)",
+    "url": "https://www.travel.dod.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "These computation examples illustrate how to determine a Service member’s PCS order effective date."
+   },
+   {
+    "title": "How to Compute a PCS Order’s Effective Date (computation example CE-MPDT-22)",
+    "agency": "DTMO / PDTATAC (DoD)",
+    "url": "https://www.travel.dod.mil/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "1. Determine authorized and actual reporting date. 10 June 2. Minus 7 days of travel time actually used. 3 June 3. Add 1 day. 4 June"
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "The authorized PCS weight allowance is normally determined by a Service member’s pay grade on the effective date of the PCS order, and whether the Service member has dependents on the effective date of the PCS order."
+   },
+   {
+    "title": "Joint Travel Regulations",
+    "agency": "DTMO (DoD)",
+    "url": "https://www.travel.dod.mil/Policy-Regulations/Joint-Travel-Regulations/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "For DLA purposes, a Service member with a dependent is one who, on the effective date of a PCS or ITDY order, has a dependent authorized transportation under that order."
+   }
+  ],
+  "vintage": "F2 sequence, built 2026-10-22",
+  "verified_on": "2026-10-22"
+ }
+]

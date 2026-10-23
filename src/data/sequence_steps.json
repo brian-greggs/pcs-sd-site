@@ -688,7 +688,7 @@
   "id": "pre-dla-advance",
   "phase": "90_60_30",
   "order": 5,
-  "step": "Decide on advance DLA. The GTCC can't be used for DLA; DLA is paid as an advance (on the NPPSC 1300/1) or at settlement.",
+  "step": "Decide on advance DLA. The GTCC can't be used for DLA; DLA is paid as an advance (on the NPPSC 1300/1) or at settlement. The amount for your grade is below.",
   "anchor": "detachment",
   "deadline": "Same as the advance request; DLA advances are paid about 30 days before detachment.",
   "depends_on": [
@@ -715,6 +715,14 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-22",
     "quote": "A DLA may be paid in advance."
+   },
+   {
+    "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+    "agency": "DTMO / PDTATAC (DoD)",
+    "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "PRIMARY DLA RATES Effective January 1, 2026"
    },
    {
     "title": "NAVADMIN 210/25 Mandatory use of the GTCC during PCS travel",

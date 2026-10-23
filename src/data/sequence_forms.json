@@ -280,7 +280,7 @@
   "id": "navy-dla",
   "service": "navy",
   "form": "Dislocation Allowance (DLA), claimed on the DD 1351-2 or advanced on the NPPSC 1300/1",
-  "pays_or_does": "Partly reimburses the cost of moving a household on PCS orders; a flat amount, one per fiscal year unless an exception applies. Rates are by grade and dependency status (DTMO table, not captured).",
+  "pays_or_does": "Partly reimburses the cost of moving a household on PCS orders; a flat amount by grade, with or without dependents, one per fiscal year unless an exception applies. The primary rates effective January 1, 2026 are in the table with this form.",
   "who_files": "The Sailor; the CPPA reviews DLA support documents.",
   "anchor": "detachment",
   "deadline": "Advance requested with the NPPSC 1300/1 (at least 45 days before transfer) and paid about 30 days before detachment; otherwise on the travel claim.",
@@ -294,7 +294,7 @@
    "arrival-travel-claim"
   ],
   "status": "newest_authority",
-  "note": "",
+  "note": "A second DLA, paid only when orders are amended, modified, canceled or revoked (JTR par. 050507), uses DTMO's secondary rates, which aren't shown here.",
   "unconfirmed": [],
   "sources": [
    {
@@ -320,6 +320,22 @@
     "incentive": "Government: no commercial interest",
     "retrieved_on": "2026-10-22",
     "quote": "Only one DLA is permitted in a fiscal year, unless the situation qualifies as an exception in par. 050501. See the DTMO website for current DLA rates."
+   },
+   {
+    "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+    "agency": "DTMO / PDTATAC (DoD)",
+    "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "PRIMARY DLA RATES Effective January 1, 2026"
+   },
+   {
+    "title": "Dislocation Allowance (DLA) Rates, primary rates effective January 1, 2026",
+    "agency": "DTMO / PDTATAC (DoD)",
+    "url": "https://www.travel.dod.mil/Travel-Transportation-Rates/Dislocation-Allowance/",
+    "incentive": "Government: no commercial interest",
+    "retrieved_on": "2026-10-22",
+    "quote": "SECONDARY DLA RATES Effective January 1, 2025 These rates are only payable when a second DLA is paid in accordance with JTR, par. 050507"
    },
    {
     "title": "Joint Travel Regulations",

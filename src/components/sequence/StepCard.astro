@@ -5,7 +5,8 @@
 // scripts/check_sequence.mjs compares the rendered deadline with the row (data-step / data-deadline).
 import FactBlock from '../FactBlock.astro';
 import Cites from './Cites.astro';
-import { ANCHOR_LABEL, appliesText, citeDates, citeNames, formHref, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import DlaRates from './DlaRates.astro';
+import { ANCHOR_LABEL, DLA_STEP, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, appliesText, citeDates, citeNames, formHref, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
 import type { SequenceData, Step } from '../../lib/sequenceData';
 
 interface Props { step: Step; data: SequenceData }
@@ -19,7 +20,7 @@ const applies = appliesText(step.applies_to);
 
 <FactBlock plain id={step.id} title={`${step.order}. ${step.step}`} asOf={citeDates(step)} source={citeNames(step)}>
   <dl class="facts" data-step={step.id}>
-    <dt>Timing</dt><dd data-anchor>{ANCHOR_LABEL[step.anchor]}</dd>
+    <dt>Timing</dt><dd><span data-anchor>{ANCHOR_LABEL[step.anchor]}</span>{EFFECTIVE_ANCHORS.includes(step.anchor) && <> · <a href={EFFECTIVE_HREF} data-effective-link>{EFFECTIVE_LINK_TEXT}</a></>}</dd>
     <dt>Deadline</dt><dd data-deadline>{step.deadline}</dd>
     {deps.length > 0 && <><dt>Do first</dt><dd><ul class="plain">{deps.map((d) => <li><a href={stepHref(d)}>{phaseByKey(d.phase).label}, step {d.order}</a>: {firstSentence(d.step)}</li>)}</ul></dd></>}
     {applies && <><dt>Applies to</dt><dd>{applies}</dd></>}
@@ -35,6 +36,7 @@ const applies = appliesText(step.applies_to);
       ))}
     </div>
   )}
+  {step.id === DLA_STEP && <DlaRates rows={data.dla} mode="lines" />}
   {noteParas(step.note).map((n) => <p class="note">{n}</p>)}
   {step.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
   <Cites sources={step.sources} superseded={step.superseded} />

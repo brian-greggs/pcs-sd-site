@@ -13,6 +13,12 @@
 //   seq-notes        every sequence page opens with the disclaimer and the Navy-rules note; the Camp Pendleton,
 //                    MCAS Miramar and MCRD San Diego base pages carry the Navy-rules note; the sequence page
 //                    links Plan My Move as "build your personal checklist"
+//   seq-dla          DTMO's primary DLA rates: the DLA step shows one line per grade for every pay band, the DLA
+//                    form shows the whole table in order, every data-dla line and row equals
+//                    src/data/sequence_dla.json, both blocks cite the table (so their date line has its date), and no
+//                    dollars-and-cents figure on a sequence page sits outside a data-dla line or an official quote
+//   seq-effective    /sequence/ shows the effective-date line once, as exported, with its quotes and date line;
+//                    every step and form counted from the report or detachment date links to it, and no other does
 //   seq-weights      the weight allowance table (JTR Table 5-37) is on the forms page once, right after the
 //                    household goods counseling form: every row of src/data/sequence_weights.json in order, each
 //                    figure equal to the export, with its date line and one quote per citation
@@ -25,6 +31,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   PHASES, ANCHOR_LABEL, SEQUENCE_DISCLAIMER, NAVY_RULES_NOTE, MARINE_BASES, citeDates, unconfirmedLine,
+  DLA_STEP, DLA_FORM, dlaLine, usd, EFFECTIVE_ANCHORS, EFFECTIVE_HREF,
 } from '../src/lib/sequence.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -32,11 +39,14 @@ const DIST = join(ROOT, 'dist');
 const STEPS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_steps.json'), 'utf-8'));
 const FORMS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_forms.json'), 'utf-8'));
 const WEIGHTS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_weights.json'), 'utf-8'));
+const DLA = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_dla.json'), 'utf-8'));
+const EFFECTIVE = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'sequence_effective_date.json'), 'utf-8'))[0];
+const BANDS = ['E1–E4', 'E5–E6', 'E7–E9', 'W1–W5', 'O1–O3E', 'O1–O3', 'O4–O6'];
 const WEIGHTS_ID = 'weight-allowances';
 const WEIGHTS_AFTER = 'navy-hhg-counseling-shipment';
 const BASE_SLUG = { PENDLETON: 'camp-pendleton', MIRAMAR: 'miramar', MCRD: 'mcrd' };
 const NAVY_BASE_SLUGS = ['naval-base-san-diego', 'north-island', 'naval-amphibious-base', 'point-loma', 'naval-medical-center'];
-const CHECKS = ['seq-export', 'seq-deadlines', 'seq-sources', 'seq-unconfirmed', 'seq-notes', 'seq-weights'];
+const CHECKS = ['seq-export', 'seq-deadlines', 'seq-sources', 'seq-unconfirmed', 'seq-notes', 'seq-weights', 'seq-dla', 'seq-effective'];
 
 const decode = (s) => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;|&#34;/g, '"')
   .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
@@ -51,12 +61,13 @@ function load() {
   read('sequence/forms/index.html');
   for (const p of PHASES) read(`sequence/${p.slug}/index.html`);
   for (const slug of [...Object.values(BASE_SLUG), ...NAVY_BASE_SLUGS]) read(`base/${slug}/index.html`);
-  return { pages, steps: structuredClone(STEPS), forms: structuredClone(FORMS), weights: structuredClone(WEIGHTS) };
+  return { pages, steps: structuredClone(STEPS), forms: structuredClone(FORMS), weights: structuredClone(WEIGHTS),
+    dla: structuredClone(DLA), effective: structuredClone(EFFECTIVE) };
 }
 
 const lb = (n) => `${n.toLocaleString('en-US')} lb`;
 
-function check({ pages, steps, forms, weights }) {
+function check({ pages, steps, forms, weights, dla, effective }) {
   const failures = [];
   const fail = (c, where, what) => failures.push({ check: c, where, what });
   const seqPages = Object.keys(pages).filter((k) => k.startsWith('sequence/'));
@@ -177,6 +188,63 @@ function check({ pages, steps, forms, weights }) {
     }
     if (JSON.stringify(bs.map((b) => b.id)) !== JSON.stringify(want.map((f) => f.id))) fail('seq-export', fk, 'forms missing or out of order');
   }
+  // DLA rates: lines on the DLA step (every band), the whole table with the DLA form, each equal to the export.
+  const dlaOrdered = [...dla].sort((a, b) => a.id.localeCompare(b.id));
+  const dlaBlock = (k, id, mode) => {
+    const b = pages[k] && blocks(pages[k]).find((x) => x.id === id);
+    if (!b) { fail('seq-dla', k, `no ${id} block`); return; }
+    const row = [...steps, ...forms].find((r) => r.id === id);
+    if (!row.sources.some((c) => c.url === dlaOrdered[0].source.url && c.retrieved_on === dlaOrdered[0].source.retrieved_on)) fail('seq-dla', `${k} #${id}`, 'the row doesn\'t cite the DLA rate table, so its date line lacks the table\'s date');
+    const blk = b.html.match(new RegExp(`<div[^>]*data-dla-block="${mode}"[^>]*>[\\s\\S]*$`));
+    if (!blk) { fail('seq-dla', `${k} #${id}`, `no DLA ${mode} in the block`); return; }
+    const label = attr(blk[0], 'data-dla-label')[0];
+    if (!label || decode(label[2]) !== dlaOrdered[0].caption) fail('seq-dla', `${k} #${id}`, `DLA label isn't "${dlaOrdered[0].caption}"`);
+    if (mode === 'lines') {
+      for (const band of BANDS) {
+        const ul = blk[0].match(new RegExp(`<ul[^>]*data-band-show="${band}"[^>]*>([\\s\\S]*?)</ul>`));
+        const got = ul ? [...ul[1].matchAll(/<li[^>]*data-dla="([^"]+)"[^>]*>([\s\S]*?)<\/li>/g)].map((m) => [m[1], decode(m[2])]) : [];
+        const want = dlaOrdered.filter((r) => r.pay_band === band).map((r) => [r.grade, dlaLine(r)]);
+        if (JSON.stringify(got) !== JSON.stringify(want)) fail('seq-dla', `${k} #${id}`, `${band} lines aren't the table's: ${got.map((g) => g[1]).join('; ') || 'none'}`);
+      }
+    } else {
+      const got = [...blk[0].matchAll(/<tr[^>]*data-dla="([^"]+)"[^>]*>([\s\S]*?)<\/tr>/g)].map((m) => [m[1], ...[...m[2].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) => decode(c[1]))]);
+      const want = dlaOrdered.map((r) => [r.grade, r.grade, usd(r.with_dependents_usd), usd(r.without_dependents_usd)]);
+      if (JSON.stringify(got) !== JSON.stringify(want)) fail('seq-dla', `${k} #${id}`, `table rows (${got.length}) aren't the ${want.length} exported rows, in order and equal`);
+    }
+  };
+  const dlaStep = steps.find((s) => s.id === DLA_STEP);
+  dlaBlock(`sequence/${PHASES.find((p) => p.key === dlaStep.phase).slug}/index.html`, DLA_STEP, 'lines');
+  dlaBlock('sequence/forms/index.html', DLA_FORM, 'table');
+  for (const k of seqPages) {
+    if (!pages[k]) continue;
+    const rest = pages[k].replace(/<(li|tr)[^>]*\bdata-dla="[^"]+"[^>]*>[\s\S]*?<\/\1>/g, '').replace(/<blockquote\b[^>]*data-official-quote[^>]*>[\s\S]*?<\/blockquote>/g, '');
+    const m = decode(rest).match(/\$\d{1,3}(,\d{3})*\.\d\d/);
+    if (m) fail('seq-dla', k, `dollars-and-cents figure outside the DLA lines (hand-typed?): ${m[0]}`);
+  }
+
+  // The effective-date line, once on /sequence/, linked from every report- and detachment-date timing.
+  const idxBlocks = idx ? blocks(idx).filter((b) => b.id === effective.id) : [];
+  if (idxBlocks.length !== 1) fail('seq-effective', 'sequence/index.html', `${idxBlocks.length} effective-date blocks (want 1)`);
+  else {
+    const h = idxBlocks[0].html;
+    const line = attr(h, 'data-effective-line')[0];
+    if (!line || decode(line[2]) !== effective.line) fail('seq-effective', 'sequence/index.html', 'the effective-date line isn\'t the exported one');
+    const asof = attr(h, 'data-asof')[0];
+    if (!asof || !decode(asof[2]).startsWith(`${citeDates(effective)}.`)) fail('seq-effective', 'sequence/index.html', `date line isn't "${citeDates(effective)}"`);
+    for (const c of effective.sources) if (!decode(h).includes(`“${c.quote}”`)) fail('seq-effective', 'sequence/index.html', `quote missing: "${c.quote.slice(0, 50)}"`);
+    if ((h.match(/\bdata-cite\b/g) ?? []).length !== effective.sources.length) fail('seq-effective', 'sequence/index.html', 'quote count differs from the export');
+  }
+  const linked = (html) => new RegExp(`<a href="${EFFECTIVE_HREF.replace(/[/#]/g, '\\$&')}"[^>]*data-effective-link`).test(html);
+  for (const [k, rows] of [...PHASES.map((p) => [`sequence/${p.slug}/index.html`, steps.filter((s) => s.phase === p.key)]), ['sequence/forms/index.html', forms.filter((f) => f.status !== 'not_yet_covered')]]) {
+    if (!pages[k]) continue;
+    for (const b of blocks(pages[k])) {
+      const row = rows.find((r) => r.id === b.id);
+      if (!row) continue;
+      const want = EFFECTIVE_ANCHORS.includes(row.anchor);
+      if (want !== linked(b.html)) fail('seq-effective', `${k} #${row.id}`, want ? 'timing counted from the report or detachment date without the effective-date link' : 'effective-date link on a timing not counted from the report or detachment date');
+    }
+  }
+
   // No deadline outside a step or form block, on any page read here.
   for (const [k, html] of Object.entries(pages)) {
     if (!html) continue;
@@ -200,6 +268,14 @@ const PLANTS = {
   'no Navy note on a Marine base': (s) => { const k = 'base/miramar/index.html'; s.pages[k] = s.pages[k].replace(/data-navy-note/g, 'data-x'); },
   'no disclaimer on a phase page': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('data-seq-disclaimer', 'data-x'); },
   'USMC row on a page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('</main>', '<a href="#usmc-travel-voucher">x</a></main>'); },
+  'wrong DLA figure': (s) => { s.dla.find((r) => r.grade === 'E-5').with_dependents_usd = 3600; },
+  'DLA band lines dropped': (s) => { const k = 'sequence/before-you-go/index.html'; s.pages[k] = s.pages[k].replace(/(<ul[^>]*data-band-show="O1–O3"[^>]*>)[\s\S]*?(<\/ul>)/, '$1$2'); },
+  'DLA table row dropped': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/<tr[^>]*data-dla="E-5"[\s\S]*?<\/tr>/, ''); },
+  'DLA figure typed outside the lines': (s) => { const k = 'sequence/before-you-go/index.html'; s.pages[k] = s.pages[k].replace('<p class="note">Your rate', '<p class="note">About $3,548.02. Your rate'); },
+  'DLA step no longer cites the table': (s) => { const r = s.steps.find((x) => x.id === 'pre-dla-advance'); r.sources = r.sources.filter((c) => !c.url.includes('Dislocation-Allowance')); },
+  'effective-date line changed': (s) => { s.effective.line = 'The effective date is the day you leave.'; },
+  'effective-date link missing': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace(/ · <a href="\/sequence\/#effective-date"[^>]*data-effective-link>[^<]*<\/a>/, ''); },
+  'effective-date block removed': (s) => { const k = 'sequence/index.html'; s.pages[k] = s.pages[k].replace(/<section[^>]*data-fact="effective-date"[\s\S]*?<\/section>/, ''); },
   'wrong weight figure': (s) => { s.weights.find((r) => r.grade === 'E-6').with_dependents_lb = 12000; },
   'weight row dropped': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/<tr[^>]*data-weight="weight-allowances-10"[\s\S]*?<\/tr>/, ''); },
   'weight figure typed outside the rows': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('<div class="table-wrap"><table data-weights>', '<p>E-6: 11,000 lb</p><div class="table-wrap"><table data-weights>'); },
@@ -235,7 +311,7 @@ for (const c of CHECKS) {
   }
 }
 const navy = FORMS.filter((f) => f.status !== 'not_yet_covered').length;
-console.log(`  ${STEPS.length} steps on ${PHASES.length} phase pages, ${navy} forms (${FORMS.length - navy} USMC rows hidden), weight table ${WEIGHTS.length} rows`);
+console.log(`  ${STEPS.length} steps on ${PHASES.length} phase pages, ${navy} forms (${FORMS.length - navy} USMC rows hidden), weight table ${WEIGHTS.length} rows, DLA ${DLA.length} grades`);
 if (failures.length) {
   console.log(`\n${failures.length} sequence check failure(s). Build failed.\n`);
   process.exit(1);

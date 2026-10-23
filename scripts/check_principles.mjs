@@ -193,7 +193,7 @@ function checkDist() {
   }
   // Every verbatim quote the move sequence exports (steps, side-by-side rules, superseded, forms, the weight table).
   const officialQuotes = new Set();
-  for (const f of ['sequence_steps', 'sequence_forms', 'sequence_weights']) {
+  for (const f of ['sequence_steps', 'sequence_forms', 'sequence_weights', 'sequence_dla', 'sequence_effective_date']) {
     const p = join(DATA, `${f}.json`);
     if (!existsSync(p)) continue;
     const add = (c) => c && c.quote && officialQuotes.add(c.quote.replace(/\s+/g, ' ').trim());
@@ -290,7 +290,8 @@ function checkDist() {
         const dollar = m[0].match(/\$\s?\d[\d,]*/);
         if (dollar) fail('bah-figures', page, `dollar figure next to "${m[1]}" outside the BAH markup (hand-typed?): ${context(m[0], m[0].indexOf(dollar[0]))}`);
       }
-      for (const m of restText.matchAll(/\$\s?(\d{1,2},?\d{3})\b/g)) {
+      // BAH figures are whole dollars, so an amount with cents (a DLA rate, checked by seq-dla) isn't one.
+      for (const m of restText.matchAll(/\$\s?(\d{1,2},?\d{3})\b(?!\.\d)/g)) {
         const n = Number(m[1].replace(/,/g, ''));
         if (bahValues.has(n) && !allow.some((a) => a.page === page && a.value === n)) {
           fail('bah-figures', page, `$${m[1]} equals a BAH figure but isn't in the BAH markup: ${context(restText, m.index)} (if it's a coincidence, add it to scripts/bah_check_allow.json with a reason)`);
