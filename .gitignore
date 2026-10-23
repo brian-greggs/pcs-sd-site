@@ -27,3 +27,6 @@ pnpm-debug.log*
 evals/*_run.json
 # local wrangler state
 .wrangler/
+
+# review screenshots (local only)
+.review/

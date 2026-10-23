@@ -1,4 +1,26 @@
-# Site build — status (2026-10-22, session 11h: model A/B, Sonnet 5.5 chosen for Production; v0.7.7)
+# Site build — status (2026-10-23, session 12: static maps; v0.8.0)
+
+## Session 12: static maps (v0.8.0)
+
+Brian's brief (2026-10-22) and his review notes on the first screenshots (2026-10-23), both built; approved 2026-10-23.
+
+**Pages.** Inline SVG drawn at build time (`src/components/SiteMap.astro`, `src/lib/map.js`): no tiles, no map library in the browser, nothing fetched, no JavaScript.
+- **Home:** the eight bases and the 40 neighborhoods. Every neighborhood and base shape is a plain `<a>` to its page, named with the place's name (`aria-label`), with a visible focus outline and stroke (48 tab stops; each base's marker and label also link but sit outside the tab order). The SVG is `role="group"` there, since its shapes are links.
+- **Base pages** (under "Off base"): neighborhoods shaded by drive-time group to that base: one merged shape per group, from `tierOf()` (`src/lib/tiers.js`), the same function as the cards and the plan. Legend "Drive time to <base> at 0700" with the base page's group names. The page's own base has a larger marker, a ring and a bold label; the other seven are muted.
+- **Neighborhood pages** (under the kicker): a locator framed on the neighborhood and its nearest base by the 0700 drive (closest zip), at least about 26 km across; other bases within 10 minutes of that are marked when they fall on it. One-line key: "<name> · nearest base: <base>, <drive range across its zips>".
+- Everywhere: water, gray land the site doesn't cover, Mexico, the San Diego County line, eight routes (I-5, I-15, I-805, I-8, SR-163, SR-78, SR-52, SR-56) with shields (phones show only I-5, I-15, I-8 and 78; the rest from 720 px, placed only where nothing else wants the room), hatched bases, labels placed without overlap (DM Sans advance widths read from the self-hosted WOFF files, `src/lib/fontMetrics.js`), `<title>`/`<desc>`, and a small source chip with the boundary and drive-time dates. The lists and tables stay as the text alternative. The maps sit outside the dated sections, so the assistant corpus is unchanged (compared with a build of 80e2c3e: only the new Map layers row on `/sources/` differs).
+
+**Geometry.** `src/geo/sd_map.topo.json` (60 m, 128 KB) and `src/geo/sd_map_overview.topo.json` (250 m, 84 KB), from the data repo's `pull/pull_map_layers.py` via the export (data repo STATUS, "Map layers"). A map uses the detailed file only when it shows under 100 m a unit. Projection: Lambert conformal conic on California State Plane Zone 6's parallels and meridian, fitted to each map. New `provenance.json` row `maps` and Sources row "Map layers". New dependencies: `d3-geo` 3.1.1, `topojson-client` 3.1.0 (build time only).
+
+**Colors** (theme.css): drive groups `#FFECB1 → #FFB648 → #E68A02 → #C86700` (one amber hue, 37° spread): neighbors 1.49 / 1.50 / 1.48:1, on the land 10.4 / 7.0 / 4.6 / 3.1:1, on the ocean 15.7 / 10.6 / 7.0 / 4.7:1; land `#333638` (neutral gray, 1.52:1 from the ocean). The dataviz validator passes the ramp on land and ocean. Six map-label pairs added to the contrast check (24 pairs, lowest 5.33:1).
+
+**Size budget:** 90 KB of map SVG a page, 50 KB a locator. Largest: home 84.8 KB (22.9 KB gzipped), base 77.0 KB (Camp Pendleton, 20.4 KB), locator 45.4 KB (North Park / Normal Heights, 12.4 KB).
+
+**New check `scripts/check_maps.mjs`** (postbuild, after the intake checks): `map-pages` (one map of the right kind per page), `map-tiers` (all 320 neighborhood–base shadings equal `tierOf()` computed from commute.json, and the page's own cards; legend in order), `map-geometry` (every path redrawn from the exported file named in `data-geo-file` with the projection in `data-proj`, 763 paths; no other shapes but the allowed roles), `map-size`, `map-labels` (label classes tied to contrast pairs, 12 px or more on a 358 px map, no overlaps), `map-a11y` (role, title, desc, legend or the computed locator key, dated source line), `map-links`, `map-bases`, `map-shields` (phone set; none on a base or marker), `map-palette` (the thresholds above). `--plant all`: 22 of 22 caught, among them Bonita moved into the NBSD 30–44 group (`map-tiers`). `check_layout.mjs` takes `LAYOUT_BASE` for a server on another port.
+
+Checks on 2026-10-23: full build, every check (47 PASS lines, map checks included); layout clean on 82 pages at 390/768/1280/1440; in Chrome, 1,545 labels on 98 maps at 390 and 1280 px, no overlaps, smallest 12.4 px; keyboard focus and label clicks tested on the home map. Review screenshots in `.review/maps/` (gitignored).
+
+**Open:** the base page's group chips on the cards are still blue, mauve and gold, not the map's amber steps.
 
 ## Session 11h: model A/B, Sonnet 5.5 chosen for Production (v0.7.7, no site or assistant code changed)
 

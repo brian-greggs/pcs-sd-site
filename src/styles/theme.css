@@ -23,6 +23,36 @@
   --stripe-3: #E9704F;
   --stripe-4: #FBBD60;
 
+  /* Maps (src/components/SiteMap.astro). Tier fills are one amber hue (37° spread), light (near) to dark (far):
+     ordinal, monotone in lightness, so they read in grayscale and for color-blind readers. Neighbors at least 1.45:1,
+     the darkest 3.2:1 on the land and 4.8:1 on the ocean; scripts/check_maps.mjs (map-palette) enforces it.
+     Land the site doesn't cover is a neutral gray, so it never reads as water. */
+  --map-ocean: #0B1328;
+  --map-land: #333638;
+  --map-outside: #282A2D;
+  --map-edge: #3A4A78;
+  --map-county: #6B7AA3;
+  --map-road: #D9DFEC;
+  --map-road-casing: #0B1328;
+  --map-nbhd: #2C4F7E;
+  --map-focus: #E9704F;
+  --map-tier-under30: #FFECB1;
+  --map-tier-30-45: #FFB648;
+  --map-tier-45-60: #E68A02;
+  --map-tier-60plus: #C86700;
+  --map-base-fill: #3A2246;
+  --map-base-hatch: #C98AAE;
+  --map-base-edge: #E8A6C6;
+  --map-halo: #0B1328;
+  --map-label: #FBF3EC;
+  --map-label-muted: #B4C0D6;
+  --map-label-base: #E8A6C6;
+  --map-label-focus: #F7A386;
+  --map-marker-muted: #888491;
+  --map-label-water: #8EA4C8;
+  --map-shield: #E4E9F3;
+  --map-shield-text: #0B1328;
+
   /* Print only (the starting plan prints on white paper). */
   --paper: #FFFFFF;
   --ink: #111111;

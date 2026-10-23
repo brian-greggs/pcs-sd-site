@@ -175,3 +175,12 @@
 - **A caption is part of its table.** The text conversion turned `<caption>` into an ordinary line, so packing treated "Zip 92058" as a paragraph and could leave it at the end of one part with its table in the next. Rows without their caption are numbers without a zip; seven sections had it, and the model misread one live.
 - **An eval that joins what the model sees separately can't see a split.** `has_fact` joined every part with a newline, which glued the caption back onto its table. Matching within one part is what the model actually gets.
 
+## Session 12 (2026-10-23): static maps
+
+- **Check that a drawing came from the data by redrawing it.** Each path names its source (`data-geo`) and the SVG carries its projection, so the check rebuilds every path from the exported TopoJSON and compares strings. A hand-drawn shape, a nudged path or another file all fail; a check that only looked for `data-geo` would pass a forged one.
+- **Simplify once, as one topology.** Zips and land simplified as separate layers drifted apart at the coast and crossed in 200+ places. Exporting the land as a partition (the zips plus the rest) and dissolving after simplifying makes them the same arcs.
+- **Pick the level of detail by scale, not by kind of map.** A locator that framed two far-apart bases drew 60 m geometry over 50 km (99 KB). Choosing the file by meters per unit, and framing on the nearest base only, brought locators to 12–46 KB.
+- **Estimate in the build, measure in a browser.** The label placer's width guesses passed its own check and still touched in Chrome. Reading the real advance widths and line box from the site's own WOFF files fixed it; the browser pass is what found it.
+- **A sequential ramp on a dark map needs its darkest step checked against the land, not just the page.** The first ramp passed the validator on the navy surface, but 45–59 and 60+ were both dark browns that read alike. Thresholds between neighbors and on land and ocean now live in `map-palette`.
+- **A plant has to land where the fault can show.** The "extra shields on phones" plant missed because the NBSD map had no extra shields; it now picks a page that does.
+- **CSS order beats intent.** A later, less specific `.map-legend` rule undid the one-line key's `nowrap`; only the screenshot showed it.

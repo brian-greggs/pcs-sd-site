@@ -1,0 +1,11 @@
+---
+// One map label (SiteMap.astro): a <text> centered on its box, one or two lines. data-box is the box the placer kept
+// clear, which scripts/check_maps.mjs checks against every other label.
+import { LINE_HEIGHT } from '../lib/map.js';
+interface Props { l: { x: number; y: number; lines: string[]; size: number; anchor: string; cls: string; id: string; box: { x: number; y: number; w: number; h: number } } }
+const { l } = Astro.props;
+const lh = l.size * LINE_HEIGHT;
+const r1 = (v: number) => Math.round(v * 10) / 10;
+---
+<text x={l.x} y={l.y - ((l.lines.length - 1) * lh) / 2} text-anchor={l.anchor} dominant-baseline="central" font-size={l.size}
+      class={l.cls} data-label={l.id} data-box={[l.box.x, l.box.y, l.box.w, l.box.h].map(r1).join(',')}>{l.lines.length === 1 ? l.lines[0] : l.lines.map((t, i) => <tspan x={l.x} dy={i === 0 ? 0 : lh}>{t}</tspan>)}</text>

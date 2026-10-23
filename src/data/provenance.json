@@ -38,6 +38,15 @@
   "note": "spot-checked by hand, 5 figures, DTMO calculator"
  },
  {
+  "id": "maps",
+  "title": "Map boundaries",
+  "source_name": "US Census Bureau cartographic boundaries (2020 ZCTAs; 2025 counties and states) and TIGER/Line 2025 (primary roads, military installations, area water); Natural Earth (Mexico only)",
+  "source_url": "https://www.census.gov/geographies/mapping-files.html",
+  "license": "Public domain",
+  "vintage": "Census 2020 ZCTAs; Census 2025 boundaries",
+  "verified_on": "2026-10-22"
+ },
+ {
   "id": "sequence",
   "title": "Move sequence and forms",
   "source_name": "Official pages: JTR (with PDTATAC changes), DoD FMR, MyNavy HR, NAVSUP, PPA, Military OneSource, CNIC, CHP; each step and form names its own",

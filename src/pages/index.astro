@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { BASES } from '../lib/bases';
 import { baseHousingAreas } from '../lib/baseHousing';
+import SiteMap from '../components/SiteMap.astro';
 
 const communities = await getCollection('communities');
 const { areas } = await baseHousingAreas();
@@ -25,6 +26,8 @@ const areaPages = areas.filter((a) => a.has_page).length;
       </li>
     ))}
   </ul>
+
+  <SiteMap kind="overview" />
 
   <h2 class="section-title">Then get a starting plan</h2>
   <ul class="cards">

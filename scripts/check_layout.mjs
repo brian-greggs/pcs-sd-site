@@ -33,7 +33,7 @@ const load = async (w, url) => {
   await done; await new Promise((r) => setTimeout(r, 250));
 };
 const overflow = async () => (await send('Runtime.evaluate', { expression: `(() => { const d = document.documentElement; const wide = [...document.querySelectorAll('body *')].filter(e => { const r = e.getBoundingClientRect(); return r.right > d.clientWidth + 1 && getComputedStyle(e).position !== 'fixed' && !e.closest('.table-wrap'); }).slice(0,3).map(e => e.tagName + '.' + e.className); return JSON.stringify({ sw: d.scrollWidth, cw: d.clientWidth, wide }); })()`, returnByValue: true })).result.result.value;
-const base = 'http://localhost:4321';
+const base = process.env.LAYOUT_BASE ?? 'http://localhost:4321'; // LAYOUT_BASE=http://localhost:4329 for another server
 const report = [];
 if (allFile) {
   const pages = readFileSync(allFile, 'utf-8').trim().split('\n');

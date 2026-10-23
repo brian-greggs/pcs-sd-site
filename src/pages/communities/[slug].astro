@@ -24,6 +24,7 @@ import Notes from '../../components/sections/Notes.astro';
 import Toc from '../../components/Toc.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
 import BahLines from '../../components/BahLines.astro';
+import SiteMap from '../../components/SiteMap.astro';
 import { acsDollars, dollars, pct, range, PAY_BAND_ORDER } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { writtenNotes } from '../../lib/notes';
@@ -115,6 +116,7 @@ const sections = [
   <div class="page-main" data-default-base={defaultBase}>
   <h1>{community.name}</h1>
   <p class="kicker">{community.corridor} · {zips.join(', ')}</p>
+  <SiteMap kind="locator" community={slug} />
 
   <Notes notes={notes} part="lead" />
 

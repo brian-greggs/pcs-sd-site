@@ -47,6 +47,10 @@ const CONTRAST_PAIRS = [
   ['text', 'blue-bg'], ['text', 'mauve-bg'], ['text', 'gold-bg'], // tile sub-lines, gap boxes
   ['muted', 'blue-bg'], ['muted', 'gold-bg'], ['link', 'gold-bg'], // "+1" on a tile; labels and links in a gap box
   ['ink', 'paper'], ['ink-muted', 'paper'], // the printed starting plan
+  // Map labels (src/lib/map.js LABEL_CLASSES): each label class's fill on the halo it's drawn with; water labels sit
+  // on the ocean, shield text on its shield. scripts/check_maps.mjs fails a label with any other class.
+  ['map-label', 'map-halo'], ['map-label-muted', 'map-halo'], ['map-label-base', 'map-halo'], ['map-label-focus', 'map-halo'],
+  ['map-label-water', 'map-ocean'], ['map-shield-text', 'map-shield'],
 ];
 
 // --- Helpers ----------------------------------------------------------------

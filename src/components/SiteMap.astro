@@ -1,0 +1,269 @@
+---
+// A static map, drawn at build time as inline SVG (src/lib/map.js). Three kinds:
+//   overview  the home page: the eight bases and the 40 neighborhoods
+//   base      a base page: every neighborhood shaded by its drive-time group to that base (tierOf(), the same
+//             groups as the cards below it and the plan), with a legend
+//   locator   a neighborhood page: the neighborhood, and the nearest base(s) by the 0700 drive
+// Nothing here needs hover or JavaScript; the lists and tables on the page are the text alternative. Geometry comes
+// only from src/geo/sd_map.topo.json; scripts/check_maps.mjs redraws every path from it and checks the shading.
+import { getCollection } from 'astro:content';
+import * as M from '../lib/map.js';
+import Label from './MapLabel.astro';
+import topoDetail from '../geo/sd_map.topo.json';
+import topoOverview from '../geo/sd_map_overview.topo.json';
+import { BASES, baseByCode, minutes } from '../lib/bases';
+import { provenance } from '../lib/prov';
+
+interface Props {
+  kind: 'overview' | 'base' | 'locator';
+  base?: string; // base code, for kind="base"
+  community?: string; // slug, for kind="locator"
+}
+const { kind, base, community } = Astro.props;
+const uid = `map-${kind}-${(base ?? community ?? 'all').toLowerCase()}`;
+const communities = (await getCollection('communities')).map((c) => c.data).sort((a, b) => a.slug.localeCompare(b.slug));
+const commute = (await getCollection('commute')).map((r) => r.data);
+const { asOf } = await provenance();
+
+// --- What this map shows, and its extent ---------------------------------------------------------
+const focus = kind === 'locator' ? communities.find((c) => c.slug === community) : null;
+if (kind === 'locator' && !focus) throw new Error(`SiteMap: unknown neighborhood ${community}`);
+if (kind === 'base' && !BASES.some((b) => b.code === base)) throw new Error(`SiteMap: unknown base ${base}`);
+// Nearest bases for a locator: the nearest by the 0700 drive (from the neighborhood's closest zip) and any other within
+// 10 minutes of it, at most three.
+const nearest = focus ? (() => {
+  const lo = BASES.map((b) => ({ code: b.code, min: Math.min(...commute.filter((r) => r.base === b.code && focus.zips.includes(r.zip)).map((r) => r.peak_am_min)) }))
+    .filter((d) => Number.isFinite(d.min)).sort((a, b) => a.min - b.min);
+  return lo.filter((d) => d.min <= lo[0].min + 10).slice(0, 3);
+})() : [];
+// The extent comes from the overview export (same layers, same coordinates to within its 250 m); the drawing from the
+// detailed one only when the map is zoomed in enough to show the difference.
+const GO = M.geo(topoOverview);
+let G = GO;
+let cFeatures = new Map(communities.map((c) => [c.slug, G.communities([c])]));
+const point = (code: string) => ({ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: G.basePoint(code) } });
+let extent;
+if (focus) {
+  // The neighborhood and its nearest base, grown to at least about 26 km across so there's context around it. Other bases
+  // within 10 minutes are marked when they fall on this map (framing them all made some locators county-wide).
+  const fc = { type: 'FeatureCollection', features: [cFeatures.get(focus.slug), point(nearest[0].code)] };
+  let [[x0, y0], [x1, y1]] = M.geoBounds(fc as any);
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const hw = Math.max((x1 - x0) / 2 * 1.15, 0.14), hh = Math.max((y1 - y0) / 2 * 1.15, 0.1);
+  extent = { type: 'Feature', properties: {}, geometry: { type: 'MultiPoint', coordinates: [[cx - hw, cy - hh], [cx + hw, cy + hh]] } };
+} else {
+  // Every neighborhood and base, and a few km into Mexico so the border reads as a border.
+  const south = { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [-117.0, 32.49] } };
+  extent = { type: 'FeatureCollection', features: [...cFeatures.values(), ...BASES.map((b) => G.base(b.code)), south] };
+}
+const { projection, height: H, params } = M.makeProjection(extent, focus ? { pad: 6, minH: 230, maxH: 300 } : { pad: 8, minH: 300, maxH: 470 });
+const level = M.metersPerUnit(projection, H) < M.DETAIL_BELOW_M ? 'detail' : 'overview';
+if (level === 'detail') {
+  G = M.geo(topoDetail);
+  cFeatures = new Map(communities.map((c) => [c.slug, G.communities([c])]));
+}
+const W = M.WIDTH;
+const path = M.geoPath(projection).digits(M.DIGITS);
+const d = (f: any) => path(f) ?? '';
+
+// --- Layers --------------------------------------------------------------------------------------
+// data-geo names what each path is drawn from, so the check can redraw it: "land", "mexico", "countyline",
+// "communities:<slug> <slug> …" (their zips merged), "borders", "base:<code>", "base-outline:<code>", "road:<route>".
+// On the home map every neighborhood and base is its own shape and a plain link to its page (href, name).
+type P = { d: string; geo: string; cls: string; attrs?: Record<string, string>; href?: string; name?: string };
+const links = kind === 'overview';
+const fills: P[] = [];
+fills.push({ d: d(G.mexico()), geo: 'mexico', cls: 'map-outside' });
+fills.push({ d: d(G.land()), geo: 'land', cls: 'map-land' });
+const tiers = new Map<string, string>();
+const group = (cs: typeof communities) => `communities:${cs.map((c) => c.slug).join(' ')}`;
+if (kind === 'base') {
+  // One shape per drive group: the neighborhoods tierOf() puts in it, merged (each listed in data-communities).
+  for (const c of communities) {
+    const t = M.communityTier(c, base!, commute);
+    if (t) tiers.set(c.slug, t);
+  }
+  for (const t of M.TIERS) {
+    const cs = communities.filter((c) => tiers.get(c.slug) === t);
+    if (cs.length) fills.push({ d: d(G.communities(cs)), geo: group(cs), cls: `map-tier map-tier-${t}`, attrs: { 'data-tier': t, 'data-communities': cs.map((c) => c.slug).join(' ') } });
+  }
+} else if (kind === 'overview') {
+  for (const c of [...communities].sort((a, b) => a.name.localeCompare(b.name))) {
+    // Each shape carries its own dark edge, so the separate border mesh isn't drawn on this map.
+    fills.push({ d: d(cFeatures.get(c.slug)), geo: group([c]), cls: 'map-nbhd map-nbhd-edged', attrs: { 'data-communities': c.slug }, href: `/communities/${c.slug}/`, name: c.name });
+  }
+} else {
+  const others = communities.filter((c) => c !== focus);
+  fills.push({ d: d(G.communities(others)), geo: group(others), cls: 'map-nbhd', attrs: { 'data-communities': others.map((c) => c.slug).join(' ') } });
+  fills.push({ d: d(cFeatures.get(focus!.slug)), geo: group([focus!]), cls: 'map-focus', attrs: { 'data-communities': focus!.slug } });
+}
+const hatch = `${uid}-hatch`;
+// Base outlines: a base wholly on the map carries its stroke on its fill; one the frame cuts gets its outline as its own
+// line (a stroke on the cut fill would draw the frame edge).
+const whole = (code: string) => { const [[x0, y0], [x1, y1]] = M.geoPath(M.projectionFrom({ ...params, width: 1e6, height: 1e6 })).bounds(G.base(code)); return x0 >= 0 && y0 >= 0 && x1 <= W && y1 <= H; };
+const cut = BASES.filter((b) => !whole(b.code)).map((b) => b.code);
+for (const b of BASES) fills.push({ d: d(G.base(b.code)), geo: `base:${b.code}`, cls: cut.includes(b.code) ? 'map-base' : 'map-base map-base-edge', attrs: { 'data-base': b.code, fill: `url(#${hatch})` },
+  ...(links ? { href: `/base/${b.slug}/`, name: b.short } : {}) });
+const lines: P[] = [
+  { d: d(G.countyline()), geo: 'countyline', cls: 'map-county' },
+  ...(links ? [] : [{ d: d(G.borders(communities)), geo: 'borders', cls: 'map-border' }]),
+  ...cut.map((code) => ({ d: d(G.baseOutline(code)), geo: `base-outline:${code}`, cls: 'map-base-edge' })),
+].filter((p) => p.d);
+const roads = G.roads().map((f: any) => ({ d: d(f), geo: `road:${f.properties.route}`, route: f.properties.route })).filter((r) => r.d);
+const fillsShown = fills.filter((p) => p.d);
+
+// --- Markers and labels --------------------------------------------------------------------------
+const L = new M.Labeler(W, H);
+const onMap = ([x, y]: number[]) => x >= 4 && y >= 4 && x <= W - 4 && y <= H - 4;
+const markerCodes = kind === 'locator' ? nearest.map((n) => n.code) : BASES.map((b) => b.code);
+// On a base page the base it's about gets a larger marker with a ring and a bold label; the other seven are muted.
+const muted = (code: string) => kind === 'base' && code !== base;
+const markers = markerCodes.map((code) => ({ code, xy: projection(G.basePoint(code))!, focus: kind === 'base' && code === base }))
+  .filter((m) => m.xy && onMap(m.xy))
+  .map((m) => ({ ...m, xy: m.xy.map((v: number) => Math.round(v * 10) / 10), r: m.focus ? M.MARKER.focus : muted(m.code) ? M.MARKER.muted : M.MARKER.base }));
+for (const m of markers) {
+  const r = m.focus ? M.MARKER.ring + 1 : m.r + 1;
+  L.block({ x: m.xy[0] - r, y: m.xy[1] - r, w: 2 * r, h: 2 * r });
+}
+// The highlighted neighborhood's name first on a locator (it may move out on a leader line), then the bases (each
+// must be named), the base this page is about first of all.
+const baseShapes = BASES.map((b) => G.base(b.code));
+const underBase = (x: number, y: number) => baseShapes.some((f) => M.containsGeo(f, projection, x, y));
+const focusAnchor = focus ? M.anchorPoint(cFeatures.get(focus.slug)!.geometry, projection, W, H, underBase) : null;
+if (focus && focusAnchor) {
+  const xy = [focusAnchor.x, focusAnchor.y];
+  L.place({ id: `community:${focus.slug}`, lines: M.labelLines(focus.name), cls: 'map-label-focus', size: M.FONT.label, bold: true,
+            candidates: [...M.nearPoint(xy), ...M.aroundPoint(xy, 4)], required: true, leaderFrom: xy });
+}
+for (const m of [...markers].sort((a, b) => Number(b.focus) - Number(a.focus))) {
+  L.place({ id: `base:${m.code}`, lines: [M.BASE_LABEL[m.code]], cls: m.focus ? 'map-label-focus' : muted(m.code) ? 'map-label-base-muted' : 'map-label-base',
+            size: m.focus ? M.FONT.focus : M.FONT.base, bold: !muted(m.code),
+            candidates: M.aroundPoint(m.xy, (m.focus ? M.MARKER.ring : m.r) + 4), required: true, leaderFrom: m.xy });
+}
+// Water and Mexico.
+const landPolys = G.land();
+const mexPolys = G.mexico();
+const notLand = (x: number, y: number) => !M.containsGeo(landPolys, projection, x, y) && !M.containsGeo(mexPolys, projection, x, y);
+const boxIn = (test: (x: number, y: number) => boolean) => (b: { x: number; y: number; w: number; h: number }) =>
+  [[0, 0], [1, 0], [0, 1], [1, 1], [0.5, 0.5], [0.5, 0], [0.5, 1]].every(([fx, fy]) => test(b.x + fx * b.w, b.y + fy * b.h));
+const grid = (fx: number[], fy: number[]) => fy.flatMap((y) => fx.map((x) => ({ x: x * W, y: y * H })));
+L.place({ id: 'water:pacific', lines: ['Pacific', 'Ocean'], cls: 'map-label-water', size: M.FONT.label,
+          candidates: grid([0.12, 0.17, 0.22, 0.27, 0.08], [0.55, 0.62, 0.48, 0.7, 0.4, 0.78, 0.3, 0.85]), test: boxIn(notLand) });
+L.place({ id: 'water:mexico', lines: ['Mexico'], cls: 'map-label-muted', size: M.FONT.label,
+          candidates: grid([0.5, 0.42, 0.58, 0.66, 0.34, 0.75], [0.975, 0.96, 0.94]), test: boxIn((x, y) => M.containsGeo(mexPolys, projection, x, y)) });
+// Freeway shields, one per route, never on a label, a marker or a base. The four that orient a phone reader (I-5, I-15,
+// I-8, 78) go first; the rest are placed last, only where nothing else wants the room, and show only on wider screens.
+const shields: any[] = [];
+const offBases = (b: { x: number; y: number; w: number; h: number }) => !M.boxPoints(b).some(([x, y]: number[]) => underBase(x, y));
+const placeShield = (r: any, extra: boolean) => {
+  const pts = M.linePoints(r, projection).filter((p: number[]) => onMap(p));
+  if (pts.length < 2) return;
+  const mid = Math.floor(pts.length / 2);
+  const order = pts.map((p: number[], i: number) => ({ p, k: Math.abs(i - mid) })).sort((a: any, b: any) => a.k - b.k).map((o: any) => o.p);
+  const label = L.place({ id: `road:${r.properties.route}`, lines: [r.properties.route.replace(/^SR-/, '')], cls: 'map-shield-text', size: M.FONT.shield, bold: true, pad: 3,
+                          candidates: order.filter((_: any, i: number) => i % 2 === 0).map(([x, y]: number[]) => ({ x, y })), test: offBases });
+  if (label) shields.push({ ...label, route: r.properties.route, interstate: r.properties.route.startsWith('I-'), extra });
+};
+for (const r of G.roads().filter((r: any) => M.PHONE_ROUTES.includes(r.properties.route))) placeShield(r, false);
+// The other neighborhoods' names, biggest on the map first, where they fit.
+const named = communities.filter((c) => c !== focus).map((c) => ({ c, a: M.anchorPoint(cFeatures.get(c.slug)!.geometry, projection, W, H, underBase) }))
+  .filter((x) => x.a).sort((x, y) => y.a!.d - x.a!.d);
+for (const { c, a } of named) {
+  L.place({ id: `community:${c.slug}`, lines: M.labelLines(c.name), cls: focus ? 'map-label-muted' : 'map-label',
+            size: M.FONT.label, candidates: M.nearPoint([a!.x, a!.y]) });
+}
+for (const r of G.roads().filter((r: any) => !M.PHONE_ROUTES.includes(r.properties.route))) placeShield(r, true);
+const labels = L.placed.filter((l: any) => l.cls !== 'map-shield-text');
+const r1 = (v: number) => Math.round(v * 10) / 10;
+
+// --- Words: title, description, legend, date line ------------------------------------------------
+const baseShort = base ? baseByCode(base).short : '';
+const counts = M.TIERS.map((t) => [...tiers.values()].filter((x) => x === t).length);
+const title = kind === 'base' ? `Map: neighborhoods by drive time to ${baseShort}`
+  : kind === 'overview' ? 'Map: the eight bases and the 40 neighborhoods on this site'
+  : `Map: where ${focus!.name} is`;
+const desc = kind === 'base'
+  ? `Each of the ${tiers.size} neighborhoods is shaded by its weekday 0700 drive to ${baseShort}: ${M.TIERS.map((t, i) => `${counts[i]} ${M.TIER_PHRASE[t]}`).join(', ')}. A neighborhood with several zips is shaded for its slowest zip. The same groups are listed below the map.`
+  : kind === 'overview'
+  ? `San Diego County from Camp Pendleton to the Mexican border, with the eight bases (${BASES.map((b) => b.short).join(', ')}) and the 40 neighborhoods this site covers. Each base and neighborhood on the map links to its page; the base list above and the Neighborhoods page have the same places as text.`
+  : `${focus!.name} (zip ${focus!.zips.join(', ')}) on a map of the area around it. The nearest base by the 0700 drive is ${baseByCode(nearest[0].code).short} (${nearest[0].min} min from the closest zip)${nearest.length > 1 ? `; also within 10 minutes of that: ${nearest.slice(1).map((n) => `${baseByCode(n.code).short} (${n.min} min)`).join(', ')}` : ''}. The Commute section has the drive to every base.`;
+const dateLine = `Boundaries: ${asOf('maps')} (US Census Bureau; Mexico from Natural Earth)` + (kind === 'base' || kind === 'locator' ? `. Drive times: ${asOf('commute')} (Google Maps, Tuesday 0700)` : '');
+const svgId = `${uid}-svg`;
+// The locator's one-line key: the neighborhood and its nearest base, with the drive range across its zips (as the
+// At a glance tile gives it).
+const nearDrive = focus ? (() => {
+  const ms = commute.filter((r) => r.base === nearest[0].code && focus.zips.includes(r.zip)).map((r) => r.peak_am_min);
+  return minutes({ lo: Math.min(...ms), hi: Math.max(...ms) });
+})() : '';
+const baseLabelAttrs = (m: any) => (links ? { href: `/base/${baseByCode(m.code).slug}/`, tabindex: '-1', 'aria-hidden': 'true' } : null);
+---
+
+<figure class={`map map-${kind}`} data-map={kind} data-map-base={base} data-map-community={community}>
+  <svg id={svgId} class="map-svg" viewBox={`0 0 ${W} ${H}`} role={links ? 'group' : 'img'} aria-labelledby={`${uid}-title ${uid}-desc`}
+       data-proj={JSON.stringify(params)} data-geo-file={M.GEO_FILE[level]} data-dropped={L.dropped.length}>
+    <title id={`${uid}-title`}>{title}</title>
+    <desc id={`${uid}-desc`}>{desc}</desc>
+    <defs>
+      <pattern id={hatch} width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect data-role="hatch" width="4" height="4" class="map-base-fill" />
+        <line data-role="hatch" x1="0" y1="0" x2="0" y2="4" class="map-base-hatch" />
+      </pattern>
+    </defs>
+    <rect data-role="ocean" width={W} height={H} class="map-ocean" />
+    {fillsShown.map((p) => p.href
+      ? <a href={p.href} aria-label={p.name} class="map-link"><path d={p.d} data-geo={p.geo} class={p.cls} {...p.attrs} /></a>
+      : <path d={p.d} data-geo={p.geo} class={p.cls} {...p.attrs} />)}
+    {lines.map((p) => <path d={p.d} data-geo={p.geo} class={p.cls} />)}
+    <g id={`${uid}-roads`} class="map-road-casing">
+      {roads.map((r) => <path d={r.d} data-geo={r.geo} />)}
+    </g>
+    <use href={`#${uid}-roads`} class="map-road" />
+    {labels.filter((l) => l.leader).map((l) => (
+      <line data-role="leader" x1={l.leader![0][0]} y1={l.leader![0][1]} x2={l.leader![1][0]} y2={l.leader![1][1]} class="map-leader" />
+    ))}
+    {[false, true].map((extra) => (
+      <g class={extra ? 'map-shields map-shields-extra' : 'map-shields'}>
+        {shields.filter((s) => s.extra === extra).map((s) => (
+          <>
+            <rect data-role="shield" data-route={s.route} x={r1(s.box.x)} y={r1(s.box.y)} width={r1(s.box.w)} height={r1(s.box.h)} rx={s.interstate ? 3 : 7} class="map-shield" />
+            <Label l={s} />
+          </>
+        ))}
+      </g>
+    ))}
+    {labels.filter((l) => !l.id.startsWith('base:')).map((l) => <Label l={l} />)}
+    {markers.map((m) => {
+      const label = labels.find((l) => l.id === `base:${m.code}`);
+      const inner = (
+        <>
+          {m.focus && <circle data-role="marker-ring" data-base={m.code} cx={m.xy[0]} cy={m.xy[1]} r={M.MARKER.ring} class="map-marker-ring" />}
+          <circle data-role="marker" data-base={m.code} cx={m.xy[0]} cy={m.xy[1]} r={m.r} class={m.focus ? 'map-marker map-marker-focus' : muted(m.code) ? 'map-marker map-marker-muted' : 'map-marker'} />
+          {label && <Label l={label} />}
+        </>
+      );
+      return links ? <a {...baseLabelAttrs(m)} class="map-link-marker">{inner}</a> : inner;
+    })}
+  </svg>
+  <figcaption>
+    {kind === 'base' && (
+      <>
+        <p class="map-legend-title">Drive time to {baseShort} at 0700</p>
+        <ul class="map-legend">
+          {M.TIERS.map((t) => <li data-legend-tier={t}><span class={`map-swatch map-tier-${t}`} aria-hidden="true"></span>{M.TIER_LEGEND[t]}</li>)}
+          <li><svg class="map-swatch-svg" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" fill={`url(#${hatch})`} class="map-base-swatch" /></svg>Military base</li>
+        </ul>
+      </>
+    )}
+    {kind === 'overview' && (
+      <ul class="map-legend">
+        <li><span class="map-swatch map-nbhd" aria-hidden="true"></span>Neighborhood on this site</li>
+        <li><svg class="map-swatch-svg" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" fill={`url(#${hatch})`} class="map-base-swatch" /></svg>Military base</li>
+        <li><span class="map-swatch map-swatch-road" aria-hidden="true"></span>Freeway</li>
+      </ul>
+    )}
+    {kind === 'locator' && (
+      <p class="map-legend map-legend-line" data-map-key><span class="map-swatch map-focus" aria-hidden="true"></span><span><strong>{focus!.name}</strong> · nearest base: {baseByCode(nearest[0].code).short}, {nearDrive}</span></p>
+    )}
+    <p class="map-source" data-map-asof>{dateLine}.</p>
+  </figcaption>
+</figure>

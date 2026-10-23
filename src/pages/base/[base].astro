@@ -9,6 +9,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import Toc from '../../components/Toc.astro';
+import SiteMap from '../../components/SiteMap.astro';
 import { BASES, baseBySlug, drives, GROUP_BASES, minutes, PENDLETON_UNTIED_NOTE, TIERS } from '../../lib/bases';
 import { baseHousingAreas } from '../../lib/baseHousing';
 import { dollars, range } from '../../lib/format';
@@ -87,6 +88,7 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
   {MARINE_BASES.includes(base.code) && <p class="note" data-navy-note>{NAVY_RULES_NOTE}</p>}
 
   <h2 class="group-title" id="off-base">Off base</h2>
+  <SiteMap kind="base" base={base.code} />
   {tiers.map((t) => (
     <FactBlock id={t.id} title={t.label} chip={t.tone} level={3} summary={tierSummary(t.rows)} asOf={commuteAsOf} source={commuteSource}>
       <ul class="cards cards-pane">
