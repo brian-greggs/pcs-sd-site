@@ -29,12 +29,8 @@ export const GROUP_BASES: Record<string, BaseCode[]> = {
 };
 const NAVY: BaseCode[] = ['NBSD', 'NASNI', 'NAB', 'NBPL', 'NMCSD'];
 
-// The Camp Pendleton base page's line above the areas LMH ties to no base (QUESTIONS 60, Brian
-// 2026-10-11; PRD Q9 open). The plan quotes it and cites the page, with this date.
-export const PENDLETON_UNTIED_NOTE = {
-  text: 'We haven’t confirmed whether Camp Pendleton families can apply to these areas. Ask LMH.',
-  written: '2026-10-11',
-};
+// The Camp Pendleton base page's line above the areas LMH ties to no base: src/lib/fixedNotes.js.
+export { PENDLETON_UNTIED_NOTE } from './fixedNotes.js';
 
 export type Drive = { code: BaseCode; lo: number; hi: number; tier: string };
 
@@ -63,10 +59,11 @@ export function commuteSummary(ds: Drive[], chosen: BaseCode) {
   return parts.join(' · ');
 }
 
-// Tier chips on the base pages: [30, 45), [45, 60), 60 and up.
+// Tier chips on the base pages: [30, 45), [45, 60), 60 and up. Each group's chip is the map's amber step for it
+// (Brian 2026-10-23: the map-tier-* fills in theme.css), so the cards and the map read alike.
 export const TIERS = [
-  { key: 'under30', label: 'Under 30 min', tone: 'blue' },
-  { key: '30-45', label: '30–44 min', tone: 'mauve' },
-  { key: '45-60', label: '45–59 min', tone: 'gold' },
-  { key: '60plus', label: '60 min or more', tone: 'gold' },
+  { key: 'under30', label: 'Under 30 min', tone: 'map-tier-under30' },
+  { key: '30-45', label: '30–44 min', tone: 'map-tier-30-45' },
+  { key: '45-60', label: '45–59 min', tone: 'map-tier-45-60' },
+  { key: '60plus', label: '60 min or more', tone: 'map-tier-60plus' },
 ] as const;

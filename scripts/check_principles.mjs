@@ -5,7 +5,12 @@
 //   node scripts/check_principles.mjs dist     (postbuild: the rendered pages in dist/)
 //
 // Checks (PRD §3, §9; kickoff step 3):
-//   dated        every rendered fact block shows its verified/vintage date (Principle 2)
+//   dated        every section has one SourceChip whose dates cover every fact in it (Principle 2; Brian
+//                2026-10-23): every fact names its source (data-src), the chip lists exactly the sources its
+//                section uses (data-chip-src), and each source's own date (provenance.json, links.json, the
+//                sequence export, …: sourceDates below) is in the chip's date lines; a line that states no fact
+//                (data-nofact) has no digit. Tables and fact lists sit inside a section.
+//                `node scripts/check_principles.mjs dist --plant all` plants each kind of fault and must catch it
 //   bah-figures  every BAH dollar figure comes from src/data/bah.json and carries its year, MHA and a
 //                source/date line; no other dollar figure sits next to "BAH" or equals a BAH figure
 //                (Brian 2026-10-20; replaced no-bah, which allowed no BAH figure at all)
@@ -36,6 +41,7 @@ const stage = process.argv[2] ?? 'dist';
 
 // --- Word lists: scripts/principle_lists.mjs (edit there) --------------------
 import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED, SCORE_WORDS, SCORE_ALLOWED, PLACEHOLDER_PATTERNS } from './principle_lists.mjs';
+import { FIXED_DATES } from '../src/lib/fixedNotes.js';
 
 // Text on background pairs the pages use, as theme.css custom properties.
 // Every one must reach WCAG AA for body text (4.5:1).
@@ -51,6 +57,8 @@ const CONTRAST_PAIRS = [
   // on the ocean, shield text on its shield. scripts/check_maps.mjs fails a label with any other class.
   ['map-label', 'map-halo'], ['map-label-muted', 'map-halo'], ['map-label-base', 'map-halo'], ['map-label-focus', 'map-halo'],
   ['map-label-water', 'map-ocean'], ['map-shield-text', 'map-shield'],
+  // The base page's drive-group chips: dark text on each of the map's amber steps (Brian 2026-10-23).
+  ['on-tier', 'map-tier-under30'], ['on-tier', 'map-tier-30-45'], ['on-tier', 'map-tier-45-60'], ['on-tier', 'map-tier-60plus'],
 ];
 
 // --- Helpers ----------------------------------------------------------------
@@ -108,6 +116,93 @@ function elementsWith(html, attr) {
   }
   return out;
 }
+// --- Source keys and their own dates (the `dated` check) -------------------------------------------------------
+// Each key a SourceChip can list, and the dates its date lines must name: the source's verified or retrieval date,
+// read from the data files (not from the page). A key with no entry here fails.
+const readJson = (f) => (existsSync(join(DATA, f)) ? JSON.parse(readFileSync(join(DATA, f), 'utf-8')) : []);
+function sourceDates() {
+  const m = new Map();
+  for (const r of readJson('provenance.json')) m.set(`prov:${r.id}`, [r.verified_on]);
+  for (const r of readJson('links.json')) m.set(`link:${r.id}`, [r.verified_on]);
+  for (const r of readJson('housing_rules.json')) m.set(`rule:${r.id}`, [r.verified_on]);
+  for (const r of readJson('base_housing_areas.json')) m.set(`areas:${r.id}`, [r.verified_on]);
+  for (const r of readJson('hazards.json')) if (r.fhsz_retrieved_on) m.set(`fhsz:${r.zip}`, [r.fhsz_retrieved_on]);
+  for (const [k, d] of Object.entries(FIXED_DATES)) m.set(`fixed:${k}`, [d]);
+  const days = (cites) => [...new Set(cites.filter(Boolean).map((c) => c.retrieved_on))].sort();
+  const cites = (r) => [...(r.sources ?? []), ...(r.alternatives ?? []).flatMap((a) => a.sources), ...(r.superseded ?? [])];
+  for (const f of ['sequence_steps.json', 'sequence_forms.json', 'sequence_effective_date.json']) for (const r of readJson(f)) m.set(`seq:${r.id}`, days(cites(r)));
+  const w = readJson('sequence_weights.json').sort((a, b) => a.id.localeCompare(b.id))[0];
+  if (w) m.set('seq:weight-allowances', days([w.source, ...cites(w)]));
+  const log = readJson('sources.json').map((r) => r.retrieved).filter((d) => /^\d{4}-/.test(d)).sort();
+  if (log.length) m.set('log:sources', [log.at(-1)]);
+  for (const dir of ['communities', 'base-housing-areas']) {
+    for (const f of walk(join(ROOT, 'src', 'content', dir), '.md')) {
+      const d = readFileSync(f, 'utf-8').match(/^verified_on:\s*['"]?(\d{4}-\d{2}-\d{2})/m);
+      if (d) m.set(`notes:${dir}/${f.split('/').pop().replace(/\.md$/, '')}`, [d[1]]);
+    }
+  }
+  return m;
+}
+// A changelog entry is dated by its own day (changelog:<date>).
+const keyDates = (reg, k) => reg.get(k) ?? (/^changelog:\d{4}-\d{2}-\d{2}$/.test(k) ? [k.slice(10)] : null);
+// The HTML with every element matched by `open` removed (balanced on the element's own tag).
+function dropElements(html, open) {
+  let out = html, m;
+  while ((m = out.match(open))) {
+    const re = new RegExp(`<${m[1]}\\b[^>]*>|</${m[1]}>`, 'gi');
+    re.lastIndex = m.index + m[0].length;
+    let depth = 1, end = m.index + m[0].length, x;
+    while ((x = re.exec(out))) { if (x[0][1] !== '/') depth++; else if (--depth === 0) { end = x.index + x[0].length; break; } }
+    out = out.slice(0, m.index) + ' ' + out.slice(end);
+  }
+  return out;
+}
+const attrRe = (name) => new RegExp(`<(\\w+)\\b[^>]*\\s${name}(?:="[^"]*")?(?=[\\s/>])[^>]*>`);
+// One section's `dated` faults: one chip, its keys both ways, every key's dates in its date lines, every fact tagged.
+function datedFaults(body, reg) {
+  const out = [];
+  const chips = elementsWith(body, 'data-source-chip');
+  if (chips.length !== 1) return [`${chips.length} SourceChips (want 1)`];
+  const chip = chips[0];
+  const listed = (body.slice(chip.start, chip.end).match(/data-chip-src="([^"]*)"/) ?? [, ''])[1].split(' ').filter(Boolean);
+  const asof = chip.inner.match(/<p[^>]*\sdata-asof(?=[\s>])[^>]*>([\s\S]*?)<\/p>/);
+  if (!asof) return ['no date line in its SourceChip'];
+  if (!/\b(19|20)\d{2}\b/.test(visibleText(asof[1]))) out.push(`date line has no year: "${visibleText(asof[1]).trim()}"`);
+  const dateText = [asof[1], ...[...chip.inner.matchAll(/<p[^>]*\sdata-asof-more[^>]*>([\s\S]*?)<\/p>/g)].map((m) => m[1])].map(visibleText).join(' ');
+  const used = new Set([...body.matchAll(/\sdata-src="([^"]*)"/g)].flatMap((m) => m[1].split(' ').filter(Boolean)));
+  for (const k of used) if (!listed.includes(k)) out.push(`a fact names "${k}", which its SourceChip doesn't list`);
+  // Dates by the word that introduces them ("verified 2026-09-18", "Links checked 2026-09-18 and 2026-09-30"), so a
+  // key's date has to be stated as that kind of date, not just appear somewhere in the line.
+  const said = {};
+  for (const m of dateText.matchAll(/\b(verified|checked|downloaded|retrieved)\s+((?:\d{4}-\d{2}(?:-\d{2})?(?:,\s*|\s+and\s+)?)+)/gi)) {
+    for (const d of m[2].match(/\d{4}-\d{2}(?:-\d{2})?/g)) (said[m[1].toLowerCase()] ??= new Set()).add(d);
+  }
+  const WORD = { prov: 'verified', link: 'checked', fhsz: 'downloaded', seq: 'retrieved', rule: 'retrieved', areas: 'verified' };
+  for (const k of listed) {
+    if (!used.has(k)) out.push(`SourceChip lists "${k}", which no fact in the section names`);
+    const want = keyDates(reg, k);
+    const word = WORD[k.split(':')[0]];
+    if (!want) out.push(`unknown source key "${k}"`);
+    else for (const d of want) {
+      if (word ? !said[word]?.has(d) : !dateText.includes(d)) out.push(`"${k}" is dated ${d}, which its SourceChip doesn't state${word ? ` as "${word} ${d}"` : ''}: "${dateText.trim().slice(0, 120)}"`);
+    }
+  }
+  // Every fact is inside an element that names its source. Left out: the chip, headings (section titles),
+  // form controls, toggle labels (data-ui) and lines that state no fact (data-nofact); those two carry no digit.
+  let rest = body.slice(0, chip.start) + ' ' + body.slice(chip.end);
+  for (const n of [...elementsWith(rest, 'data-nofact'), ...elementsWith(rest, 'data-ui')]) {
+    const t = visibleText(dropElements(n.inner, /<(select)\b[^>]*>/));
+    if (/\d/.test(t)) out.push(`a line marked as stating no fact has a figure: "${t.trim().slice(0, 80)}"`);
+  }
+  rest = dropElements(rest, attrRe('data-src'));
+  rest = dropElements(rest, attrRe('data-nofact'));
+  rest = dropElements(rest, attrRe('data-ui'));
+  rest = dropElements(rest, /<(h[1-6]|select)\b[^>]*>/);
+  const loose = visibleText(rest).replace(/[\s·.,;:()–—-]+/g, ' ').trim();
+  if (loose) out.push(`text that names no source: "${loose.slice(0, 100)}"`);
+  return out;
+}
+
 const dollarsIn = (s) => [...s.matchAll(/\$\s?(\d[\d,]*)/g)].map((m) => Number(m[1].replace(/,/g, '')));
 // Reviewed coincidences: a dollar figure outside the BAH markup that equals a BAH value but is something
 // else (e.g. a HUD rent). Each entry: { "page": "communities/x/index.html", "value": 4410, "why": "..." }
@@ -189,7 +284,7 @@ function checkBahRows(rows) {
 }
 
 // --- Dist stage -------------------------------------------------------------
-function checkDist() {
+function checkDist(plant = null) {
   const pages = walk(DIST, '.html');
   if (pages.length === 0) {
     fail('dist', 'dist/', 'no pages built');
@@ -208,7 +303,8 @@ function checkDist() {
   const bah = loadBah();
   const bahValues = new Set([...(bah?.values() ?? [])].flatMap((r) => [r.with_dependents, r.without_dependents]));
   const allow = loadBahAllow();
-  let factBlocks = 0, extLinks = 0, bahFigures = 0;
+  let factBlocks = 0, extLinks = 0, bahFigures = 0, chipKeys = 0;
+  const reg = sourceDates();
   if (!bah) fail('bah-figures', 'src/data/bah.json', 'missing: run pull/export_for_site.py in pcs-sd-data');
 
   // third-party: stylesheets (fonts, background images) only from this site.
@@ -219,7 +315,9 @@ function checkDist() {
 
   for (const file of pages) {
     const page = relative(DIST, file);
-    const html = readFileSync(file, 'utf-8');
+    const raw = readFileSync(file, 'utf-8');
+    const html = plant && plant.page === page ? plant.edit(raw) : raw;
+    if (plant && plant.page === page && html === raw) fail('plant', page, 'the plant changed nothing');
     const text = visibleText(html);
 
     // third-party: anything the browser fetches on its own (not <a> links, which the reader chooses).
@@ -237,13 +335,12 @@ function checkDist() {
     // noindex
     if (!/<meta name="robots" content="noindex/.test(html)) fail('noindex', page, 'missing <meta name="robots" content="noindex">');
 
-    // dated: every data-fact block has a non-empty data-asof line containing a date.
+    // dated: every section has one SourceChip whose dates cover every fact in it.
     const blocks = [...html.matchAll(/<section[^>]*data-fact="([^"]+)"[^>]*>([\s\S]*?)<\/section>/g)];
     for (const [, id, body] of blocks) {
       factBlocks++;
-      const asof = body.match(/<p[^>]*data-asof[^>]*>([\s\S]*?)<\/p>/);
-      if (!asof) fail('dated', page, `fact block "${id}" has no date line`);
-      else if (!/\b(19|20)\d{2}\b/.test(visibleText(asof[1]))) fail('dated', page, `fact block "${id}" date line has no year: "${visibleText(asof[1]).trim()}"`);
+      for (const f of datedFaults(body, reg)) { fail('dated', page, `section "${id}": ${f}`); }
+      chipKeys += (body.match(/data-chip-src="([^"]*)"/) ?? [, ''])[1].split(' ').filter(Boolean).length;
     }
     // Tables and fact lists must sit inside a dated block.
     const outside = html.replace(/<section[^>]*data-fact="[^"]+"[^>]*>[\s\S]*?<\/section>/g, '');
@@ -344,10 +441,43 @@ function checkDist() {
     }
   }
 
-  passes.push(`dist: ${pages.length} pages, ${factBlocks} fact blocks, ${extLinks} outbound links, ${bahFigures.toLocaleString('en-US')} BAH figures checked against bah.json`);
+  passes.push(`dist: ${pages.length} pages, ${factBlocks} sections (${chipKeys.toLocaleString('en-US')} source keys in their SourceChips, each dated from its data file), ${extLinks} outbound links, ${bahFigures.toLocaleString('en-US')} BAH figures checked against bah.json`);
 }
 
+// --- Plants for `dated` (--plant <kind> | all): one fault each, in memory; each must fail the check ------------
+const NBHD = 'communities/santee/index.html';
+const PLANTS = {
+  'fact with no source': { page: NBHD, edit: (h) => h.replace('<h3>Buying</h3>', '<h3>Buying</h3><p>Median rent $2,100 a month.</p>') },
+  'source the chip doesn\'t list': { page: NBHD, edit: (h) => h.replace(/(<section[^>]*data-fact="climate"[\s\S]*?<div class="table-wrap" data-src=")prov:climate/, '$1prov:climate prov:ownership') },
+  'chip lists an unused source': { page: NBHD, edit: (h) => h.replace(/(<section[^>]*data-fact="climate"[\s\S]*?data-chip-src=")prov:climate/, '$1prov:climate prov:schools') },
+  'chip date isn\'t the source\'s': { page: NBHD, edit: (h) => h.replace(/(<section[^>]*data-fact="childcare"[\s\S]*?<p class="asof" data-asof>)2026-09-18 · verified 2026-09-18/, '$12026-09-18 · verified 2026-09-19') },
+  'link date missing from the chip': { page: NBHD, edit: (h) => h.replace(/(<section[^>]*data-fact="schools"[\s\S]*?)<p class="asof" data-asof-more>[^<]*<\/p>/, '$1') },
+  'fire download date missing': { page: 'communities/escondido/index.html', edit: (h) => h.replace(/(<section[^>]*data-fact="hazards"[\s\S]*?)<p class="asof" data-asof-more>CAL FIRE[^<]*<\/p>/, '$1') },
+  'superseded quote date missing': { page: 'sequence/first-30-days/index.html', edit: (h) => h.replace(/(<section[^>]*data-fact="f30-loss-damage-claim"[\s\S]*?)<p class="asof" data-asof-more>[^<]*<\/p>/, '$1') },
+  'section with no chip': { page: NBHD, edit: (h) => h.replace(/(<section[^>]*data-fact="access"[\s\S]*?)<details class="src-chip"[\s\S]*?<\/details>\s*<\/section>/, '$1</section>') },
+  'two chips in a section': { page: NBHD, edit: (h) => { const c = h.match(/<details class="src-chip" data-source-chip[\s\S]*?<\/details>/)[0]; return h.replace(/(<section[^>]*data-fact="climate"[^>]*>)/, `$1${c}`); } },
+  'figure in a no-fact line': { page: NBHD, edit: (h) => h.replace('your street can change them.', 'your street can change them by 10 minutes.') },
+  'unknown source key': { page: NBHD, edit: (h) => h.replace(/data-fact="climate"([\s\S]*?)prov:climate([\s\S]*?)data-chip-src="prov:climate"/, 'data-fact="climate"$1prov:weather$2data-chip-src="prov:weather"') },
+  'sequence step figure untagged': { page: 'sequence/arrival/index.html', edit: (h) => h.replace(/(<section[^>]*data-fact="arrival-travel-claim"[^>]*>)/, '$1<p>Due in 5 days.</p>') },
+};
+
 // --- Run --------------------------------------------------------------------
+const plantArg = process.argv.includes('--plant') ? process.argv[process.argv.indexOf('--plant') + 1] : null;
+if (plantArg) {
+  const kinds = plantArg === 'all' ? Object.keys(PLANTS) : [plantArg];
+  let missed = 0;
+  for (const k of kinds) {
+    if (!PLANTS[k]) { console.log(`unknown plant "${k}"; kinds: ${Object.keys(PLANTS).join(' | ')}`); process.exit(2); }
+    failures.length = 0;
+    checkDist(PLANTS[k]);
+    const f = failures.find((x) => x.check === 'dated');
+    const broke = failures.find((x) => x.check === 'plant');
+    if (f && !broke) console.log(`  CAUGHT  ${k}: ${f.where}: ${f.what.slice(0, 140)}`);
+    else { console.log(`  MISSED  ${k}${broke ? ' (the plant changed nothing)' : ''}`); missed++; }
+  }
+  console.log(`\ndated plants: ${kinds.length - missed}/${kinds.length} caught`);
+  process.exit(missed ? 1 : 0);
+}
 if (stage === 'source') checkSource();
 else if (stage === 'dist') checkDist();
 else {
@@ -363,7 +493,7 @@ for (const c of checks) {
   if (!fs.length) console.log(`  PASS  ${c}`);
   else {
     console.log(`  FAIL  ${c} (${fs.length})`);
-    for (const f of fs.slice(0, 20)) console.log(`        ${f.where}: ${f.what}`);
+    for (const f of fs.slice(0, Number(process.env.SHOW ?? 20))) console.log(`        ${f.where}: ${f.what}`);
     if (fs.length > 20) console.log(`        … and ${fs.length - 20} more`);
   }
 }

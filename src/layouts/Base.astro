@@ -51,5 +51,18 @@ const { title, description = 'An unofficial, non-commercial guide for military f
         <a href="/changelog/">What changed</a>
       </nav>
     </footer>
+    <script>
+      // Every <details> starts closed (Brian 2026-10-23). A link to a section, a form row or a heading inside one
+      // (#id) opens it and any closed <details> around it. Without JavaScript the link still scrolls there.
+      const openTarget = () => {
+        const el = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+        if (!el) return;
+        const own = el.querySelector(':scope > details');
+        if (own instanceof HTMLDetailsElement) own.open = true;
+        for (let d = el.closest('details'); d; d = d.parentElement?.closest('details') ?? null) d.open = true;
+      };
+      openTarget();
+      addEventListener('hashchange', openTarget);
+    </script>
   </body>
 </html>

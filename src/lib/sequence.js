@@ -30,11 +30,47 @@ export const TIMELINE_PHASE = {
   'no-orders': 'orders',
 };
 
-// Top of every sequence page (Brian 2026-10-20).
+// Top of /sequence/ (Brian 2026-10-20); since 2026-10-23 the phase and forms pages carry the one-line footnote
+// below instead, linking to it.
 export const SEQUENCE_DISCLAIMER = 'This is the order the official rules imply. Your command, CPPA and transportation office have the final word.';
 // The Marine Corps bases' pages and every sequence page (Brian 2026-10-20). USMC rows stay hidden.
 export const NAVY_RULES_NOTE = 'The forms and deadlines here are Navy rules. Marine Corps steps aren’t covered yet.';
 export const MARINE_BASES = ['PENDLETON', 'MIRAMAR', 'MCRD'];
+// The compact list of a phase's steps at the top of its page (its own dated block; the corpus skips it).
+export const TIMELINE_ID = 'timeline';
+export const SEQUENCE_FOOTNOTE = 'Navy rules, in the order the official rules imply; your command has the final word.';
+export const DISCLAIMER_HREF = '/sequence/#about-this-order';
+
+// A step's title on its card and in the phase timeline: the step's text, or for a long step (over 170
+// characters) its first sentence, with the rest under "Details and official wording". A deadline's first sentence is its chip in the timeline and the forms index.
+// Both are the row's own words, cut at a sentence end, never reworded.
+export const firstSentence = (t) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
+export function stepTitle(step) {
+  const title = step.step.length > 170 ? firstSentence(step.step) : step.step;
+  return { title, rest: step.step.slice(title.length).trim() };
+}
+
+// Short names for the form chips on step cards and the forms index (presentation only; every Navy form needs one).
+export const FORM_SHORT = {
+  'navy-dd1351-2-travel-voucher': 'DD 1351-2',
+  'navy-tle-claim': 'TLE',
+  'navy-dla': 'DLA',
+  'navy-travel-advance': 'NPPSC 1300/1',
+  'navy-advance-settlement': 'Advance settlement',
+  'navy-dependent-travel': 'Dependent travel',
+  'navy-ppm-paperwork': 'PPM',
+  'navy-hhg-counseling-shipment': 'HHG counseling',
+  'navy-hhg-loss-damage-notice': 'Loss or damage notice',
+  'navy-hhg-claim': 'HHG claim',
+  'navy-hhg-quick-claim': 'Quick claim',
+  'navy-hhg-inconvenience-claim': 'Inconvenience claim',
+  'navy-gtcc-pcs': 'GTCC',
+  'navy-pet-expenses': 'Pet expenses',
+};
+export const formShort = (id) => {
+  if (!FORM_SHORT[id]) throw new Error(`sequence: no short name for form ${id} (FORM_SHORT in src/lib/sequence.js)`);
+  return FORM_SHORT[id];
+};
 
 // Who a "Not yet confirmed" line sends the reader to.
 export const ASK_LABEL = {
@@ -69,6 +105,11 @@ export function citeDates(row) {
   const all = [...row.sources, ...(row.alternatives ?? []).flatMap((a) => a.sources)].map((c) => c.retrieved_on);
   const days = [...new Set(all)].sort();
   return `Official pages retrieved ${days.join(' and ')}`;
+}
+// Retrieval dates of a row's superseded quotes (shown under "Older guidance") that its date line doesn't name.
+export function olderDates(row) {
+  const named = new Set([...row.sources, ...(row.alternatives ?? []).flatMap((a) => a.sources)].map((c) => c.retrieved_on));
+  return [...new Set((row.superseded ?? []).map((c) => c.retrieved_on))].filter((d) => !named.has(d)).sort();
 }
 export function citeNames(row) {
   const all = [...row.sources, ...(row.alternatives ?? []).flatMap((a) => a.sources)];

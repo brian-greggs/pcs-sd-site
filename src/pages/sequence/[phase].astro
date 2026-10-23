@@ -1,10 +1,12 @@
 ---
-// One phase of the move sequence (F2): its steps in order, each with its timing, deadline, what comes first,
-// its forms and the official quotes behind it. The two lines at the top are on every sequence page.
+// One phase of the move sequence (F2): a compact timeline of its steps (title and deadline, each linking to its
+// card), then the step cards in order (title, deadline and form chips; the rest behind one tap), and the one-line
+// footnote linking to the disclaimer on /sequence/ (Brian 2026-10-23).
 import Base from '../../layouts/Base.astro';
-import SequenceTop from '../../components/sequence/SequenceTop.astro';
+import SourceChip from '../../components/SourceChip.astro';
+import SequenceFootnote from '../../components/sequence/SequenceFootnote.astro';
 import StepCard from '../../components/sequence/StepCard.astro';
-import { PHASES } from '../../lib/sequence.js';
+import { PHASES, TIMELINE_ID, citeDates, firstSentence, olderDates, stepTitle } from '../../lib/sequence.js';
 import { sequenceData } from '../../lib/sequenceData';
 
 export function getStaticPaths() {
@@ -17,16 +19,33 @@ const data = await sequenceData();
 const steps = data.steps.filter((s) => s.phase === phase.key);
 const prev = PHASES[i - 1];
 const next = PHASES[i + 1];
+// The timeline's chip: every retrieval date of the steps it lists.
+const all = { sources: steps.flatMap((s) => s.sources), alternatives: steps.flatMap((s) => s.alternatives), superseded: steps.flatMap((s) => s.superseded) };
+const older = olderDates(all);
+const keys = steps.map((s) => `seq:${s.id}`);
 ---
 
 <Base title={`Move sequence: ${phase.label}`} back={{ href: '/sequence/', label: 'Move sequence' }} description={`${phase.label}: the PCS steps for this phase, in order, with deadlines and official sources.`}>
   <p class="eyebrow">Move sequence · phase {i + 1} of {PHASES.length}</p>
   <h1>{phase.label}</h1>
   <p class="kicker">{phase.blurb}. {steps.length} steps.</p>
-  <SequenceTop />
+
+  <section class="timeline" id={TIMELINE_ID} data-fact={TIMELINE_ID}>
+    <h2 class="vh">Steps in this phase</h2>
+    <ol class="tl">
+      {steps.map((s) => (
+        <li data-timeline-step={s.id} data-src={`seq:${s.id}`}>
+          <a href={`#${s.id}`}><span class="tl-n">{s.order}</span><span class="tl-title">{stepTitle(s).title}</span></a>
+          <span class="tag due-tag" data-due-short>{firstSentence(s.deadline)}</span>
+        </li>
+      ))}
+    </ol>
+    <SourceChip srcs={keys} asOf={citeDates(all)} source="the official pages each step cites (on its card)" more={older.length ? [`Older guidance (not used) retrieved ${older.join(' and ')}`] : []} />
+  </section>
 
   {steps.map((s) => <StepCard step={s} data={data} />)}
 
+  <SequenceFootnote />
   <nav class="seq-nav" aria-label="Other phases">
     {prev ? <a href={`/sequence/${prev.slug}/`}>‹ {prev.label}</a> : <span></span>}
     {next ? <a href={`/sequence/${next.slug}/`}>{next.label} ›</a> : <a href="/sequence/forms/">Forms and claims ›</a>}

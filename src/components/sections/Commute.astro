@@ -1,17 +1,20 @@
 ---
-// 0700 commute from these zips to every base gate (range across zips).
+// 0700 commute from these zips to every base gate (range across zips). The reader's base comes first (one row
+// per base, the page script shows theirs: ?base=, else the nearest); every base is behind "All bases". How the
+// drive times are measured is on /sources/ (How the numbers work), linked from the hint line.
 import { getCollection } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
+import MethodHint from '../MethodHint.astro';
 import { range, TIER_LABEL } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 import { tierOf } from '../../lib/tiers.js';
 import { baseByCode, commuteSummary, drives, type BaseCode } from '../../lib/bases';
 
-// chosen: the base the summary leads with (default: the nearest). switchable renders one summary per
+// chosen: the base shown first (default: the nearest). switchable renders one summary and one first row per
 // base, hidden but the chosen one, so the page script can follow ?base= without new text.
-interface Props { zips: string[]; open?: boolean; chosen?: BaseCode; switchable?: boolean }
-const { zips, open = false, chosen, switchable = false } = Astro.props;
+interface Props { zips: string[]; chosen?: BaseCode; switchable?: boolean }
+const { zips, chosen, switchable = false } = Astro.props;
 const ds = await drives(zips);
 const lead = chosen ?? ds[0]?.code;
 const { asOf } = await provenance();
@@ -30,32 +33,38 @@ const byBase = Object.values(
 })).sort((a, b) => a.peakLo - b.peakLo);
 const gap = gapLine(missingZips(zips, rows), '0700 drive times', OUT_OF_PULL);
 const noRange = byBase.some((b) => b.lo == null || b.hi == null);
+// The first rows: the chosen base (or every base, one shown, when the page follows ?base=).
+const firstRows = switchable ? byBase : byBase.filter((b) => b.base === lead);
 ---
 
-<FactBlock id="commute" title="Commute at 0700" open={open} asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
+<FactBlock id="commute" title="Commute at 0700" summarySrc="prov:commute" srcs={['prov:commute']} asOf={asOf('commute')} source="Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); road miles from OSRM on OpenStreetMap">
   <Fragment slot="summary">{switchable
     ? ds.map((d) => <span data-base={baseByCode(d.code).slug} hidden={d.code !== lead}>{commuteSummary(ds, d.code)}</span>)
     : lead ? commuteSummary(ds, lead) : 'No 0700 drive times in our data'}</Fragment>
-  <p class="note">Drive times start from the center of the zip{zips.length > 1 ? ' (a range across the zips here)' : ''}, so your street can add or take away 5–10 minutes. The range is Google's typical spread for a weekday at 0700.</p>
-  {gap && <p class="gap">{gap}</p>}
-  {byBase.length > 0 && (
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Base (gate)</th><th class="num">0700 predicted</th><th class="num">Typical range</th><th>Tier</th><th class="num">Road miles</th></tr></thead>
-      <tbody>
-        {byBase.map((b) => (
-          <tr>
-            <td>{bases[b.base].installation}<br /><span class="muted">{bases[b.base].gate}</span></td>
-            <td class="num">{range(b.peakLo, b.peakHi, ' min')}</td>
-            <td class="num">{b.lo != null && b.hi != null ? range(b.lo, b.hi, ' min') : '—'}</td>
-            <td>{TIER_LABEL[b.tier]}</td>
-            <td class="num">{b.miles ?? '—'}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-  )}
-  {noRange && <p class="note">A dash in the typical range means Google gave no spread for that trip, which happens on very short drives.</p>}
-  <p class="note">Every base is listed with its real minutes, however long the drive. The tier groups them: under 30, 30–44, 45–59, and 60 minutes or more{zips.length > 1 ? ', by the slowest zip here' : ''}.</p>
+  {gap && <p class="gap" data-src="prov:commute">{gap}</p>}
+  {byBase.length > 0 && (<>
+    {/* data-dup: the same rows are in the full table below, which the assistant corpus keeps. */}
+    <div class="table-wrap" data-src="prov:commute" data-dup>
+      <table>
+        <caption>Your base{zips.length > 1 ? ', across the zips here' : ''}</caption>
+        <thead><tr><th>Base (gate)</th><th class="num">0700 predicted</th><th class="num">Typical range</th><th>Tier</th><th class="num">Road miles</th></tr></thead>
+        <tbody>
+          {firstRows.map((b) => <tr data-base={switchable ? baseByCode(b.base).slug : undefined} hidden={b.base !== lead}><td>{bases[b.base].installation}<br /><span class="muted">{bases[b.base].gate}</span></td><td class="num">{range(b.peakLo, b.peakHi, ' min')}</td><td class="num">{b.lo != null && b.hi != null ? range(b.lo, b.hi, ' min') : '—'}</td><td>{TIER_LABEL[b.tier]}</td><td class="num">{b.miles ?? '—'}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <details class="more">
+      <summary data-ui>All bases</summary>
+      <div class="table-wrap" data-src="prov:commute">
+        <table>
+          <thead><tr><th>Base (gate)</th><th class="num">0700 predicted</th><th class="num">Typical range</th><th>Tier</th><th class="num">Road miles</th></tr></thead>
+          <tbody>
+            {byBase.map((b) => <tr><td>{bases[b.base].installation}<br /><span class="muted">{bases[b.base].gate}</span></td><td class="num">{range(b.peakLo, b.peakHi, ' min')}</td><td class="num">{b.lo != null && b.hi != null ? range(b.lo, b.hi, ' min') : '—'}</td><td>{TIER_LABEL[b.tier]}</td><td class="num">{b.miles ?? '—'}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+      {noRange && <p class="note" data-src="prov:commute">A dash in the typical range means Google gave no spread for that trip, which happens on very short drives.</p>}
+    </details>
+  </>)}
+  <MethodHint topic="drive-times" text="Drive times start at the zip’s center; your street can change them." />
 </FactBlock>

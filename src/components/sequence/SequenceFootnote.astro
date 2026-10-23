@@ -1,0 +1,7 @@
+---
+// One line at the foot of every phase page and the forms page (Brian 2026-10-23), linking to the full disclaimer
+// and the Navy-rules note on /sequence/. scripts/check_sequence.mjs (seq-notes) looks for it by data-seq-footnote.
+import { SEQUENCE_FOOTNOTE, DISCLAIMER_HREF } from '../../lib/sequence.js';
+---
+
+<p class="note seq-footnote" data-seq-footnote><span data-footnote-text>{SEQUENCE_FOOTNOTE}</span> <a href={DISCLAIMER_HREF}>About this order</a></p>

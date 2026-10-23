@@ -2,6 +2,7 @@
 // Public schools with an address in these zips, their districts, and the Dashboard facts.
 import { getCollection, getEntry } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
+import MethodHint from '../MethodHint.astro';
 import ExtLink from '../ExtLink.astro';
 import { pct, STATUS_LABEL } from '../../lib/format';
 import { provenance } from '../../lib/prov';
@@ -16,24 +17,23 @@ const districtNames = [...new Set(schools.filter((s) => s.charter === 'N').map((
 const districts = (await Promise.all(districtNames.map((d) => getEntry('districts', d)))).filter((d) => !!d);
 const districtLine = districtNames.length ? `${districtNames[0]}${districtNames.length > 1 ? ` +${districtNames.length - 1} more` : ''}` : 'No district found';
 const summary = `${districtLine} · ${schools.length} public ${schools.length === 1 ? 'school' : 'schools'} in ${zips.length > 1 ? 'these zips' : 'the zip'}`;
-const hasDash = schools.some((s) => [s.ela_dfs_statuslevel, s.math_dfs_statuslevel, s.caaspp_ela_pct_met, s.caaspp_math_pct_met, s.chronic_abs_pct].some((v) => v == null));
 ---
 
-<FactBlock id="schools" title="Schools" summary={summary} asOf={asOf('schools')} source="California Department of Education: school directory, CA School Dashboard 2025, CAASPP 2024–25">
+<FactBlock id="schools" title="Schools" summary={summary} summarySrc="prov:schools" srcs={['prov:schools', ...(districts.length ? ['prov:districts'] : []), 'link:slo-navy-san-diego', 'link:slo-mcas-miramar']} asOf={asOf('schools')} source="California Department of Education: school directory, CA School Dashboard 2025, CAASPP 2024–25">
   {districts.map((d) => (
-    <dl class="facts">
+    <dl class="facts" data-src="prov:districts">
       <dt>District</dt>
       <dd>{d.id}</dd>
       <dt>Which school is yours</dt>
-      <dd>{d.data.boundary_url ? <ExtLink href={d.data.boundary_url} incentive="Public school district" text="District boundary lookup" /> : <span class="muted">Boundary lookup not yet found; ask the district.</span>}</dd>
+      <dd>{d.data.boundary_url ? <ExtLink href={d.data.boundary_url} incentive="Public school district" text="District boundary lookup" src="prov:districts" /> : <span class="muted">Boundary lookup not yet found; ask the district.</span>}</dd>
       <dt>Transfers</dt>
-      <dd>{d.data.transfer_url ? <ExtLink href={d.data.transfer_url} incentive="Public school district" text="District transfer policy" /> : <span class="muted">Transfer page not yet found.</span>}</dd>
+      <dd>{d.data.transfer_url ? <ExtLink href={d.data.transfer_url} incentive="Public school district" text="District transfer policy" src="prov:districts" /> : <span class="muted">Transfer page not yet found.</span>}</dd>
     </dl>
   ))}
-  {districts.length === 0 && <p class="gap">No school district found for {zips.length > 1 ? 'these zips' : 'this zip'} in our data. The School Liaison Officers below can tell you which district serves an address.</p>}
-  <p class="note">These are the public schools with an address in {zips.length > 1 ? 'these zips' : 'this zip'}. Your assigned school depends on your street, so check the boundary lookup before you sign a lease.</p>
+  {districts.length === 0 && <p class="gap" data-src="prov:schools">No school district found for {zips.length > 1 ? 'these zips' : 'this zip'} in our data. The School Liaison Officers below can tell you which district serves an address.</p>}
+  <p class="note" data-src="prov:schools">These are the public schools with an address in {zips.length > 1 ? 'these zips' : 'this zip'}. Your assigned school depends on your street, so check the boundary lookup before you sign a lease.</p>
   {schools.length > 0 ? (
-    <div class="table-wrap">
+    <div class="table-wrap" data-src="prov:schools">
       <table>
         <thead>
           <tr><th>School</th><th>Grades</th><th>English (Dashboard)</th><th>Math (Dashboard)</th><th class="num">Met English standard</th><th class="num">Met math standard</th><th class="num">Chronically absent</th><th>Elsewhere</th></tr>
@@ -48,17 +48,16 @@ const hasDash = schools.some((s) => [s.ela_dfs_statuslevel, s.math_dfs_statuslev
               <td class="num">{pct(s.caaspp_ela_pct_met)}</td>
               <td class="num">{pct(s.caaspp_math_pct_met)}</td>
               <td class="num">{pct(s.chronic_abs_pct, 1)}</td>
-              <td>{s.greatschools_url ? <ExtLink href={s.greatschools_url} incentive="Nonprofit: ad-supported" text="GreatSchools" /> : '—'}</td>
+              <td>{s.greatschools_url ? <ExtLink href={s.greatschools_url} incentive="Nonprofit: ad-supported" text="GreatSchools" src="prov:schools" /> : '—'}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
   ) : (
-    <p class="note">No public school has an address in {zips.length > 1 ? 'these zips' : 'this zip'}. The boundary lookup for the district still decides which school is yours.</p>
+    <p class="note" data-src="prov:schools">No public school has an address in {zips.length > 1 ? 'these zips' : 'this zip'}. The boundary lookup for the district still decides which school is yours.</p>
   )}
-  {hasDash && <p class="note">A dash means the state files we use have no figure for that school. Usually that's because too few students were tested or no tested grades are taught there; the Dashboard's chronic absence measure covers grades K–8.</p>}
-  <p class="note">English and math columns show the Dashboard status level, from very low to very high. The "met standard" columns are the share of tested students who met or exceeded the state standard. The full picture for each school is on the <ExtLink id="ca-school-dashboard" />.</p>
-  <p class="note">Moving mid-year, or need help with enrollment? The School Liaison Officers are free:</p>
-  <ul class="links"><li>Navy: <ExtLink id="slo-navy-san-diego" /></li><li>Marine Corps: <ExtLink id="slo-mcas-miramar" /></li></ul>
+  <MethodHint topic="schools" text="What the Dashboard levels and dashes mean:" />
+  <p class="note" data-src="link:slo-navy-san-diego link:slo-mcas-miramar">Moving mid-year, or need help with enrollment? The School Liaison Officers are free:</p>
+  <ul class="links" data-src="link:slo-navy-san-diego link:slo-mcas-miramar"><li>Navy: <ExtLink id="slo-navy-san-diego" /></li><li>Marine Corps: <ExtLink id="slo-mcas-miramar" /></li></ul>
 </FactBlock>

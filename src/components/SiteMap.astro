@@ -13,6 +13,7 @@ import topoDetail from '../geo/sd_map.topo.json';
 import topoOverview from '../geo/sd_map_overview.topo.json';
 import { BASES, baseByCode, minutes } from '../lib/bases';
 import { provenance } from '../lib/prov';
+import SourceChip from './SourceChip.astro';
 
 interface Props {
   kind: 'overview' | 'base' | 'locator';
@@ -264,6 +265,6 @@ const baseLabelAttrs = (m: any) => (links ? { href: `/base/${baseByCode(m.code).
     {kind === 'locator' && (
       <p class="map-legend map-legend-line" data-map-key><span class="map-swatch map-focus" aria-hidden="true"></span><span><strong>{focus!.name}</strong> · nearest base: {baseByCode(nearest[0].code).short}, {nearDrive}</span></p>
     )}
-    <p class="map-source" data-map-asof>{dateLine}.</p>
+    <SourceChip map asOf={dateLine} source="" />
   </figcaption>
 </figure>

@@ -1,14 +1,16 @@
 ---
-// Every form and claim in the move sequence (F2): what it pays or does, who files, the deadline, where it's
-// filed, what to attach, the steps it belongs to, and the official quotes. Navy rows only; USMC rows are
-// "not yet covered" and the Navy-rules note at the top says so (Brian 2026-10-20). The weight allowance table (JTR
-// Table 5-37) follows the household goods counseling form it belongs to.
+// Every form and claim in the move sequence (F2), as an index (Brian 2026-10-23): one row per form with its short
+// name, what it pays or does, the deadline and where it's filed; tapping the row opens who files, the timing, what
+// to attach, the steps it belongs to, notes and the official quotes. Navy rows only; USMC rows are "not yet
+// covered" and the footnote's Navy-rules line says so (Brian 2026-10-20). The weight allowance table (JTR Table
+// 5-37) follows the household goods counseling form it belongs to.
 import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
+import SourceChip from '../../components/SourceChip.astro';
 import Cites from '../../components/sequence/Cites.astro';
 import DlaRates from '../../components/sequence/DlaRates.astro';
-import SequenceTop from '../../components/sequence/SequenceTop.astro';
-import { ANCHOR_LABEL, DLA_FORM, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, citeDates, citeNames, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import SequenceFootnote from '../../components/sequence/SequenceFootnote.astro';
+import { ANCHOR_LABEL, DLA_FORM, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, citeDates, citeNames, firstSentence, formShort, noteParas, olderDates, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
 import { sequenceData } from '../../lib/sequenceData';
 
 const data = await sequenceData();
@@ -21,46 +23,63 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
 <Base title="Forms and claims" back={{ href: '/sequence/', label: 'Move sequence' }} description="Every PCS form and claim in the move sequence: deadline, where to file, what to attach, with official sources.">
   <p class="eyebrow">Move sequence</p>
   <h1>Forms and claims</h1>
-  <SequenceTop />
-  <p class="intro">{data.forms.length} forms and claims, each with its deadline, where it's filed and what goes with it.</p>
+  <p class="intro">{data.forms.length} forms and claims. Tap one for what to attach, the steps it belongs to and the official wording.</p>
 
-  {data.forms.map((f) => (<>
-    <FactBlock plain id={f.id} title={f.form} asOf={citeDates(f)} source={citeNames(f)}>
-      <dl class="facts" data-form={f.id}>
-        <dt>What it pays or does</dt><dd>{f.pays_or_does}</dd>
-        <dt>Who files</dt><dd>{f.who_files}</dd>
-        <dt>Timing</dt><dd><span data-anchor>{ANCHOR_LABEL[f.anchor]}</span>{EFFECTIVE_ANCHORS.includes(f.anchor) && <> · <a href={EFFECTIVE_HREF} data-effective-link>{EFFECTIVE_LINK_TEXT}</a></>}</dd>
-        <dt>Deadline</dt><dd data-deadline>{f.deadline}</dd>
-        <dt>Where it's filed</dt><dd data-filed>{f.filed_where}</dd>
-        {f.attachments.length > 0 && <><dt>What to attach</dt><dd><ul class="plain">{f.attachments.map((x) => <li>{x}</li>)}</ul></dd></>}
-        {f.sequence_step.length > 0 && <><dt>Steps</dt><dd><ul class="plain">{f.sequence_step.map((id) => {
-          const s = data.stepById.get(id)!;
-          return <li><a href={stepHref(s)}>{phaseByKey(s.phase).label}, step {s.order}</a></li>;
-        })}</ul></dd></>}
-      </dl>
-      {f.id === DLA_FORM && <DlaRates rows={data.dla} mode="table" />}
-      {noteParas(f.note).map((n) => <p class="note">{n}</p>)}
-      {f.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
-      <Cites sources={f.sources} superseded={f.superseded} />
-    </FactBlock>
-    {f.id === WEIGHTS_AFTER && w && (
-      <FactBlock plain id={w.id} title={w.title} asOf={citeDates(w)} source={citeNames(w)}>
-        <p class="note">By pay grade on <a href={EFFECTIVE_HREF}>the effective date of your PCS orders</a>, in pounds. It covers everything the government ships or stores for you; professional gear (yours and your spouse's) doesn't count against it.</p>
-        <div class="table-wrap">
-          <table data-weights>
-            <caption>{w.caption.replace(/^Table 5-37\.\s*/, '')} ({w.paragraph}, Table 5-37)</caption>
-            <thead><tr><th>Pay grade</th><th class="num">With dependents</th><th class="num">Without dependents</th></tr></thead>
-            <tbody>
-              {w.rows.map((r) => (
-                <tr data-weight={r.id}><td>{r.grade.split(/(\s+)/).map((t) => (/-/.test(t) ? <span class="nowrap">{t}</span> : t))}</td><td class="num" data-with>{lb(r.with_dependents_lb)}</td><td class="num" data-without>{lb(r.without_dependents_lb)}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <Cites sources={w.sources} superseded={w.superseded} />
-      </FactBlock>
-    )}
-  </>))}
+  {data.forms.map((f) => {
+    const src = `seq:${f.id}`;
+    const older = olderDates(f);
+    return (<>
+      <section class="fact form-row" id={f.id} data-fact={f.id}>
+        <details>
+          <summary data-src={src}>
+            <span class="form-head"><span class="tag form-tag" data-dup>{formShort(f.id)}</span> <h2 class="form-name">{f.form}</h2></span>
+            <span class="form-line" data-dup>{firstSentence(f.pays_or_does)}</span>
+            <span class="form-line"><span class="tag due-tag" data-due-short data-dup>{firstSentence(f.deadline)}</span> <span class="muted" data-dup>Filed: {firstSentence(f.filed_where)}</span></span>
+          </summary>
+          <div class="body" data-src={src}>
+            <dl class="facts" data-form={f.id}>
+              <dt>What it pays or does</dt><dd>{f.pays_or_does}</dd>
+              <dt>Who files</dt><dd>{f.who_files}</dd>
+              <dt>Timing</dt><dd><span data-anchor>{ANCHOR_LABEL[f.anchor]}</span>{EFFECTIVE_ANCHORS.includes(f.anchor) && <> · <a href={EFFECTIVE_HREF} data-effective-link>{EFFECTIVE_LINK_TEXT}</a></>}</dd>
+              <dt>Deadline</dt><dd data-deadline>{f.deadline}</dd>
+              <dt>Where it's filed</dt><dd data-filed>{f.filed_where}</dd>
+              {f.attachments.length > 0 && <><dt>What to attach</dt><dd><ul class="plain">{f.attachments.map((x) => <li>{x}</li>)}</ul></dd></>}
+              {f.sequence_step.length > 0 && <><dt>Steps</dt><dd><ul class="plain">{f.sequence_step.map((id) => {
+                const s = data.stepById.get(id)!;
+                return <li><a href={stepHref(s)}>{phaseByKey(s.phase).label}, step {s.order}</a></li>;
+              })}</ul></dd></>}
+            </dl>
+            {f.id === DLA_FORM && <DlaRates rows={data.dla} mode="table" />}
+            {noteParas(f.note).map((n) => <p class="note">{n}</p>)}
+            {f.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
+            <Cites sources={f.sources} superseded={f.superseded} src={src} />
+          </div>
+        </details>
+        <SourceChip srcs={[src]} asOf={citeDates(f)} source={citeNames(f)} more={older.length ? [`Older guidance (not used) retrieved ${older.join(' and ')}`] : []} />
+      </section>
+      {f.id === WEIGHTS_AFTER && w && (
+        <FactBlock id={w.id} title={w.title} summary={`${w.paragraph}, Table 5-37: pounds by pay grade, with and without dependents`} summarySrc={`seq:${w.id}`} srcs={[`seq:${w.id}`]} asOf={citeDates(w)} source={citeNames(w)}>
+          <div data-src={`seq:${w.id}`}>
+            <p class="note">By pay grade on <a href={EFFECTIVE_HREF}>the effective date of your PCS orders</a>, in pounds. It covers everything the government ships or stores for you; professional gear (yours and your spouse's) doesn't count against it.</p>
+            <div class="table-wrap">
+              <table data-weights>
+                <caption>{w.caption.replace(/^Table 5-37\.\s*/, '')} ({w.paragraph}, Table 5-37)</caption>
+                <thead><tr><th>Pay grade</th><th class="num">With dependents</th><th class="num">Without dependents</th></tr></thead>
+                <tbody>
+                  {w.rows.map((r) => (
+                    <tr data-weight={r.id}><td>{r.grade.split(/(\s+)/).map((t) => (/-/.test(t) ? <span class="nowrap">{t}</span> : t))}</td><td class="num" data-with>{lb(r.with_dependents_lb)}</td><td class="num" data-without>{lb(r.without_dependents_lb)}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Cites sources={w.sources} superseded={w.superseded} src={`seq:${w.id}`} />
+          </div>
+        </FactBlock>
+      )}
+    </>);
+  })}
+
+  <SequenceFootnote />
 </Base>
 
 <script>

@@ -471,7 +471,8 @@ if (!existsSync(planFile)) {
       const sec = (htmlOf(rel).match(/<section[^>]*data-fact="cost"[^>]*>([\s\S]*?)<\/section>/) ?? [])[1] ?? '';
       const zips = communities[n.slug].zips;
       const seen = new Set();
-      for (const [, bases, body] of sec.matchAll(/<div class="ratio-area" data-mha-bases="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*(?=<div class="ratio-area"|<h3)/g)) {
+      // The full tables sit under "Show all pay bands" (2026-10-23), so the last one is followed by the band note.
+      for (const [, bases, body] of sec.matchAll(/<div class="ratio-area" data-mha-bases="([^"]*)"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*(?=<div class="ratio-area"|<h3|<p class="note"|<\/details>)/g)) {
         for (const [, caption, rows] of body.matchAll(/<caption>([\s\S]*?)<\/caption>([\s\S]*?)<\/table>/g)) {
           const mha = (caption.match(/\(MHA (CA\d{3})\)/) ?? [])[1];
           const zip = (caption.match(/Zip (\d{5})/) ?? [])[1] ?? (zips.length === 1 ? zips[0] : null);
@@ -490,6 +491,17 @@ if (!existsSync(planFile)) {
         }
       }
       if (seen.size !== mhas.length) fail('page-ratios', rel, `ratio tables for ${[...seen].join(', ') || 'no MHA'}, need ${mhas.join(', ')}`);
+      // The reader's own row (2026-10-23: one per zip, band and MHA, shown for the band and base picked) against the same rule.
+      const mine = [...sec.matchAll(/<tr data-ratio-mine="(\d{5})\|([^|"]+)\|(CA\d{3})"[^>]*>([\s\S]*?)<\/tr>/g)];
+      if (!mine.length && ratioRows.some((r) => zips.includes(r.zip))) fail('page-ratios', rel, 'no ratio row for the reader\'s pay band');
+      for (const [, zip, band, mha, cells] of mine) {
+        const vals = [...cells.matchAll(/<td class="num">([^<]*)<\/td>/g)].map((m) => m[1]);
+        [2, 3, 4].forEach((br, i) => {
+          ratioCells++;
+          const w = want(zip, band, br, mha);
+          if ((w ? fmt(w) : '—') !== vals[i]) fail('page-ratios', rel, `your-band row ${zip} ${band} ${br}-bed against ${mha}: page "${vals[i]}", rent ÷ BAH ${w ? fmt(w) : '—'}`);
+        });
+      }
       // The plan's ratios: the range across the zips, per MHA.
       for (const mha of mhas) for (const band of Object.keys(BANDS)) for (const br of [2, 3, 4]) {
         const ws = zips.map((z) => want(z, band, br, mha)).filter(Boolean);

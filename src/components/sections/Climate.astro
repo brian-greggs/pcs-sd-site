@@ -32,9 +32,9 @@ const summary = climate.length ? `July high ${span('july_mean_max_f')}°F · ${s
 const label = (zip: string) => (climate.length > 1 ? zip : name);
 ---
 
-<FactBlock id="climate" title="Climate" summary={summary} asOf={asOf('climate')} source="NOAA U.S. Climate Normals 1991–2020 (nearest station); California Energy Commission building climate zones">
-  {gap && <p class="gap">{gap}</p>}
-  <div class="table-wrap">
+<FactBlock id="climate" title="Climate" summary={summary} summarySrc="prov:climate" srcs={['prov:climate']} asOf={asOf('climate')} source="NOAA U.S. Climate Normals 1991–2020 (nearest station); California Energy Commission building climate zones">
+  {gap && <p class="gap" data-src="prov:climate">{gap}</p>}
+  <div class="table-wrap" data-src="prov:climate">
     <table>
       <thead><tr><th></th>{climate.map((c) => <th class="num">{label(c.zip)}</th>)}{showCoastal && <th class="num">Coronado (coast)</th>}</tr></thead>
       <tbody>
@@ -44,7 +44,7 @@ const label = (zip: string) => (climate.length > 1 ? zip : name);
       </tbody>
     </table>
   </div>
-  {flagged.map((c) => <p class="gap">The nearest weather station for {where(c)} is {reasons(c).join(', and ')}, so the real temperatures can differ from these.</p>)}
-  {climate.length > 0 && <p class="note">Weather station: {climate.map((c) => `${titleCase(c.noaa_station_name)}, ${c.station_distance_km} km away`).join('; ')}.</p>}
-  <p class="gap">Whether a home has air conditioning isn't published anywhere. On hot inland days it matters, so ask before you sign.</p>
+  {flagged.map((c) => <p class="gap" data-src="prov:climate">The nearest weather station for {where(c)} is {reasons(c).join(', and ')}, so the real temperatures can differ from these.</p>)}
+  {climate.length > 0 && <p class="note" data-src="prov:climate">Weather station: {climate.map((c) => `${titleCase(c.noaa_station_name)}, ${c.station_distance_km} km away`).join('; ')}.</p>}
+  <p class="gap" data-src="prov:climate">Whether a home has air conditioning isn't published anywhere. On hot inland days it matters, so ask before you sign.</p>
 </FactBlock>

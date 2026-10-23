@@ -40,6 +40,7 @@
   --map-tier-30-45: #FFB648;
   --map-tier-45-60: #E68A02;
   --map-tier-60plus: #C86700;
+  --on-tier: #0B1328;  /* text on a drive-group chip (base pages): the page background, on each amber step */
   --map-base-fill: #3A2246;
   --map-base-hatch: #C98AAE;
   --map-base-edge: #E8A6C6;

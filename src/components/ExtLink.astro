@@ -1,7 +1,8 @@
 ---
 // Every outbound link goes through here so its incentive label shows next to
-// it (Principle 4, F4). Pass a link id from src/data/links.json, or a url plus
-// an explicit incentive for links that come from other data files.
+// it (Principle 4, F4), as a small tag on the link. Pass a link id from src/data/links.json, or a url plus
+// an explicit incentive for links that come from other data files. The link names its source for the
+// section's SourceChip (data-src): `link:<id>` for a links.json link, or `src` (the data file the url came from).
 import { getEntry } from 'astro:content';
 
 interface Props {
@@ -9,16 +10,18 @@ interface Props {
   href?: string;
   incentive?: string;
   text?: string;
+  src?: string;
 }
-let { id, href, incentive, text } = Astro.props;
+let { id, href, incentive, text, src } = Astro.props;
 if (id) {
   const link = await getEntry('links', id);
   if (!link) throw new Error(`ExtLink: no link with id "${id}" in src/data/links.json`);
   href ??= link.data.url;
   incentive ??= link.data.incentive;
   text ??= link.data.title;
+  src ??= `link:${id}`;
 }
 if (!href || !incentive) throw new Error(`ExtLink: ${href ?? id} has no incentive label`);
 ---
 
-<span class="ext"><a href={href} data-incentive={incentive} rel="noopener noreferrer">{text ?? <slot />}</a> <small class="incentive">{incentive}</small></span>
+<span class="ext" data-src={src}><a href={href} data-incentive={incentive} rel="noopener noreferrer">{text ?? <slot />}</a> <small class="incentive">{incentive}</small></span>

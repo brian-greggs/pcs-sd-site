@@ -1,0 +1,11 @@
+---
+// One line pointing to "How the numbers work" on /sources/ (Brian 2026-10-23), where the method notes that used
+// to repeat on every page now live once. It states no fact (data-nofact: the `dated` check allows it no digit).
+import { METHOD_TOPICS } from '../lib/method';
+
+interface Props { topic: keyof typeof METHOD_TOPICS; text: string }
+const { topic, text } = Astro.props;
+if (!METHOD_TOPICS[topic]) throw new Error(`MethodHint: no topic "${topic}" on /sources/`);
+---
+
+<p class="method-hint" data-nofact>{text} <a href={`/sources/#${METHOD_TOPICS[topic].id}`}>How the numbers work</a></p>

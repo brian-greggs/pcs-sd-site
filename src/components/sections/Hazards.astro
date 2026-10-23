@@ -1,6 +1,6 @@
 ---
 // Fire (CAL FIRE hazard severity zones), flood and aircraft noise for these zips.
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
 import ExtLink from '../ExtLink.astro';
 import { pct } from '../../lib/format';
@@ -13,7 +13,6 @@ const { zips, waterQuality = false } = Astro.props;
 const { asOf } = await provenance();
 const hazards = (await getCollection('hazards')).map((r) => r.data).filter((r) => zips.includes(r.zip));
 const multiZip = hazards.length > 1;
-const beachLink = (await getEntry('links', 'sd-county-beach-bay'))!.data;
 const gap = gapLine(missingZips(zips, hazards), 'flood or noise figures', OUT_OF_PULL);
 // Fire: share of land in each CAL FIRE class (exclusive; SRA 2023 + LRA 2025 combined by the pull).
 const fireText = (h: (typeof hazards)[number]) => {
@@ -56,14 +55,18 @@ const summary = [
   floodSpan != null ? `flood zone ${floodSpan}` : null,
   noisy ? 'aircraft noise: see inside' : null,
 ].filter(Boolean).join(' · ');
+// Fire figures carry their own download date (per zip), in the chip.
+const fireZips = hazards.filter((h) => h.fhsz_very_high_pct != null);
+const fireDays = [...new Set(fireZips.map((h) => h.fhsz_retrieved_on))].sort();
+const srcs = ['prov:hazards', ...fireZips.map((h) => `fhsz:${h.zip}`), 'link:cal-fire-fhsz', 'link:fema-flood-map', ...(waterQuality ? ['link:sd-county-beach-bay'] : [])];
 ---
 
-<FactBlock id="hazards" title="Hazards" summary={summary} asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar and NAS North Island noise contours (airport land use plans, via SANDAG); CAL FIRE Fire Hazard Severity Zones (State Responsibility Area 2023, Local Responsibility Area 2025)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
+<FactBlock id="hazards" title="Hazards" summary={summary} summarySrc={['prov:hazards', ...fireZips.map((h) => `fhsz:${h.zip}`)].join(' ')} srcs={srcs} more={fireDays.length ? [`CAL FIRE maps downloaded ${fireDays.join(' and ')}`] : []} asOf={asOf('hazards')} source={`FEMA National Flood Hazard Layer; MCAS Miramar and NAS North Island noise contours (airport land use plans, via SANDAG); CAL FIRE Fire Hazard Severity Zones (State Responsibility Area 2023, Local Responsibility Area 2025)${waterQuality ? '; San Diego County Beach and Bay Program (link only)' : ''}`}>
   {hazards.map((h) => (
-    <dl class="facts">
+    <dl class="facts" data-src={['prov:hazards', ...(h.fhsz_very_high_pct != null ? [`fhsz:${h.zip}`] : [])].join(' ')}>
       {multiZip && <><dt>Zip</dt><dd>{h.zip}</dd></>}
       <dt>Fire</dt>
-      <dd>{h.fhsz_very_high_pct != null ? <>{fireText(h)}. <span class="muted">CAL FIRE maps, downloaded {h.fhsz_retrieved_on}.</span> <ExtLink id="cal-fire-fhsz" text="Check an address" />{h.fhsz_mapped_pct != null && h.fhsz_mapped_pct < 95 && <span class="gap-inline"> CAL FIRE rates only {pct(h.fhsz_mapped_pct, 0)} of this zip's land. Federal land, such as bases and national forest, isn't in its maps, so the real share in a hazard zone can be higher.</span>}</> : <span>Not in our data yet. Check the address yourself: <ExtLink id="cal-fire-fhsz" /></span>}</dd>
+      <dd>{h.fhsz_very_high_pct != null ? <>{fireText(h)}. <ExtLink id="cal-fire-fhsz" text="Check an address" />{h.fhsz_mapped_pct != null && h.fhsz_mapped_pct < 95 && <span class="gap-inline"> CAL FIRE rates only {pct(h.fhsz_mapped_pct, 0)} of this zip's land. Federal land, such as bases and national forest, isn't in its maps, so the real share in a hazard zone can be higher.</span>}</> : <span>Not in our data yet. Check the address yourself: <ExtLink id="cal-fire-fhsz" /></span>}</dd>
       <dt>Flood</dt>
       <dd>{pct(h.sfha_pct, 1)} of land is in a FEMA 1%-annual-chance flood zone. <ExtLink id="fema-flood-map" text="Check an address" /></dd>
       <dt>Aircraft noise</dt>
@@ -71,11 +74,11 @@ const summary = [
     </dl>
   ))}
   {waterQuality && (
-    <dl class="facts">
+    <dl class="facts" data-src="link:sd-county-beach-bay">
       <dt>Beach and bay water</dt>
-      <dd>Closures and advisories change daily, so we link to them rather than copy them: <ExtLink id="sd-county-beach-bay" /> <span class="muted">(link checked {beachLink.verified_on})</span></dd>
+      <dd>Closures and advisories change daily, so we link to them rather than copy them: <ExtLink id="sd-county-beach-bay" /></dd>
     </dl>
   )}
-  {gap && <p class="gap">{gap}</p>}
-  <p class="gap">Aircraft noise here covers MCAS Miramar and NAS North Island only. Noise contours for NOLF Imperial Beach, San Diego International, Camp Pendleton's airfield and the county's smaller airports aren't in our data yet.</p>
+  {gap && <p class="gap" data-src="prov:hazards">{gap}</p>}
+  <p class="gap" data-src="prov:hazards">Aircraft noise here covers MCAS Miramar and NAS North Island only. Noise contours for NOLF Imperial Beach, San Diego International, Camp Pendleton's airfield and the county's smaller airports aren't in our data yet.</p>
 </FactBlock>

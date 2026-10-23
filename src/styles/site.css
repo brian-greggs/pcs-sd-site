@@ -36,7 +36,7 @@ strong, b { font-weight: 700; }
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: var(--gold-fg);
   background: var(--gold-bg); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px;
 }
-.site-footer { margin-top: 2.5rem; padding-top: 16px; padding-bottom: 32px; border-top: 1px solid var(--border); font-size: 0.9rem; color: var(--muted); }
+.site-footer { margin-top: 1.6rem; padding-top: 14px; padding-bottom: 24px; border-top: 1px solid var(--border); font-size: 0.9rem; color: var(--muted); }
 .site-footer p { margin: 0 0 4px; }
 .site-footer nav { display: flex; gap: 20px; margin-top: 8px; }
 .site-footer nav a { display: inline-flex; align-items: center; min-height: var(--touch); }
@@ -80,10 +80,37 @@ blockquote.quote p, blockquote.quote ul { margin: 0.3rem 0; }
 .gold { background: var(--gold-bg); color: var(--gold-fg); }
 
 .chip { display: inline-block; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); margin: 1.2rem 0 0.5rem; }
+/* Base page drive groups: the map's amber step for the group (map-tier-* sets the fill), dark text on it. */
+.chip.tier-chip { color: var(--on-tier); border-color: transparent; }
+
+/* --- Receipts: the SourceChip under every section (src/components/SourceChip.astro) ----------------------- */
+.src-chip { margin: 2px 0 0; font-size: 13px; line-height: 1.3; color: var(--muted); }
+.src-chip > summary { display: inline-flex; align-items: center; gap: 4px; min-height: 22px; padding: 0 8px; list-style: none; cursor: pointer; border: 1px solid var(--border); border-radius: 999px; white-space: nowrap; }
+.src-chip > summary::-webkit-details-marker { display: none; }
+.src-chip > summary::after { content: "›"; font-size: 1rem; line-height: 1; }
+.src-chip[open] > summary::after { transform: rotate(90deg); }
+.src-chip-body { margin: 6px 0 4px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow-wrap: anywhere; }
+.src-chip-body .asof { margin: 0 0 4px; font-size: 13px; }
+.src-chip-body .asof:last-child { margin-bottom: 0; }
+.fact > .src-chip { margin-left: 8px; }
+.map .src-chip { margin-top: 8px; }
+
+/* Small tags: form chips on step cards, deadlines in the timeline and the forms index, who a step is for. */
+.tag { display: inline-block; padding: 1px 8px; font-size: 0.78rem; line-height: 1.5; border-radius: 999px; border: 1px solid var(--border); color: var(--text); text-decoration: none; }
+a.tag { color: var(--link); border-color: var(--link); }
+.due-tag { background: var(--gold-bg); color: var(--gold-fg); border-color: transparent; border-radius: 6px; }
+.applies-tag { color: var(--muted); }
+
+/* One line pointing to "How the numbers work" on /sources/. */
+.method-hint { font-size: 0.85rem; color: var(--muted); margin: 0.6rem 0 0; }
+/* "Show all pay bands", "All bases", "Details and official wording": a closed inner <details>. */
+details.more { margin: 0.6rem 0 0; }
+details.more > summary { display: flex; align-items: center; min-height: var(--touch); color: var(--link); cursor: pointer; font-size: 0.95rem; font-weight: 500; }
+.vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* --- At a glance tiles ------------------------------------------------------ */
-.glance { margin: 1.2rem 0; }
-.glance-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 0.6rem; }
+.glance { margin: 0.8rem 0; }
+.glance-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 0.4rem; }
 .glance-head h2 { margin: 0; }
 .band-pick { display: flex; align-items: center; gap: 8px; font-size: 0.92rem; color: var(--muted); }
 select {
@@ -91,12 +118,12 @@ select {
   color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
 }
 dl.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
-.tile { border-radius: var(--radius); border: 1px solid var(--border); padding: 12px 14px; min-height: 104px; display: flex; flex-direction: column; }
+.tile { border-radius: var(--radius); border: 1px solid var(--border); padding: 10px 12px; display: flex; flex-direction: column; }
 .tile dt { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.02em; }
 .tile dd { margin: 4px 0 0; }
-.tile-value { display: block; font-family: var(--font-head); font-weight: 700; font-size: 1.45rem; line-height: 1.15; }
+.tile-value { display: block; font-family: var(--font-head); font-weight: 700; font-size: 1.3rem; line-height: 1.15; }
 .tile-value.tile-text { font-size: 1.1rem; }
-.tile-sub { display: block; font-size: 0.85rem; margin-top: 4px; color: var(--text); }
+.tile-sub { display: block; font-size: 0.8rem; line-height: 1.35; margin-top: 2px; color: var(--text); }
 
 /* --- Lead box ---------------------------------------------------------------- */
 .leadbox { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--coral); border-radius: var(--radius); padding: 12px 16px; margin: 1rem 0; }
@@ -104,19 +131,19 @@ dl.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
 .leadbox p.lead { margin: 0; font-size: 1.05rem; }
 
 /* --- Sections (native <details>) -------------------------------------------- */
-.fact { margin: 8px 0; }
-.fact > details, .fact.plain { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.fact { margin: 4px 0 6px; }
+.fact > details:not(.src-chip), .fact.plain { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .fact.plain { padding: 14px 16px; }
-.fact > details > summary {
-  list-style: none; cursor: pointer; min-height: 56px; padding: 12px 44px 12px 16px; position: relative;
+.fact > details:not(.src-chip) > summary {
+  list-style: none; cursor: pointer; min-height: 48px; padding: 8px 40px 8px 14px; position: relative;
 }
-.fact > details > summary::-webkit-details-marker { display: none; }
-.fact > details > summary::after { content: "›"; position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--link); font-size: 1.4rem; }
-.fact > details[open] > summary::after { transform: translateY(-50%) rotate(90deg); }
-.fact > details > summary :is(h2, h3) { margin: 0; font-size: 1.1rem; }
-.fact > details > summary .chip { margin: 0; }
-.fact .summary-line { display: block; font-size: 0.88rem; color: var(--muted); margin-top: 2px; }
-.fact .body { padding: 0 16px 14px; border-top: 1px solid var(--border); }
+.fact > details:not(.src-chip) > summary::-webkit-details-marker { display: none; }
+.fact > details:not(.src-chip) > summary::after { content: "›"; position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--link); font-size: 1.4rem; }
+.fact > details:not(.src-chip)[open] > summary::after { transform: translateY(-50%) rotate(90deg); }
+.fact > details:not(.src-chip) > summary :is(h2, h3) { margin: 0; font-size: 1.1rem; }
+.fact > details:not(.src-chip) > summary .chip { margin: 0; }
+.fact .summary-line { display: block; font-size: 0.86rem; line-height: 1.4; color: var(--muted); margin-top: 2px; }
+.fact .body { padding: 0 14px 12px; border-top: 1px solid var(--border); }
 
 /* --- Tables and fact lists --------------------------------------------------- */
 .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.6rem 0; }
@@ -140,9 +167,8 @@ dl.facts dd { margin: 0; }
   h1 { font-size: 2.1rem; }
 }
 
-.ext small.incentive { font-size: 0.75rem; color: var(--muted); }
-.ext small.incentive::before { content: "("; }
-.ext small.incentive::after { content: ")"; }
+/* The incentive label is a small tag on its link (Brian 2026-10-23), not a parenthesis. */
+.ext small.incentive { display: inline-block; margin-left: 2px; padding: 0 6px; font-size: 0.7rem; line-height: 1.5; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; vertical-align: 1px; white-space: nowrap; }
 ul.links { padding-left: 1.1rem; }
 ul.links li { margin: 6px 0; }
 ul.plain { padding-left: 1.1rem; }
@@ -266,7 +292,42 @@ table[data-dla-table] th.num { white-space: normal; }
 /* --- Move sequence (/sequence/) ---------------------------------------------- */
 .fact.plain > h2 { font-size: 1.08rem; }
 .cites { margin: 0.6rem 0 0; }
-.cites > summary { cursor: pointer; color: var(--link); font-size: 0.92rem; min-height: var(--touch); display: flex; align-items: center; }
+/* Step cards: title, deadline, chips; the rest behind "Details and official wording", on one row with the chip. */
+.fact.plain.step { padding: 10px 14px 4px; margin: 0 0 6px; }
+.step > h2 { font-size: 0.98rem; font-weight: 600; line-height: 1.3; margin: 0 0 4px; }
+.step-meta { margin: 0; font-size: 0.88rem; line-height: 1.55; }
+.step-meta .tag { font-size: 0.74rem; line-height: 1.35; }
+.due-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--gold-fg); }
+.applies { font-size: 0.8rem; color: var(--muted); }
+.applies::before { content: "· "; }
+.step .gap { margin: 6px 0 0; }
+.step-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 4px; }
+.step-foot > .step-more { margin: 0; }
+.step-foot > .step-more:not([open]) { flex: 0 1 auto; max-width: 62%; } /* a closed <details> still sizes to its hidden content */
+.step-foot > .step-more > summary { min-height: 34px; font-size: 0.82rem; }
+.step-foot > .step-more[open] { order: 2; flex-basis: 100%; }
+.step-foot > .src-chip { margin: 0; }
+.step-foot > .src-chip[open] { flex-basis: 100%; }
+/* The phase timeline: one line per step (title cut to a line), its deadline under it. */
+.timeline { margin: 0.6rem 0 1rem; }
+ol.tl { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--border); }
+ol.tl li { position: relative; padding: 2px 0 4px 14px; line-height: 1.35; }
+ol.tl li::before { content: ""; position: absolute; left: -6px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--link); }
+ol.tl a { display: flex; gap: 6px; color: var(--text); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+ol.tl a:hover .tl-title { color: var(--link); }
+.tl-n { flex: none; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tl-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The deadline's first sentence, cut to one line here; the card below has it in full. */
+ol.tl .due-tag { display: block; max-width: calc(100% - 20px); margin-left: 20px; font-size: 0.72rem; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The forms index: one tappable row per form. */
+.form-row > details:not(.src-chip) > summary { display: block; }
+.form-head { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.form-row .form-tag { flex: none; font-weight: 700; }
+.form-row h2.form-name { min-width: 0; margin: 0; font-family: var(--font-body); font-size: 0.85rem; font-weight: 400; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.form-line { display: block; margin-top: 4px; font-size: 0.9rem; line-height: 1.4; }
+.form-line:nth-child(2) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.form-line .muted { font-size: 0.85rem; }
+.seq-footnote { margin-top: 1.2rem; }
 .quotes { list-style: none; margin: 0.2rem 0 0; padding: 0; }
 .quotes li { margin: 0 0 12px; font-size: 0.9rem; }
 .quotes blockquote { margin: 0 0 4px; padding-left: 10px; border-left: 2px solid var(--border); color: var(--text); overflow-wrap: anywhere; }
@@ -330,7 +391,6 @@ path.map-base-edge[data-geo^="base-outline"] { fill: none; }
 .map-svg a:focus { outline: none; }
 .map-svg a.map-link:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
 .map-svg a.map-link:focus-visible path { stroke: var(--link); stroke-width: 3; }
-.map-source { display: inline-block; margin: 8px 0 0; padding: 3px 8px; font-size: 0.75rem; line-height: 1.45; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; }
 .map-legend.map-legend-line { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 8px; margin: 0; }
 .map-legend.map-legend-line .map-swatch { margin-top: 3px; }
 .map-legend-title { margin: 0 0 4px; font-size: 0.92rem; font-weight: 700; }

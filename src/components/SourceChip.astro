@@ -1,0 +1,54 @@
+---
+// The receipts for one section (Brian 2026-10-23): a small muted chip that opens to the source, the dates and
+// the license. Every dated section has exactly one, as its last element. Inside, the date line (data-asof) is
+// the section's old date line word for word, so every check that reads it (the BAH date, the sequence's
+// retrieval dates, the assistant corpus's dates) reads the same text.
+//
+// `srcs` are the source keys this section's facts carry (data-src on each fact; see FactBlock). The `dated`
+// check (scripts/check_principles.mjs) requires every key used in the section to be listed here, every key
+// listed to be used, and each key's own date (provenance.json, links.json, the sequence export, …) to be in
+// the date line. Key kinds: prov:<provenance id>, link:<links.json id>, seq:<sequence row id>,
+// rule:<housing_rules id>, areas:<base_housing_areas id>, fhsz:<zip>, fixed:<name> (src/lib/fixedNotes.js),
+// notes:<collection>/<slug>, log:sources, changelog:<date>.
+//
+// `more` adds dated lines of their own (data-asof-more: the CAL FIRE download date, a link's check date), which
+// the `dated` check reads with the date line; links (link: keys) get one automatically. The corpus keeps the
+// section's "verified" date from the date line alone.
+//
+// `map` renders the same chip under a map (outside any section): its date line is data-map-asof, which
+// scripts/check_maps.mjs reads, and it carries no keys.
+import { getCollection } from 'astro:content';
+import { provenance } from '../lib/prov';
+
+interface Props { asOf: string; source: string; srcs?: string[]; more?: string[]; map?: boolean }
+const { asOf, source, srcs = [], more = [], map = false } = Astro.props;
+if (!asOf.trim()) throw new Error('SourceChip: no date line');
+if (!map && !srcs.length) throw new Error(`SourceChip: no source keys for "${asOf}"`);
+const { prov } = await provenance();
+// The chip itself shows the latest full date in its date lines (vintages like "2024-25" don't count).
+const links = new Map((await getCollection('links')).map((l) => [l.id, l.data]));
+const linkDays = [...new Set(srcs.filter((k) => k.startsWith('link:')).map((k) => {
+  const l = links.get(k.slice(5));
+  if (!l) throw new Error(`SourceChip: no link "${k}" in links.json`);
+  return l.verified_on;
+}))].sort();
+const lines = [...more, ...(linkDays.length ? [`Links checked ${linkDays.join(' and ')}`] : [])];
+const text = [asOf, ...lines].join(' ');
+const latest = (text.match(/\b20\d{2}-\d{2}-\d{2}\b/g) ?? text.match(/\b20\d{2}-\d{2}\b/g) ?? [asOf]).sort().at(-1);
+const label = `${map ? 'Map sources' : srcs.length > 1 ? 'Sources' : 'Source'} · ${latest}`;
+const provIds = [...new Set(srcs.map((k) => (k.startsWith('prov:') ? k.slice(5) : k.startsWith('seq:') ? 'sequence' : null)).filter((x): x is string => !!x))];
+for (const id of provIds) if (!prov[id]) throw new Error(`SourceChip: no provenance row "${id}"`);
+const licenses = [...new Set(provIds.map((id) => `${prov[id].title}: ${prov[id].license}`))];
+---
+
+<details class="src-chip" data-source-chip={map ? undefined : ''} data-chip-src={map ? undefined : srcs.join(' ')}>
+  <summary class="src-chip-sum">{label}</summary>
+  <div class="src-chip-body">
+    {map
+      ? <p class="asof" data-map-asof>{asOf}.</p>
+      : <p class="asof" data-asof>{asOf}. Source: {source}.</p>}
+    {lines.map((l) => <p class="asof" data-asof-more>{l}.</p>)}
+    {licenses.length > 0 && <p class="asof">License: {licenses.join('; ')}.</p>}
+    <slot />
+  </div>
+</details>

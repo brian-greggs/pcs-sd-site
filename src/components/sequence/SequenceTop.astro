@@ -1,8 +1,9 @@
 ---
-// The two lines at the top of every sequence page (Brian 2026-10-20). scripts/check_sequence.mjs looks for
-// both by their data attributes.
-import { SEQUENCE_DISCLAIMER, NAVY_RULES_NOTE } from '../../lib/sequence.js';
+// The two lines at the top of /sequence/ (Brian 2026-10-20): the full disclaimer and the Navy-rules note. Since
+// 2026-10-23 the phase and forms pages carry SequenceFootnote instead, which links here.
+// scripts/check_sequence.mjs looks for both by their data attributes.
+import { SEQUENCE_DISCLAIMER, NAVY_RULES_NOTE, DISCLAIMER_HREF } from '../../lib/sequence.js';
 ---
 
-<p class="gap" data-seq-disclaimer>{SEQUENCE_DISCLAIMER}</p>
+<p class="gap" id={DISCLAIMER_HREF.split('#')[1]} data-seq-disclaimer>{SEQUENCE_DISCLAIMER}</p>
 <p class="note" data-navy-note>{NAVY_RULES_NOTE}</p>

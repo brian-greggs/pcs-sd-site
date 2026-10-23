@@ -1,10 +1,20 @@
 ---
-// Generated from EAP_Data_Source_Log.md (latest row per layer) via the export.
+// Generated from EAP_Data_Source_Log.md (latest row per layer) via the export. "How the numbers work" holds the
+// method notes the pages used to repeat in every section (src/lib/method.ts); the pages link here.
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import FactBlock from '../components/FactBlock.astro';
+import ExtLink from '../components/ExtLink.astro';
+import { METHOD_TOPICS } from '../lib/method';
+import { provenance } from '../lib/prov';
+import { INCENTIVE_LABELS } from '../lib/fixedNotes.js';
 
 const sources = (await getCollection('sources')).map((s) => s.data);
 const labels = [...new Set((await getCollection('links')).map((l) => l.data.incentive))].sort();
+const latest = sources.map((s) => s.retrieved).filter((d) => /^\d{4}-/.test(d)).sort().at(-1);
+const { asOf } = await provenance();
+const topics = Object.values(METHOD_TOPICS);
+const methodSrcs = [...new Set(topics.map((t) => t.src))];
 ---
 
 <Base title="Sources" back={{ href: '/', label: 'Home' }}>
@@ -14,9 +24,18 @@ const labels = [...new Set((await getCollection('links')).map((l) => l.data.ince
     pulled it. Some sources let us show their numbers; others only let us link to them. The last column says which.
   </p>
 
-  <section class="fact plain" data-fact="sources">
-    <h2>Data sources</h2>
-    <div class="table-wrap">
+  <FactBlock plain id="how-numbers-work" title="How the numbers work" srcs={[...methodSrcs, 'link:ca-school-dashboard']} asOf={methodSrcs.map((k) => `${topics.find((t) => t.src === k)!.title}: ${asOf(k.slice(5))}`).join('. ')} source="the provenance record for each dataset (table below)">
+    {topics.map((t) => (
+      <div class="method" data-src={t.src}>
+        <h3 id={t.id}>{t.title}</h3>
+        {t.paras.map((x) => <p>{x}</p>)}
+        {t.id === METHOD_TOPICS.schools.id && <p data-src="link:ca-school-dashboard"><ExtLink id="ca-school-dashboard" /></p>}
+      </div>
+    ))}
+  </FactBlock>
+
+  <FactBlock plain id="data-sources" title="Data sources" srcs={['log:sources']} asOf={`Generated from the data source log. Most recent retrieval: ${latest}`} source="the data source log">
+    <div class="table-wrap" data-src="log:sources">
       <table>
         <thead><tr><th>Layer</th><th>Source</th><th>Vintage</th><th>Retrieved</th><th>License</th><th>On this site</th></tr></thead>
         <tbody>
@@ -26,13 +45,12 @@ const labels = [...new Set((await getCollection('links')).map((l) => l.data.ince
         </tbody>
       </table>
     </div>
-    <p class="asof" data-asof>Generated from the data source log. Most recent retrieval: {sources.map((s) => s.retrieved).filter((d) => /^\d{4}-/.test(d)).sort().at(-1)}.</p>
-  </section>
+  </FactBlock>
 
-  <section class="fact plain" data-fact="incentives">
-    <h2>What the labels on links mean</h2>
-    <p>Every link out of this site is labeled with how the site on the other end makes its money. The labels in use:</p>
-    <ul>{labels.map((l) => <li>{l}</li>)}</ul>
-    <p class="asof" data-asof>Labels assigned 2026-09-30.</p>
-  </section>
+  <FactBlock plain id="incentives" title="What the labels on links mean" srcs={['fixed:incentive-labels']} asOf={`Labels assigned ${INCENTIVE_LABELS.written}`} source="this site">
+    <div data-src="fixed:incentive-labels">
+      <p>Every link out of this site is labeled with how the site on the other end makes its money. The labels in use:</p>
+      <ul>{labels.map((l) => <li>{l}</li>)}</ul>
+    </div>
+  </FactBlock>
 </Base>
