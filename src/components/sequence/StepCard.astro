@@ -8,7 +8,7 @@
 import Cites from './Cites.astro';
 import DlaRates from './DlaRates.astro';
 import SourceChip from '../SourceChip.astro';
-import { ANCHOR_LABEL, DLA_STEP, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, appliesText, citeDates, citeNames, firstSentence, formHref, formShort, noteParas, olderDates, phaseByKey, stepHref, stepTitle, unconfirmedLine } from '../../lib/sequence.js';
+import { ANCHOR_LABEL, NO_DEADLINE, deadlineText, DLA_STEP, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, appliesText, citeDates, citeNames, firstSentence, formHref, formShort, noteParas, olderDates, phaseByKey, stepHref, stepTitle, unconfirmedLine } from '../../lib/sequence.js';
 import type { SequenceData, Step } from '../../lib/sequenceData';
 
 interface Props { step: Step; data: SequenceData }
@@ -24,7 +24,7 @@ const older = olderDates(step);
 <section class="fact plain step" id={step.id} data-fact={step.id}>
   <h2 data-src={src}>{step.order}. {title}</h2>
   <div data-src={src}>
-    <p class="step-meta"><span class="due-label">Deadline:</span> <span data-deadline>{step.deadline}</span>{forms.map((f) => <> <a class="tag form-tag" href={formHref(f.id)} data-dup>{formShort(f.id)}</a></>)}{applies && <> <span class="applies"><span class="vh">Applies to: </span>{applies}</span></>}</p>
+    <p class="step-meta"><span class="due-label">Deadline:</span> <span data-deadline class={step.deadline === NO_DEADLINE ? 'no-deadline' : undefined}>{deadlineText(step.deadline)}</span>{forms.map((f) => <> <a class="tag form-tag" href={formHref(f.id)} data-dup>{formShort(f.id)}</a></>)}{applies && <> <span class="applies"><span class="vh">Applies to: </span>{applies}</span></>}</p>
     {step.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
     <div class="step-foot">
     <details class="more step-more">

@@ -99,6 +99,9 @@ blockquote.quote p, blockquote.quote ul { margin: 0.3rem 0; }
 .tag { display: inline-block; padding: 1px 8px; font-size: 0.78rem; line-height: 1.5; border-radius: 999px; border: 1px solid var(--border); color: var(--text); text-decoration: none; }
 a.tag { color: var(--link); border-color: var(--link); }
 .due-tag { background: var(--gold-bg); color: var(--gold-fg); border-color: transparent; border-radius: 6px; }
+/* A step with no official deadline: "No set deadline", muted (Brian 2026-10-24). */
+.due-tag.no-deadline { background: transparent; color: var(--muted); border-color: var(--border); }
+.no-deadline { color: var(--muted); }
 .applies-tag { color: var(--muted); }
 
 /* One line pointing to "How the numbers work" on /sources/. */

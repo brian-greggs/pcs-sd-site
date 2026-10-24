@@ -45,6 +45,13 @@ export const DISCLAIMER_HREF = '/sequence/#about-this-order';
 // characters) its first sentence, with the rest under "Details and official wording". A deadline's first sentence is its chip in the timeline and the forms index.
 // Both are the row's own words, cut at a sentence end, never reworded.
 export const firstSentence = (t) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
+// A row with no official deadline exports "not stated"; the pages show "No set deadline", muted, on the card and in
+// the chips (Brian 2026-10-24). Every other deadline shows word for word. scripts/check_sequence.mjs uses the same
+// two functions, and fails any deadline or chip that shows "not stated".
+export const NO_DEADLINE = 'not stated';
+export const NO_DEADLINE_LABEL = 'No set deadline';
+export const deadlineText = (d) => (d === NO_DEADLINE ? NO_DEADLINE_LABEL : d);
+export const deadlineShort = (d) => (d === NO_DEADLINE ? NO_DEADLINE_LABEL : firstSentence(d));
 export function stepTitle(step) {
   const title = step.step.length > 170 ? firstSentence(step.step) : step.step;
   return { title, rest: step.step.slice(title.length).trim() };

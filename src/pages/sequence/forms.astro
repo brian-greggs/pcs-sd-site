@@ -10,7 +10,7 @@ import SourceChip from '../../components/SourceChip.astro';
 import Cites from '../../components/sequence/Cites.astro';
 import DlaRates from '../../components/sequence/DlaRates.astro';
 import SequenceFootnote from '../../components/sequence/SequenceFootnote.astro';
-import { ANCHOR_LABEL, DLA_FORM, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, citeDates, citeNames, firstSentence, formShort, noteParas, olderDates, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import { ANCHOR_LABEL, NO_DEADLINE, deadlineShort, deadlineText, DLA_FORM, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, citeDates, citeNames, firstSentence, formShort, noteParas, olderDates, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
 import { sequenceData } from '../../lib/sequenceData';
 
 const data = await sequenceData();
@@ -35,14 +35,14 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
           <summary data-src={src}>
             <span class="form-head"><span class="tag form-tag" data-dup>{formShort(f.id)}</span> <h2 class="form-name">{f.form}</h2></span>
             <span class="form-line" data-dup>{firstSentence(f.pays_or_does)}</span>
-            <span class="form-line"><span class="tag due-tag" data-due-short data-dup>{firstSentence(f.deadline)}</span> <span class="muted" data-dup>Filed: {firstSentence(f.filed_where)}</span></span>
+            <span class="form-line"><span class={`tag due-tag${f.deadline === NO_DEADLINE ? ' no-deadline' : ''}`} data-due-short data-dup>{deadlineShort(f.deadline)}</span> <span class="muted" data-dup>Filed: {firstSentence(f.filed_where)}</span></span>
           </summary>
           <div class="body" data-src={src}>
             <dl class="facts" data-form={f.id}>
               <dt>What it pays or does</dt><dd>{f.pays_or_does}</dd>
               <dt>Who files</dt><dd>{f.who_files}</dd>
               <dt>Timing</dt><dd><span data-anchor>{ANCHOR_LABEL[f.anchor]}</span>{EFFECTIVE_ANCHORS.includes(f.anchor) && <> · <a href={EFFECTIVE_HREF} data-effective-link>{EFFECTIVE_LINK_TEXT}</a></>}</dd>
-              <dt>Deadline</dt><dd data-deadline>{f.deadline}</dd>
+              <dt>Deadline</dt><dd data-deadline class={f.deadline === NO_DEADLINE ? 'no-deadline' : undefined}>{deadlineText(f.deadline)}</dd>
               <dt>Where it's filed</dt><dd data-filed>{f.filed_where}</dd>
               {f.attachments.length > 0 && <><dt>What to attach</dt><dd><ul class="plain">{f.attachments.map((x) => <li>{x}</li>)}</ul></dd></>}
               {f.sequence_step.length > 0 && <><dt>Steps</dt><dd><ul class="plain">{f.sequence_step.map((id) => {

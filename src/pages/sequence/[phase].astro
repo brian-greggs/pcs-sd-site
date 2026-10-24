@@ -6,7 +6,7 @@ import Base from '../../layouts/Base.astro';
 import SourceChip from '../../components/SourceChip.astro';
 import SequenceFootnote from '../../components/sequence/SequenceFootnote.astro';
 import StepCard from '../../components/sequence/StepCard.astro';
-import { PHASES, TIMELINE_ID, citeDates, firstSentence, olderDates, stepTitle } from '../../lib/sequence.js';
+import { NO_DEADLINE, PHASES, TIMELINE_ID, citeDates, deadlineShort, olderDates, stepTitle } from '../../lib/sequence.js';
 import { sequenceData } from '../../lib/sequenceData';
 
 export function getStaticPaths() {
@@ -37,7 +37,7 @@ const keys = steps.map((s) => `seq:${s.id}`);
       {steps.map((s) => (
         <li data-timeline-step={s.id} data-src={`seq:${s.id}`}>
           <a href={`#${s.id}`}><span class="tl-n">{s.order}</span><span class="tl-title">{stepTitle(s).title}</span></a>
-          <span class="tag due-tag" data-due-short>{firstSentence(s.deadline)}</span>
+          <span class={`tag due-tag${s.deadline === NO_DEADLINE ? ' no-deadline' : ''}`} data-due-short>{deadlineShort(s.deadline)}</span>
         </li>
       ))}
     </ol>

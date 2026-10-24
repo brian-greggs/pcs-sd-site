@@ -7,7 +7,8 @@
 //   seq-deadlines    every deadline shown (data-deadline) is its row's deadline, word for word, and every timing
 //                    line is the row's anchor; a deadline outside a step or form block fails. A short deadline chip
 //                    (data-due-short: the phase timeline, the forms index) is the first sentence of its row's
-//                    deadline, word for word
+//                    deadline, word for word. A row with no official deadline ("not stated") shows "No set
+//                    deadline" instead, and no deadline, chip or tag on a sequence page shows "not stated"
 //   seq-export also  each phase page opens with its timeline: one entry per step, in order, linking to the step,
 //                    with the step's title (its text, or its first sentence when long)
 //   seq-sources      every step and form block has a date line naming every retrieval date of its sources, and
@@ -36,7 +37,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   PHASES, ANCHOR_LABEL, SEQUENCE_DISCLAIMER, SEQUENCE_FOOTNOTE, DISCLAIMER_HREF, NAVY_RULES_NOTE, MARINE_BASES, citeDates,
-  unconfirmedLine, DLA_STEP, DLA_FORM, dlaLine, usd, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, TIMELINE_ID, firstSentence, stepTitle,
+  unconfirmedLine, DLA_STEP, DLA_FORM, dlaLine, usd, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, TIMELINE_ID, stepTitle, NO_DEADLINE,
+  deadlineText, deadlineShort,
 } from '../src/lib/sequence.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -126,8 +128,8 @@ function check({ pages, steps, forms, weights, dla, effective }) {
     if (!dl) { fail('seq-export', where, `no data-${kind} list in the block`); return; }
     const dls = attr(b.html, 'data-deadline');
     if (dls.length !== 1) fail('seq-deadlines', where, `${dls.length} deadlines in the block (want 1)`);
-    else if (decode(dls[0][2]) !== row.deadline) fail('seq-deadlines', where, `deadline "${decode(dls[0][2])}" isn't the row's "${row.deadline}"`);
-    for (const d of attr(b.html, 'data-due-short')) if (decode(d[2]) !== firstSentence(row.deadline)) fail('seq-deadlines', where, `short deadline "${decode(d[2])}" isn't the first sentence of the row's`);
+    else if (decode(dls[0][2]) !== deadlineText(row.deadline)) fail('seq-deadlines', where, `deadline "${decode(dls[0][2])}" isn't the row's "${deadlineText(row.deadline)}"`);
+    for (const d of attr(b.html, 'data-due-short')) if (decode(d[2]) !== deadlineShort(row.deadline)) fail('seq-deadlines', where, `short deadline "${decode(d[2])}" isn't the first sentence of the row's`);
     const an = attr(b.html, 'data-anchor')[0];
     if (!an || decode(an[2]) !== ANCHOR_LABEL[row.anchor]) fail('seq-deadlines', where, `timing line isn't the row's anchor (${row.anchor})`);
     const asof = attr(b.html, 'data-asof')[0];
@@ -170,7 +172,7 @@ function check({ pages, steps, forms, weights, dla, effective }) {
         const title = li.match(/<span class="tl-title">([\s\S]*?)<\/span>/);
         if (!title || decode(title[1]) !== stepTitle(row).title) fail('seq-export', `${k} timeline`, `${id}: title isn't the step's`);
         const due = attr(li, 'data-due-short');
-        if (due.length !== 1 || decode(due[0][2]) !== firstSentence(row.deadline)) fail('seq-deadlines', `${k} timeline`, `${id}: deadline chip isn't the first sentence of the row's deadline`);
+        if (due.length !== 1 || decode(due[0][2]) !== deadlineShort(row.deadline)) fail('seq-deadlines', `${k} timeline`, `${id}: deadline chip isn't the first sentence of the row's deadline`);
       }
     }
     const got = bs.map((b) => b.id);
@@ -281,6 +283,18 @@ function check({ pages, steps, forms, weights, dla, effective }) {
     }
   }
 
+  // A row with no official deadline shows "No set deadline" (Brian 2026-10-24): no deadline, deadline chip or tag on
+  // a sequence page shows the export's "not stated".
+  for (const k of seqPages) {
+    if (!pages[k]) continue;
+    for (const m of [...attr(pages[k], 'data-deadline'), ...attr(pages[k], 'data-due-short')]) {
+      if (new RegExp(NO_DEADLINE, 'i').test(decode(m[2]))) fail('seq-deadlines', k, `a deadline shows "${decode(m[2])}" (want "${deadlineText(NO_DEADLINE)}")`);
+    }
+    for (const m of pages[k].matchAll(/<(?:span|a)[^>]*class="[^"]*\btag\b[^"]*"[^>]*>([\s\S]*?)<\/(?:span|a)>/g)) {
+      if (new RegExp(NO_DEADLINE, 'i').test(decode(m[1]))) fail('seq-deadlines', k, `a chip shows "${decode(m[1])}"`);
+    }
+  }
+
   // No deadline outside a step or form block, on any page read here.
   for (const [k, html] of Object.entries(pages)) {
     if (!html) continue;
@@ -308,6 +322,9 @@ const PLANTS = {
   'footnote reworded on the forms page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('your command has the final word', 'you decide'); },
   'timeline step dropped': (s) => { const k = 'sequence/orders/index.html'; s.pages[k] = s.pages[k].replace(/<li[^>]*data-timeline-step="orders-sponsor"[\s\S]*?<\/li>/, ''); },
   'timeline deadline reworded': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace(/(<li[^>]*data-timeline-step="arrival-travel-claim"[\s\S]*?data-due-short>)[^<]*/, '$1Within 10 days.'); },
+  'timeline chip shows "not stated"': (s) => { const k = 'sequence/orders/index.html'; s.pages[k] = s.pages[k].replace(/(<li[^>]*data-timeline-step="orders-sponsor"[\s\S]*?data-due-short>)[^<]*/, '$1not stated'); },
+  'card shows "not stated"': (s) => { const k = 'sequence/before-you-go/index.html'; s.pages[k] = s.pages[k].replace(/(<section[^>]*data-fact="pre-schools"[\s\S]*?<span data-deadline[^>]*>)[^<]*/, '$1not stated'); },
+  '"not stated" in a form chip': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('<a class="tag form-tag"', '<span class="tag">Deadline not stated</span><a class="tag form-tag"'); },
   'forms index deadline reworded': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/(<section[^>]*data-fact="navy-hhg-claim"[\s\S]*?data-due-short[^>]*>)[^<]*/, '$1Within a year.'); },
   'USMC row on a page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('</main>', '<a href="#usmc-travel-voucher">x</a></main>'); },
   'wrong DLA figure': (s) => { s.dla.find((r) => r.grade === 'E-5').with_dependents_usd = 3600; },
