@@ -11,31 +11,14 @@ import { search } from './retrieve.js';
 import { SYSTEM_PROMPT, NO_ANSWER, userMessage } from './prompt.js';
 import { isReferral, isDemographic, GUARD_TEXT } from './guards.js';
 import { sectionOf, labelOf, citedOnly } from './cite.js';
+import { cleanContext, householdLine, basePage } from './context.js';
 
 export const MAX_QUESTION = 500;
 
-// Intake context the family can choose to send (base, pay band, kids' age groups, top 2 priorities).
+// The reader's move from the home page's chip (assistant/context.js, v1.1.0): base, pay band and household only.
 // Anything else in the request is dropped; every value must be one the intake offers.
-const BASES = {
-  NBSD: 'Naval Base San Diego', MIRAMAR: 'MCAS Miramar', NASNI: 'NAS North Island', NAB: 'Naval Amphibious Base Coronado',
-  NBPL: 'Naval Base Point Loma', NMCSD: 'Naval Medical Center San Diego', MCRD: 'MCRD San Diego', PENDLETON: 'Camp Pendleton', unsure: 'not sure yet',
-};
-const BANDS = ['E1–E4', 'E5–E6', 'E7–E9', 'W1–W5', 'O1–O3E', 'O1–O3', 'O4–O6'];
-const KID_GROUPS = ['0-2', '3-5', '6-9', '10-13', '14-18'];
-// Q8 labels come with the corpus (scripts/build_corpus.mjs copies src/config/intake/priorities.json
-// into it). Not a JSON import: Node needs `with { type: 'json' }` for one, and the wrangler 3 that
-// Cloudflare Pages uses to compile functions/ can't parse that syntax (LESSONS, session 5c).
-const priorityLabels = (index) => Object.fromEntries((index?.priorities ?? []).map((p) => [p.id, p.label]));
+export { cleanContext, householdLine } from './context.js';
 
-export function cleanContext(raw, PRIORITY = {}) {
-  if (!raw || typeof raw !== 'object') return null;
-  const c = {};
-  if (Object.hasOwn(BASES, raw.base)) c.base = raw.base;
-  if (BANDS.includes(raw.band)) c.band = raw.band;
-  if (Array.isArray(raw.kids)) c.kids = KID_GROUPS.filter((g) => raw.kids.includes(g));
-  if (Array.isArray(raw.priorities)) c.priorities = raw.priorities.filter((p, i, xs) => Object.hasOwn(PRIORITY, p) && xs.indexOf(p) === i).slice(0, 2);
-  return Object.keys(c).length ? c : null;
-}
 // The previous turn (QUESTIONS 54, Brian 2026-10-11): the family's last question and the answer
 // they saw, nothing older. Context for a follow-up ("what about Santee?"), never a source.
 export const MAX_PREVIOUS_ANSWER = 2000;
@@ -44,16 +27,6 @@ export function cleanPrevious(raw) {
   const question = raw.question.replace(/\s+/g, ' ').trim().slice(0, MAX_QUESTION);
   const answer = typeof raw.answer === 'string' ? raw.answer.trim().slice(0, MAX_PREVIOUS_ANSWER) : '';
   return question ? { question, answer } : null;
-}
-
-export function householdLine(c, PRIORITY = {}) {
-  if (!c) return null;
-  return [
-    c.base && `reporting to ${BASES[c.base]}`,
-    c.band && `pay band ${c.band}`,
-    c.kids && (c.kids.length ? `children aged ${c.kids.map((g) => g.replace('-', '–')).join(', ')}` : 'no children'),
-    c.priorities?.length && `top priorities: ${c.priorities.map((p) => PRIORITY[p]).join(', then ')}`,
-  ].filter(Boolean).join('; ');
 }
 
 // Whole sections are sent (every part of a split one), so a citation names the section, not a part,
@@ -66,15 +39,16 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
   const question = typeof body?.question === 'string' ? body.question.replace(/\s+/g, ' ').trim() : '';
   if (!question) return { status: 400, json: { error: 'Ask a question.' } };
   if (question.length > MAX_QUESTION) return { status: 400, json: { error: `Keep it under ${MAX_QUESTION} characters.` } };
-  const labels = priorityLabels(index);
-  const context = cleanContext(body.context, labels);
-  const household = householdLine(context, labels);
+  const context = cleanContext(body.context);
+  const household = householdLine(context);
   const live = Boolean(env.ANTHROPIC_API_KEY && env.ASSISTANT_MODEL);
   const mode = live ? 'live' : 'stub';
   const previous = cleanPrevious(body.previous);
   // Retrieve for the new question, with the previous question's topic words at a low weight (a follow-up
   // such as "what about Santee?" names a place but not the topic). The answer text isn't used for retrieval.
-  const r = search(index, question, undefined, previous?.question ?? '');
+  // The reader's base, when the chip sends it, routes a where-to-live question to that base page; it is never
+  // added to the question's words.
+  const r = search(index, question, undefined, previous?.question ?? '', { basePage: basePage(context) });
   const pointer = r.relevant
     ? { url: nearestChunk(r).url, title: nearestChunk(r).page_title, verified_on: nearestChunk(r).verified_on }
     : { url: r.nearest.url, title: r.nearest.title };

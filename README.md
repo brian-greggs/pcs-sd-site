@@ -3,8 +3,8 @@
 The public site for an unofficial, non-commercial San Diego PCS guide. Static pages built with
 [Astro](https://astro.build); nothing runs on a server. No analytics, no cookies, no third-party
 requests: the fonts (Bricolage Grotesque, DM Sans) are self-hosted from `@fontsource` packages. One page script
-sends anything: the home page's ask box posts the question (with the previous turn, and the starting-plan fields only
-if ticked) to this site's own `/api/ask`. The neighborhood pages' pay band and `?base=` only show or hide text already
+sends anything: the home page's ask box posts the question (with the previous turn, and, while the move chip is on,
+the base, pay band and household from the starting plan) to this site's own `/api/ask`. The neighborhood pages' pay band and `?base=` only show or hide text already
 on the page, and the starting plan (`/plan/`) works out its plan in the browser from data embedded in the page.
 Every page is `noindex` until week 5.
 
@@ -85,7 +85,7 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes (home: only its one POST to `/api/ask`), and every line the rules can print (built across the answer space) has a source and a date, every dollar figure is a BAH line from `bah.json` with its year, MHA and BAH date, and passes the word lists; with no base chosen, the housing allowance section is the one "Pick a base" line, no figures; `page-ratios` recomputes every rent-to-BAH ratio (rent ÷ the duty station's BAH) and checks the export, the pages and the plan against it |
 | `scripts/check_functions.mjs` | Postbuild: the code `functions/` reaches uses no syntax Cloudflare's wrangler 3 can't parse, no JSON or Node built-in imports, no `process.env`; the bundled Function fits the free-plan size limit |
 | `scripts/build_corpus.mjs` | Postbuild: chunks every published page by dated section into `dist/assistant/corpus.json` with BM25 postings (the assistant's only knowledge) |
-| `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, intake context, daily cap) |
+| `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, daily cap), `context.js` (what the home page's move chip may send: base, pay band, household; shared by the page, the server and the checks) |
 | `functions/api/ask.js` | Cloudflare Pages Function at `/api/ask` (same origin). Env: `ANTHROPIC_API_KEY`, `ASSISTANT_MODEL`, optional KV `ASK_LIMITS` and `ASK_DAILY_CAP` |
 | `src/pages/ask.astro`, `public/_redirects` | `/ask/` now redirects to `/` (301 on Cloudflare; a meta refresh elsewhere) |
 | `scripts/check_frontend.mjs` | Postbuild: the start screen has one ask box and no data, then the map and nothing else; the example questions retrieve; every menu link resolves and matches `/browse/`; the site name links home on every page; no page is reachable only from home; the `/ask/` redirect; the plan cards cover every answer field and choice. `--plant all` proves each |

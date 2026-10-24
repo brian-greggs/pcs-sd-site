@@ -360,17 +360,16 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outl
 .start-hero h1 { font-size: 2.2rem; margin: 0 0 0.3rem; }
 .start-sub { font-size: 1.05rem; margin: 0 0 1rem; color: var(--muted); }
 .start.talking .start-hero { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.start-plan { margin: 16px 0 0; }
 
-/* The ask box: textarea and send button side by side, the tools under them. */
+/* The ask box: the textarea, then a bar with the move chip at the left and Ask at the right; the tools under them. */
 .ask-label { display: block; font-weight: 700; margin-bottom: 6px; }
-.ask-field { display: flex; align-items: flex-end; gap: 8px; padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.ask-field { display: flex; flex-direction: column; gap: 4px; padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .ask-field:focus-within { border-color: var(--link); }
 textarea {
   width: 100%; min-height: 88px; padding: 10px 12px; font: inherit;
   color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
 }
-.ask-field textarea { flex: 1; min-width: 0; min-height: var(--touch); max-height: 40vh; padding: 10px 8px; border: 0; resize: none; field-sizing: content; }
+.ask-field textarea { min-width: 0; min-height: var(--touch); max-height: 40vh; padding: 10px 8px; border: 0; resize: none; field-sizing: content; }
 textarea:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 .ask-field textarea:focus-visible { outline: none; }
 .ask-send {
@@ -378,14 +377,51 @@ textarea:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
   color: var(--on-coral); background: var(--coral); border: 1px solid var(--coral); border-radius: 8px; cursor: pointer;
 }
 .ask-send:disabled { cursor: progress; }
+.ask-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+/* The move chip (v1.1.0): "+ Add your move" into the plan, or base · pay band · household with an × and a menu. The
+   summary is cut with an ellipsis when it doesn't fit; the menu and the button's name have it in full. */
+.ctx { position: relative; flex: 1; min-width: 0; display: flex; }
+.ctx-set { display: flex; align-items: center; min-width: 0; max-width: 100%; }
+.ctx-chip {
+  display: inline-flex; align-items: center; min-width: 0; max-width: 100%; min-height: var(--touch); padding: 0 14px;
+  font: inherit; font-size: 0.88rem; line-height: 1.2; color: var(--blue-fg); background: var(--blue-bg);
+  border: 1px solid var(--blue-bg); border-radius: 22px; cursor: pointer; text-decoration: none;
+}
+.ctx-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctx-add { color: var(--link); background: none; border: 1px dashed var(--border); }
+.ctx-set .ctx-chip { border-radius: 22px 0 0 22px; padding-right: 8px; }
+.ctx-set.off .ctx-chip { border-radius: 22px; padding-right: 14px; color: var(--muted); background: none; border: 1px dashed var(--border); }
+.ctx-x {
+  flex: none; width: var(--touch); min-height: var(--touch); padding: 0; font: inherit; font-size: 1.15rem; line-height: 1;
+  color: var(--blue-fg); background: var(--blue-bg); border: 1px solid var(--blue-bg); border-left-color: var(--surface);
+  border-radius: 0 22px 22px 0; cursor: pointer;
+}
+.ctx-chip:focus-visible, .ctx-x:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; position: relative; }
+.ctx-menu {
+  position: absolute; left: 0; top: calc(100% + 6px); z-index: 30; width: max-content; min-width: 220px;
+  max-width: min(320px, calc(100vw - 32px)); padding: 8px 0; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+/* In a conversation the box sits at the bottom of the screen, so the menu opens upward. */
+.start.talking .ctx-menu { top: auto; bottom: calc(100% + 6px); }
+.ctx-menu-head { margin: 0; padding: 4px 14px 8px; font-size: 0.85rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+.ctx-menu ul { list-style: none; margin: 0; padding: 0; }
+.ctx-menu :is(a, button) {
+  display: flex; align-items: center; width: 100%; min-height: var(--touch); padding: 0 14px; font: inherit; font-size: 0.95rem;
+  color: var(--text); background: none; border: 0; text-align: left; text-decoration: none; cursor: pointer;
+}
+.ctx-menu :is(a, button):hover { background: var(--surface); }
+.ctx-menu :is(a, button):focus-visible { outline: 2px solid var(--link); outline-offset: -2px; }
 .ask-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; margin-top: 4px; font-size: 0.9rem; }
-.ask-context { display: inline-flex; align-items: center; gap: 8px; min-height: var(--touch); color: var(--text); cursor: pointer; }
-.ask-context input { accent-color: var(--coral); width: 18px; height: 18px; margin: 0; }
 .ask-link { display: inline-flex; align-items: center; min-height: var(--touch); padding: 0; font: inherit; color: var(--link); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .ask-tools .ask-link:first-of-type { margin-left: auto; }
 .ask-sent { margin: 4px 0 8px; padding: 10px 14px; font-size: 0.9rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
 .ask-sent p { margin: 0 0 6px; }
 .ask-sent p:last-child { margin-bottom: 0; }
+.ask-sent-fields { margin: 0 0 6px; padding-left: 1.1rem; }
+.ask-sent-fields li { margin: 2px 0; color: var(--text); }
+.ask-sent-fields strong { font-weight: 700; }
 .ask-pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; max-height: 24rem; overflow-y: auto; }
 
 /* Example questions and follow-ups: tappable chips that ask straight away. */

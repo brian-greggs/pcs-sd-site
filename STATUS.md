@@ -1,4 +1,76 @@
-# Site build — status (2026-10-24, session 14b: layout fixes on the ask-first front end; v1.0.0)
+# Site build — status (2026-10-24, session 15b: the move chip on home; v1.1.0)
+
+## Session 15b: Brian's changes to the chip (2026-10-24), same branch
+
+Brian approved the wording with five changes, all built:
+
+- **Home footer** is back to "Every answer cites its official source and date. No ads, no referrals. This site stores nothing you type." The chip is explained in "What's sent?" only.
+- **Plan page note:** "Your answers stay in this browser. If you ask a question on the home page, your base, pay grade and household go with it. Nothing else is sent, logged or put in a link." No "Rules v0.9." (the plan's own head still names the rules version). Card 1's Next ends at 803 px at 390 × 844, the same as before this branch, so no tightening was needed.
+- **× is stored.** The off switch is `chip_off: true` in the same `pcs-sd:intake` entry as the answers. A reload keeps it off, and saving answers on `/plan/` keeps it (`save()` carries it over). Clearing the answers, on the chip or on the plan, drops it. "Send it with my questions" removes it. Another tab's change updates the chip. The menu heading when off reads "Not sent with your questions: …".
+- **"What's sent?" labels:** Your question, Previous turn, Base, Pay grade, Spouse or partner, Children's age groups (values in words: "Naval Base San Diego", "yes", "6–9, 10–13 (not how many)"). The raw JSON under the list is unchanged. Each line carries `data-field` for the checks.
+- **Example questions:** "How long is the base housing wait at Murphy Canyon?" stays. The corpus has the wait times: the Murphy Canyon Wait times section is the top section retrieved (score 29.98) and carries CNRSW's October 2026 list row by row (enlisted 2, 3 and 4 bedrooms 1–3 months, 5 bedrooms 16–18 months; officers 3–7 months), verified 2026-09-30. Eval in-01 checks the 3-bedroom row. Nothing to replace.
+
+**Checks.** `ask-body` now also asks after × and a reload, and after × and an edit on `/plan/` (no context both times). It asks after turning the chip back on and reloading (context back). It reads the plain labels for each listed field. New browser plant `off-not-kept` (the stored switch never written): caught. Browser plants 4 of 4.
+
+**Runs on 2026-10-24:**
+- Build and static checks:
+  - full build: 58 PASS lines, no FAIL; corpus byte-identical to 5df2e70's
+  - front end plants: 28 of 28
+  - intake-network plants: 4 of 4
+  - dated plants: 16 of 16
+- Browser checks: all 12 groups pass; browser plants 4 of 4.
+- Layout: clean on 83 pages at 390/768/1280/1440.
+- Retrieval eval:
+  - unchanged from session 15: the 53 existing rows identical; expected fact 47 of 48 (in-16 only); page 48 of 48; section 42 of 42
+  - every self-test passes
+- **Live eval of the six context cases (ctx-01 to ctx-06) is still pending.** It will run locally after merge (no key here).
+
+**Phone screens** (390 × 844):
+
+| Screen | Before (5df2e70) | Now |
+|---|---|---|
+| Home, empty chip | 1.80 (box ends 353 px, map at 780) | 1.70 (box ends 401, chips 677, map at 693) |
+| Home, chip set | — | 1.70 |
+| Home, "What's sent?" open, chip set | — | 2.52 |
+| Home with an answer (the BAH example) | 1.89 | 1.95 |
+| Plan card 1 | 1.22 (Next ends 803 px) | 1.22 (Next ends 803 px) |
+
+## Session 15: the move chip (2026-10-24), branch `claude/peaceful-ptolemy-jhan3a`, not merged
+
+Brian's brief: an intake context selector on home. Data, rules (v0.9), facts, deadlines, sources and the corpus are unchanged (`dist/assistant/corpus.json` is byte-identical to a build of 5df2e70).
+
+**The chip.** Bottom left of the ask box, under the textarea, with Ask at the right (`.ask-bar` in `src/pages/index.astro`). No starting-plan answers in this browser: "+ Add your move", a link to `/plan/`. With answers: base · pay band · household ("NBSD · E5–E6 · spouse, kids 6–9, 10–13"), cut with an ellipsis when it doesn't fit; the full words are in the button's name ("Your move, sent with your questions: …") and at the top of its menu. The chip is a button (`aria-expanded`, `aria-controls`) opening a menu: See your plan (`/plan/`), Edit answers (`/plan/#edit`, which opens card 1 with the answers filled in) and Clear (removes `pcs-sd:intake` from this browser; the chip goes back to "+ Add your move" and takes focus). Enter or a tap opens it; Tab walks it; Escape closes it and returns focus to the chip; a click or focus outside closes it. In a conversation it opens upward. The × (labeled "Don't send your move with the next question") turns it off for this visit: the chip reads "Your move: off", the menu gains "Send it with my questions". The "Not sure what to ask?" card is gone; the map follows the example chips. `/plan/` is still in the menu, the sidebar and `/browse/`, and on the chip. The "Include my starting-plan answers" checkbox is gone; "Ask about this plan" still lands on home with the box focused, the chip set.
+
+**What's sent.** `assistant/context.js` is the one allow list, used by the page, the server and the checks: `context` is a separate field of the request body, never in the question, with only `base` (a base code or `unsure`), `band` (one of the 7), and, once question 4 is answered, `partner` (true/false) and `kids` (the age groups that have any child; no counts). Never the timeline, bedrooms, pets, "open to" or priorities (priorities went before, when ticked: QUESTIONS 78). The server's `cleanContext` drops every other field and value. The body is `{question, previous?, context?}` and nothing else. "What's sent?" lists each field that will go (`question`, `previous`, `context.base` …) with its value, a line on what stays in this browser, and the exact JSON.
+
+**The model.** The prompt's household line is now "Household details from the family's starting plan (for relevance only, not a source): reporting to …; pay band …; spouse or partner; children aged …", its own block before the question. Rules line: use them for relevance only; they are not a source, never state a fact the sections don't support; when the answer doesn't depend on them, say so in a few words; never repeat them back as a profile.
+
+**One retrieval change.** With a base on the chip, a where-to-live question ("Where should we look to live?", `isWhereToLive` in `assistant/retrieve.js`) that names no page gets that base page's "Under 30 min", "30–44 min" and BAH table ahead of BM25's picks (like the sequence-start route). Without it, "where should we look" sends Orders step 1 and `/sources/` for every base, or nothing. The base never joins the question's words. QUESTIONS 80.
+
+**Copy (shown to Brian before committing).** Plan page note, home footer line, the plan page's no-JavaScript notice, "What's sent?" and the changelog entry; see QUESTIONS 81 for the sentence dropped from the plan note.
+
+**Checks.**
+- `check_frontend.mjs`: `home-layout` now wants the example chips last before the map and no "Not sure what to ask?"; new `home-chip` (bar order, the empty link, the menu button and its three items, the labeled ×, no old checkbox) and `ask-context` (960 answer sets: only the four fields, allowed values, age groups not counts, household only with question 4; the server would send each unchanged; "What's sent?" names match; the body has only question/previous/context; the server drops MOS, a name, timeline and priorities from a request and keeps the context out of the question; the rules line). `--plant all` 28 of 28 (8 new: card back, chip at the right, empty chip not to /plan/, no Edit answers, unlabeled ×, chip sends the timeline, chip sends kid counts, body with an extra field, server keeping unknown fields).
+- `check_frontend_browser.mjs`: new `chip` (empty and set at 390 px, placement, name, keyboard menu, Escape, outside click, the menu in a conversation, Edit answers → card 1, ×, Clear, the longest summary cut inside the box), `ask-body` (every request across six questions: one POST to /api/ask each and nothing else; body fields and values; context equal to the chip's, none with no answers, none for two questions after ×, back after "Send it with my questions"; "What's sent?" lists exactly what then goes and its JSON is the body), `plan-network` (/plan/ from load through all eight cards, the plan, Edit and Clear: only its own static files, none after load). `home` measures the map against the example chips. `--plant extra-field|context-after-x|plan-post|all` rewrites the built JavaScript as served, so the fault is in the page's own code (each edit must land): 3 of 3 caught.
+- `intake-network` unchanged: plants 4 of 4.
+- `eval_assistant.mjs`: six context cases. ctx-01 to ctx-04: "Where should we look to live?" under NBSD and Camp Pendleton × E5–E6 and O4–O6 (expect the base page's Under 30 min section, the band's BAH row in the sections sent; live: a neighborhood from that group, `band_row`). ctx-05/06: "How do I file my PCS travel claim?" under two contexts (`context_free`: the same sections as without; live: `says_independent`). New self-tests: the where-to-live route (8 cases), 7 rule cases, every chip base's page and routed sections in the corpus.
+
+**Runs on 2026-10-24:** full build, 58 PASS lines, no FAIL (56 before, plus `home-chip` and `ask-context`); front end plants 28 of 28; intake-network plants 4 of 4; dated plants 16 of 16; browser checks all 12 groups pass; browser plants 3 of 3; layout clean on 83 pages at 390/768/1280/1440. Retrieval eval: the 53 existing rows identical to 5df2e70's; with the six new, expected fact 47 of 48 (in-16 only, as before), expected page in the sections sent 48 of 48, section 42 of 42; all self-tests pass; go-live gate as before (out-01 and out-04 declined by retrieval). Sequence and map plants not re-run (no code they read changed). **Live eval not run** (no key here; pages.dev blocked), so the new cases' live rules are untested against the model.
+
+**Phone screens** (390 × 844; "before" is a build of 5df2e70):
+
+| Screen | Before | Now |
+|---|---|---|
+| Home, empty chip | 1.80 (box ends 353 px, chips 629, map 780) | 1.78 (box ends 401, chips 677, map 693) |
+| Home, chip set | — | 1.78 (same as empty) |
+| Home, chip menu open | — | 1.78 (the menu overlays the chips) |
+| Home, "What's sent?" open, chip set | — | 2.62 |
+| Home with an answer (the BAH example) | 1.89 | 2.03 (the follow-up box is 48 px taller with the chip's row; it stays on screen, sticky) |
+| Plan card 1 | 1.22 (Next ends 803 px) | 1.24 (Next ends 824 px) |
+
+Screenshots in `.review/chip/` (gitignored), before and after at 390 and 1280.
+
+**Open:** none; QUESTIONS 77–85 answered 2026-10-24 (session 15b).
 
 ## Session 14b: layout fixes (2026-10-24), same branch, not merged
 
