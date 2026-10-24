@@ -20,6 +20,8 @@ h3 { font-size: 1.02rem; font-weight: 600; margin: 1rem 0 0.4rem; }
 strong, b { font-weight: 700; }
 
 /* --- Header and footer ---------------------------------------------------- */
+.skip { position: absolute; left: 8px; top: -60px; z-index: 30; padding: 10px 14px; background: var(--surface); color: var(--link); border: 1px solid var(--link); border-radius: 8px; }
+.skip:focus { top: 8px; }
 .stripe { display: grid; grid-template-columns: repeat(4, 1fr); height: 6px; }
 .stripe span:nth-child(1) { background: var(--stripe-1); }
 .stripe span:nth-child(2) { background: var(--stripe-2); }
@@ -31,6 +33,46 @@ strong, b { font-weight: 700; }
   font-family: var(--font-head); font-weight: 700; text-decoration: none;
 }
 .site-name { color: var(--text); font-size: 1.05rem; }
+.bar-start { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.menu-btn {
+  display: inline-flex; align-items: center; gap: 8px; min-width: var(--touch); min-height: var(--touch); margin-left: -10px; padding: 0 10px;
+  color: var(--text); text-decoration: none; font-weight: 500; font-size: 0.95rem; border-radius: 8px; cursor: pointer;
+}
+.menu-btn:hover { background: var(--surface); }
+.menu-btn:focus-visible { outline: 2px solid var(--link); outline-offset: 0; }
+.menu-icon { display: inline-grid; gap: 4px; width: 18px; }
+.menu-icon span { display: block; height: 2px; border-radius: 1px; background: var(--text); }
+.menu-word { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* The menu (src/layouts/Base.astro). Without JavaScript it never shows: the button is a link to /browse/. On a phone
+   it's a drawer over the page; from 1024 px a sidebar, collapsible, that the page makes room for. */
+.drawer { display: none; }
+html.js.menu-open .drawer { display: block; position: fixed; inset: 0; z-index: 20; }
+.drawer-scrim { position: absolute; inset: 0; background: var(--scrim); }
+.drawer-panel {
+  position: absolute; top: 0; bottom: 0; left: 0; width: min(86vw, 340px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 6px 16px 24px; background: var(--bg); border-right: 1px solid var(--border);
+}
+.drawer-head { display: flex; align-items: center; justify-content: space-between; min-height: 56px; }
+.drawer-title { margin: 0; font-family: var(--font-head); font-weight: 700; font-size: 1.05rem; }
+.drawer-close { display: inline-flex; align-items: center; justify-content: center; width: var(--touch); height: var(--touch); margin-right: -8px; font: inherit; font-size: 1.6rem; line-height: 1; color: var(--text); background: none; border: 0; border-radius: 8px; cursor: pointer; }
+.drawer-close:hover { background: var(--surface); }
+.menu-links a { display: flex; align-items: center; min-height: var(--touch); padding: 0 10px; margin: 0 -10px; color: var(--text); text-decoration: none; border-radius: 8px; }
+.menu-links a:hover { background: var(--surface); color: var(--link); }
+.menu-links a[aria-current="page"] { color: var(--link); font-weight: 700; }
+.menu-links .menu-ask { font-family: var(--font-head); font-weight: 700; color: var(--link); }
+.menu-group { margin-top: 12px; }
+.menu-group-title { margin: 0 0 2px; font-family: var(--font-body); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.menu-group ul { list-style: none; margin: 0; padding: 0; }
+.browse-page .menu-links { max-width: 480px; }
+.browse-page .menu-group-title { margin-top: 1.2rem; }
+@media (min-width: 1024px) {
+  html.js:not(.sidebar-collapsed) .drawer { display: block; position: fixed; top: 0; bottom: 0; left: 0; z-index: 10; width: var(--sidebar); }
+  html.js:not(.sidebar-collapsed) .drawer-scrim { display: none; }
+  html.js:not(.sidebar-collapsed) .drawer-panel { width: var(--sidebar); }
+  html.js:not(.sidebar-collapsed) body { padding-left: var(--sidebar); }
+  html.js:not(.sidebar-collapsed) .bar .menu-btn { visibility: hidden; }
+}
 .back { color: var(--link); font-size: 1rem; }
 .beta {
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: var(--gold-fg);
@@ -250,9 +292,40 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outl
 .line-source { font-size: 0.82rem; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
 .plan-card { margin: 0 0 12px; }
 
+/* Cards: one question per screen (with JavaScript; v1.0.0). Big tap targets, progress, Back and Next. */
+.carded .q { display: none; }
+.carded .q.current { display: block; }
+.carded .q:focus { outline: none; }
+.carded .q:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.carded .q legend { font-size: 1.25rem; line-height: 1.25; padding: 0; margin-bottom: 4px; }
+.carded .q { padding: 14px 16px 16px; }
+.carded .opts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.carded .opt { min-height: 46px; padding: 0 14px; font-size: 1.02rem; }
+.carded .opt input[type="radio"], .carded .opt input[type="checkbox"] { width: 20px; height: 20px; flex: none; }
+.carded .count-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 8px; }
+.carded .count { min-height: 50px; }
+.carded .pick-row { display: none; }
+.plan-cards .intro, .plan-cards .eyebrow { display: none; } /* the plan's own head repeats "v0, rules under test" */
+.plan-cards h1 { font-size: 1.4rem; margin-top: 0.6rem; }
+.plan-cards .note { font-size: 0.85rem; margin: 0.4rem 0; }
+.card-top { margin: 4px 0 8px; }
+.card-progress { margin: 0 0 6px; font-size: 0.9rem; font-weight: 700; color: var(--muted); }
+.progress-track { height: 6px; border-radius: 3px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; }
+.progress-fill { display: block; height: 100%; width: 0; background: var(--coral); }
+.card-nav { display: flex; gap: 8px; margin: 12px 0; }
+.card-nav .btn { min-width: 6.5rem; min-height: 50px; }
+.card-nav [data-card-next] { margin-left: auto; }
+.carded [data-form-actions] { justify-content: flex-end; }
+.carded [data-form-actions] [data-show-plan] { min-height: 50px; order: 2; }
+.pick-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.carded .pick-opt { min-height: 44px; }
+.pick-opt { justify-content: space-between; gap: 6px; width: 100%; padding: 6px 12px; font: inherit; font-size: 0.98rem; line-height: 1.25; color: var(--text); text-align: left; }
+.pick-opt[aria-pressed="true"] { border-color: var(--link); background: var(--mauve-bg); }
+.pick-rank { flex: none; font-size: 0.8rem; font-weight: 700; color: var(--mauve-fg); }
+
 @media print {
-  body { background: var(--paper); color: var(--ink); font-size: 11pt; }
-  .stripe, .bar, .site-footer nav, .toc, [data-print-hide], [data-intake], .intro, noscript { display: none !important; }
+  body { background: var(--paper); color: var(--ink); font-size: 11pt; padding-left: 0 !important; }
+  .stripe, .bar, .site-footer nav, .toc, [data-print-hide], [data-intake], .intro, noscript, .drawer, .skip { display: none !important; }
   main, .site-footer { max-width: none; padding: 0; }
   a { color: var(--ink); }
   .note, .muted, .hint, .line-source, .asof, .eyebrow, .site-footer, .ext small.incentive { color: var(--ink-muted); }
@@ -264,24 +337,78 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outl
   .plan-lines .ext a::after { content: " <" attr(href) ">"; overflow-wrap: anywhere; }
 }
 
-/* --- Assistant (/ask/, not linked) ------------------------------------------ */
-.ask-log { list-style: none; margin: 0; padding: 0; }
-.ask-turn { margin: 12px 0; }
-.ask-you { margin: 0 0 6px; padding: 10px 14px; border-radius: var(--radius); background: var(--mauve-bg); color: var(--text); }
-.ask-answer { padding: 10px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-.ask-text { margin: 0.4rem 0; }
-.ask-text :is(p, ul, ol) { margin: 0.4rem 0; }
-.ask-text :is(ul, ol) { padding-left: 1.3rem; }
-.ask-box { margin-top: 16px; }
+/* --- Home: ask first (v1.0.0) ---------------------------------------------------
+   The start screen fills the first screen (header 62 px: the 6 px stripe and the 56 px bar), so the bases, the map and
+   the rest begin below the fold; once a question is asked it shrinks to the conversation. */
+.start { display: flex; flex-direction: column; justify-content: center; min-height: calc(100vh - 62px); min-height: calc(100svh - 62px); padding: 8px 0 20px; }
+@media (min-width: 720px) { .start { max-width: 760px; } }
+.start.talking { justify-content: flex-start; min-height: 0; padding-top: 0; }
+.start-hero h1 { font-size: 2.2rem; margin: 0 0 0.3rem; }
+.start-sub { font-size: 1.05rem; margin: 0 0 1rem; color: var(--muted); }
+.start.talking .start-hero { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.start-plan { margin: 16px 0 0; }
+.start-trust { margin: 14px 0 0; font-size: 0.85rem; line-height: 1.4; color: var(--muted); }
+.below-fold { padding-top: 8px; }
+.below-fold > .section-title:first-child { margin-top: 0.4rem; }
+
+/* The ask box: textarea and send button side by side, the tools under them. */
 .ask-label { display: block; font-weight: 700; margin-bottom: 6px; }
+.ask-field { display: flex; align-items: flex-end; gap: 8px; padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.ask-field:focus-within { border-color: var(--link); }
 textarea {
   width: 100%; min-height: 88px; padding: 10px 12px; font: inherit;
   color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
 }
+.ask-field textarea { flex: 1; min-width: 0; min-height: var(--touch); max-height: 40vh; padding: 10px 8px; border: 0; resize: none; field-sizing: content; }
 textarea:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
-.ask-context { margin-top: 8px; }
+.ask-field textarea:focus-visible { outline: none; }
+.ask-send {
+  flex: none; min-width: var(--touch); min-height: var(--touch); padding: 0 16px; font: inherit; font-weight: 700;
+  color: var(--on-coral); background: var(--coral); border: 1px solid var(--coral); border-radius: 8px; cursor: pointer;
+}
+.ask-send:disabled { cursor: progress; }
+.ask-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; margin-top: 4px; font-size: 0.9rem; }
+.ask-context { display: inline-flex; align-items: center; gap: 8px; min-height: var(--touch); color: var(--text); cursor: pointer; }
+.ask-context input { accent-color: var(--coral); width: 18px; height: 18px; margin: 0; }
+.ask-link { display: inline-flex; align-items: center; min-height: var(--touch); padding: 0; font: inherit; color: var(--link); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.ask-tools .ask-link:first-of-type { margin-left: auto; }
+.ask-sent { margin: 4px 0 8px; padding: 10px 14px; font-size: 0.9rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+.ask-sent p { margin: 0 0 6px; }
+.ask-sent p:last-child { margin-bottom: 0; }
 .ask-pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; max-height: 24rem; overflow-y: auto; }
+
+/* Example questions and follow-ups: tappable chips that ask straight away. */
+.ask-examples { margin-top: 14px; }
+.ask-examples-title { margin: 0 0 6px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.ask-examples ul, .ask-next ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.ask-chip {
+  display: inline-flex; align-items: center; min-height: var(--touch); padding: 8px 14px; text-align: left;
+  font: inherit; font-size: 0.92rem; line-height: 1.3; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 22px; cursor: pointer;
+}
+.ask-chip:hover { border-color: var(--link); }
+.ask-chip-small { font-size: 0.86rem; }
+.ask-next { margin-top: 12px; }
+
+/* The conversation. */
+.ask-log { list-style: none; margin: 0; padding: 0; }
+.ask-turn { margin: 12px 0 18px; scroll-margin-top: 12px; }
+.ask-you { margin: 0 0 8px auto; max-width: 85%; width: fit-content; padding: 10px 14px; border-radius: var(--radius) var(--radius) 4px var(--radius); background: var(--mauve-bg); color: var(--text); overflow-wrap: anywhere; }
+.ask-answer { padding: 4px 0; }
+.ask-text { margin: 0.2rem 0 0.4rem; }
+.ask-text :is(p, ul, ol) { margin: 0.5rem 0; }
+.ask-text :is(ul, ol) { padding-left: 1.3rem; }
+.ask-checking { margin: 0.4rem 0; color: var(--muted); }
+.ask-checking::after { content: ""; display: inline-block; width: 1.2em; text-align: left; animation: ask-dots 1.2s steps(4) infinite; }
+@keyframes ask-dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+@media (prefers-reduced-motion: reduce) { .ask-checking::after { animation: none; } }
+.ask-src { margin: 6px 0 0; }
+.ask-src-list { list-style: none; margin: 0; padding: 0; }
+.ask-src-list li { margin: 4px 0; }
+.ask-related { margin-top: 10px; min-height: 56px; }
+.card-eyebrow { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .ask-stub summary { cursor: pointer; color: var(--link); min-height: var(--touch); display: flex; align-items: center; }
+.start.talking .ask-box { position: sticky; bottom: 0; padding: 8px 0 10px; background: var(--bg); }
 
 /* BAH lines (src/components/BahLines.astro): label, then one line per grade */
 .bah-label { font-weight: 700; margin: 0.6rem 0 0.2rem; }

@@ -1,0 +1,22 @@
+---
+// The menu's links (src/lib/menu.ts), grouped, with "Ask a question" (home) first. In the drawer the group names
+// are plain text (the drawer sits before each page's h1); on /browse/ they're headings.
+import { MENU } from '../lib/menu';
+interface Props { heading?: 'h2' | 'p'; idPrefix?: string }
+const { heading = 'p', idPrefix = 'menu' } = Astro.props;
+const H = heading;
+const here = Astro.url.pathname;
+const current = (href: string) => (href === here ? 'page' : undefined);
+---
+
+<div class="menu-links" data-menu-links>
+  <a class="menu-ask" href="/" aria-current={current('/')}>Ask a question</a>
+  {MENU.map((g) => (
+    <div class="menu-group">
+      <H class="menu-group-title" id={`${idPrefix}-${g.id}`}>{g.label}</H>
+      <ul aria-labelledby={`${idPrefix}-${g.id}`}>
+        {g.links.map((l) => <li><a href={l.href} aria-current={current(l.href)}>{l.text}</a></li>)}
+      </ul>
+    </div>
+  ))}
+</div>

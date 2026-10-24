@@ -1,4 +1,4 @@
-// The part of Markdown an answer may use, as plain data for /ask/ to render (src/pages/ask.astro):
+// The part of Markdown an answer may use, as plain data for the home page's conversation to render (src/pages/index.astro):
 // paragraphs, "- " and "1. " lists, **bold**, and [text](/site/path) links. Everything else is text:
 // a heading's #s, *italics* and `code` marks are dropped, and a link off the site keeps only its
 // words. The page builds the DOM from this with createElement and textContent, never innerHTML.

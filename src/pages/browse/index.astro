@@ -1,0 +1,12 @@
+---
+// The menu as a plain page: where the menu button goes without JavaScript. Same links as the drawer.
+import Base from '../../layouts/Base.astro';
+import MenuLinks from '../../components/MenuLinks.astro';
+---
+
+<Base title="Browse" back={{ href: '/', label: 'Home' }} description="Every part of the guide: the eight bases, neighborhoods, base housing, the move sequence, forms, the starting plan and the sources.">
+  <h1>Browse the guide</h1>
+  <div class="browse-page">
+    <MenuLinks heading="h2" idPrefix="browse" />
+  </div>
+</Base>

@@ -1,53 +1,347 @@
 ---
-// Home: base first. A family picks where they're reporting; the base page sorts
-// neighborhoods and base housing by the 0700 drive. Or they browse everything.
+// Home: ask first (v1.0.0). The first screen is the ask box and nothing else: one line, a sub line, the box,
+// example questions, a way into the starting plan and one line on where answers come from. The conversation
+// happens here (it replaced /ask/). Below the fold: the bases, the map, the plan and sequence, and the two indexes,
+// as before.
+//
+// Questions go to /api/ask on this site (functions/api/ask.js), which answers only from this site's pages. The
+// conversation lives in this page's memory: no localStorage, no cookies; reload and it's gone. With each question
+// go the previous turn (last question and answer, nothing older) and, only if the reader turns it on, four
+// starting-plan fields; "What's sent?" shows exactly that before it's sent. scripts/check_intake.mjs allows this
+// page one network call, that POST, and nothing else (intake-network).
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { BASES } from '../lib/bases';
 import { baseHousingAreas } from '../lib/baseHousing';
 import SiteMap from '../components/SiteMap.astro';
+import { EXAMPLE_QUESTIONS } from '../lib/examples';
 
 const communities = await getCollection('communities');
 const { areas } = await baseHousingAreas();
 const areaPages = areas.filter((a) => a.has_page).length;
 ---
 
-<Base title="Home">
-  <h1>Orders to San Diego? Start with your base.</h1>
-  <p class="intro">Pick where you're reporting. We'll sort neighborhoods and base housing by the drive at 0700.</p>
+<Base title="Home" description="Ask about moving to San Diego on military orders. Every answer cites its official source and date.">
+  <section class="start" data-start aria-labelledby="start-title">
+    <div class="start-hero" data-hero>
+      <h1 id="start-title">Orders to San Diego?</h1>
+      <p class="start-sub">Ask about housing, BAH, schools, the commute or the paperwork. Answers come only from this guide’s dated pages.</p>
+    </div>
 
-  <ul class="cards cards-bases">
-    {BASES.map((b) => (
+    <noscript><p class="gap">The assistant needs JavaScript. Everything it knows is on the pages: <a href="/browse/">browse the guide</a>.</p></noscript>
+
+    <div class="ask" data-ask hidden>
+      <ol class="ask-log" data-log aria-label="Conversation"></ol>
+      <p class="vh" role="status" data-status></p>
+
+      <div class="ask-box" data-box>
+        <label class="ask-label" for="ask-q" data-ask-label>Ask a question</label>
+        <div class="ask-field">
+          <textarea id="ask-q" rows="2" maxlength="500" data-q aria-describedby="ask-hint"></textarea>
+          <button type="button" class="ask-send" data-send>Ask</button>
+        </div>
+        <p class="vh" id="ask-hint">Enter sends; Shift and Enter starts a new line.</p>
+        <div class="ask-tools">
+          <label class="ask-context" data-context-wrap hidden>
+            <input type="checkbox" data-context /> Include my starting-plan answers
+          </label>
+          <button type="button" class="ask-link" data-whats-sent aria-expanded="false" aria-controls="ask-sent">What’s sent?</button>
+          <button type="button" class="ask-link" data-clear-log hidden>New conversation</button>
+        </div>
+        <div class="ask-sent" id="ask-sent" data-sent-panel hidden>
+          <p>Your question goes to an AI model, which answers only from this guide’s pages. This site doesn’t store it. Don’t type names, addresses or anything personal.</p>
+          <p data-sent-none>Nothing else goes with your next question.</p>
+          <div data-sent-some hidden>
+            <p>Besides your question, this is exactly what goes with it:</p>
+            <pre class="ask-pre" data-context-json></pre>
+          </div>
+          <p data-previous-note hidden>Your last question and the answer you saw go along so a follow-up makes sense. Nothing older is sent. Start a new conversation to send none.</p>
+          <p data-context-none hidden>No starting-plan answers on this device. <a href="/plan/">Answer the eight questions</a> if you want answers fitted to your household.</p>
+        </div>
+        <p class="gap" data-error role="alert" hidden></p>
+      </div>
+
+      <div class="ask-examples" data-examples>
+        <p class="ask-examples-title" id="examples-title">Try one</p>
+        <ul aria-labelledby="examples-title">
+          {EXAMPLE_QUESTIONS.map((q) => <li><button type="button" class="ask-chip" data-example>{q.text}</button></li>)}
+        </ul>
+      </div>
+    </div>
+
+    <a class="card start-plan" href="/plan/" data-plan-cta>
+      <span><span class="card-name">Not sure what to ask?</span><span class="card-sub">A few quick questions about your household give you a starting plan: what matters, what to skip, where to look first.</span></span>
+      <span class="arrow" aria-hidden="true">›</span>
+    </a>
+
+    <p class="start-trust" data-trust>Every answer cites its official source and date. No ads, no referrals. This site stores nothing you type.</p>
+  </section>
+
+  <div class="below-fold" data-below>
+    <h2 class="section-title">Or start with your base</h2>
+    <p class="intro">Pick where you’re reporting. We’ll sort neighborhoods and base housing by the drive at 0700.</p>
+
+    <ul class="cards cards-bases">
+      {BASES.map((b) => (
+        <li>
+          <a class="card" href={`/base/${b.slug}/`}>
+            <span><span class="card-name">{b.short}</span><span class="card-sub">{b.location}</span></span>
+            <span class="arrow" aria-hidden="true">›</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <SiteMap kind="overview" />
+
+    <h2 class="section-title">Then get a starting plan</h2>
+    <ul class="cards">
       <li>
-        <a class="card" href={`/base/${b.slug}/`}>
-          <span><span class="card-name">{b.short}</span><span class="card-sub">{b.location}</span></span>
+        <a class="card" href="/plan/">
+          <span><span class="card-name">Eight questions, about a minute</span><span class="card-sub">What matters most for your household, what to skip, and where to look first. Works before you know your base. Your answers stay on this device.</span></span>
           <span class="arrow" aria-hidden="true">›</span>
         </a>
       </li>
-    ))}
-  </ul>
+      <li>
+        <a class="card" href="/sequence/">
+          <span><span class="card-name">The move sequence</span><span class="card-sub">Orders to your first 30 days, in order, with deadlines, forms and the official pages behind them.</span></span>
+          <span class="arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+    </ul>
 
-  <SiteMap kind="overview" />
-
-  <h2 class="section-title">Then get a starting plan</h2>
-  <ul class="cards">
-    <li>
-      <a class="card" href="/plan/">
-        <span><span class="card-name">Eight questions, about a minute</span><span class="card-sub">What matters most for your household, what to skip, and where to look first. Works before you know your base. Your answers stay on this device.</span></span>
-        <span class="arrow" aria-hidden="true">›</span>
-      </a>
-    </li>
-    <li>
-      <a class="card" href="/sequence/">
-        <span><span class="card-name">The move sequence</span><span class="card-sub">Orders to your first 30 days, in order, with deadlines, forms and the official pages behind them.</span></span>
-        <span class="arrow" aria-hidden="true">›</span>
-      </a>
-    </li>
-  </ul>
-
-  <h2 class="section-title">Or just browse</h2>
-  <div class="browse">
-    <a class="blue" href="/neighborhoods/"><span class="count">{communities.length}</span><span class="label">Neighborhoods</span></a>
-    <a class="mauve" href="/base-housing/"><span class="count">{areaPages}</span><span class="label">Base housing</span></a>
+    <h2 class="section-title">Or just browse</h2>
+    <div class="browse">
+      <a class="blue" href="/neighborhoods/"><span class="count">{communities.length}</span><span class="label">Neighborhoods</span></a>
+      <a class="mauve" href="/base-housing/"><span class="count">{areaPages}</span><span class="label">Base housing</span></a>
+    </div>
   </div>
 </Base>
+
+<script>
+  import { parseAnswer } from '../../assistant/format.js';
+  import { latestDate, relatedPage, followUps } from '../lib/askView.js';
+
+  const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
+  const start = $('[data-start]');
+  const root = $('[data-ask]');
+  const log = $('[data-log]');
+  const status = $('[data-status]');
+  const q = $<HTMLTextAreaElement>('[data-q]');
+  const sendBtn = $<HTMLButtonElement>('[data-send]');
+  const toggle = $<HTMLInputElement>('[data-context]');
+  const contextWrap = $('[data-context-wrap]');
+  const sentBtn = $<HTMLButtonElement>('[data-whats-sent]');
+  const sentPanel = $('[data-sent-panel]');
+  const clearBtn = $<HTMLButtonElement>('[data-clear-log]');
+  const errorBox = $('[data-error]');
+  const label = $('[data-ask-label]');
+  root.hidden = false;
+
+  // Starting-plan answers: read only when the reader turns this on; only these four fields go out.
+  type Ctx = { base?: string; band?: string; kids?: string[]; priorities?: string[] };
+  const readContext = (): Ctx | null => {
+    try {
+      const a = JSON.parse(localStorage.getItem('pcs-sd:intake') ?? 'null')?.answers;
+      if (!a) return null;
+      const c: Ctx = {};
+      if (a.base) c.base = a.base;
+      if (a.band) c.band = a.band;
+      if (a.kids) c.kids = Object.keys(a.kids).filter((g) => a.kids[g] > 0);
+      if (Array.isArray(a.priorities)) c.priorities = a.priorities.slice(0, 2);
+      return Object.keys(c).length ? c : null;
+    } catch { return null; }
+  };
+  // The option shows only when this device has starting-plan answers, or when the plan's "Ask about this plan"
+  // brought the reader here (it arrives already ticked).
+  const fromPlan = location.hash === '#ask-with-plan';
+  contextWrap.hidden = !(readContext() || fromPlan);
+  if (fromPlan) toggle.checked = true;
+
+  // The conversation: this page's memory only.
+  type Reply = Record<string, any>;
+  const history: { question: string; reply: Reply }[] = [];
+
+  // What goes with the next question besides the question itself: the previous turn (last question and the answer
+  // shown, nothing older) and, only if ticked, the four starting-plan fields. "What's sent?" shows this same object,
+  // and send() sends it.
+  const extras = () => {
+    const out: { previous?: { question: string; answer?: string }; context?: Ctx } = {};
+    const last = history.at(-1);
+    if (last) out.previous = last.reply.answer ? { question: last.question, answer: last.reply.answer } : { question: last.question };
+    const c = toggle.checked ? readContext() : null;
+    if (c) out.context = c;
+    return out;
+  };
+  const showOutgoing = () => {
+    const x = extras();
+    const some = Object.keys(x).length > 0;
+    $('[data-sent-none]').hidden = some;
+    $('[data-sent-some]').hidden = !some;
+    $('[data-previous-note]').hidden = !x.previous;
+    $('[data-context-none]').hidden = !(toggle.checked && !x.context);
+    $('[data-context-json]').textContent = JSON.stringify(x, null, 2);
+  };
+  toggle.addEventListener('change', showOutgoing);
+  sentBtn.addEventListener('click', () => {
+    const open = sentPanel.hidden;
+    sentPanel.hidden = !open;
+    sentBtn.setAttribute('aria-expanded', String(open));
+    if (open) showOutgoing();
+  });
+
+  const el = (tag: string, cls?: string, text?: string) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  };
+  const link = (href: string, text: string, cls?: string) => {
+    const a = el('a', cls, text) as HTMLAnchorElement;
+    a.href = href;
+    return a;
+  };
+  // An answer's bold, lists and site links (assistant/format.js); everything else stays text.
+  const fill = (parent: HTMLElement, tokens: { type: string; text: string; href?: string }[]) => {
+    for (const t of tokens) {
+      if (t.type === 'strong') parent.append(el('strong', undefined, t.text));
+      else if (t.type === 'link') parent.append(link(t.href!, t.text));
+      else parent.append(t.text);
+    }
+  };
+  const answerText = (text: string) => {
+    const box = el('div', 'ask-text');
+    for (const b of parseAnswer(text)) {
+      if (b.type === 'p') { const p = el('p'); fill(p, b.inline); box.append(p); continue; }
+      const list = el(b.type);
+      for (const item of b.items) { const li = el('li'); fill(li, item); list.append(li); }
+      box.append(list);
+    }
+    return box;
+  };
+  // The receipts, collapsed: "N sources · verified <latest>", opening to each cited section with its date.
+  const sourceChip = (citations: Reply[]) => {
+    const d = el('details', 'src-chip ask-src');
+    const latest = latestDate(citations);
+    const n = citations.length;
+    d.append(el('summary', undefined, `${n} ${n === 1 ? 'source' : 'sources'}${latest ? ` · verified ${latest}` : ''}`));
+    const body = el('div', 'src-chip-body');
+    const ul = el('ul', 'ask-src-list');
+    for (const c of citations) {
+      const li = el('li');
+      li.append(link(c.url, c.label ?? `${c.title}: ${c.section}`));
+      if (c.verified_on) li.append(el('span', 'muted', ` · verified ${c.verified_on}`));
+      ul.append(li);
+    }
+    body.append(ul);
+    d.append(body);
+    return d;
+  };
+  const relatedCard = (r: { url: string; title: string; sub?: string }) => {
+    const a = link(r.url, '', 'card ask-related');
+    const words = el('span');
+    words.append(el('span', 'card-eyebrow', 'Related page'), el('span', 'card-name', r.title));
+    if (r.sub) words.append(el('span', 'card-sub', r.sub));
+    const arrow = el('span', 'arrow', '›');
+    arrow.setAttribute('aria-hidden', 'true');
+    a.append(words, arrow);
+    return a;
+  };
+  const answerBlock = (question: string, reply: Reply) => {
+    const a = el('div', 'ask-answer');
+    if (reply.error) a.append(el('p', 'gap', reply.error));
+    if (reply.answer) a.append(answerText(reply.answer));
+    if (reply.note) a.append(el('p', 'note', reply.note));
+    // Only the sections the answer cites, under the label it cites them by (assistant/cite.js).
+    if (reply.citations?.length) a.append(sourceChip(reply.citations));
+    const related = relatedPage(reply);
+    if (related) a.append(relatedCard(related));
+    if (reply.prompt) {
+      const d = el('details', 'ask-stub');
+      d.append(el('summary', undefined, 'The prompt that would go to the model'));
+      d.append(el('pre', 'ask-pre', `${reply.prompt.system}\n\n=== user ===\n\n${reply.prompt.messages[0].content}`));
+      a.append(d);
+    }
+    // Follow-ups from the cited sections (src/lib/askView.js): no model call.
+    const next = followUps(reply, question);
+    if (next.length) {
+      const wrap = el('div', 'ask-next');
+      const ul = el('ul');
+      ul.setAttribute('aria-label', 'Follow-up questions');
+      for (const s of next) {
+        const li = el('li');
+        const b = el('button', 'ask-chip ask-chip-small', s) as HTMLButtonElement;
+        b.type = 'button';
+        b.addEventListener('click', () => ask(s));
+        li.append(b);
+        ul.append(li);
+      }
+      wrap.append(ul);
+      a.append(wrap);
+    }
+    return a;
+  };
+
+  // Conversation mode: the start screen gives way to the log, and the box becomes the follow-up box.
+  const setTalking = (on: boolean) => {
+    start.classList.toggle('talking', on);
+    $('[data-examples]').hidden = on;
+    $('[data-plan-cta]').hidden = on;
+    clearBtn.hidden = !on;
+    label.textContent = on ? 'Ask a follow-up' : 'Ask a question';
+  };
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let busy = false;
+  const ask = async (text?: string) => {
+    const question = (text ?? q.value).trim();
+    if (!question || busy) return;
+    busy = true;
+    errorBox.hidden = true;
+    sendBtn.disabled = true;
+    const outgoing = { question, ...extras() };
+    setTalking(true);
+    const li = el('li', 'ask-turn');
+    li.append(el('p', 'ask-you', question));
+    const waiting = el('div', 'ask-answer ask-waiting');
+    waiting.append(el('p', 'ask-checking', 'Checking the sources…'));
+    li.append(waiting);
+    log.append(li);
+    status.textContent = 'Checking the sources…';
+    q.value = '';
+    li.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
+    try {
+      const res = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(outgoing),
+      });
+      const reply = await res.json().catch(() => ({ error: 'The assistant isn’t working right now.' }));
+      history.push({ question, reply });
+      waiting.replaceWith(answerBlock(question, reply));
+      status.textContent = reply.error ? reply.error : 'Answer ready.';
+    } catch {
+      li.remove();
+      if (!history.length) setTalking(false);
+      q.value = question;
+      errorBox.textContent = 'Couldn’t reach the assistant. Check your connection and try again.';
+      errorBox.hidden = false;
+      status.textContent = '';
+    } finally {
+      busy = false;
+      sendBtn.disabled = false;
+      showOutgoing();
+    }
+  };
+  sendBtn.addEventListener('click', () => ask());
+  q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask(); } });
+  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-example]')) b.addEventListener('click', () => ask(b.textContent ?? ''));
+  clearBtn.addEventListener('click', () => {
+    history.length = 0;
+    log.replaceChildren();
+    setTalking(false);
+    showOutgoing();
+    status.textContent = 'New conversation.';
+    q.focus();
+  });
+  if (fromPlan) q.focus();
+</script>

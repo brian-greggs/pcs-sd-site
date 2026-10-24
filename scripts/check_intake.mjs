@@ -4,7 +4,10 @@
 //
 //   intake-network   the intake pages (/plan/, home, base pages) make no network requests and put
 //                    nothing in a URL: their scripts use no fetch, XMLHttpRequest, sendBeacon,
-//                    WebSocket, EventSource, history or location writes, and there is no <form>
+//                    WebSocket, EventSource, history or location writes, and there is no <form>.
+//                    One exception (v1.0.0): home asks the assistant, so its scripts may hold exactly
+//                    one call, a POST to this site's /api/ask; a second call or any other still fails.
+//                    `--plant network` proves it (4 plants)
 //   intake-sources   every line the plan can print names a source (a page on this site that exists
 //                    in dist/, or an official link with its incentive label) and that source's dates
 //   intake-bah       every dollar figure in plan text is a BAH line from src/data/bah.json: the grade's
@@ -102,19 +105,53 @@ function scriptFile(src, seen) {
   }
   return files;
 }
-function checkNetwork() {
+// Home is where the assistant is (it replaced /ask/ in v1.0.0): one POST to /api/ask on this site, with the question,
+// the previous turn and, only if the reader ticks it, four starting-plan fields ("What's sent?" shows the object). Its
+// scripts may hold that one call and nothing else on the list above.
+const ALLOWED_CALL = { 'index.html': /\bfetch\s*\(\s*(["'`])\/api\/ask\1\s*,\s*\{\s*method\s*:\s*(["'`])POST\2/g };
+function checkNetwork(plant = null) {
   for (const page of INTAKE_PAGES) {
     const file = join(DIST, page);
     if (!existsSync(file)) { fail('intake-network', page, 'page not built'); continue; }
-    const html = readFileSync(file, 'utf-8');
+    const raw = readFileSync(file, 'utf-8');
+    const html = plant?.page === page ? plant.edit(raw) : raw;
     if (/<form\b/i.test(html)) fail('intake-network', page, '<form> on an intake page (a form can submit answers or put them in a URL)');
-    for (const { where, code } of scriptsOf(html)) {
+    const scripts = scriptsOf(html);
+    const allowed = ALLOWED_CALL[page];
+    if (allowed) {
+      const calls = scripts.reduce((n, s) => n + (s.code.match(allowed) ?? []).length, 0);
+      if (calls > 1) fail('intake-network', page, `${calls} calls to /api/ask (one is allowed)`);
+      const at = scripts.find((s) => allowed.test(s.code));
+      if (at) at.code = at.code.replace(new RegExp(allowed.source), ' ');
+      allowed.lastIndex = 0;
+    }
+    for (const { where, code } of scripts) {
       for (const re of NETWORK) {
         const m = code.match(re);
         if (m) fail('intake-network', page, `${where}: "${m[0]}"`);
       }
     }
   }
+}
+// Each must fail intake-network: the allowance is one POST to /api/ask on home, nowhere else.
+const inject = (js) => (h) => h.replace('</body>', `<script>${js}</script></body>`);
+const NETWORK_PLANTS = {
+  'second /api/ask call on home': { page: 'index.html', edit: inject('fetch("/api/ask",{method:"POST",body:"{}"})') },
+  'another fetch on home': { page: 'index.html', edit: inject('fetch("/api/log",{method:"POST"})') },
+  'sendBeacon on home': { page: 'index.html', edit: inject('navigator.sendBeacon("/api/ask")') },
+  '/api/ask call on /plan/': { page: 'plan/index.html', edit: inject('fetch("/api/ask",{method:"POST"})') },
+};
+if (process.argv.includes('--plant')) {
+  let caught = 0;
+  for (const [name, plant] of Object.entries(NETWORK_PLANTS)) {
+    failures.length = 0;
+    checkNetwork(plant);
+    const hit = failures.some((f) => f.check === 'intake-network' && f.where === plant.page);
+    caught += hit;
+    console.log(`  ${hit ? 'CAUGHT' : 'MISSED'}  ${name}`);
+  }
+  console.log(`\nintake-network plants: ${caught} of ${Object.keys(NETWORK_PLANTS).length} caught\n`);
+  process.exit(caught === Object.keys(NETWORK_PLANTS).length ? 0 : 1);
 }
 
 // --- Plan text ------------------------------------------------------------------

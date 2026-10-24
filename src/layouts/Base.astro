@@ -9,6 +9,7 @@ import '@fontsource/dm-sans/latin-400.css';
 import '@fontsource/dm-sans/latin-500.css';
 import '@fontsource/dm-sans/latin-700.css';
 import '../styles/site.css';
+import MenuLinks from '../components/MenuLinks.astro';
 
 interface Props {
   title: string;
@@ -30,16 +31,37 @@ const { title, description = 'An unofficial, non-commercial guide for military f
     <meta name="theme-color" content="#0B1328" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} · San Diego PCS Guide (beta)</title>
+    <slot name="head" />
+    <script is:inline>
+      // Before first paint, so the drawer and the wide-screen sidebar don't jump: "js" turns the menu on (without it
+      // the menu button is a plain link to /browse/), and a sidebar collapsed earlier in this tab stays collapsed.
+      document.documentElement.classList.add('js');
+      try { if (sessionStorage.getItem('pcs-sd:sidebar') === 'collapsed') document.documentElement.classList.add('sidebar-collapsed'); } catch { /* storage blocked */ }
+    </script>
   </head>
   <body>
     <div class="stripe" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <a class="skip" href="#main">Skip to content</a>
     <header class="bar">
-      {back
-        ? <a class="back" href={back.href} aria-label={`Back to ${back.label}`} data-back>‹ back</a>
-        : <a class="site-name" href="/">San Diego PCS Guide</a>}
+      <div class="bar-start">
+        <a class="menu-btn" href="/browse/" data-menu-btn aria-controls="site-menu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span><span class="menu-word">Menu</span></a>
+        {back
+          ? <a class="back" href={back.href} aria-label={`Back to ${back.label}`} data-back>‹ back</a>
+          : <a class="site-name" href="/">San Diego PCS Guide</a>}
+      </div>
       <span class="beta">BETA</span>
     </header>
-    <main>
+    <div class="drawer" id="site-menu" data-drawer>
+      <div class="drawer-scrim" data-menu-scrim></div>
+      <nav class="drawer-panel" aria-label="Site menu" data-menu-panel>
+        <div class="drawer-head">
+          <p class="drawer-title">Menu</p>
+          <button type="button" class="drawer-close" data-menu-close aria-label="Close menu"><span aria-hidden="true">×</span></button>
+        </div>
+        <MenuLinks />
+      </nav>
+    </div>
+    <main id="main">
       <slot />
     </main>
     <footer class="site-footer">
@@ -63,6 +85,65 @@ const { title, description = 'An unofficial, non-commercial guide for military f
       };
       openTarget();
       addEventListener('hashchange', openTarget);
+    </script>
+    <script>
+      // The menu. Under 1024 px it's a drawer over the page: the rest of the page is inert while it's open, Tab stays
+      // inside it, Escape or the close button closes it and focus goes back to the menu button. From 1024 px it's a
+      // sidebar on the left that the same button collapses (remembered for this tab only). Without JavaScript the
+      // button is a link to /browse/, which lists the same links (src/lib/menu.ts).
+      const root = document.documentElement;
+      const btn = document.querySelector<HTMLAnchorElement>('[data-menu-btn]')!;
+      const drawer = document.querySelector<HTMLElement>('[data-drawer]')!;
+      const panel = document.querySelector<HTMLElement>('[data-menu-panel]')!;
+      const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]')!;
+      const wide = matchMedia('(min-width: 1024px)');
+      const outside = () => [...document.body.children].filter((e) => e !== drawer && e.tagName !== 'SCRIPT') as HTMLElement[];
+      const focusables = () => [...panel.querySelectorAll<HTMLElement>('a[href], button')].filter((e) => e.offsetParent !== null);
+      btn.setAttribute('role', 'button');
+      const sync = () => {
+        const open = wide.matches ? !root.classList.contains('sidebar-collapsed') : root.classList.contains('menu-open');
+        btn.setAttribute('aria-expanded', String(open));
+        btn.setAttribute('aria-label', wide.matches ? (open ? 'Hide menu' : 'Show menu') : 'Menu');
+        if (wide.matches) { panel.removeAttribute('role'); panel.removeAttribute('aria-modal'); }
+        else { panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); }
+        closeBtn.setAttribute('aria-label', wide.matches ? 'Hide menu' : 'Close menu');
+        const trap = !wide.matches && open;
+        for (const e of outside()) e.inert = trap;
+      };
+      const remember = (collapsed: boolean) => {
+        try { collapsed ? sessionStorage.setItem('pcs-sd:sidebar', 'collapsed') : sessionStorage.removeItem('pcs-sd:sidebar'); } catch { /* storage blocked */ }
+      };
+      const openMenu = () => {
+        if (wide.matches) { root.classList.remove('sidebar-collapsed'); remember(false); sync(); return; }
+        root.classList.add('menu-open');
+        sync();
+        closeBtn.focus();
+      };
+      const closeMenu = () => {
+        if (wide.matches) { root.classList.add('sidebar-collapsed'); remember(true); }
+        else root.classList.remove('menu-open');
+        sync();
+        btn.focus();
+      };
+      const isOpen = () => (wide.matches ? !root.classList.contains('sidebar-collapsed') : root.classList.contains('menu-open'));
+      btn.addEventListener('click', (e) => { e.preventDefault(); isOpen() ? closeMenu() : openMenu(); });
+      btn.addEventListener('keydown', (e) => { if (e.key === ' ') { e.preventDefault(); btn.click(); } });
+      closeBtn.addEventListener('click', closeMenu);
+      document.querySelector('[data-menu-scrim]')!.addEventListener('click', closeMenu);
+      drawer.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isOpen()) { e.preventDefault(); closeMenu(); return; }
+        if (e.key !== 'Tab' || wide.matches) return;
+        const f = focusables();
+        if (!f.length) return;
+        if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f.at(-1)!.focus(); }
+        else if (!e.shiftKey && document.activeElement === f.at(-1)) { e.preventDefault(); f[0].focus(); }
+      });
+      // A link to a section of the page you're on closes the drawer, so the section isn't left under it.
+      panel.addEventListener('click', (e) => {
+        if ((e.target as Element).closest('a') && !wide.matches) { root.classList.remove('menu-open'); sync(); }
+      });
+      wide.addEventListener('change', () => { root.classList.remove('menu-open'); sync(); });
+      sync();
     </script>
   </body>
 </html>

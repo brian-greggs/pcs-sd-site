@@ -72,7 +72,7 @@ const index = url ? null : buildIndex(JSON.parse(readFileSync(corpusFile, 'utf-8
 const env = live ? { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY, ASSISTANT_MODEL: process.env.ASSISTANT_MODEL } : {};
 const realAnswers = Boolean(url || live);
 
-// An item can carry `previous` ({question, answer}): the turn before it, as /ask/ sends it.
+// An item can carry `previous` ({question, answer}): the turn before it, as the home page sends it.
 async function ask(question, previous) {
   const body = previous ? { question, previous } : { question };
   const t0 = performance.now();
@@ -270,7 +270,7 @@ const labelCases = [
 const labelBad = labelCases.filter(([c, want]) => labelOf(c) !== want);
 const filterBad = filterCases.filter(([a, want]) => urls(citedOnly(a, cit, near)) !== want);
 if (labelBad.length) filterBad.push(...labelBad.map(([c]) => [`label of ${c.section_heading}`]));
-// The answer formatting /ask/ renders: bold, lists and site links only.
+// The answer formatting the home page renders: bold, lists and site links only.
 const fmt = (t) => JSON.stringify(parseAnswer(t));
 const formatCases = [
   ['**Live in Santee.** It runs 18 min.', '[{"type":"p","inline":[{"type":"strong","text":"Live in Santee."},{"type":"text","text":" It runs 18 min."}]}]'],
