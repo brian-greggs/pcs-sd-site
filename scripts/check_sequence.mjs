@@ -5,14 +5,20 @@
 //                    sequence_forms.json (no hand-typed step), every exported Navy row is on its page once, in
 //                    order, and no USMC "not yet covered" row reaches any page
 //   seq-deadlines    every deadline shown (data-deadline) is its row's deadline, word for word, and every timing
-//                    line is the row's anchor; a deadline outside a step or form block fails
+//                    line is the row's anchor; a deadline outside a step or form block fails. A short deadline chip
+//                    (data-due-short: the phase timeline, the forms index) is the first sentence of its row's
+//                    deadline, word for word. A row with no official deadline ("not stated") shows "No set
+//                    deadline" instead, and no deadline, chip or tag on a sequence page shows "not stated"
+//   seq-export also  each phase page opens with its timeline: one entry per step, in order, linking to the step,
+//                    with the step's title (its text, or its first sentence when long)
 //   seq-sources      every step and form block has a date line naming every retrieval date of its sources, and
 //                    one quote per citation (sources, side-by-side rules, superseded)
 //   seq-unconfirmed  a row with "Not yet confirmed" lines (partial, confirm with the HSC) shows each, in order,
 //                    naming who to ask (CPPA, PPPO, HSC, Navy Household Goods); no other row shows one
-//   seq-notes        every sequence page opens with the disclaimer and the Navy-rules note; the Camp Pendleton,
-//                    MCAS Miramar and MCRD San Diego base pages carry the Navy-rules note; the sequence page
-//                    links Plan My Move as "build your personal checklist"
+//   seq-notes        /sequence/ opens with the disclaimer and the Navy-rules note (before its first block); every
+//                    phase page and the forms page carries the one-line footnote, as written, linking to them,
+//                    before its first block (Brian 2026-10-23, at the top since 2026-10-24); the Camp Pendleton, MCAS Miramar and MCRD San Diego base pages carry the
+//                    Navy-rules note; the sequence page links Plan My Move as "build your personal checklist"
 //   seq-dla          DTMO's primary DLA rates: the DLA step shows one line per grade for every pay band, the DLA
 //                    form shows the whole table in order, every data-dla line and row equals
 //                    src/data/sequence_dla.json, both blocks cite the table (so their date line has its date), and no
@@ -30,8 +36,9 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  PHASES, ANCHOR_LABEL, SEQUENCE_DISCLAIMER, NAVY_RULES_NOTE, MARINE_BASES, citeDates, unconfirmedLine,
-  DLA_STEP, DLA_FORM, dlaLine, usd, EFFECTIVE_ANCHORS, EFFECTIVE_HREF,
+  PHASES, ANCHOR_LABEL, SEQUENCE_DISCLAIMER, SEQUENCE_FOOTNOTE, DISCLAIMER_HREF, NAVY_RULES_NOTE, MARINE_BASES, citeDates,
+  unconfirmedLine, DLA_STEP, DLA_FORM, dlaLine, usd, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, TIMELINE_ID, stepTitle, NO_DEADLINE,
+  deadlineText, deadlineShort,
 } from '../src/lib/sequence.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -73,16 +80,28 @@ function check({ pages, steps, forms, weights, dla, effective }) {
   const seqPages = Object.keys(pages).filter((k) => k.startsWith('sequence/'));
   for (const k of seqPages) if (!pages[k]) fail('seq-export', k, 'page not built');
 
-  // Notes at the top of every sequence page; the Navy-rules note on the three Marine Corps bases.
+  // The disclaimer and the Navy-rules note at the top of /sequence/; the footnote on every phase page and the forms
+  // page; the Navy-rules note on the three Marine Corps bases.
   for (const k of seqPages.filter((k) => pages[k])) {
     const html = pages[k];
-    const disc = attr(html, 'data-seq-disclaimer')[0];
-    const navy = attr(html, 'data-navy-note')[0];
-    if (!disc || decode(disc[2]) !== SEQUENCE_DISCLAIMER) fail('seq-notes', k, 'no disclaimer line, or its wording changed');
-    if (!navy || decode(navy[2]) !== NAVY_RULES_NOTE) fail('seq-notes', k, 'no Navy-rules note, or its wording changed');
-    // Both before the first step or form.
-    const first = html.search(/data-fact="/);
-    if (disc && first >= 0 && html.indexOf('data-seq-disclaimer') > first) fail('seq-notes', k, 'disclaimer comes after the first step');
+    if (k === 'sequence/index.html') {
+      const disc = attr(html, 'data-seq-disclaimer')[0];
+      const navy = attr(html, 'data-navy-note')[0];
+      if (!disc || decode(disc[2]) !== SEQUENCE_DISCLAIMER) fail('seq-notes', k, 'no disclaimer line, or its wording changed');
+      if (!navy || decode(navy[2]) !== NAVY_RULES_NOTE) fail('seq-notes', k, 'no Navy-rules note, or its wording changed');
+      if (!new RegExp(`<p[^>]*\\bid="${DISCLAIMER_HREF.split('#')[1]}"[^>]*data-seq-disclaimer`).test(html)) fail('seq-notes', k, `disclaimer without the id the footnotes link to (${DISCLAIMER_HREF})`);
+      // Both before the first block.
+      const first = html.search(/data-fact="/);
+      if (disc && first >= 0 && html.indexOf('data-seq-disclaimer') > first) fail('seq-notes', k, 'disclaimer comes after the first block');
+    } else {
+      const foot = html.match(/<p[^>]*\bdata-seq-footnote[^>]*>([\s\S]*?)<\/p>/);
+      const text = foot && foot[1].match(/<span data-footnote-text>([\s\S]*?)<\/span>/);
+      if (!foot || !text || decode(text[1]) !== SEQUENCE_FOOTNOTE) fail('seq-notes', k, 'no footnote line, or its wording changed');
+      else if (!foot[1].includes(`<a href="${DISCLAIMER_HREF}"`)) fail('seq-notes', k, `footnote doesn't link to the disclaimer (${DISCLAIMER_HREF})`);
+      // At the top (Brian 2026-10-24): before the first block.
+      const first = html.search(/data-fact="/);
+      if (first >= 0 && html.indexOf('data-seq-footnote') > first) fail('seq-notes', k, 'footnote comes after the first block');
+    }
   }
   for (const code of MARINE_BASES) {
     const k = `base/${BASE_SLUG[code]}/index.html`;
@@ -109,7 +128,8 @@ function check({ pages, steps, forms, weights, dla, effective }) {
     if (!dl) { fail('seq-export', where, `no data-${kind} list in the block`); return; }
     const dls = attr(b.html, 'data-deadline');
     if (dls.length !== 1) fail('seq-deadlines', where, `${dls.length} deadlines in the block (want 1)`);
-    else if (decode(dls[0][2]) !== row.deadline) fail('seq-deadlines', where, `deadline "${decode(dls[0][2])}" isn't the row's "${row.deadline}"`);
+    else if (decode(dls[0][2]) !== deadlineText(row.deadline)) fail('seq-deadlines', where, `deadline "${decode(dls[0][2])}" isn't the row's "${deadlineText(row.deadline)}"`);
+    for (const d of attr(b.html, 'data-due-short')) if (decode(d[2]) !== deadlineShort(row.deadline)) fail('seq-deadlines', where, `short deadline "${decode(d[2])}" isn't the first sentence of the row's`);
     const an = attr(b.html, 'data-anchor')[0];
     if (!an || decode(an[2]) !== ANCHOR_LABEL[row.anchor]) fail('seq-deadlines', where, `timing line isn't the row's anchor (${row.anchor})`);
     const asof = attr(b.html, 'data-asof')[0];
@@ -135,8 +155,26 @@ function check({ pages, steps, forms, weights, dla, effective }) {
   for (const p of PHASES) {
     const k = `sequence/${p.slug}/index.html`;
     if (!pages[k]) continue;
-    const bs = blocks(pages[k]);
+    const all = blocks(pages[k]);
+    const bs = all.filter((b) => b.id !== TIMELINE_ID);
     const want = steps.filter((s) => s.phase === p.key).sort((a, b) => a.order - b.order);
+    // The timeline: the first block, one entry per step in order, each linking to its card, with its title and the
+    // first sentence of its deadline.
+    const tl = all.find((b) => b.id === TIMELINE_ID);
+    if (!tl || all[0] !== tl) fail('seq-export', k, 'no timeline before the first step');
+    else {
+      const items = [...tl.html.matchAll(/<li[^>]*\bdata-timeline-step="([^"]+)"[^>]*>([\s\S]*?)<\/li>/g)];
+      if (JSON.stringify(items.map((m) => m[1])) !== JSON.stringify(want.map((s) => s.id))) fail('seq-export', k, `timeline isn't the phase's ${want.length} steps in order`);
+      for (const [, id, li] of items) {
+        const row = want.find((s) => s.id === id);
+        if (!row) continue;
+        if (!li.includes(`href="#${id}"`)) fail('seq-export', `${k} timeline`, `${id} doesn't link to its card`);
+        const title = li.match(/<span class="tl-title">([\s\S]*?)<\/span>/);
+        if (!title || decode(title[1]) !== stepTitle(row).title) fail('seq-export', `${k} timeline`, `${id}: title isn't the step's`);
+        const due = attr(li, 'data-due-short');
+        if (due.length !== 1 || decode(due[0][2]) !== deadlineShort(row.deadline)) fail('seq-deadlines', `${k} timeline`, `${id}: deadline chip isn't the first sentence of the row's deadline`);
+      }
+    }
     const got = bs.map((b) => b.id);
     for (const b of bs) {
       const row = steps.find((s) => s.id === b.id);
@@ -172,7 +210,7 @@ function check({ pages, steps, forms, weights, dla, effective }) {
         if (JSON.stringify(cells) !== JSON.stringify(want)) fail('seq-weights', fk, `${r.id}: page shows ${cells.join(' | ')}, export says ${want.join(' | ')}`);
       }
       // Every figure we print ("11,000 lb") is in a marked row; the official quotes below keep their own wording.
-      const loose = h.replace(/<tr[^>]*\bdata-weight="[^"]+"[^>]*>[\s\S]*?<\/tr>/g, '').replace(/<details class="cites">[\s\S]*?<\/details>/g, '');
+      const loose = h.replace(/<tr[^>]*\bdata-weight="[^"]+"[^>]*>[\s\S]*?<\/tr>/g, '').replace(/<div class="cites"[^>]*>[\s\S]*?<\/div>/g, '');
       if (/\d{1,2},\d{3} lb(?!s)/.test(decode(loose))) fail('seq-weights', fk, 'a weight figure outside the table rows');
       const cites = [ordered[0].source, ...ordered[0].sources];
       const asof = attr(h, 'data-asof')[0];
@@ -245,6 +283,18 @@ function check({ pages, steps, forms, weights, dla, effective }) {
     }
   }
 
+  // A row with no official deadline shows "No set deadline" (Brian 2026-10-24): no deadline, deadline chip or tag on
+  // a sequence page shows the export's "not stated".
+  for (const k of seqPages) {
+    if (!pages[k]) continue;
+    for (const m of [...attr(pages[k], 'data-deadline'), ...attr(pages[k], 'data-due-short')]) {
+      if (new RegExp(NO_DEADLINE, 'i').test(decode(m[2]))) fail('seq-deadlines', k, `a deadline shows "${decode(m[2])}" (want "${deadlineText(NO_DEADLINE)}")`);
+    }
+    for (const m of pages[k].matchAll(/<(?:span|a)[^>]*class="[^"]*\btag\b[^"]*"[^>]*>([\s\S]*?)<\/(?:span|a)>/g)) {
+      if (new RegExp(NO_DEADLINE, 'i').test(decode(m[1]))) fail('seq-deadlines', k, `a chip shows "${decode(m[1])}"`);
+    }
+  }
+
   // No deadline outside a step or form block, on any page read here.
   for (const [k, html] of Object.entries(pages)) {
     if (!html) continue;
@@ -260,13 +310,22 @@ const PLANTS = {
   'wrong deadline': (s) => { const r = s.steps.find((x) => x.id === 'arrival-travel-claim'); r.deadline = 'Within 10 days of reporting.'; },
   'step dropped from its page': (s) => { const k = 'sequence/orders/index.html'; s.pages[k] = s.pages[k].replace(/<section[^>]*data-fact="orders-sponsor"[\s\S]*?<\/section>/, ''); },
   'deadline outside a block': (s) => { const k = 'sequence/index.html'; s.pages[k] = s.pages[k].replace('</main>', '<p data-deadline>Within 5 days.</p></main>'); },
-  'no date line': (s) => { const k = 'sequence/transit/index.html'.replace('transit', 'on-the-road'); s.pages[k] = s.pages[k].replace(/<p class="asof" data-asof>[^<]*<\/p>/, ''); },
+  'no date line': (s) => { const k = 'sequence/on-the-road/index.html'; s.pages[k] = s.pages[k].replace(/(<section[^>]*data-fact="transit-receipts"[\s\S]*?)<p class="asof" data-asof>[^<]*<\/p>/, '$1'); },
   'quote missing': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/<li data-cite>[\s\S]*?<\/li>/, ''); },
   'no "Not yet confirmed" line': (s) => { const k = 'sequence/first-30-days/index.html'; s.pages[k] = s.pages[k].replace(/<p class="gap" data-unconfirmed="PPPO">[^<]*<\/p>/, ''); },
   'asks the wrong office': (s) => { const r = s.forms.find((x) => x.id === 'navy-ppm-paperwork'); r.unconfirmed[0] = { ...r.unconfirmed[0], ask: 'HSC' }; },
   'second "Not yet confirmed" line dropped': (s) => { const k = 'sequence/first-30-days/index.html'; s.pages[k] = s.pages[k].replace(/<p class="gap" data-unconfirmed="NAVY_HHG">[^<]*<\/p>/, ''); },
   'no Navy note on a Marine base': (s) => { const k = 'base/miramar/index.html'; s.pages[k] = s.pages[k].replace(/data-navy-note/g, 'data-x'); },
-  'no disclaimer on a phase page': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('data-seq-disclaimer', 'data-x'); },
+  'no disclaimer on /sequence/': (s) => { const k = 'sequence/index.html'; s.pages[k] = s.pages[k].replace('data-seq-disclaimer', 'data-x'); },
+  'no footnote on a phase page': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('data-seq-footnote', 'data-x'); },
+  'footnote moved to the foot': (s) => { const k = 'sequence/orders/index.html'; const m = s.pages[k].match(/<p[^>]*data-seq-footnote[\s\S]*?<\/p>/); s.pages[k] = s.pages[k].replace(m[0], '').replace('</main>', m[0] + '</main>'); },
+  'footnote reworded on the forms page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('your command has the final word', 'you decide'); },
+  'timeline step dropped': (s) => { const k = 'sequence/orders/index.html'; s.pages[k] = s.pages[k].replace(/<li[^>]*data-timeline-step="orders-sponsor"[\s\S]*?<\/li>/, ''); },
+  'timeline deadline reworded': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace(/(<li[^>]*data-timeline-step="arrival-travel-claim"[\s\S]*?data-due-short>)[^<]*/, '$1Within 10 days.'); },
+  'timeline chip shows "not stated"': (s) => { const k = 'sequence/orders/index.html'; s.pages[k] = s.pages[k].replace(/(<li[^>]*data-timeline-step="orders-sponsor"[\s\S]*?data-due-short>)[^<]*/, '$1not stated'); },
+  'card shows "not stated"': (s) => { const k = 'sequence/before-you-go/index.html'; s.pages[k] = s.pages[k].replace(/(<section[^>]*data-fact="pre-schools"[\s\S]*?<span data-deadline[^>]*>)[^<]*/, '$1not stated'); },
+  '"not stated" in a form chip': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('<a class="tag form-tag"', '<span class="tag">Deadline not stated</span><a class="tag form-tag"'); },
+  'forms index deadline reworded': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace(/(<section[^>]*data-fact="navy-hhg-claim"[\s\S]*?data-due-short[^>]*>)[^<]*/, '$1Within a year.'); },
   'USMC row on a page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('</main>', '<a href="#usmc-travel-voucher">x</a></main>'); },
   'wrong DLA figure': (s) => { s.dla.find((r) => r.grade === 'E-5').with_dependents_usd = 3600; },
   'DLA band lines dropped': (s) => { const k = 'sequence/before-you-go/index.html'; s.pages[k] = s.pages[k].replace(/(<ul[^>]*data-band-show="O1–O3"[^>]*>)[\s\S]*?(<\/ul>)/, '$1$2'); },

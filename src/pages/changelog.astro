@@ -2,6 +2,7 @@
 // F11: what changed between versions and why.
 import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import SourceChip from '../components/SourceChip.astro';
 
 // Newest first: by date, then by version (several entries can share a date).
 const entries = (await getCollection('changelog')).sort((a, b) =>
@@ -15,8 +16,8 @@ const rendered = await Promise.all(entries.map(async (e) => ({ ...e.data, Conten
   {rendered.map(({ date, title, version, Content }) => (
     <section class="fact plain" data-fact={`changelog-${date}`}>
       <h2>{version}: {title}</h2>
-      <Content />
-      <p class="asof" data-asof>{date}</p>
+      <div data-src={`changelog:${date}`}><Content /></div>
+      <SourceChip srcs={[`changelog:${date}`]} asOf={date} source="this site's change log" />
     </section>
   ))}
 </Base>

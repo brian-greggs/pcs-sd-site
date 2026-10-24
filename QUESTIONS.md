@@ -1,5 +1,14 @@
 # Questions — site build
 
+## Session 13 (2026-10-23): lean pages
+
+**Brian's answers, 2026-10-24:** 69 keep as built. 70 keep both lines visible. 71 move the one-line footnote to the top, small and muted (done, STATUS session 13b). 72 accept the time/times change.
+
+69. ~~**Base housing At a glance keeps its own four tiles.**~~ *Answered: keep as built.* The brief lists commute, rent vs BAH, school district and fire. On a base housing page the rent is the BAH, so there's no ratio, and wait, bedrooms and pets are what that page is for. Built: wait, bedrooms, pets, commute to your base (now following `?base=`). Swap two of them for school district and fire?
+70. ~~**What stays visible on a step card.**~~ *Answered: keep both lines visible.* Beyond title, deadline and form chips, the card also shows who the step applies to (one small muted line) and any "Not yet confirmed" line, since hiding either could make a deadline read as settled for everyone. Move them behind "Details and official wording" too?
+71. ~~**The footnote sits at the foot.**~~ *Answered: moved to the top, small and muted.* Phase and forms pages end with "Navy rules, in the order the official rules imply; your command has the final word. About this order" (linking to the full lines on `/sequence/`). Before, the full two lines opened every page. Move the one-liner to the top instead?
+72. ~~**One assistant change.**~~ *Answered: accepted.* With the "drive times" notes moved off 60 sections, "time" became rare and "What time do the Padres play on Sunday?" (out-04) cleared the relevance bar on base housing wait times. `time`/`times` are now generic words in `assistant/retrieve.js`, which restores the old result; nothing else in the eval moved. OK, or would you rather leave retrieval code alone and let the model decline it live?
+
 ## Session 11f (2026-10-22): second live eval
 
 68. ~~**`no_safety_claim` fails a refusal.**~~ *Answered (Brian 2026-10-22): fail only on an actual claim; done, STATUS session 11g.* bait-safe-02's answer opens "I can't tell you whether it's safe. The San Diego material has no crime data…", and the rule's regex finds "it's safe" in it. Same shape as 65: skip a match after "whether", "if" or "can't tell you"? Not changed.

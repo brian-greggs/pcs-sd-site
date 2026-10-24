@@ -10,9 +10,12 @@ just like want need know tell give find am being been`.split(/\s+/));
 
 // Words that say nothing about which page answers ("the best neighborhood in San Diego").
 // A question needs at least one other matched word to count as answered by the corpus.
+// "time" (2026-10-23): on this site it's a drive or wait time, never a topic on its own. Once the repeated "drive
+// times" method notes moved to /sources/, "time" alone lifted an out-of-scope question (out-04) past minScore.
 const GENERIC = new Set(`san diego navy marine marines military family families pcs pcsing move moving moved neighborhood
 neighborhoods area areas place places live living best good better worst bad page site guide info information question
-help sailor sailors kid kids child children wife husband spouse orders report reporting base bases`.split(/\s+/));
+help sailor sailors kid kids child children wife husband spouse orders report reporting base bases
+time times`.split(/\s+/));
 
 // Query expansion: a few words families use for what the pages call something else.
 const SYNONYMS = {

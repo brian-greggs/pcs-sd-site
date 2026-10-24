@@ -184,3 +184,13 @@
 - **A sequential ramp on a dark map needs its darkest step checked against the land, not just the page.** The first ramp passed the validator on the navy surface, but 45–59 and 60+ were both dark browns that read alike. Thresholds between neighbors and on land and ocean now live in `map-palette`.
 - **A plant has to land where the fault can show.** The "extra shields on phones" plant missed because the NBSD map had no extra shields; it now picks a page that does.
 - **CSS order beats intent.** A later, less specific `.map-legend` rule undid the one-line key's `nowrap`; only the screenshot showed it.
+
+## Session 13 (2026-10-23): lean pages
+
+- **A date check is only as strict as the word in front of the date.** "Every key's date appears in the chip" passed a planted wrong verified date because the vintage held the same day, and a removed CAL FIRE date because "Links checked" held it. Requiring the date after its own word ("verified", "checked", "downloaded", "retrieved") caught both, and then found that no neighborhood's Cost section had ever dated its Mello-Roos line.
+- **Tag facts at the source, not the section.** Making each fact name its source (`data-src`) and failing any untagged text is what surfaced the undated outside links and superseded quotes; a section-level "these are my sources" would have agreed with itself.
+- **Moving repeated text changes retrieval for questions it never answered.** The "drive times" notes on 60 sections kept "time" a low-weight word; once they moved, an out-of-scope question about a ballgame cleared the relevance bar on wait times. Run the retrieval eval after any presentation change that touches section text, and diff the corpus.
+- **A selector for the section card also matches a `<details>` inside it.** `.fact > details` styled the new source chip as a second card; the screenshot, not the checks, showed it.
+- **A closed `<details>` can still be as wide as its hidden content.** The step footer's toggle and chip wouldn't share a row until the toggle got a max width; measure widths in the browser when a flex row wraps unexpectedly.
+- **Keep the old date line inside the new chip, word for word.** Every check that already read `data-asof` (BAH dates, sequence retrieval dates, the corpus's `dates`) kept working without a change; only the checks that parsed moved markup needed updating.
+

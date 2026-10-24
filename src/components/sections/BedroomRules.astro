@@ -9,15 +9,18 @@ import ExtLink from '../ExtLink.astro';
 interface Props { navyOnlyNote?: boolean; plain?: boolean }
 const { navyOnlyNote = false, plain = false } = Astro.props;
 const rule = (await getEntry('housingRules', 'bedroom-entitlement'))!.data;
+const key = 'rule:bedroom-entitlement';
 ---
 
-<FactBlock id="bedrooms" title="Bedroom guidelines" plain={plain} summary="Navy Housing's rule for enlisted families (E1–E6), quoted from CNIC" asOf={`Rule: CNIC Applying for Housing page, retrieved ${rule.verified_on} (copied by hand from a browser)`} source="CNIC Navy Housing">
-  <blockquote class="quote">
-    <p>“{rule.intro}”</p>
-    <ul>{rule.guidelines.map((g) => <li>“{g}”</li>)}</ul>
-  </blockquote>
-  <p>This decides which bedroom row applies to you.</p>
-  <p class="note">Quoted from <ExtLink id={rule.link_id} text="CNIC, Applying for Housing" />.</p>
-  {rule.officer_section_empty && <p>CNIC's page lists no bedroom standard for officers and senior enlisted; ask the Housing Service Center.</p>}
-  {navyOnlyNote && <p class="note">This source is a Navy Housing page. Camp Pendleton's own terms aren't in our material.</p>}
+<FactBlock id="bedrooms" title="Bedroom guidelines" plain={plain} summary="Navy Housing's rule for enlisted families (E1–E6), quoted from CNIC" summarySrc={key} srcs={[key, `link:${rule.link_id}`]} asOf={`Rule: CNIC Applying for Housing page, retrieved ${rule.verified_on} (copied by hand from a browser)`} source="CNIC Navy Housing">
+  <div data-src={key}>
+    <blockquote class="quote">
+      <p>“{rule.intro}”</p>
+      <ul>{rule.guidelines.map((g) => <li>“{g}”</li>)}</ul>
+    </blockquote>
+    <p>This decides which bedroom row applies to you.</p>
+    {rule.officer_section_empty && <p>CNIC's page lists no bedroom standard for officers and senior enlisted; ask the Housing Service Center.</p>}
+    {navyOnlyNote && <p class="note">This source is a Navy Housing page. Camp Pendleton's own terms aren't in our material.</p>}
+  </div>
+  <p class="note" slot="receipts">Quoted from <ExtLink id={rule.link_id} text="CNIC, Applying for Housing" />.</p>
 </FactBlock>

@@ -1,4 +1,72 @@
-# Site build — status (2026-10-23, session 12: static maps; v0.8.0)
+# Site build — status (2026-10-24, session 13b: review notes on the lean pages; v0.9.0)
+
+## Session 13b: Brian's review notes (2026-10-24), same branch, not merged
+
+- **At a glance first.** Neighborhood pages: name and kicker, then the four tiles and their SourceChip, then the locator map, then the lead (when written). Base housing pages: the tiles, then the area's facts note and lead. On every one of the 60 pages the tiles end by 525 px at 390 × 844, on the first screen.
+- **Chips inside collapsed sections.** A collapsed section's SourceChip is now the last thing in its body (FactBlock, the forms index rows, the weight table), so it shows when the section is opened; At a glance, the phase timeline, step cards and the `/sources/` and `/sequence/` blocks (always open) keep theirs at the end. The page-level "Sources and dates" section has no chip: its rows are the receipts.
+- **`dated` adjusted to match:** a section whose body is a collapsed `<details>` must hold its chip inside it; the "Sources and dates" table must have no chip, every row names its source key (`data-src`) and its Verified cell must equal that source's own date (from its data file), and the summary's "last checked" must be the latest row date. New plants: chip outside a collapsed section, a Sources-table row with a wrong date, a row with no source, a chip on the Sources table; `--plant all` 16 of 16.
+- **QUESTIONS 69–72 answered** (69 keep, 70 keep both lines, 72 accepted). **71:** the one-line footnote is now at the top of every phase page and the forms page, small and muted (0.8 rem); `seq-notes` now also requires it before the first block (new plant "footnote moved to the foot"; sequence plants 31 of 31).
+- **Runs on 2026-10-24:** full build, every check (47 PASS lines, no FAIL; 781 sections, the extra one is this release's changelog entry); map plants 22 of 22; corpus caption plant caught; layout clean on 82 pages at 390/768/1280/1440 (no sideways overflow); retrieval eval identical to session 13's (expected fact 41 of 42, in-16 only; expected page in the sections sent 42 of 42; section 38 of 38; go-live gate: out-01 and out-04 declined by retrieval; every self-test passes). Live eval still not run: pages.dev is blocked from this environment.
+
+- **"No set deadline" (Brian 2026-10-24, last fix before merge).** The five steps whose exported deadline is "not stated" (orders-sponsor, pre-pets, pre-schools, pre-vehicle, arrival-dps-address) now show "No set deadline", muted, on the card and in the timeline chip; the forms index and rows use the same rule (no form has one today). The mapping lives once in `src/lib/sequence.js` (`NO_DEADLINE`, `deadlineText`, `deadlineShort`); the export is unchanged and every other deadline still shows word for word. `seq-deadlines` compares each deadline and chip with that rule and fails any deadline, deadline chip or tag on a sequence page that shows "not stated" (3 new plants; sequence plants 34 of 34). Build: 47 PASS lines, no FAIL; dated plants 16 of 16, map plants 22 of 22; retrieval eval unchanged; layout clean on the 7 sequence pages at all four widths; phase pages 3.0–3.9 screens, forms 3.7.
+
+**Phone lengths** (390 × 844 px screens, Chromium, JavaScript on, every section closed):
+
+| Page | Before (3a06c28) | Session 13 | Now | Target |
+|---|---|---|---|---|
+| Home | 2.6 | 2.6 | 2.6 | — |
+| Neighborhood (Santee) | 6.6 | 2.2 | 2.0 | ≤ 2.5 |
+| All 40 neighborhoods | 6.5–9.5 | 2.2–2.4 | 2.0–2.2 | ≤ 2.5 |
+| Base housing (Murphy Canyon) | 5.9 | 2.3 | 1.9 | ≤ 2.5 |
+| All 20 base housing areas | 3.8–5.9 | 2.3–2.5 | 1.9–2.2 | ≤ 2.5 |
+| Base page (Naval Base San Diego) | 2.7 | 2.6 | 2.4 | — |
+| Phase (90, 60 and 30 days out, the longest) | 10.3 | 3.9 | 3.9 | ≤ 4 |
+| All 5 phases | 3.6–10.3 | 1.6–3.9 | 1.6–3.9 | ≤ 4 |
+| Forms and claims | 23.5 | 4.1 | 3.7 | ≤ 5 |
+
+## Session 13: lean pages, receipts one tap away (v0.9.0)
+
+Brian's brief (2026-10-23): presentation only (no data, wording of facts or deadlines changed). Three layers per section: the answer (summary line, always visible), the details (one tap, closed by default), the receipts (a SourceChip under every section). Branch `claude/epic-davinci-dl1huu`; not merged.
+
+**Site-wide.**
+- `src/components/SourceChip.astro`: about 13 px, muted, a closed `<details>` showing "Source · <latest date>"; it opens to the section's old date line word for word (`data-asof`, so the BAH date, the sequence's retrieval dates and the corpus's `dates` read the same text), extra dated lines (`data-asof-more`: the CAL FIRE download date, "Links checked …", older guidance's retrieval date) and the licenses from `provenance.json`. It replaces every per-block date/source paragraph, the "Official pages retrieved" lines, the inline "(CNIC)" / "(Military OneSource)" citations (now links inside the chip) and the "(link checked …)" / "CAL FIRE maps, downloaded …" asides. The map source boxes use the same chip (`map` mode keeps `data-map-asof` for check_maps). The page-level Sources table stays.
+- Incentive labels are a small tag on their link (CSS only: the `<small class="incentive">` markup the `incentive` check reads is unchanged).
+- Every `<details>` starts closed (Cost, Commute, Wait times, How to apply and Gotchas used to open). A link to a section, a form row or a heading inside one opens it (`Base.astro`, a few lines; without JavaScript it still scrolls there).
+- "How the numbers work" on `/sources/` (`src/lib/method.ts`): drive times at 0700, no-traffic drives, HUD rent and the Census medians, the ratio, BAH following the duty station, school columns, wait ranges; the pages' own notes, moved. Pages get a one-line hint (`MethodHint.astro`, `data-nofact`).
+- Disclaimer: full ("order the official rules imply" + Navy rules) only on `/sequence/` (`#about-this-order`); phase and forms pages end with `SEQUENCE_FOOTNOTE` ("Navy rules, in the order the official rules imply; your command has the final word.") linking to it.
+
+**Neighborhood and base housing pages.** At a glance: four tiles following the reader's base (`?base=`, else nearest) and pay band, one SourceChip under them. Neighborhoods: commute to your base, 3-bed rent vs BAH for your band, school district, fire. Base housing keeps its own four (wait, bedrooms, pets, commute to your base, which now follows `?base=`); rent there is the BAH, so there is no ratio tile (QUESTIONS 69). Cost: your band's BAH lines, your band's ratio row per zip and the 3-bed rent; "Show all pay bands" has the rent tables and every band's ratios; Buying below. Base housing Cost links to the base page's full BAH table instead of expanding (the full table lives only on base pages). Commute: your base's row first, "All bases" expands. Other sections: summary visible, tables and notes behind the tap.
+
+**Sequence.** Phase pages open with a timeline (`data-fact="timeline"`): step number, title cut to one line, the deadline's first sentence as a chip (cut to one line; the card has it in full), linking to the card. Step cards: title (the step, or its first sentence when over 170 characters; the rest is the first line under the tap), "Deadline:" with the full deadline, short form chips (`FORM_SHORT` in `src/lib/sequence.js`, e.g. "DD 1351-2", "DLA") linking to the forms page, who it applies to, and any "Not yet confirmed" line; timing, do first, the full form names, side-by-side rules, DLA lines, source notes and quotes behind "Details and official wording", on one row with the chip. Forms page: one row per form (short name, full name cut to a line, what it pays (first sentence, two lines), deadline's first sentence, where filed); tapping opens the full facts, attachments, steps, DLA table, notes and quotes. The weight table is a closed section after the HHG counseling row.
+
+**Base pages.** Drive-group chips now use the map's amber steps (`map-tier-*` with `--on-tier` text; 4 new contrast pairs, lowest 4.74:1), closing session 12's open item. The page-top method note is a hint.
+
+**Checks.**
+- `dated` (check_principles) is now: every section has exactly one SourceChip; every fact names its source key (`data-src`: `prov:`, `link:`, `seq:`, `rule:`, `areas:`, `fhsz:`, `fixed:`, `notes:`, `log:`, `changelog:`); the chip lists exactly the keys its section uses (both ways); each key's own date, read from its data file (`provenance.json` verified_on, `links.json`, the sequence export's retrieval dates including superseded quotes, `hazards.json` fhsz_retrieved_on, `fixedNotes.js`, …), appears in the chip's date lines introduced by its own word ("verified", "checked", "downloaded", "retrieved"); a `data-nofact` or toggle (`data-ui`) line carries no digit; any other text in a section fails. Tables and fact lists outside a section still fail. `--plant all`: 12 of 12 caught. 780 sections, 2,444 keys.
+- It found real gaps, now fixed: every neighborhood Cost section showed Mello-Roos status without its date (county list, verified 2026-09-22); base housing Communities/Wait times dated LMH pages by vintage only; school, child care and hazard sections never dated their outside links; superseded quotes' retrieval dates weren't in their block's date line (one step, f30-loss-damage-claim, and one form, navy-hhg-quick-claim).
+- Other checks unchanged in what they require; markup they parse moved, so: `seq-notes` reads the full lines on `/sequence/` and the footnote elsewhere (plants: disclaimer removed, footnote removed or reworded); `seq-export` and `seq-deadlines` also check the timeline (every step once, in order, linking to its card, its title, its deadline chip = the deadline's first sentence) and the forms index chips; `seq-weights` strips the quotes as `<div class="cites">`; `page-ratios` reads the full tables under "Show all pay bands" and now also checks every your-band ratio row (6,468 cells, up from 3,234). Sequence plants 30 of 30, map plants 22 of 22, corpus caption plant caught (4 runs; 7 before, since sections are shorter).
+- Corpus (`build_corpus.mjs`): drops the chip, toggle labels (`data-ui`), the your-band rows that repeat the full tables (`data-dup`), no-fact hints (`data-nofact`) and the phase timeline; `dates` adds the chip's extra lines, `verified_on` still comes from the date line alone. Compared with a build of 3a06c28: every collapsed table and fact is still there; the only text that left sections is the method notes (now `/sources/#how-numbers-work`) and the inline dates (now in `dates`); no section's `verified_on` changed. 950 chunks (954 before).
+
+**Assistant code:** one change. Moving the "drive times" notes made "time" rare, and out-04 ("What time do the Padres play on Sunday?") cleared `minScore` on base housing wait-time sections (3.56 → 6.33). `time`/`times` are now in `GENERIC` (`assistant/retrieve.js`), which restores the old result. QUESTIONS 72.
+
+**Runs on 2026-10-23:** full build, every check (47 PASS lines, no FAIL); layout clean on 82 pages at 390/768/1280/1440; retrieval eval: expected fact 41 of 42 (in-16 only, as before), expected page in the sections sent 42 of 42 (41 before: in-16 now gets `/sources/#how-numbers-work`), section 38 of 38, every self-test passes, go-live gate unchanged (out-01 and out-04 declined by retrieval). **Live eval not run:** pages.dev is blocked by this environment's network policy (CONNECT 403), so neither the preview nor the live eval could be reached from here.
+
+**Phone lengths** (390 × 844 px screens, Chromium, JavaScript on, every section closed):
+
+| Page | Before (3a06c28) | After | Target |
+|---|---|---|---|
+| Home | 2.6 | 2.6 | — |
+| Neighborhood (Santee) | 6.6 | 2.2 | ≤ 2.5 |
+| All 40 neighborhoods | 6.5–9.5 | 2.2–2.4 | ≤ 2.5 |
+| Base housing (Murphy Canyon) | 5.9 | 2.3 | ≤ 2.5 |
+| All 20 base housing areas | 3.8–5.9 | 2.3–2.5 (Camp Pendleton 2,102 px = 2.49) | ≤ 2.5 |
+| Base page (Naval Base San Diego) | 2.7 | 2.6 | — |
+| Phase (90, 60 and 30 days out, the longest) | 10.3 | 3.9 | ≤ 4 |
+| All 5 phases | 3.6–10.3 | 1.6–3.9 | ≤ 4 |
+| Forms and claims | 23.5 | 4.1 | ≤ 5 |
+
+**Open:** none from this session; QUESTIONS 69–72 answered 2026-10-24 (session 13b).
+
 
 ## Session 12: static maps (v0.8.0)
 

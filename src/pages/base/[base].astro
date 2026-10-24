@@ -10,6 +10,7 @@ import Base from '../../layouts/Base.astro';
 import FactBlock from '../../components/FactBlock.astro';
 import Toc from '../../components/Toc.astro';
 import SiteMap from '../../components/SiteMap.astro';
+import MethodHint from '../../components/MethodHint.astro';
 import { BASES, baseBySlug, drives, GROUP_BASES, minutes, PENDLETON_UNTIED_NOTE, TIERS } from '../../lib/bases';
 import { baseHousingAreas } from '../../lib/baseHousing';
 import { dollars, range } from '../../lib/format';
@@ -57,8 +58,8 @@ const housingSummary = (as: typeof tied, what: 'wait' | 'drive') => {
 };
 const commuteAsOf = asOf('commute');
 const commuteSource = "Google Maps predicted drive time, Tuesday 0700, from the zip's center (rounded); a neighborhood with several zips shows the range";
-const housingAsOf = `Waits: ${estimate} · verified ${verifiedOn}. Drive: ${asOf('commute')}`;
-const housingSource = "Navy Housing Service Center / LMH wait-time lists; Google Maps predicted drive time from the area's zip";
+const housingAsOf = `Waits: ${estimate} · verified ${verifiedOn}. Drive: ${asOf('commute')}. Communities: LMH pages ${asOf('base_housing')}`;
+const housingSource = "Navy Housing Service Center / LMH wait-time lists; Google Maps predicted drive time from the area's zip; Liberty Military Housing community pages";
 const sections = [
   { id: 'off-base', label: 'Off base', children: tiers.map((t) => ({ id: t.id, label: t.label })) },
   { id: 'base-housing', label: 'Base housing', children: [{ id: 'housing-tied', label: 'Tied to this base' }, { id: 'housing-untied', label: 'Not tied to a base' }] },
@@ -76,7 +77,7 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
   <p class="eyebrow">Reporting to</p>
   <h1>{base.short}</h1>
   <p class="kicker">{gate}</p>
-  <p class="note">Weekday drive to the main gate at 0700, from the middle of each neighborhood. Your street can add 5–10 minutes. A neighborhood with several zips shows the range and sits in the group for its slowest zip.</p>
+  <MethodHint topic="drive-times" text="Sorted by the weekday drive to the main gate at 0700." />
   <a class="card plan-card" href="/plan/" data-plan-base={base.code}>
     <span><span class="card-name">Starting plan for {base.short}</span><span class="card-sub">Seven more questions, about a minute. Your answers stay on this device.</span></span>
     <span class="arrow" aria-hidden="true">›</span>
@@ -90,8 +91,8 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
   <h2 class="group-title" id="off-base">Off base</h2>
   <SiteMap kind="base" base={base.code} />
   {tiers.map((t) => (
-    <FactBlock id={t.id} title={t.label} chip={t.tone} level={3} summary={tierSummary(t.rows)} asOf={commuteAsOf} source={commuteSource}>
-      <ul class="cards cards-pane">
+    <FactBlock id={t.id} title={t.label} chip={`tier-chip ${t.tone}`} level={3} summary={tierSummary(t.rows)} summarySrc="prov:commute" srcs={['prov:commute']} asOf={commuteAsOf} source={commuteSource}>
+      <ul class="cards cards-pane" data-src="prov:commute">
         {t.rows.map((r) => (
           <li>
             <a class="card" href={`/communities/${r.slug}/?base=${base.slug}`}>
@@ -103,13 +104,13 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
       </ul>
     </FactBlock>
   ))}
-  {missing > 0 && <p class="gap">{missing} {missing === 1 ? 'neighborhood has' : 'neighborhoods have'} no 0700 drive time to {base.short} in our data.</p>}
+  {missing > 0 && <p class="gap" data-src="prov:commute">{missing} {missing === 1 ? 'neighborhood has' : 'neighborhoods have'} no 0700 drive time to {base.short} in our data.</p>}
 
   <h2 class="group-title" id="base-housing">Base housing</h2>
-  <FactBlock id="housing-tied" title={`Tied to ${base.short} by LMH`} level={3} summary={housingSummary(tied, 'wait')} asOf={housingAsOf} source={housingSource}>
+  <FactBlock id="housing-tied" title={`Tied to ${base.short} by LMH`} level={3} summary={housingSummary(tied, 'wait')} summarySrc="prov:base_housing_waits" srcs={['prov:base_housing_waits', ...(tied.length ? ['prov:commute'] : []), 'prov:base_housing']} asOf={housingAsOf} source={housingSource}>
     {tied.length > 0 ? (
       <>
-        <ul class="cards cards-pane">
+        <ul class="cards cards-pane" data-src="prov:base_housing_waits prov:commute prov:base_housing">
           {tied.map((a) => (
             <li>
               <a class="card" href={`/base-housing/${a.id}/?base=${base.slug}`}>
@@ -120,17 +121,17 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
           ))}
         </ul>
         {base.code === 'PENDLETON'
-          ? <p class="note">Camp Pendleton's wait times aren't in our data: the Navy Housing Service Center's list covers the San Diego complex only. <a href="/base-housing/camp-pendleton/">See the Camp Pendleton area page</a> for its communities and who to ask.</p>
-          : <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}.</p>}
+          ? <p class="note" data-src="prov:base_housing_waits">Camp Pendleton's wait times aren't in our data: the Navy Housing Service Center's list covers the San Diego complex only. <a href="/base-housing/camp-pendleton/">See the Camp Pendleton area page</a> for its communities and who to ask.</p>
+          : <p class="note" data-src="prov:base_housing_waits">{estimate}. <span data-nofact><a href="/sources/#how-waits">How the wait ranges work</a></span></p>}
       </>
     ) : (
-      <p class="gap">Liberty Military Housing doesn't tie any base housing area to {base.short}. The areas under "Not tied to a specific base by LMH" are open to any eligible family; they're sorted by the drive here.</p>
+      <p class="gap" data-src="prov:base_housing_waits prov:base_housing">Liberty Military Housing doesn't tie any base housing area to {base.short}. The areas under "Not tied to a specific base by LMH" are open to any eligible family; they're sorted by the drive here.</p>
     )}
   </FactBlock>
 
-  <FactBlock id="housing-untied" title="Not tied to a specific base by LMH" level={3} summary={housingSummary(untied, 'drive')} asOf={base.code === 'PENDLETON' ? `${housingAsOf}. Eligibility note: ${PENDLETON_UNTIED_NOTE.written}` : housingAsOf} source={housingSource}>
-    {base.code === 'PENDLETON' && <p class="gap">{PENDLETON_UNTIED_NOTE.text}</p>}
-    <ul class="cards cards-pane">
+  <FactBlock id="housing-untied" title="Not tied to a specific base by LMH" level={3} summary={housingSummary(untied, 'drive')} summarySrc="prov:commute" srcs={['prov:base_housing_waits', 'prov:commute', 'prov:base_housing', ...(base.code === 'PENDLETON' ? ['fixed:pendleton-untied'] : [])]} asOf={base.code === 'PENDLETON' ? `${housingAsOf}. Eligibility note: ${PENDLETON_UNTIED_NOTE.written}` : housingAsOf} source={housingSource}>
+    {base.code === 'PENDLETON' && <p class="gap" data-src="fixed:pendleton-untied">{PENDLETON_UNTIED_NOTE.text}</p>}
+    <ul class="cards cards-pane" data-src="prov:base_housing_waits prov:commute prov:base_housing">
       {untied.map((a) => (
         <li>
           <a class="card" href={`/base-housing/${a.id}/?base=${base.slug}`}>
@@ -140,12 +141,12 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
         </li>
       ))}
     </ul>
-    <p class="note">Wait is the range across every list, pay grade and bedroom count in the area. {estimate}. <a href="/base-housing/">All base housing</a></p>
+    <p class="note" data-src="prov:base_housing_waits">{estimate}. <span data-nofact><a href="/sources/#how-waits">How the wait ranges work</a> · <a href="/base-housing/">All base housing</a></span></p>
   </FactBlock>
 
   <h2 class="group-title" id="bah">{bah.label}</h2>
-  <FactBlock id="bah-table" title="Housing allowance (BAH) by pay grade" level={3} summary={`${bahBands.length} pay bands, ${bah.rows.length} grades · with and without dependents`} asOf={`BAH ${bah.year} · verified ${bah.verified_on}`} source={`${bah.source_name}. BAH follows the duty station: ${base.short} is in the ${bah.area} area (MHA ${bah.mha})`}>
-    <div class="table-wrap" data-bah-block={`${bah.year}|${bah.mha}`}>
+  <FactBlock id="bah-table" title="Housing allowance (BAH) by pay grade" level={3} summary={`${bahBands.length} pay bands, ${bah.rows.length} grades · with and without dependents`} summarySrc="prov:bah" srcs={['prov:bah']} asOf={`BAH ${bah.year} · verified ${bah.verified_on}`} source={`${bah.source_name}. BAH follows the duty station: ${base.short} is in the ${bah.area} area (MHA ${bah.mha})`}>
+    <div class="table-wrap" data-bah-block={`${bah.year}|${bah.mha}`} data-src="prov:bah">
       <table>
         <caption data-bah-label>{bah.label}, by pay grade, a month</caption>
         <thead><tr><th>Pay band</th><th>Grade</th><th class="num">With dependents</th><th class="num">Without dependents</th></tr></thead>
@@ -156,7 +157,7 @@ const bahBands = [...new Set(bah.rows.map((r) => r.pay_band))];
         </tbody>
       </table>
     </div>
-    <p class="note">Each neighborhood and base housing page shows the lines for your pay band from this table, next to the rent.</p>
+    <p class="note" data-src="prov:bah">Each neighborhood and base housing page shows the lines for your pay band from this table, next to the rent.</p>
   </FactBlock>
   </div>
   </div>

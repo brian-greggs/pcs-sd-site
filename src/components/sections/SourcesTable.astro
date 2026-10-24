@@ -1,26 +1,32 @@
 ---
-// "Sources and dates" footer, generated from provenance.
+// "Sources and dates" footer, generated from provenance: the page-level table of every source, with its dates
+// and license. `extra` rows carry their own source key (areas:<id> for the base housing grouping). It has no
+// SourceChip (Brian 2026-10-24): each row is a receipt, and the `dated` check compares each row's Verified
+// cell with its source's own date.
 import FactBlock from '../FactBlock.astro';
 import { provenance } from '../../lib/prov';
 
-interface Props { ids: string[]; extra?: { title: string; source: string; vintage: string; verified: string; license: string }[] }
+type Extra = { key: string; title: string; source: string; vintage: string; verified: string; license: string };
+interface Props { ids: string[]; extra?: Extra[] }
 const { ids, extra = [] } = Astro.props;
 const { prov } = await provenance();
 const rows = [
-  ...ids.map((id) => ({ title: prov[id].title, source: prov[id].note ? `${prov[id].source_name} (verified: ${prov[id].note})` : prov[id].source_name, vintage: prov[id].vintage, verified: prov[id].verified_on, license: prov[id].license })),
+  ...ids.map((id) => ({ key: `prov:${id}`, title: prov[id].title, source: prov[id].note ? `${prov[id].source_name} (verified: ${prov[id].note})` : prov[id].source_name, vintage: prov[id].vintage, verified: prov[id].verified_on, license: prov[id].license })),
   ...extra,
 ];
-const latest = rows.map((r) => r.verified).sort().at(-1)!;
+const days = [...new Set(rows.map((r) => r.verified))].sort();
+const latest = days.at(-1)!;
+const keys = rows.map((r) => r.key);
 ---
 
-<FactBlock id="sources" title="Sources and dates" summary={`${rows.length} sources, each with its date · last checked ${latest}`} asOf={`Most recent verification: ${latest}`} source="the provenance record for each dataset (full list on the Sources page)">
+<FactBlock id="sources" title="Sources and dates" summary={`${rows.length} sources, each with its date · last checked ${latest}`} summarySrc={keys.join(' ')} srcs={keys} noChip asOf={`Verified ${days.join(', ')}; most recent verification: ${latest}`} source="the provenance record for each dataset (full list on the Sources page)">
   <div class="table-wrap">
     <table>
       <thead><tr><th>What</th><th>Source</th><th>Vintage</th><th>Verified</th><th>License</th></tr></thead>
       <tbody>
-        {rows.map((r) => <tr><td>{r.title}</td><td>{r.source}</td><td>{r.vintage}</td><td>{r.verified}</td><td>{r.license}</td></tr>)}
+        {rows.map((r) => <tr data-src={r.key}><td>{r.title}</td><td>{r.source}</td><td>{r.vintage}</td><td data-verified>{r.verified}</td><td>{r.license}</td></tr>)}
       </tbody>
     </table>
   </div>
-  <p class="note"><a href="/sources/">All sources</a></p>
+  <p class="note" data-nofact><a href="/sources/">All sources</a></p>
 </FactBlock>

@@ -20,6 +20,7 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSy
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { indexChunks } from '../assistant/retrieve.js';
+import { TIMELINE_ID } from '../src/lib/sequence.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
@@ -86,9 +87,14 @@ function unrankedLines(html) {
 }
 // Of the per-base and per-band variants a page renders (the page script shows one), keep the visible default.
 // Balanced on the element's own tag, so a hidden wrapper takes its nested divs (the ratio tables per MHA) with it.
-function stripHidden(html) {
+const stripHidden = (html) => dropElements(html, /<(\w+)\b[^>]*\shidden(?:="")?(?=[\s>])[^>]*>/);
+// What the pages mark as not content (2026-10-23): the SourceChip (its date line is read first, as `dates`), toggle
+// labels ("Show all pay bands", data-ui), the reader's own rows that repeat a full table further down (data-dup) and
+// lines that state no fact (data-nofact: the "How the numbers work" hints and links).
+const stripUi = (html) => dropElements(html, /<(\w+)\b[^>]*\s(?:data-source-chip|data-ui|data-dup|data-nofact)(?:="[^"]*")?(?=[\s>])[^>]*>/);
+function dropElements(html, open) {
   let out = html, m;
-  while ((m = out.match(/<(\w+)\b[^>]*\shidden(?:="")?(?=[\s>])[^>]*>/))) {
+  while ((m = out.match(open))) {
     const re = new RegExp(`<${m[1]}\\b[^>]*>|</${m[1]}>`, 'gi');
     re.lastIndex = m.index + m[0].length;
     let depth = 1, end = m.index + m[0].length, x; // no closing tag (a void element): drop the tag alone
@@ -157,15 +163,21 @@ for (const file of walk(DIST)) {
   for (const [, id, inner] of blocks) {
     // Each page's "Sources and dates" block repeats /sources/, which is in the corpus once.
     if (id === 'sources' && url !== '/sources/') continue;
+    // The phase timeline repeats the step cards under it.
+    if (id === TIMELINE_ID) continue;
+    // The SourceChip's date line (data-asof) gives the section's verified date; its other dated lines (a CAL FIRE
+    // download, links checked) ride along in `dates`.
     const asofHtml = (inner.match(/<p[^>]*data-asof[^>]*>([\s\S]*?)<\/p>/) ?? [, ''])[1];
-    const dates = text(asofHtml);
-    const verified = latestDate(dates);
+    const moreLines = [...inner.matchAll(/<p[^>]*data-asof-more[^>]*>([\s\S]*?)<\/p>/g)].map((m) => text(m[1]));
+    const verified = latestDate(text(asofHtml));
+    const dates = [text(asofHtml), ...moreLines].join(' ');
     if (!verified) throw new Error(`build_corpus: ${url}#${id} has no date in its date line: "${dates}"`);
-    const headHtml = (inner.match(/<h[23]\b[^>]*>([\s\S]*?)<\/h[23]>/) ?? [, id])[1];
+    const content = stripUi(inner);
+    const headHtml = (content.match(/<h[23]\b[^>]*>([\s\S]*?)<\/h[23]>/) ?? [, id])[1];
     const heading = text(headHtml);
     // The summary line, like the body, can hold one variant per base (all but one hidden): keep the visible one.
-    const summary = text(stripHidden((inner.match(/<summary>([\s\S]*?)<\/summary>/) ?? [, ''])[1].replace(/^[\s\S]*?<span class="summary-line">/, '')));
-    let body = inner.replace(/<p[^>]*data-asof[^>]*>[\s\S]*?<\/p>/, '');
+    const summary = text(stripHidden((content.match(/<summary>([\s\S]*?)<\/summary>/) ?? [, ''])[1].replace(/^[\s\S]*?<span class="summary-line"[^>]*>/, '')));
+    let body = content;
     body = body.replace(/<summary>[\s\S]*?<\/summary>/, '').replace(/<h2\b[^>]*>[\s\S]*?<\/h2>/, '');
     body = stripHidden(body);
     const parts = split(body);

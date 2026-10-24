@@ -14,10 +14,10 @@ const gap = gapLine(missingZips(zips, care), 'licensed child care counts', OUT_O
 const sum = (k: keyof (typeof care)[number]) => care.reduce((n, r) => n + (r[k] as number), 0);
 ---
 
-<FactBlock id="childcare" title="Child care" summary={care.length ? `${sum('centers')} licensed centers · ${sum('centers_infant')} take infants · ${sum('large_fcc_homes')} large family homes` : 'No counts in our data'} asOf={asOf('childcare')} source="California Department of Social Services, Community Care Licensing (licensed facilities download)">
-  {gap && <p class="gap">{gap}</p>}
+<FactBlock id="childcare" title="Child care" summarySrc="prov:childcare" srcs={['prov:childcare', 'link:ymca-childcare-resource-service', 'link:militarychildcare-request-care']} summary={care.length ? `${sum('centers')} licensed centers · ${sum('centers_infant')} take infants · ${sum('large_fcc_homes')} large family homes` : 'No counts in our data'} asOf={asOf('childcare')} source="California Department of Social Services, Community Care Licensing (licensed facilities download)">
+  {gap && <p class="gap" data-src="prov:childcare">{gap}</p>}
   {care.length > 0 && (
-  <dl class="facts">
+  <dl class="facts" data-src="prov:childcare">
     <dt>Licensed centers</dt>
     <dd>{sum('centers')} <span class="muted">(capacity {sum('center_capacity')})</span></dd>
     <dt>Centers licensed for infants</dt>
@@ -30,8 +30,8 @@ const sum = (k: keyof (typeof care)[number]) => care.reduce((n, r) => n + (r[k] 
     <dd>{sum('large_fcc_homes')} <span class="muted">(capacity {sum('large_fcc_capacity')})</span></dd>
   </dl>
   )}
-  <p class="gap">Missing from these counts: small family child care homes (up to 8 children). They're licensed, but the state doesn't publish them, and they're often where infant care is. The way to find them is the county's free referral service.</p>
-  <ul class="links">
+  <p class="gap" data-src="prov:childcare">Missing from these counts: small family child care homes (up to 8 children). They're licensed, but the state doesn't publish them, and they're often where infant care is. The way to find them is the county's free referral service.</p>
+  <ul class="links" data-src="link:ymca-childcare-resource-service link:militarychildcare-request-care">
     <li><ExtLink id="ymca-childcare-resource-service" /></li>
     <li><ExtLink id="militarychildcare-request-care" /></li>
   </ul>

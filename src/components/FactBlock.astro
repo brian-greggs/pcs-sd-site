@@ -1,39 +1,49 @@
 ---
-// A section of facts. The date line is required (Principle 2), and
-// scripts/check_principles.mjs fails the build if a block renders without it.
-// By default the section is a native <details>: the summary shows the section
-// name and a one-line summary built from the data, so a closed section still
-// says what's in it. `plain` renders an always-open card instead.
+// A section of facts, in three layers (Brian 2026-10-23): the summary line (always visible), the body (one tap:
+// a native <details>, closed by default) and the receipts (a SourceChip with the source, the dates and the
+// license: the body's last element, so it shows when the section is opened; Brian 2026-10-24). `plain` renders an
+// always-open card with the chip at its end (sequence steps, /sources/). `noChip` is for the page-level "Sources
+// and dates" table only: its rows are the receipts, each with its own date.
+//
+// Every fact in the section names its source with data-src (the summary line with `summarySrc`); the chip lists
+// those keys (`srcs`) and the date line that covers them. scripts/check_principles.mjs (`dated`) fails a section
+// with a fact that names no source, a source the chip doesn't list, or a chip date that isn't the source's own.
+import SourceChip from './SourceChip.astro';
+
 interface Props {
   id: string;
   title: string;
   asOf: string; // e.g. "HUD FY2027 · verified 2026-09-18"
   source: string;
+  srcs: string[];
+  more?: string[]; // extra dated lines for the chip (SourceChip)
   summary?: string;
-  open?: boolean;
+  summarySrc?: string; // the source keys of the facts in the summary line
   plain?: boolean;
   level?: 2 | 3; // 3 for a group inside a page section (base pages)
-  chip?: 'blue' | 'mauve' | 'gold'; // show the title as a tier chip
+  chip?: string; // show the title as a tier chip (a map-tier-* class: the base page's drive groups)
+  noChip?: boolean;
 }
-const { id, title, asOf, source, summary, open = false, plain = false, level = 2, chip } = Astro.props;
+const { id, title, asOf, source, srcs, more, summary, summarySrc, plain = false, level = 2, chip, noChip = false } = Astro.props;
 const H = level === 3 ? 'h3' : 'h2';
 if (!asOf.trim()) throw new Error(`FactBlock "${id}" has no date`);
 if (!plain && !summary?.trim() && !Astro.slots.has('summary')) throw new Error(`FactBlock "${id}" has no summary line`);
+if (!plain && !summarySrc) throw new Error(`FactBlock "${id}": the summary line names no source (summarySrc)`);
 ---
 
 {plain ? (
   <section class="fact plain" id={id} data-fact={id}>
     <h2>{title}</h2>
     <slot />
-    <p class="asof" data-asof>{asOf}. Source: {source}.</p>
+    <SourceChip asOf={asOf} source={source} srcs={srcs} more={more}><slot name="receipts" /></SourceChip>
   </section>
 ) : (
   <section class="fact" id={id} data-fact={id}>
-    <details open={open}>
-      <summary><H>{chip ? <span class={`chip ${chip}`}>{title}</span> : title}</H><span class="summary-line"><slot name="summary">{summary}</slot></span></summary>
+    <details>
+      <summary><H>{chip ? <span class={`chip ${chip}`}>{title}</span> : title}</H><span class="summary-line" data-src={summarySrc}><slot name="summary">{summary}</slot></span></summary>
       <div class="body">
         <slot />
-        <p class="asof" data-asof>{asOf}. Source: {source}.</p>
+        {!noChip && <SourceChip asOf={asOf} source={source} srcs={srcs} more={more}><slot name="receipts" /></SourceChip>}
       </div>
     </details>
   </section>

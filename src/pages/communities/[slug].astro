@@ -25,6 +25,8 @@ import Toc from '../../components/Toc.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
 import BahLines from '../../components/BahLines.astro';
 import SiteMap from '../../components/SiteMap.astro';
+import SourceChip from '../../components/SourceChip.astro';
+import MethodHint from '../../components/MethodHint.astro';
 import { acsDollars, dollars, pct, range, PAY_BAND_ORDER } from '../../lib/format';
 import { provenance } from '../../lib/prov';
 import { writtenNotes } from '../../lib/notes';
@@ -87,6 +89,7 @@ const fireValue = veryHigh.length
 const mapped = hazards.map((h) => h.fhsz_mapped_pct).filter((x): x is number => x != null);
 const leastMapped = mapped.length ? Math.min(...mapped) : null;
 const fireDate = hazards.map((h) => h.fhsz_retrieved_on).find(Boolean);
+const fireKeys = hazards.filter((h) => h.fhsz_very_high_pct != null).map((h) => `fhsz:${h.zip}`);
 const rent3 = rent.map((r) => r.fy27_3br).filter((x): x is number => x != null);
 const rent3Text = rent3.length ? (Math.min(...rent3) === Math.max(...rent3) ? dollars(rent3[0]) : `${dollars(Math.min(...rent3))}–${dollars(Math.max(...rent3))}`) : '—';
 const cfd = new Set(ownership.map((o) => o.has_cfd));
@@ -101,7 +104,6 @@ const bah = await bahTable();
 const defaultBase = ds[0] ? baseByCode(ds[0].code).slug : null;
 const bahDefault = ds[0] ? bah.areaOf(ds[0].code).mha : bah.areas[0].mha;
 
-const ACS_NOTE = 'Census 5-year estimate (2020–2024); lags the current market.';
 const sections = [
   { id: 'glance', label: 'At a glance' }, { id: 'cost', label: 'Cost' }, { id: 'commute', label: 'Commute' },
   { id: 'schools', label: 'Schools' }, { id: 'childcare', label: 'Child care' }, { id: 'access', label: 'Commissary & Costco' },
@@ -116,21 +118,17 @@ const sections = [
   <div class="page-main" data-default-base={defaultBase}>
   <h1>{community.name}</h1>
   <p class="kicker">{community.corridor} · {zips.join(', ')}</p>
-  <SiteMap kind="locator" community={slug} />
-
-  <Notes notes={notes} part="lead" />
-
   <section class="glance" id="glance" data-fact="glance">
     <div class="glance-head">
       <h2>At a glance</h2>
-      <label class="band-pick" data-band-picker hidden>Pay band
+      <label class="band-pick" data-band-picker data-nofact hidden>Pay band
         <select data-band-select>
           {bands.map((b) => <option value={b} selected={b === DEFAULT_BAND}>{b}</option>)}
         </select>
       </label>
     </div>
     <dl class="tiles">
-      <div class="tile blue">
+      <div class="tile blue" data-src="prov:commute">
         <dt>Commute at 0700</dt>
         {ds.map((d, i) => (
           <dd data-base={baseByCode(d.code).slug} hidden={i !== 0}>
@@ -140,7 +138,7 @@ const sections = [
         ))}
         {ds.length === 0 && <dd><span class="tile-value">—</span><span class="tile-sub">No drive times in our data</span></dd>}
       </div>
-      <div class="tile mauve">
+      <div class="tile mauve" data-src="prov:rent_to_bah">
         <dt>3-bed rent vs. BAH</dt>
         {bah.areas.map((a) => bands.map((b) => (
           <dd data-band-show={b} data-mha-bases={a.bases.join(' ')} hidden={b !== DEFAULT_BAND || a.mha !== bahDefault}>
@@ -150,14 +148,14 @@ const sections = [
         )))}
         {bands.length === 0 && <dd><span class="tile-value">—</span><span class="tile-sub">No HUD rent for this zip</span></dd>}
       </div>
-      <div class="tile blue">
+      <div class="tile blue" data-src="prov:schools">
         <dt>School district</dt>
         <dd>
           <span class="tile-value tile-text">{districtNames[0] ?? '—'}{districtNames.length > 1 && <span class="muted"> +{districtNames.length - 1}</span>}</span>
           <span class="tile-sub">{schoolRows.length} public {schoolRows.length === 1 ? 'school' : 'schools'} in {multiZip ? 'these zips' : 'the zip'}</span>
         </dd>
       </div>
-      <div class="tile gold">
+      <div class="tile gold" data-src={fireValue ? fireKeys.join(' ') : 'prov:hazards'}>
         <dt>Fire</dt>
         <dd>
           <span class="tile-value">{fireValue ?? '—'}</span>
@@ -166,72 +164,103 @@ const sections = [
         </dd>
       </div>
     </dl>
-    <p class="asof" data-asof>Commute: {asOf('commute')}. Rent ratio: {asOf('rent_to_bah')}. Schools: {asOf('schools')}. Fire: {fireDate ? `CAL FIRE maps, downloaded ${fireDate}` : asOf('hazards')}.</p>
+    <SourceChip srcs={['prov:commute', 'prov:rent_to_bah', 'prov:schools', ...(fireValue ? fireKeys : ['prov:hazards'])]} asOf={`Commute: ${asOf('commute')}. Rent ratio: ${asOf('rent_to_bah')}. Schools: ${asOf('schools')}. Fire: ${fireDate ? `CAL FIRE maps, downloaded ${fireDate}` : asOf('hazards')}`} source="Google Maps predicted drive times; HUD Small Area Fair Market Rents and DTMO BAH; California Department of Education; CAL FIRE Fire Hazard Severity Zones" />
   </section>
 
-  <FactBlock id="cost" title="Cost" open summary={costSummary} asOf={`Rent: ${asOf('rent')}. BAH: ${asOf('bah')}. Ratio: ${asOf('rent_to_bah')}`} source={`HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; ${bah.areas[0].source_name}`}>
-    <h3>Rent</h3>
-    {rentGap && <p class="gap">{rentGap}</p>}
-    {rent.map((r) => (
-      <div class="table-wrap">
-        <table>
-          <caption>HUD reference rent{multiZip ? `, zip ${r.zip}` : ''}: 40th-percentile rent including utilities{r.safmr_metro_default ? ' (metro default, not zip-specific)' : ''}</caption>
-          <thead><tr><th>Bedrooms</th><th class="num">Studio</th><th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th></tr></thead>
-          <tbody><tr><td>Monthly</td><td class="num">{dollars(r.fy27_0br)}</td><td class="num">{dollars(r.fy27_1br)}</td><td class="num">{dollars(r.fy27_2br)}</td><td class="num">{dollars(r.fy27_3br)}</td><td class="num">{dollars(r.fy27_4br)}</td></tr></tbody>
-        </table>
-      </div>
-      <p class="note">Census median rent across all rented homes here: {acsDollars(r.acs_median_gross_rent)}. <span class="muted">{ACS_NOTE}</span> For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" />.</p>
-    ))}
-    {/* Next to the rent (Brian 2026-10-20). data-unranked: sent to the assistant with this subsection but
-        left out of its ranking, so 40 copies of the same lines don't outrank the base pages' tables. */}
-    <div class="bah" data-unranked>
-      <BahLines areas={bah.areas} bands={bands.length ? bands : PAY_BAND_ORDER} mha={bahDefault} band={DEFAULT_BAND} />
-      <p class="note">BAH follows your duty station, not where you live. Every base on this site is in the San Diego area (CA038) except Camp Pendleton (CA024). This shows your base's area if you came from its base page, and otherwise the area of the nearest base. Pick your pay band above.</p>
-    </div>
+  {/* The tiles first, so they're on the first phone screen; the locator map right after (Brian 2026-10-24). */}
+  <SiteMap kind="locator" community={slug} />
 
-    <h3>Rent as a share of your housing allowance</h3>
-    {ratioGap && <p class="gap">{ratioGap}</p>}
-    <p class="note">HUD reference rent for that many bedrooms, divided by the 2026 allowance with dependents for your base's housing area, the same figures as the lines above: the allowance follows your duty station, not where you live. Under 100% means the reference rent fits inside the allowance. A band shows a range when its grades get different allowances.</p>
-    {bah.areas.map((a) => (
-      <div class="ratio-area" data-mha-bases={a.bases.join(' ')} hidden={a.mha !== bahDefault}>
-        {rent.filter((r) => ratios.some((x) => x.zip === r.zip && x.mha === a.mha)).map((r) => (
+  <Notes notes={notes} part="lead" />
+
+  <FactBlock id="cost" title="Cost" summary={costSummary} summarySrc="prov:rent prov:ownership" srcs={['prov:rent', 'prov:bah', 'prov:rent_to_bah', 'prov:ownership', 'link:per-parcel-lookup']} asOf={`Rent: ${asOf('rent')}. BAH: ${asOf('bah')}. Ratio: ${asOf('rent_to_bah')}. Mello-Roos: ${asOf('ownership')}`} source={`HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; ${bah.areas[0].source_name}; SD County Auditor & Controller, Active Mello-Roos Districts FY2025-26`}>
+    {/* Your pay band first (Brian 2026-10-23): the BAH lines, the ratio row and the 3-bed rent for the band picked
+        at the top and your base's housing area; every band is behind "Show all pay bands". data-unranked: the BAH
+        lines are sent to the assistant with this section but left out of its ranking, so 40 copies of the same
+        lines don't outrank the base pages' tables. */}
+    <div class="bah" data-unranked data-src="prov:bah">
+      <BahLines areas={bah.areas} bands={bands.length ? bands : PAY_BAND_ORDER} mha={bahDefault} band={DEFAULT_BAND} />
+    </div>
+    {rentGap && <p class="gap" data-src="prov:rent">{rentGap}</p>}
+    {ratioGap && <p class="gap" data-src="prov:rent_to_bah">{ratioGap}</p>}
+    {/* data-dup: the same figures are in the full tables below, which the assistant corpus keeps. */}
+    <div class="mine" data-dup>
+      {rent3.length > 0 && <p data-src="prov:rent">3-bed HUD reference rent: {multiZip ? rent.filter((r) => r.fy27_3br != null).map((r) => `${dollars(r.fy27_3br)} (${r.zip})`).join(' · ') : dollars(rent3[0])} a month.</p>}
+      {bah.areas.map((a) => bands.map((b) => (
+        <div class="table-wrap" data-src="prov:rent_to_bah" data-band-show={b} data-mha-bases={a.bases.join(' ')} hidden={b !== DEFAULT_BAND || a.mha !== bahDefault}>
+          <table>
+            <caption>Rent as a share of allowance, {b} · {a.area} area (MHA {a.mha})</caption>
+            <thead><tr><th>{multiZip ? 'Zip' : 'Bedrooms'}</th><th class="num">2 bed</th><th class="num">3 bed</th><th class="num">4 bed</th></tr></thead>
+            <tbody>
+              {rent.filter((r) => ratios.some((x) => x.zip === r.zip && x.mha === a.mha)).map((r) => (
+                <tr data-ratio-mine={`${r.zip}|${b}|${a.mha}`}><td>{multiZip ? r.zip : b}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, b, br, a.mha)}</td>)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )))}
+    </div>
+    <MethodHint topic="ratio" text="The share is HUD rent divided by your base’s BAH." />
+
+    <details class="more">
+      <summary data-ui>Show all pay bands</summary>
+      <h3>Rent</h3>
+      {rent.map((r) => (
+        <div data-src="prov:rent">
           <div class="table-wrap">
             <table>
-              <caption>{multiZip ? `Zip ${r.zip} · ` : ''}{a.area} area (MHA {a.mha})</caption>
-              <thead><tr><th>Pay band</th><th class="num">2 bed</th><th class="num">3 bed</th><th class="num">4 bed</th></tr></thead>
-              <tbody>
-                {bands.map((band) => (
-                  <tr data-band-row={band} class={band === DEFAULT_BAND ? 'picked' : undefined}><td>{band}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, band, br, a.mha)}</td>)}</tr>
-                ))}
-              </tbody>
+              <caption>HUD reference rent{multiZip ? `, zip ${r.zip}` : ''}: 40th-percentile rent including utilities{r.safmr_metro_default ? ' (metro default, not zip-specific)' : ''}</caption>
+              <thead><tr><th>Bedrooms</th><th class="num">Studio</th><th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th></tr></thead>
+              <tbody><tr><td>Monthly</td><td class="num">{dollars(r.fy27_0br)}</td><td class="num">{dollars(r.fy27_1br)}</td><td class="num">{dollars(r.fy27_2br)}</td><td class="num">{dollars(r.fy27_3br)}</td><td class="num">{dollars(r.fy27_4br)}</td></tr></tbody>
             </table>
           </div>
-        ))}
-      </div>
-    ))}
+          <p class="note">Census median rent across all rented homes here: {acsDollars(r.acs_median_gross_rent)}. For what landlords are asking this month: <ExtLink href={r.zillow_url} incentive="Commercial: earns from agent referrals and listing ads" text="Zillow rent trends for this zip" src="prov:rent" />.</p>
+        </div>
+      ))}
+
+      <h3>Rent as a share of your housing allowance</h3>
+      {bah.areas.map((a) => (
+        <div class="ratio-area" data-mha-bases={a.bases.join(' ')} hidden={a.mha !== bahDefault} data-src="prov:rent_to_bah">
+          {rent.filter((r) => ratios.some((x) => x.zip === r.zip && x.mha === a.mha)).map((r) => (
+            <div class="table-wrap">
+              <table>
+                <caption>{multiZip ? `Zip ${r.zip} · ` : ''}{a.area} area (MHA {a.mha})</caption>
+                <thead><tr><th>Pay band</th><th class="num">2 bed</th><th class="num">3 bed</th><th class="num">4 bed</th></tr></thead>
+                <tbody>
+                  {bands.map((band) => (
+                    <tr data-band-row={band} class={band === DEFAULT_BAND ? 'picked' : undefined}><td>{band}</td>{[2, 3, 4].map((br) => <td class="num">{ratioCell(r.zip, band, br, a.mha)}</td>)}</tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+      ))}
+      <p class="note" data-src="prov:rent_to_bah">A band shows a range when its grades get different allowances.</p>
+    </details>
 
     <h3>Buying</h3>
-    <dl class="facts">
+    <dl class="facts" data-src="prov:rent prov:ownership">
       {rent.map((r) => (<>
         <dt>Census median home value{multiZip ? ` (${r.zip})` : ''}</dt>
-        <dd>{acsDollars(r.acs_median_home_value)}. <span class="muted">{ACS_NOTE}</span></dd>
+        <dd>{acsDollars(r.acs_median_home_value)}.</dd>
       </>))}
       {ownership.map((o) => (<>
         <dt>Mello-Roos: {o.subarea || community.name}</dt>
         <dd>{CFD_LABEL[o.has_cfd]}{(o.has_cfd === 'unknown' || o.has_cfd === 'mixed') && <> <ExtLink id="per-parcel-lookup" /></>}</dd>
       </>))}
     </dl>
-    {ownership.length === 0 && <p class="gap">No Mello-Roos record for {community.name} yet: the county list hasn’t been matched to this area. Check the parcel before an offer.</p>}
-    <p class="note">Mello-Roos is a fixed yearly charge on the property tax bill that doesn't drop when the home's value does. The only reliable check is the parcel itself{parcelLinkInline ? ', with the county lookup above.' : <>: <ExtLink id="per-parcel-lookup" /></>}</p>
+    {ownership.length === 0 && <p class="gap" data-src="prov:ownership">No Mello-Roos record for {community.name} yet: the county list hasn’t been matched to this area. Check the parcel before an offer.</p>}
+    <p class="note" data-src="prov:ownership link:per-parcel-lookup">Mello-Roos is a fixed yearly charge on the property tax bill that doesn't drop when the home's value does. The only reliable check is the parcel itself{parcelLinkInline ? ', with the county lookup above.' : <>: <ExtLink id="per-parcel-lookup" /></>}</p>
+    <MethodHint topic="hud-rent" text="Census medians are five-year estimates and lag the market." />
   </FactBlock>
 
-  <Commute zips={zips} open switchable />
+  <Commute zips={zips} switchable />
   <Schools zips={zips} />
   <Childcare zips={zips} />
   <Access zips={zips} />
   <Climate zips={zips} name={community.name} />
   <Hazards zips={zips} waterQuality={WATER_QUALITY.includes(slug!)} />
-  <Notes notes={notes} part="gotchas" />
+  <Notes notes={notes} part="gotchas" srcKey={`notes:communities/${slug}`} />
   <SourcesTable ids={['rent', 'bah', 'rent_to_bah', 'ownership', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} />
   </div>
   </div>

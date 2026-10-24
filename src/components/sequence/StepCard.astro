@@ -1,43 +1,55 @@
 ---
-// One step of the move sequence: its timing anchor, deadline, what comes first, who it's for, its forms,
-// any rules shown side by side (the control date), a "Not yet confirmed" line where the sources leave it
-// open, and the quotes it rests on. Everything comes from the step's row in src/data/sequence_steps.json;
-// scripts/check_sequence.mjs compares the rendered deadline with the row (data-step / data-deadline).
-import FactBlock from '../FactBlock.astro';
+// One step of the move sequence, lean (Brian 2026-10-23): its title, deadline and short form chips (linking to
+// the forms page) show; its timing, what comes first, who it's for, any rules shown side by side (the control
+// date), the source note and the official quotes are behind one "Details and official wording" tap; a
+// "Not yet confirmed" line stays visible. The SourceChip has its retrieval dates. Everything comes from the
+// step's row in src/data/sequence_steps.json; scripts/check_sequence.mjs compares the rendered deadline with the
+// row (data-step / data-deadline).
 import Cites from './Cites.astro';
 import DlaRates from './DlaRates.astro';
-import { ANCHOR_LABEL, DLA_STEP, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, appliesText, citeDates, citeNames, formHref, noteParas, phaseByKey, stepHref, unconfirmedLine } from '../../lib/sequence.js';
+import SourceChip from '../SourceChip.astro';
+import { ANCHOR_LABEL, NO_DEADLINE, deadlineText, DLA_STEP, EFFECTIVE_ANCHORS, EFFECTIVE_HREF, EFFECTIVE_LINK_TEXT, appliesText, citeDates, citeNames, firstSentence, formHref, formShort, noteParas, olderDates, phaseByKey, stepHref, stepTitle, unconfirmedLine } from '../../lib/sequence.js';
 import type { SequenceData, Step } from '../../lib/sequenceData';
 
 interface Props { step: Step; data: SequenceData }
 const { step, data } = Astro.props;
-// "Do first" names the earlier step by phase and number, then its first sentence.
-const firstSentence = (t: string) => t.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? t;
 const deps = step.depends_on.map((id) => data.stepById.get(id)!);
 const forms = step.forms.map((id) => data.formById.get(id)!);
 const applies = appliesText(step.applies_to);
+const { title, rest } = stepTitle(step);
+const src = `seq:${step.id}`;
+const older = olderDates(step);
 ---
 
-<FactBlock plain id={step.id} title={`${step.order}. ${step.step}`} asOf={citeDates(step)} source={citeNames(step)}>
-  <dl class="facts" data-step={step.id}>
-    <dt>Timing</dt><dd><span data-anchor>{ANCHOR_LABEL[step.anchor]}</span>{EFFECTIVE_ANCHORS.includes(step.anchor) && <> · <a href={EFFECTIVE_HREF} data-effective-link>{EFFECTIVE_LINK_TEXT}</a></>}</dd>
-    <dt>Deadline</dt><dd data-deadline>{step.deadline}</dd>
-    {deps.length > 0 && <><dt>Do first</dt><dd><ul class="plain">{deps.map((d) => <li><a href={stepHref(d)}>{phaseByKey(d.phase).label}, step {d.order}</a>: {firstSentence(d.step)}</li>)}</ul></dd></>}
-    {applies && <><dt>Applies to</dt><dd>{applies}</dd></>}
-    {forms.length > 0 && <><dt>Forms</dt><dd><ul class="plain">{forms.map((f) => <li><a href={formHref(f.id)} data-form-link={f.id}>{f.form}</a></li>)}</ul></dd></>}
-  </dl>
-  {step.alternatives.length > 0 && (
-    <div class="alts">
-      {step.alternatives.map((a) => (
-        <div class="alt" data-alternative>
-          <p>{a.rule}</p>
-          <Cites sources={a.sources} />
+<section class="fact plain step" id={step.id} data-fact={step.id}>
+  <h2 data-src={src}>{step.order}. {title}</h2>
+  <div data-src={src}>
+    <p class="step-meta"><span class="due-label">Deadline:</span> <span data-deadline class={step.deadline === NO_DEADLINE ? 'no-deadline' : undefined}>{deadlineText(step.deadline)}</span>{forms.map((f) => <> <a class="tag form-tag" href={formHref(f.id)} data-dup>{formShort(f.id)}</a></>)}{applies && <> <span class="applies"><span class="vh">Applies to: </span>{applies}</span></>}</p>
+    {step.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
+    <div class="step-foot">
+    <details class="more step-more">
+      <summary data-ui>Details and official wording</summary>
+      {rest && <p>{rest}</p>}
+      <dl class="facts" data-step={step.id}>
+        <dt>Timing</dt><dd><span data-anchor>{ANCHOR_LABEL[step.anchor]}</span>{EFFECTIVE_ANCHORS.includes(step.anchor) && <> · <a href={EFFECTIVE_HREF} data-effective-link>{EFFECTIVE_LINK_TEXT}</a></>}</dd>
+        {deps.length > 0 && <><dt>Do first</dt><dd><ul class="plain">{deps.map((d) => <li><a href={stepHref(d)}>{phaseByKey(d.phase).label}, step {d.order}</a>: {firstSentence(d.step)}</li>)}</ul></dd></>}
+        {forms.length > 0 && <><dt>Forms</dt><dd><ul class="plain">{forms.map((f) => <li><a href={formHref(f.id)} data-form-link={f.id}>{f.form}</a></li>)}</ul></dd></>}
+      </dl>
+      {step.alternatives.length > 0 && (
+        <div class="alts">
+          {step.alternatives.map((a) => (
+            <div class="alt" data-alternative>
+              <p>{a.rule}</p>
+              <Cites sources={a.sources} src={src} />
+            </div>
+          ))}
         </div>
-      ))}
+      )}
+      {step.id === DLA_STEP && <DlaRates rows={data.dla} mode="lines" />}
+      {noteParas(step.note).map((n) => <p class="note">{n}</p>)}
+      <Cites sources={step.sources} superseded={step.superseded} src={src} />
+    </details>
+    <SourceChip srcs={[src]} asOf={citeDates(step)} source={citeNames(step)} more={older.length ? [`Older guidance (not used) retrieved ${older.join(' and ')}`] : []} />
     </div>
-  )}
-  {step.id === DLA_STEP && <DlaRates rows={data.dla} mode="lines" />}
-  {noteParas(step.note).map((n) => <p class="note">{n}</p>)}
-  {step.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
-  <Cites sources={step.sources} superseded={step.superseded} />
-</FactBlock>
+  </div>
+</section>

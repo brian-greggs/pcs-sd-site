@@ -20,12 +20,14 @@ import Toc from '../../components/Toc.astro';
 import BedroomRules from '../../components/sections/BedroomRules.astro';
 import SourcesTable from '../../components/sections/SourcesTable.astro';
 import BahLines from '../../components/BahLines.astro';
+import SourceChip from '../../components/SourceChip.astro';
+import MethodHint from '../../components/MethodHint.astro';
 import { baseHousingAreas } from '../../lib/baseHousing';
 import { PAY_BAND_ORDER, range, tidyRange } from '../../lib/format';
 import { bahTable } from '../../lib/bah';
 import { writtenNotes } from '../../lib/notes';
 import { provenance } from '../../lib/prov';
-import { baseByCode, drives, GROUP_BASES, minutes } from '../../lib/bases';
+import { BASES, baseByCode, drives, GROUP_BASES, minutes } from '../../lib/bases';
 
 export async function getStaticPaths() {
   const { areas } = await baseHousingAreas();
@@ -96,7 +98,10 @@ const memberWord = `${area.members.length} ${area.members.length === 1 ? 'commun
 const DEFAULT_BAND = 'E5–E6';
 const bah = await bahTable();
 const bahDefault = drive ? bah.areaOf(drive.code).mha : bah.areas[0].mha;
+// The base page with an area's full BAH table: the area's own base when it's in that MHA, else the MHA's first base.
+const tableBase = (a: (typeof bah.areas)[number]) => (drive && bah.areaOf(drive.code).mha === a.mha ? baseByCode(drive.code) : BASES.find((b) => b.slug === a.bases[0])!);
 
+const APPLY_LINKS = ['link:heat-application', 'link:cnic-heat', 'link:dd-form-1746', 'link:cnic-navbase-sd-housing'];
 const sanClemente = new Set(['san-mateo-point', 'san-onofre-i', 'san-onofre-ii', 'san-onofre-iii']);
 const sections = [
   { id: 'glance', label: 'At a glance' }, { id: 'communities', label: 'Communities' }, { id: 'bedrooms', label: 'Bedroom guidelines' },
@@ -114,48 +119,53 @@ const sections = [
   <p class="eyebrow">Base housing</p>
   <h1>{area.name}</h1>
   <p class="kicker">{memberWord} · {zips.join(', ')}{area.base_tie_note ? ` · ${area.base_tie_note}` : ''}</p>
-  {area.facts_note && <p class="note">{area.facts_note}</p>}
-
-  <Notes notes={notes} part="lead" />
-
   <section class="glance" id="glance" data-fact="glance">
     <div class="glance-head">
       <h2>At a glance</h2>
-      <label class="band-pick" data-band-picker hidden>Pay band
+      <label class="band-pick" data-band-picker data-nofact hidden>Pay band
         <select data-band-select>
           {PAY_BAND_ORDER.map((b) => <option value={b} selected={b === DEFAULT_BAND}>{b}</option>)}
         </select>
       </label>
     </div>
     <dl class="tiles">
-      <div class="tile mauve">
+      <div class="tile mauve" data-src="prov:base_housing_waits">
         <dt>Wait, latest list</dt>
-        <dd><span class="tile-value">{waitText}</span><span class="tile-sub">{area.waitRange ? estimate : isPendleton ? 'Ask LMH or the Pendleton housing office' : 'Ask the Housing Service Center'}</span></dd>
+        <dd><span class={area.waitRange ? 'tile-value' : 'tile-value tile-text'}>{waitText}</span><span class="tile-sub">{area.waitRange ? estimate : isPendleton ? 'Ask LMH or the Pendleton housing office' : 'Ask the Housing Service Center'}</span></dd>
       </div>
-      <div class="tile blue">
+      <div class="tile blue" data-src="prov:base_housing">
         <dt>Bedrooms offered</dt>
         <dd><span class="tile-value">{bedroomText}</span><span class="tile-sub">{bedroomStated === area.members.length ? `across ${memberWord}` : `${bedroomStated} of ${area.members.length} communities state it`}</span></dd>
       </div>
-      <div class="tile blue">
+      <div class="tile blue" data-src="prov:base_housing prov:base_housing_waits">
         <dt>Pets</dt>
-        <dd><span class="tile-value">{petText}</span><span class="tile-sub">Limits differ by community</span></dd>
+        <dd><span class="tile-value tile-text">{petText}</span><span class="tile-sub">Limits differ by community</span></dd>
       </div>
-      <div class="tile blue">
+      <div class="tile blue" data-src="prov:commute">
         <dt>Commute at 0700</dt>
-        <dd><span class="tile-value">{drive ? minutes(drive) : '—'}</span><span class="tile-sub">{driveLabel}</span></dd>
+        {/* Your base (?base= from a base page), else the area's own base: one line per base, the page script shows one. */}
+        {ds.map((d) => (
+          <dd data-base={baseByCode(d.code).slug} hidden={d.code !== drive?.code}><span class="tile-value">{minutes(d)}</span><span class="tile-sub">{d.code === drive?.code ? driveLabel : `to ${baseByCode(d.code).short}`}</span></dd>
+        ))}
+        {!drive && <dd><span class="tile-value">—</span><span class="tile-sub">{driveLabel}</span></dd>}
       </div>
     </dl>
-    <p class="asof" data-asof>Wait and pets: {estimate} · verified {verifiedOn}. Bedrooms and pets: LMH pages {area.members[0].vintage}. Commute: {asOf('commute')}.</p>
+    <SourceChip srcs={['prov:base_housing_waits', 'prov:base_housing', 'prov:commute']} asOf={`Wait and pets: ${estimate} · verified ${verifiedOn}. Bedrooms and pets: LMH pages ${asOf('base_housing')}. Commute: ${asOf('commute')}`} source="Navy Housing Service Center / LMH wait-time lists; Liberty Military Housing community pages; Google Maps predicted drive times" />
   </section>
 
-  <FactBlock id="communities" title="Communities" summary={`${memberWord} · ${bedroomText} bedrooms · pets: ${petText.toLowerCase()}`} asOf={`LMH pages ${area.members[0].vintage}; grades and pets from the ${estimate} · verified ${verifiedOn}`} source="Liberty Military Housing community pages; Navy Housing Service Center / LMH wait-time lists">
-    <div class="table-wrap">
+  {/* The tiles first, so they're on the first phone screen (Brian 2026-10-24). */}
+  {area.facts_note && <p class="note">{area.facts_note}</p>}
+
+  <Notes notes={notes} part="lead" />
+
+  <FactBlock id="communities" title="Communities" summary={`${memberWord} · ${bedroomText} bedrooms · pets: ${petText.toLowerCase()}`} summarySrc="prov:base_housing prov:base_housing_waits" srcs={['prov:base_housing', 'prov:base_housing_waits']} asOf={`LMH pages ${asOf('base_housing')}; grades and pets from the ${estimate} · verified ${verifiedOn}`} source="Liberty Military Housing community pages; Navy Housing Service Center / LMH wait-time lists">
+    <div class="table-wrap" data-src="prov:base_housing prov:base_housing_waits">
       <table>
         <thead><tr><th>Community</th><th>Bedrooms</th><th>Eligible grades (LMH page)</th><th>Grades on the {month} list</th><th>Pet policy</th></tr></thead>
         <tbody>
           {area.members.map((c) => (
             <tr>
-              <td><ExtLink href={c.community_url} incentive={c.incentive} text={c.community} />{sanClemente.has(c.id) && <span class="muted"> (San Clemente office)</span>}</td>
+              <td><ExtLink href={c.community_url} incentive={c.incentive} text={c.community} src="prov:base_housing" />{sanClemente.has(c.id) && <span class="muted"> (San Clemente office)</span>}</td>
               <td>{c.bedroom_counts === 'not stated' ? '—' : c.bedroom_counts.replaceAll('|', ', ')}</td>
               <td>{statedEligibility(c.eligible_grades)}</td>
               <td>{gradesOnList(c.id)}</td>
@@ -165,15 +175,15 @@ const sections = [
         </tbody>
       </table>
     </div>
-    <p class="gap">LMH doesn't publish which grades can apply to each community. {askOffice}.{!isPendleton && ' The grades column is what the wait list prints.'}</p>
+    <p class="gap" data-src="prov:base_housing prov:base_housing_waits">LMH doesn't publish which grades can apply to each community. {askOffice}.{!isPendleton && ' The grades column is what the wait list prints.'}</p>
   </FactBlock>
 
   <BedroomRules navyOnlyNote={isPendleton} />
 
-  <FactBlock id="wait-times" title="Wait times" open summary={waitSummary} asOf={isPendleton ? `LMH pages ${area.members[0].vintage}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH monthly wait-time lists (PDF)">
+  <FactBlock id="wait-times" title="Wait times" summary={waitSummary} summarySrc={isPendleton ? 'prov:base_housing' : 'prov:base_housing_waits'} srcs={isPendleton ? ['prov:base_housing'] : ['prov:base_housing_waits']} asOf={isPendleton ? `LMH pages ${asOf('base_housing')}` : `${estimate} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH monthly wait-time lists (PDF)">
     {waits.length > 0 ? (
       <>
-        <div class="table-wrap">
+        <div class="table-wrap" data-src="prov:base_housing_waits">
           <table>
             <caption>{estimate}</caption>
             <thead><tr><th>List</th><th>Pay grades</th><th>Community</th><th class="num">Bedrooms</th><th class="num">Units</th><th>Wait</th></tr></thead>
@@ -184,36 +194,38 @@ const sections = [
             </tbody>
           </table>
         </div>
-        <p class="note">Wait times change every month. The source lists:</p>
-        <ul class="links">{pdfs.map((p) => <li><ExtLink href={p.source_url} incentive={p.incentive} text={`${month} ${listName(p.rank_group)} wait-time list (PDF)`} /></li>)}</ul>
+        <p class="note" data-src="prov:base_housing_waits">Wait times change every month. The source lists:</p>
+        <ul class="links" data-src="prov:base_housing_waits">{pdfs.map((p) => <li><ExtLink href={p.source_url} incentive={p.incentive} text={`${month} ${listName(p.rank_group)} wait-time list (PDF)`} src="prov:base_housing_waits" /></li>)}</ul>
       </>
     ) : isPendleton ? (
-      <p class="note">The Naval Base San Diego Housing Service Center's list doesn't cover Camp Pendleton, and Pendleton's wait times aren't in our data yet. Ask LMH or the Pendleton housing office.</p>
+      <p class="note" data-src="prov:base_housing">The Naval Base San Diego Housing Service Center's list doesn't cover Camp Pendleton, and Pendleton's wait times aren't in our data yet. Ask LMH or the Pendleton housing office.</p>
     ) : (
-      <p class="note">None of these communities is on the {month} list. Ask the Housing Service Center.</p>
+      <p class="note" data-src="prov:base_housing_waits">None of these communities is on the {month} list. Ask the Housing Service Center.</p>
     )}
   </FactBlock>
 
-  <FactBlock id="apply" title="How to apply" open summary="Apply with HEAT before you leave · check in at the Housing Service Center" asOf="CNIC NAVBASE San Diego housing page and Navy Region Southwest Housing Service Center page, retrieved 2026-09-30" source="CNIC Fleet & Family Readiness; Navy Region Southwest">
-    {isPendleton && <p class="gap">The steps below are the Naval Base San Diego Housing Service Center's. Camp Pendleton housing runs through its own office, and its steps aren't in our material yet.</p>}
-    <ol>
+  <FactBlock id="apply" title="How to apply" summary="Apply with HEAT before you leave · check in at the Housing Service Center" summarySrc={APPLY_LINKS.join(' ')} srcs={APPLY_LINKS} asOf="CNIC NAVBASE San Diego housing page and Navy Region Southwest Housing Service Center page, retrieved 2026-09-30" source="CNIC Fleet & Family Readiness; Navy Region Southwest">
+    {isPendleton && <p class="gap" data-src="link:cnic-navbase-sd-housing">The steps below are the Naval Base San Diego Housing Service Center's. Camp Pendleton housing runs through its own office, and its steps aren't in our material yet.</p>}
+    <ol data-src={APPLY_LINKS.join(' ')}>
       <li><strong>Before you leave your current command:</strong> apply online with the Housing Early Assistance Tool (HEAT), before or after you get orders. A spouse can apply with only minimal information about the service member, and a housing referral professional gets in touch within two business days. <ExtLink id="heat-application" /> <ExtLink id="cnic-heat" text="About HEAT" /></li>
       <li><strong>Paper instead:</strong> the Application for Assignment to Housing (DD Form 1746), or ask the Housing Service Center to mail or email one. <ExtLink id="dd-form-1746" /></li>
       <li><strong>When you arrive:</strong> check in at the Navy Housing Service Center, even if you plan to rent off base. It verifies eligibility, processes the application and keeps the wait list; Liberty Military Housing assigns the home. Bldg. 3544, 2625 LeHardy St., Naval Base San Diego; 619-556-8443. <ExtLink id="cnic-navbase-sd-housing" /></li>
     </ol>
   </FactBlock>
 
-  <FactBlock id="cost" title="Cost" summary={`Rent is your BAH, by allotment${costShown.length ? ` · ${costShown.length} discounted ${costShown.length === 1 ? 'rate' : 'rates'} printed` : ''}`} asOf={`Rule: CNIC Privatized Housing page, verified ${cnicRule.verified_on}. BAH: ${asOf('bah')}. Discounts: Military OneSource NBSD housing page, retrieved ${oneSource.verified_on}${costShown.length ? `. Rates as printed: ${estimate}` : ''}`} source={`CNIC Navy Housing; ${bah.areas[0].source_name}; Military OneSource; Navy Housing Service Center / LMH wait-time lists`}>
-    <p>Rent is your BAH, paid to Liberty Military Housing by allotment <span class="muted">(<ExtLink id="cnic-privatized-housing" text="CNIC" />)</span>. Some sites list discounted rates <span class="muted">(<ExtLink id="mi-nbsd-housing" text="Military OneSource" />)</span>; those are shown below as printed.</p>
-    {/* data-unranked: sent to the assistant with this section, left out of its ranking (see the neighborhood page). */}
-    <div class="bah" data-unranked>
+  <FactBlock id="cost" title="Cost" summary={`Rent is your BAH, by allotment${costShown.length ? ` · ${costShown.length} discounted ${costShown.length === 1 ? 'rate' : 'rates'} printed` : ''}`} summarySrc={['link:cnic-privatized-housing', ...(costShown.length ? ['prov:base_housing_waits'] : [])].join(' ')} srcs={['link:cnic-privatized-housing', 'prov:bah', 'link:mi-nbsd-housing', ...(costShown.length || !isPendleton ? ['prov:base_housing_waits'] : [])]} asOf={`Rule: CNIC Privatized Housing page, verified ${cnicRule.verified_on}. BAH: ${asOf('bah')}. Discounts: Military OneSource NBSD housing page, retrieved ${oneSource.verified_on}${costShown.length || !isPendleton ? `. Rates as printed: ${estimate} · verified ${verifiedOn}` : ''}`} source={`CNIC Navy Housing; ${bah.areas[0].source_name}; Military OneSource; Navy Housing Service Center / LMH wait-time lists`}>
+    <p data-src="link:cnic-privatized-housing link:mi-nbsd-housing">Rent is your BAH, paid to Liberty Military Housing by allotment. Some sites list discounted rates; those are shown below as printed.</p>
+    {/* Your pay band's lines (the picker at the top); every grade is on the base page. data-unranked: sent to the
+        assistant with this section, left out of its ranking (see the neighborhood page). */}
+    <div class="bah" data-unranked data-src="prov:bah">
       <BahLines areas={bah.areas} bands={PAY_BAND_ORDER} mha={bahDefault} band={DEFAULT_BAND} />
-      <p class="note">BAH follows your duty station: every base on this site is in the San Diego area (CA038) except Camp Pendleton (CA024). This shows {drive ? `${baseByCode(drive.code).short}'s area` : 'the nearest base’s area'}{candidates.length ? '' : ' (LMH ties this area to no base)'}, or your base's if you came from its base page. Pick your pay band at the top.</p>
     </div>
-    {isPendleton && <p class="note">Both sources are Navy pages (CNIC Navy Housing and Naval Base San Diego). Camp Pendleton's own terms aren't in our material.</p>}
+    <p class="note" data-nofact>{bah.areas.map((a) => <a href={`/base/${tableBase(a).slug}/#bah-table`} data-mha-bases={a.bases.join(' ')} hidden={a.mha !== bahDefault}>Every pay grade: the {a.area} area table on the {tableBase(a).short} page</a>)}</p>
+    <MethodHint topic="bah" text="BAH follows your duty station, not where you live." />
+    {isPendleton && <p class="note" data-src="link:cnic-privatized-housing link:mi-nbsd-housing">Both sources are Navy pages (CNIC Navy Housing and Naval Base San Diego). Camp Pendleton's own terms aren't in our material.</p>}
     {costShown.length > 0 ? (
       <>
-        <div class="table-wrap">
+        <div class="table-wrap" data-src="prov:base_housing_waits">
           <table>
             <caption>Discounted rates as printed on the {month} list</caption>
             <thead><tr><th>Community</th><th class="num">Bedrooms</th><th>As printed</th></tr></thead>
@@ -222,21 +234,22 @@ const sections = [
             </tbody>
           </table>
         </div>
-        <p class="note">Asterisks refer to footnotes on the PDF.</p>
+        <p class="note" data-src="prov:base_housing_waits">Asterisks refer to footnotes on the PDF.</p>
       </>
     ) : (
-      <p class="note">{isPendleton ? 'No discounted rates are in our material for these communities.' : `The ${month} list prints no discounted rates for these communities.`}</p>
+      <p class="note" data-src={isPendleton ? 'link:mi-nbsd-housing' : 'prov:base_housing_waits'}>{isPendleton ? 'No discounted rates are in our material for these communities.' : `The ${month} list prints no discounted rates for these communities.`}</p>
     )}
+    <Fragment slot="receipts"><p class="asof">Rent rule: <ExtLink id="cnic-privatized-housing" text="CNIC, Privatized Housing" />. Discounts: <ExtLink id="mi-nbsd-housing" text="Military OneSource, NBSD housing" />.</p></Fragment>
   </FactBlock>
 
-  <Commute zips={zips} />
+  <Commute zips={zips} chosen={drive?.code} switchable />
   <Schools zips={zips} />
   <Childcare zips={zips} />
   <Access zips={zips} />
   <Climate zips={zips} name={area.name} />
   <Hazards zips={zips} waterQuality={['coronado', 'imperial-beach'].includes(area.id)} />
-  <Notes notes={notes} part="gotchas" />
-  <SourcesTable ids={['base_housing', 'base_housing_waits', 'bah', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} extra={[{ title: 'Area grouping', source: 'Curated from LMH leasing-office zips and addresses', vintage: area.vintage, verified: area.verified_on, license: 'Ours' }]} />
+  <Notes notes={notes} part="gotchas" srcKey={`notes:base-housing-areas/${areaId}`} />
+  <SourcesTable ids={['base_housing', 'base_housing_waits', 'bah', 'commute', 'schools', 'childcare', 'military_access', 'climate', 'hazards']} extra={[{ key: `areas:${area.id}`, title: 'Area grouping', source: 'Curated from LMH leasing-office zips and addresses', vintage: area.vintage, verified: area.verified_on, license: 'Ours' }]} />
   </div>
   </div>
 </Base>

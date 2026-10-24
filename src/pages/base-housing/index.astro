@@ -6,6 +6,7 @@ import FactBlock from '../../components/FactBlock.astro';
 import ExtLink from '../../components/ExtLink.astro';
 import { baseHousingAreas, INDEX_GROUPS } from '../../lib/baseHousing';
 import BedroomRules from '../../components/sections/BedroomRules.astro';
+import { provenance } from '../../lib/prov';
 
 const { areas, month, pdfs, verifiedOn } = await baseHousingAreas();
 const listName = (g: string) => (g === 'officer' ? 'Officer' : 'Enlisted');
@@ -13,6 +14,7 @@ const waitLabel = (a: (typeof areas)[number]) =>
   a.waitRange ? `${a.waitRange[0] === a.waitRange[1] ? a.waitRange[0] : `${a.waitRange[0]}–${a.waitRange[1]}`} months`
   : a.base_group === 'PENDLETON' ? 'Not in our data' : 'Not on the list';
 const unplaced = areas.filter((a) => !a.has_page);
+const { asOf } = await provenance();
 ---
 
 <Base title="Base housing" back={{ href: '/', label: 'Home' }} description="Every base-housing community in San Diego, grouped into areas, with the latest wait range for each.">
@@ -36,8 +38,8 @@ const unplaced = areas.filter((a) => !a.has_page);
   {INDEX_GROUPS.map((g) => {
     const rows = areas.filter((a) => a.has_page && a.base_group === g.key);
     return rows.length > 0 && (
-      <FactBlock plain id={`areas-${g.key.toLowerCase()}`} title={g.title} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists; LMH community pages">
-        <div class="table-wrap">
+      <FactBlock plain id={`areas-${g.key.toLowerCase()}`} title={g.title} srcs={['prov:base_housing_waits', 'prov:base_housing']} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}. Communities: LMH pages ${asOf('base_housing')}`} source="Navy Housing Service Center / LMH wait-time lists; LMH community pages">
+        <div class="table-wrap" data-src="prov:base_housing_waits prov:base_housing">
           <table>
             <thead><tr><th>Area</th><th>Communities</th><th>Wait, {month}</th></tr></thead>
             <tbody>
@@ -58,8 +60,8 @@ const unplaced = areas.filter((a) => !a.has_page);
   </div>
 
   {unplaced.map((a) => (
-    <FactBlock plain id="location-pending" title={a.name} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists">
-      <p class="note">{a.members.map((m) => m.community).join(' and ')} are on the {month} wait list ({waitLabel(a)}), but LMH gives no address for them yet, so they don't have a page.</p>
+    <FactBlock plain id="location-pending" title={a.name} srcs={['prov:base_housing_waits']} asOf={`CNRSW estimate, ${month} · verified ${verifiedOn}`} source="Navy Housing Service Center / LMH wait-time lists">
+      <p class="note" data-src="prov:base_housing_waits">{a.members.map((m) => m.community).join(' and ')} are on the {month} wait list ({waitLabel(a)}), but LMH gives no address for them yet, so they don't have a page.</p>
     </FactBlock>
   ))}
 </Base>

@@ -20,7 +20,7 @@ npm run build    # principle checks + build into dist/ (this is what Cloudflare 
 1. `prebuild`: `scripts/check_principles.mjs source` checks the data files (column names, dates) and the theme
    (every text/background pair at least 4.5:1; no raw colors outside `src/styles/theme.css`).
 2. `astro build`: validates every data row against its schema in `src/content.config.ts`, then renders `dist/`.
-3. `postbuild`: `scripts/check_principles.mjs dist` checks the rendered pages: every fact block dated, every BAH
+3. `postbuild`: `scripts/check_principles.mjs dist` checks the rendered pages: every section has one SourceChip whose dates cover every fact in it (`--plant all` proves it), every BAH
    dollar figure from `src/data/bah.json` with its year, MHA and date line, no demographic descriptors, no score/index/rating labels, an incentive label on every outbound
    link, `noindex` on every page, no placeholder text, nothing loaded from another origin. Then
    `scripts/check_intake.mjs` checks the starting plan (see the table below), and `scripts/check_sequence.mjs` checks
@@ -72,7 +72,9 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/pages/communities/[slug].astro` | The neighborhood page template (`?base=<slug>` picks the commute tile) |
 | `src/pages/base-housing/` | The base housing index and the area page template |
 | `src/components/sections/` | Sections shared by both page types (commute, schools, child care, access, climate, hazards, notes, sources), each taking a list of zips |
-| `src/components/FactBlock.astro` | A section of facts with its required date line; a native `<details>` with a one-line summary |
+| `src/components/FactBlock.astro` | A section of facts: a one-line summary, the body behind a closed native `<details>`, and its SourceChip |
+| `src/components/SourceChip.astro` | The receipts under every section: a small chip that opens to the date line, sources and license. Every fact in a section names its source key (`data-src`); the chip lists them (`data-chip-src`) and the `dated` check dates each one from its data file |
+| `src/lib/method.ts`, `src/components/MethodHint.astro` | "How the numbers work" on `/sources/` (the method notes, once each) and the one-line hint that links to it |
 | `src/styles/theme.css` | Every color, font and size token (the dark sunset theme); `site.css` uses only these |
 | `src/components/ExtLink.astro` | Every outbound link, with its incentive label |
 | `scripts/check_principles.mjs` | The build-time principle checks |

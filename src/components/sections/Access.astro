@@ -2,6 +2,7 @@
 // Commissary, exchange, military hospital (and clinic when known), Costco.
 import { getCollection } from 'astro:content';
 import FactBlock from '../FactBlock.astro';
+import MethodHint from '../MethodHint.astro';
 import { provenance } from '../../lib/prov';
 import { gapLine, missingZips, OUT_OF_PULL } from '../../lib/gaps';
 
@@ -32,10 +33,9 @@ const accessRows = (a: (typeof access)[number]) => [
 ] as const;
 ---
 
-<FactBlock id="access" title="Commissary, exchange, hospital and Costco" summary={summary} asOf={asOf('military_access')} source="OSRM free-flow drive times on OpenStreetMap (© OpenStreetMap contributors, ODbL); DoD and Costco locations">
-  <p class="note">Drive times with no traffic, from the center of the zip. Real times at rush hour run longer. On-base times can run long because routing avoids restricted base roads.</p>
+<FactBlock id="access" title="Commissary, exchange, hospital and Costco" summary={summary} summarySrc="prov:military_access" srcs={['prov:military_access']} asOf={asOf('military_access')} source="OSRM free-flow drive times on OpenStreetMap (© OpenStreetMap contributors, ODbL); DoD and Costco locations">
   {access.map((a) => (
-    <div class="table-wrap">
+    <div class="table-wrap" data-src="prov:military_access">
       <table>
         {multiZip && <caption>Zip {a.zip}</caption>}
         <thead><tr><th>What</th><th>Nearest</th><th class="num">Minutes</th><th class="num">Miles</th></tr></thead>
@@ -47,6 +47,7 @@ const accessRows = (a: (typeof access)[number]) => [
       </table>
     </div>
   ))}
-  {gap && <p class="gap">{gap}</p>}
-  {clinicWithheld && <p class="gap">Nearest clinic not shown: some military clinics aren’t on our map yet, so we can’t say which is closest. The hospital row is accurate.</p>}
+  {gap && <p class="gap" data-src="prov:military_access">{gap}</p>}
+  {clinicWithheld && <p class="gap" data-src="prov:military_access">Nearest clinic not shown: some military clinics aren’t on our map yet, so we can’t say which is closest. The hospital row is accurate.</p>}
+  <MethodHint topic="no-traffic" text="No-traffic times from the zip’s center; rush hour runs longer." />
 </FactBlock>

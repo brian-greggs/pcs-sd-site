@@ -36,9 +36,14 @@ const count = (key: string) => steps.filter((s) => s.phase === key).length;
     </li>
   </ul>
 
-  <FactBlock plain id="effective-date" title={effective.title} asOf={citeDates(effective)} source={citeNames(effective)}>
-    <p data-effective-line>{effective.line}</p>
-    <Cites sources={effective.sources} />
+  <FactBlock plain id="effective-date" title={effective.title} srcs={[`seq:${effective.id}`]} asOf={citeDates(effective)} source={citeNames(effective)}>
+    <div data-src={`seq:${effective.id}`}>
+      <p data-effective-line>{effective.line}</p>
+      <details class="more">
+        <summary data-ui>What the official pages say</summary>
+        <Cites sources={effective.sources} src={`seq:${effective.id}`} />
+      </details>
+    </div>
   </FactBlock>
 
   <p class="note">To turn this into your own list, <ExtLink id="mos-plan-my-move" text="build your personal checklist" /> with Military OneSource's Plan My Move.</p>
