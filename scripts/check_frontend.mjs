@@ -6,11 +6,17 @@
 //   home-start      the start screen ([data-start] on /) has one ask box (one labeled textarea, one send button) and
 //                   no data: no table, figure, map, fact list, image, fact block or source key, no BAH figure, and no
 //                   digit outside the example questions (which carry no $ or %)
+//   home-layout     home is the start screen, then the region map right after it (the "Not sure what to ask?" card
+//                   last in the start screen), and nothing else: no base cards, counts or other sections; the footer's
+//                   first line is "Every answer cites its official source and date…"
 //   home-examples   every example question gets sections from retrieval (never "I don't have that"), run on the
 //                   built corpus with the assistant's own search
 //   menu-links      the drawer on every page lists the same links as /browse/ (the menu without JavaScript), every
 //                   link resolves to a built page, and they include the eight bases, both indexes, the sequence, the
 //                   forms page, the starting plan and /sources/; the menu button is a link to /browse/
+//   site-name       every page's header has "San Diego PCS Guide" linking to /; /plan/ shows "Start over" under it
+//   no-orphans      every built page but home and /ask/ has a link from another page or from the menu, so taking the
+//                   old content off home left nothing reachable only from home
 //   ask-redirect    /ask/ redirects to /: a 301 in _redirects (Cloudflare) and, in dist/ask/, a meta refresh and a
 //                   link to /, with no ask box left there
 //   plan-cards      /plan/ has one card (fieldset) per question, numbered 1 to 8 in order, covering every answer
@@ -85,6 +91,57 @@ function checkHome(files) {
   for (const e of examples) if (/[$%]/.test(e)) fail('home-start', 'index.html', `an example question with a figure: "${e}"`);
   if (examples.length < 3 || examples.length > 4) fail('home-start', 'index.html', `${examples.length} example questions (3 or 4)`);
   return examples;
+}
+
+// --- home-layout ---------------------------------------------------------------------
+const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no referrals. This site stores nothing you type.';
+function checkHomeLayout(files) {
+  const html = files['index.html'];
+  const main = elementWith(html, 'id="main"') ?? '';
+  const inner = main.replace(/^<main[^>]*>|<\/main>$/g, '');
+  const kids = [];
+  for (let i = 0, m; (m = inner.slice(i).match(/<(\w+)\b[^>]*>/));) {
+    const el = elementAt(inner, i + m.index);
+    kids.push(el);
+    i += m.index + el.length;
+  }
+  const what = kids.map((k) => (/\sdata-start\b/.test(k) ? 'start' : /\sdata-home-map\b/.test(k) ? 'map' : k.match(/^<\w+[^>]*>/)[0].slice(0, 40)));
+  if (what.join(' ') !== 'start map') fail('home-layout', 'index.html', `home's main holds ${what.join(', ')} (want the start screen, then the map, nothing else)`);
+  const start = kids.find((k) => /\sdata-start\b/.test(k)) ?? '';
+  if (!/<a\b[^>]*\sdata-plan-cta\b[^>]*>[\s\S]*?<\/a>\s*<\/section>$/.test(start)) fail('home-layout', 'index.html', '"Not sure what to ask?" isn\'t the last thing before the map');
+  const map = kids.find((k) => /\sdata-home-map\b/.test(k)) ?? '';
+  if (!/<figure\b[^>]*class="map\b/.test(map) || !/<svg\b/.test(map)) fail('home-layout', 'index.html', 'no region map after the start screen');
+  for (const [re, w] of [[/cards-bases/, 'the base cards'], [/class="browse"/, 'the browse counts'], [/<h2\b/, 'a section heading']]) if (re.test(main)) fail('home-layout', 'index.html', `${w} still on home`);
+  const note = (html.match(/<p data-footer-note>([\s\S]*?)<\/p>/) ?? [])[1];
+  if (decode(note ?? '') !== HOME_FOOTER) fail('home-layout', 'index.html', `footer line is "${note ?? ''}"`);
+}
+
+// --- site-name -------------------------------------------------------------------------
+function checkSiteName(files) {
+  for (const [page, html] of Object.entries(files)) {
+    const bar = elementWith(html, 'class="bar"') ?? '';
+    const a = bar.match(/<a class="site-name" href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/);
+    if (!a || a[1] !== '/' || !visible(a[2]).startsWith('San Diego PCS Guide')) fail('site-name', page, 'no "San Diego PCS Guide" link to / in the header');
+  }
+  const plan = files['plan/index.html'] ?? '';
+  if (!/<span class="site-sub" data-site-sub>Start over<\/span>/.test(plan)) fail('site-name', 'plan/index.html', 'no visible "Start over" under the site name');
+}
+
+// --- no-orphans ---------------------------------------------------------------------
+function checkOrphans(files) {
+  // Links from home don't count: home was the only way to some pages before; it mustn't be now.
+  const fromElsewhere = new Set();
+  for (const [page, html] of Object.entries(files)) {
+    if (page === 'index.html') continue;
+    const self = `/${page.replace(/index\.html$/, '')}`;
+    for (const href of hrefs(html)) {
+      const path = href.split('#')[0].split('?')[0];
+      if (path.startsWith('/') && path !== self) fromElsewhere.add(path);
+    }
+  }
+  const pages = Object.keys(files).map((p) => `/${p.replace(/index\.html$/, '')}`).filter((p) => p !== '/' && p !== '/ask/' && !p.endsWith('.html'));
+  for (const p of pages) if (!fromElsewhere.has(p)) fail('no-orphans', p, 'no link to it from any page but home');
+  passes.push(`no-orphans: ${pages.length} pages, each linked from another page or the menu`);
 }
 
 // --- home-examples ------------------------------------------------------------------
@@ -210,22 +267,34 @@ function load() {
 }
 function run({ files, redirects, index }) {
   const examples = checkHome(files);
+  checkHomeLayout(files);
   checkExamples(examples, index);
   checkMenu(files);
+  checkSiteName(files);
+  checkOrphans(files);
   checkRedirect(files, redirects);
   checkPlanCards(files);
   checkAskView();
 }
-const CHECKS = ['home-start', 'home-examples', 'menu-links', 'ask-redirect', 'plan-cards', 'ask-view'];
+const CHECKS = ['home-start', 'home-layout', 'home-examples', 'menu-links', 'site-name', 'no-orphans', 'ask-redirect', 'plan-cards', 'ask-view'];
 
 // One fault of each kind, planted in memory (nothing on disk changes); each must fail the check named.
 const edit = (page, fn) => (s) => ({ ...s, files: { ...s.files, [page]: fn(s.files[page]) } });
 const PLANTS = {
-  'a table on the start screen': ['home-start', edit('index.html', (h) => h.replace('<p class="start-trust"', '<table><tr><td>x</td></tr></table><p class="start-trust"'))],
+  'a table on the start screen': ['home-start', edit('index.html', (h) => h.replace('<a class="card start-plan"', '<table><tr><td>x</td></tr></table><a class="card start-plan"'))],
   'a count on the start screen': ['home-start', edit('index.html', (h) => h.replace('Not sure what to ask?', 'Not sure what to ask? 40 neighborhoods'))],
-  'the map moved above the fold': ['home-start', edit('index.html', (h) => h.replace('<p class="start-trust"', '<figure><svg></svg></figure><p class="start-trust"'))],
-  'a second textarea': ['home-start', edit('index.html', (h) => h.replace('<p class="start-trust"', '<textarea></textarea><p class="start-trust"'))],
+  'a figure on the start screen': ['home-start', edit('index.html', (h) => h.replace('<a class="card start-plan"', '<figure><svg></svg></figure><a class="card start-plan"'))],
+  'a second textarea': ['home-start', edit('index.html', (h) => h.replace('<a class="card start-plan"', '<textarea></textarea><a class="card start-plan"'))],
   'ask box unlabeled': ['home-start', edit('index.html', (h) => h.replace(/<label class="ask-label" for="ask-q"[^>]*>[^<]*<\/label>/, ''))],
+  'base cards back on home': ['home-layout', edit('index.html', (h) => h.replace('<div class="home-map"', '<ul class="cards cards-bases"><li>x</li></ul><div class="home-map"'))],
+  'plan card moved below the map': ['home-layout', edit('index.html', (h) => {
+    const card = h.match(/<a class="card start-plan"[\s\S]*?<\/a>/)[0];
+    return h.replace(card, '').replace('</main>', `${card}</main>`);
+  })],
+  'footer line missing': ['home-layout', edit('index.html', (h) => h.replace(/<p data-footer-note>[\s\S]*?<\/p>/, '<p>Every fact carries the date it was checked.</p>'))],
+  'site name not linked home': ['site-name', edit('sources/index.html', (h) => h.replace('<a class="site-name" href="/"', '<a class="site-name" href="/sources/"'))],
+  'no "Start over" on the plan': ['site-name', edit('plan/index.html', (h) => h.replace('<span class="site-sub" data-site-sub>', '<span class="site-sub" data-site-sub hidden>'))],
+  '/browse/ reachable only from home': ['no-orphans', (st) => ({ ...st, files: Object.fromEntries(Object.entries(st.files).map(([k, v]) => [k, k === 'index.html' ? v : v.replaceAll('href="/browse/"', 'href="#"')])) })],
   'an example retrieval can\'t answer': ['home-examples', edit('index.html', (h) => h.replace(/(<button\b[^>]*data-example[^>]*>)[^<]*/, '$1What time do the Padres play on Sunday?'))],
   'a broken menu link': ['menu-links', edit('browse/index.html', (h) => h.replace('href="/sequence/forms/"', 'href="/sequence/claims/"'))],
   'drawer differs from /browse/': ['menu-links', edit('sources/index.html', (h) => h.replace('href="/plan/"', 'href="/changelog/"'))],

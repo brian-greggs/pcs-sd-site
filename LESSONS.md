@@ -203,3 +203,9 @@
 - **"Tap advances" has to know what was tapped.** A recent pointer event isn't enough: a tap on Back followed by an arrow key looked like a tap on the option. Recording the tapped label and requiring the changed input to be inside it fixed it; the browser check found it, the static check couldn't.
 - **Measure the worst case, not the screenshot's case.** Card 8 fit the screenshot (six priorities) and ran 90 px past the screen with all nine. The browser check now loads the household that unlocks every priority.
 - **Playwright's `getByText` doesn't look inside `<noscript>`.** With JavaScript off the notice was there; the test was wrong. Locate it with `noscript p`.
+
+## Session 14b (2026-10-24): layout fixes
+
+- **A legend that isn't floated is drawn in its fieldset's border.** Taking the border off and floating the legend at full width puts the question above its options while the fieldset still names the group; the browser check now measures the legend against the first option on every card at two widths, since a screenshot of one card doesn't prove the other seven.
+- **Taking links off a page needs a link graph, not a guess.** Before removing home's old content I saved every page's inbound links; comparing after showed three pages home stopped linking (/neighborhoods/, /base-housing/, /sequence/), each still in the menu on 82 pages and linked from 15 to 41 others. `no-orphans` keeps it true.
+- **A flex column body needs `width: 100%` on centered children.** With `margin: 0 auto`, a flex item doesn't stretch, so main would have shrunk to its content's width; the footer push came with that one extra rule.

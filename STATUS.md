@@ -1,4 +1,31 @@
-# Site build — status (2026-10-24, session 14: ask-first front end; v1.0.0)
+# Site build — status (2026-10-24, session 14b: layout fixes on the ask-first front end; v1.0.0)
+
+## Session 14b: layout fixes (2026-10-24), same branch, not merged
+
+Brian's answers: QUESTIONS 73–76 accepted as built (74: one POST to /api/ask, from home only); the plan result's length is fine. Five layout fixes, no new features:
+
+- **Intake question above its options.** On the cards the fieldset has no border or background and the legend floats at full width, so the question sits above the options instead of across the box's top border; fieldset and legend stay for screen readers. Options got the surface color so each still reads as a button. Checked on all 8 cards at 390 and 1280 px (`legend` in the browser check: the legend ends above the first option, fieldset border 0).
+- **One home on every screen.** Home is: header, headline, sub line, ask box, example chips, "Not sure what to ask?", the region map, then the footer, at every width. The old below-the-fold content is gone from home: the base cards, "Then get a starting plan" (plan and sequence cards) and the two count tiles. Link graph before and after: home stopped linking only /neighborhoods/, /base-housing/ and /sequence/; each is in the drawer, the sidebar and /browse/ (the menu, on all 82 layout pages) and linked from 41, 29 and 15 other pages. The 8 base pages and the 40 neighborhoods stay linked from home's map, and /plan/ from its card. Nothing lost its only link; the new `no-orphans` check keeps it that way. At 390 × 844 the ask box ends at 353 px and the chips at 629 px; the map starts at 780 px, 16 px under the card.
+- **Map under "Not sure what to ask?"** The existing overview map (`SiteMap kind="overview"`, unchanged, same 48 links) sits right after the card at every size, at the content column's width: the start screen and map share one column, 680 px from 720 px up and the full column on a phone. In a conversation the card hides and the map follows the follow-up box.
+- **Footer at the bottom.** `body` is a flex column at least the window's height and `main` takes the free room, so on a short page the footer sits at the bottom of the window; it's in the flow, not fixed or sticky, and on a long page (home on a phone) it just follows the map. Home's footer opens with "Every answer cites its official source and date. No ads, no referrals. This site stores nothing you type." (`footerNote` on `Base.astro`); other pages keep their two lines.
+- **Site name on every page.** "San Diego PCS Guide" is in every header, linked to /, beside the menu button; "‹ back" stays on the right for pages whose parent isn't home (neighborhood, base housing area, sequence phase, forms) and is dropped where it pointed home, since the name does that now. On /plan/ (cards and result) and on home once there's a conversation, a small "Start over" shows under the name. It fits at 390 px with no icon.
+
+**Checks.** `check_frontend.mjs` adds `home-layout` (start screen, then the map, nothing else; the card last before the map; no base cards, counts or section headings; the footer line), `site-name` (every page; "Start over" on /plan/) and `no-orphans` (every page but home and /ask/ linked from another page or the menu); `--plant all` 20 of 20 (6 new plants). The browser check's fold test is replaced by `home` (ask box and chips on the first phone screen; map within 24 px under the card and the column's width; footer in the flow reaching the window's bottom, at 390×844, 768×1024, 1280×800), plus `footer` (/browse/ at 1280×1600), `site-name` (10 screens at 390 px, including an answer and a plan card; tapping it after an answer starts over) and `legend`; all 9 groups pass. The `home-start` rule "no data above the fold" is unchanged and still passes (it reads the start screen); on screens taller than about 780 px the map now shows on the first screen, as asked.
+
+**Runs on 2026-10-24:** full build, 56 PASS lines, no FAIL; dated plants 16 of 16, sequence 34 of 34, maps 22 of 22, corpus caption plant caught, intake-network 4 of 4, front end 20 of 20; browser checks all pass; layout clean on 83 pages at 390/768/1280/1440; corpus byte-identical; retrieval eval unchanged. Live eval still not run from here.
+
+**Phone screens** (390 × 844):
+
+| Screen | Screens |
+|---|---|
+| Home | 1.8 (ask box and chips on the first screen; the map starts at 780 px) |
+| Home with an answer | 1.9 (the turn through the follow-up box ends at 788 px) |
+| Menu open | 1.1 (the drawer scrolls inside) |
+| Plan card 1 | 1.0 (Next ends at 803 px); 1.2 with the footer |
+| Plan card 8 | 1.0; 1.04 with the footer |
+| Plan result | 5.8 |
+
+Before/after screenshots of home (390 and 1280) and intake card 1 (390 and 1280) are in `.review/frontend/` (gitignored).
 
 ## Session 14: ask-first front end (v1.0.0)
 

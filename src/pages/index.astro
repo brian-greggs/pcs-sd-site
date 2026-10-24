@@ -1,27 +1,21 @@
 ---
-// Home: ask first (v1.0.0). The first screen is the ask box and nothing else: one line, a sub line, the box,
-// example questions, a way into the starting plan and one line on where answers come from. The conversation
-// happens here (it replaced /ask/). Below the fold: the bases, the map, the plan and sequence, and the two indexes,
-// as before.
+// Home: ask first (v1.0.0). The same page on a phone and a desktop: the headline and sub line, the ask box, example
+// questions, a way into the starting plan, the region map, and the footer line on where answers come from. The
+// conversation happens here (it replaced /ask/). Everything else is in the menu (src/lib/menu.ts) and on /browse/.
 //
 // Questions go to /api/ask on this site (functions/api/ask.js), which answers only from this site's pages. The
 // conversation lives in this page's memory: no localStorage, no cookies; reload and it's gone. With each question
 // go the previous turn (last question and answer, nothing older) and, only if the reader turns it on, four
 // starting-plan fields; "What's sent?" shows exactly that before it's sent. scripts/check_intake.mjs allows this
 // page one network call, that POST, and nothing else (intake-network).
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { BASES } from '../lib/bases';
-import { baseHousingAreas } from '../lib/baseHousing';
 import SiteMap from '../components/SiteMap.astro';
 import { EXAMPLE_QUESTIONS } from '../lib/examples';
 
-const communities = await getCollection('communities');
-const { areas } = await baseHousingAreas();
-const areaPages = areas.filter((a) => a.has_page).length;
+const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no referrals. This site stores nothing you type.';
 ---
 
-<Base title="Home" description="Ask about moving to San Diego on military orders. Every answer cites its official source and date.">
+<Base title="Home" description="Ask about moving to San Diego on military orders. Every answer cites its official source and date." footerNote={HOME_FOOTER}>
   <section class="start" data-start aria-labelledby="start-title">
     <div class="start-hero" data-hero>
       <h1 id="start-title">Orders to San Diego?</h1>
@@ -74,47 +68,10 @@ const areaPages = areas.filter((a) => a.has_page).length;
       <span class="arrow" aria-hidden="true">›</span>
     </a>
 
-    <p class="start-trust" data-trust>Every answer cites its official source and date. No ads, no referrals. This site stores nothing you type.</p>
   </section>
 
-  <div class="below-fold" data-below>
-    <h2 class="section-title">Or start with your base</h2>
-    <p class="intro">Pick where you’re reporting. We’ll sort neighborhoods and base housing by the drive at 0700.</p>
-
-    <ul class="cards cards-bases">
-      {BASES.map((b) => (
-        <li>
-          <a class="card" href={`/base/${b.slug}/`}>
-            <span><span class="card-name">{b.short}</span><span class="card-sub">{b.location}</span></span>
-            <span class="arrow" aria-hidden="true">›</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-
+  <div class="home-map" data-home-map>
     <SiteMap kind="overview" />
-
-    <h2 class="section-title">Then get a starting plan</h2>
-    <ul class="cards">
-      <li>
-        <a class="card" href="/plan/">
-          <span><span class="card-name">Eight questions, about a minute</span><span class="card-sub">What matters most for your household, what to skip, and where to look first. Works before you know your base. Your answers stay on this device.</span></span>
-          <span class="arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-      <li>
-        <a class="card" href="/sequence/">
-          <span><span class="card-name">The move sequence</span><span class="card-sub">Orders to your first 30 days, in order, with deadlines, forms and the official pages behind them.</span></span>
-          <span class="arrow" aria-hidden="true">›</span>
-        </a>
-      </li>
-    </ul>
-
-    <h2 class="section-title">Or just browse</h2>
-    <div class="browse">
-      <a class="blue" href="/neighborhoods/"><span class="count">{communities.length}</span><span class="label">Neighborhoods</span></a>
-      <a class="mauve" href="/base-housing/"><span class="count">{areaPages}</span><span class="label">Base housing</span></a>
-    </div>
   </div>
 </Base>
 
@@ -288,6 +245,8 @@ const areaPages = areas.filter((a) => a.has_page).length;
     $('[data-examples]').hidden = on;
     $('[data-plan-cta]').hidden = on;
     clearBtn.hidden = !on;
+    // The site name goes home, which ends the conversation: say so while there is one.
+    $('[data-site-sub]').hidden = !on;
     label.textContent = on ? 'Ask a follow-up' : 'Ask a question';
   };
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;

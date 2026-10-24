@@ -62,7 +62,7 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/lib/sequence.js`, `src/lib/sequenceData.ts`, `src/components/sequence/` | Phases, anchors, the disclaimer and Navy-rules lines, the Q3 → phase map (shared with the plan rules and the checks); the steps and forms in order; the step card, the quotes and the two top lines |
 | `scripts/check_sequence.mjs` | Postbuild: every step and form on a page is an exported row with its deadline word for word, a date line, every quote and its "Not yet confirmed" line; the disclaimer and Navy-rules lines are where they must be; USMC rows never render. `--plant all` proves each rule fails |
 | `src/content/changelog/*.md` | The "What changed" page (F11), one file per entry |
-| `src/pages/index.astro` | Home: the ask box first (example questions in `src/lib/examples.ts`), the conversation (it replaced `/ask/`), then the bases, the map, the plan and the indexes below the fold |
+| `src/pages/index.astro` | Home, the same at every width: the ask box (example questions in `src/lib/examples.ts`), the conversation (it replaced `/ask/`), "Not sure what to ask?", then the region map; everything else is in the menu |
 | `src/lib/askView.js` | What the conversation shows around an answer: the source chip's date, the related-page card, the follow-ups (no model call) |
 | `src/lib/menu.ts`, `src/components/MenuLinks.astro`, `src/pages/browse/` | The menu: one list, in the drawer / sidebar on every page and on `/browse/` (where the button goes without JavaScript) |
 | `src/pages/plan.astro` | Starting plan (F5 intake v0): the eight questions, one card per screen, and the printable plan, worked out in the browser; answers in localStorage only |
@@ -88,7 +88,7 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, intake context, daily cap) |
 | `functions/api/ask.js` | Cloudflare Pages Function at `/api/ask` (same origin). Env: `ANTHROPIC_API_KEY`, `ASSISTANT_MODEL`, optional KV `ASK_LIMITS` and `ASK_DAILY_CAP` |
 | `src/pages/ask.astro`, `public/_redirects` | `/ask/` now redirects to `/` (301 on Cloudflare; a meta refresh elsewhere) |
-| `scripts/check_frontend.mjs` | Postbuild: the start screen has one ask box and no data; the example questions retrieve; every menu link resolves and matches `/browse/`; the `/ask/` redirect; the plan cards cover every answer field and choice. `--plant all` proves each |
+| `scripts/check_frontend.mjs` | Postbuild: the start screen has one ask box and no data, then the map and nothing else; the example questions retrieve; every menu link resolves and matches `/browse/`; the site name links home on every page; no page is reachable only from home; the `/ask/` redirect; the plan cards cover every answer field and choice. `--plant all` proves each |
 | `scripts/check_frontend_browser.mjs` | By hand (`npm run check:browser`, Playwright): the fold, the menu's focus and Escape, JavaScript off, the redirect, the cards' keyboard and tap behavior, the conversation |
 | `evals/assistant_eval.jsonl`, `scripts/eval_assistant.mjs` | 46 test questions and the runner: `npm run eval:assistant` (retrieval only), `-- --live`, or `-- --url <deployed site>` |
 | `scripts/check_layout.mjs` | Layout check, run by hand: every page at 390/768/1280/1440 px, no sideways scroll (needs Chrome; usage at the top) |

@@ -8,8 +8,15 @@
 // /api/ask doesn't exist under astro preview, so the browser's requests to it are answered here by the real handler
 // (assistant/ask.js) over the built corpus in STUB mode: no model, and the reply has no answer text.
 //
-//   fold        at 390×844, 768×1024 and 1280×800 the start screen fits the first screen and everything else on home
-//               starts below it
+//   home        at 390×844, 768×1024 and 1280×800: the ask box and the example chips are on the first screen, the
+//               region map starts right under "Not sure what to ask?" (within 24 px) inside the content column, and
+//               the footer is in the page flow (not fixed or sticky) and reaches the bottom of the window
+//   footer      on a short page (/browse/ at 1280×1600) the footer is pushed to the bottom of the window
+//   site-name   "San Diego PCS Guide" is in the header, links to /, fits and overlaps nothing at 390 px on home, an
+//               answer, the plan cards and result, a neighborhood, a base, /browse/ and /sources/; "Start over" shows
+//               under it on the plan and once home has a conversation, not on home's start screen
+//   legend      on every intake card at 390 and 1280 px the question (legend) ends above the options and the
+//               fieldset has no border for it to sit on
 //   menu        phone: the button opens the drawer, focus goes to the close button, the page behind is inert, Tab and
 //               Shift+Tab stay inside, Escape closes and focus returns to the button. 1280 px: a sidebar on load,
 //               nothing inert, the close button collapses it, and it stays collapsed on the next page in this tab
@@ -54,22 +61,97 @@ const active = (page) => page.evaluate(() => {
   return a ? `${a.tagName.toLowerCase()}${a.dataset.menuClose != null ? '[close]' : ''}${a.dataset.menuBtn != null ? '[menu]' : ''}${a.classList.contains('current') ? '.current' : ''}` : '';
 });
 
-// --- fold ---
+// --- home ---
 for (const [w, h] of [[390, 844], [768, 1024], [1280, 800]]) {
   const ctx = await context({ width: w, height: h });
   const page = await ctx.newPage();
   await page.goto(`${BASE}/`);
-  const m = await page.evaluate(() => ({
-    start: document.querySelector('[data-start]').getBoundingClientRect().bottom,
-    trust: document.querySelector('[data-trust]').getBoundingClientRect().bottom,
-    below: document.querySelector('[data-below]').getBoundingClientRect().top,
-    vh: innerHeight,
-  }));
-  expect('fold', m.trust <= m.vh, `${w}×${h}: the start screen ends at ${Math.round(m.trust)} px, past the first screen (${m.vh})`);
-  expect('fold', m.below >= m.vh - 1, `${w}×${h}: below-the-fold content starts at ${Math.round(m.below)} px, on the first screen`);
+  const m = await page.evaluate(() => {
+    const r = (sel) => document.querySelector(sel).getBoundingClientRect();
+    const f = document.querySelector('.site-footer');
+    return {
+      box: r('[data-box]').bottom, chips: r('[data-examples]').bottom, card: r('[data-plan-cta]').bottom,
+      map: r('[data-home-map] svg').top, mapL: r('[data-home-map] svg').left, mapR: r('[data-home-map] svg').right,
+      colL: r('[data-start]').left, colR: r('[data-start]').right,
+      footer: f.getBoundingClientRect().bottom + scrollY, footerPos: getComputedStyle(f).position, vh: innerHeight,
+    };
+  });
+  if (w === 390) {
+    expect('home', m.box <= m.vh && m.chips <= m.vh, `390: the ask box (${Math.round(m.box)}) or chips (${Math.round(m.chips)}) end past the first screen`);
+  }
+  expect('home', m.map >= m.card && m.map - m.card <= 24, `${w}×${h}: the map starts ${Math.round(m.map - m.card)} px under the plan card`);
+  expect('home', Math.abs(m.mapL - m.colL) <= 1 && Math.abs(m.mapR - m.colR) <= 1, `${w}×${h}: the map (${Math.round(m.mapL)}–${Math.round(m.mapR)}) isn't the content column's width (${Math.round(m.colL)}–${Math.round(m.colR)})`);
+  expect('home', m.footerPos === 'static' && m.footer >= m.vh - 1, `${w}×${h}: footer ${m.footerPos}, ends at ${Math.round(m.footer)} px`);
   await ctx.close();
 }
-passes.push('fold: 390×844, 768×1024, 1280×800');
+passes.push('home: 390×844, 768×1024, 1280×800');
+
+// --- footer ---
+{
+  const ctx = await context({ width: 1280, height: 1600 });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/browse/`);
+  const m = await page.evaluate(() => ({ bottom: document.querySelector('.site-footer').getBoundingClientRect().bottom, gap: document.querySelector('.site-footer').getBoundingClientRect().top - document.querySelector('main').lastElementChild.getBoundingClientRect().bottom, vh: innerHeight, sh: document.documentElement.scrollHeight }));
+  expect('footer', Math.abs(m.bottom - m.vh) <= 1 && m.sh <= m.vh, `/browse/ at 1280×1600: the footer ends at ${Math.round(m.bottom)} px of ${m.vh}`);
+  expect('footer', m.gap > 100, `/browse/ at 1280×1600: the footer isn't pushed down (${Math.round(m.gap)} px under the content)`);
+  await ctx.close();
+}
+passes.push('footer: pushed to the bottom of a short page');
+
+// --- site-name ---
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  const name = async (where, wantSub) => {
+    const m = await page.evaluate(() => {
+      const a = document.querySelector('.bar .site-name');
+      const r = a.getBoundingClientRect();
+      const others = [...document.querySelectorAll('.bar .back, .bar .beta, .bar .menu-btn')].filter((e) => e.offsetParent).map((e) => e.getBoundingClientRect());
+      const sub = a.querySelector('[data-site-sub]');
+      return { href: a.getAttribute('href'), text: a.querySelector('.site-title').textContent, visible: r.width > 0 && r.left >= 0 && r.right <= innerWidth,
+        overlap: others.some((o) => o.left < r.right && o.right > r.left && o.top < r.bottom && o.bottom > r.top), sub: !!sub && !sub.hidden && sub.offsetParent !== null, wrapped: a.querySelector('.site-title').getClientRects().length > 1 };
+    });
+    expect('site-name', m.href === '/' && m.text === 'San Diego PCS Guide' && m.visible && !m.overlap && !m.wrapped, `${where}: ${JSON.stringify(m)}`);
+    expect('site-name', m.sub === wantSub, `${where}: "Start over" ${m.sub ? 'shows' : 'doesn\'t show'}`);
+  };
+  for (const path of ['/communities/santee/', '/base/camp-pendleton/', '/base-housing/murphy-canyon/', '/browse/', '/sources/', '/sequence/first-30-days/', '/sequence/forms/']) {
+    await page.goto(`${BASE}${path}`);
+    await name(path, false);
+  }
+  await page.goto(`${BASE}/`);
+  await name('home', false);
+  await page.locator('[data-example]').first().click();
+  await page.waitForSelector('.ask-answer:not(.ask-waiting)');
+  await name('home with an answer', true);
+  await page.locator('.bar .site-name').click();
+  await page.waitForLoadState();
+  expect('site-name', (await page.locator('.ask-turn').count()) === 0, 'the site name didn\'t start over');
+  await page.goto(`${BASE}/plan/`);
+  await name('plan card', true);
+  await ctx.close();
+}
+passes.push('site-name: header link to / at 390 px on 10 screens; "Start over" on answers and the plan');
+
+// --- legend ---
+for (const w of [390, 1280]) {
+  const ctx = await context({ width: w, height: 900 });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/plan/`);
+  await page.evaluate(() => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: { partner: true, kids: { '0-2': 1, '3-5': 0, '6-9': 2, '10-13': 0, '14-18': 0 }, dogs: 1, bedrooms: 'help' } })));
+  await page.reload();
+  for (let i = 0; i < 8; i++) {
+    const m = await page.evaluate(() => {
+      const f = document.querySelector('fieldset.q.current');
+      const lg = f.querySelector('legend').getBoundingClientRect();
+      const first = [...f.children].find((c) => c.tagName !== 'LEGEND' && c.offsetParent !== null).getBoundingClientRect();
+      return { q: f.dataset.q, gap: first.top - lg.bottom, border: getComputedStyle(f).borderTopWidth };
+    });
+    expect('legend', m.gap >= 0 && m.border === '0px', `${w} px, card ${m.q}: legend ${m.gap < 0 ? `overlaps its options by ${Math.round(-m.gap)} px` : 'clear'}, fieldset border ${m.border}`);
+    if (i < 7) await page.locator('[data-card-next]').click();
+  }
+  await ctx.close();
+}
+passes.push('legend: all 8 cards at 390 and 1280 px');
 
 // --- menu, phone ---
 {

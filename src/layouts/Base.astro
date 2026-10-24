@@ -14,10 +14,17 @@ import MenuLinks from '../components/MenuLinks.astro';
 interface Props {
   title: string;
   description?: string;
-  // A natural parent page: the bar shows "‹ back" to it instead of the site name.
+  // A natural parent page: the bar shows "‹ back" to it, beside the site name.
   back?: { href: string; label: string };
+  // "Start over" under the site name: the page's screens (the plan's cards and result) leave what's on them when the
+  // name takes the reader home. Home shows it itself once a conversation starts ([data-site-sub]).
+  startOver?: boolean;
+  // The footer's first line. Home uses its own ("Every answer cites…"); other pages keep the two general lines.
+  footerNote?: string;
 }
-const { title, description = 'An unofficial, non-commercial guide for military families moving to San Diego.', back } = Astro.props;
+const { title, description = 'An unofficial, non-commercial guide for military families moving to San Diego.', back: backTo, startOver = false, footerNote } = Astro.props;
+// The site name goes home on every page, so a "back" to home would repeat it.
+const back = backTo && backTo.href !== '/' ? backTo : null;
 ---
 
 <!doctype html>
@@ -45,11 +52,12 @@ const { title, description = 'An unofficial, non-commercial guide for military f
     <header class="bar">
       <div class="bar-start">
         <a class="menu-btn" href="/browse/" data-menu-btn aria-controls="site-menu"><span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span><span class="menu-word">Menu</span></a>
-        {back
-          ? <a class="back" href={back.href} aria-label={`Back to ${back.label}`} data-back>‹ back</a>
-          : <a class="site-name" href="/">San Diego PCS Guide</a>}
+        <a class="site-name" href="/" data-site-name><span class="site-title">San Diego PCS Guide</span><span class="site-sub" data-site-sub hidden={!startOver}>Start over</span></a>
       </div>
-      <span class="beta">BETA</span>
+      <div class="bar-end">
+        {back && <a class="back" href={back.href} aria-label={`Back to ${back.label}`} data-back>‹ back</a>}
+        <span class="beta">BETA</span>
+      </div>
     </header>
     <div class="drawer" id="site-menu" data-drawer>
       <div class="drawer-scrim" data-menu-scrim></div>
@@ -65,8 +73,9 @@ const { title, description = 'An unofficial, non-commercial guide for military f
       <slot />
     </main>
     <footer class="site-footer">
-      <p>Every fact carries the date it was checked.</p>
-      <p>No ads, no referrals, nothing you type is collected.</p>
+      {footerNote
+        ? <p data-footer-note>{footerNote}</p>
+        : <><p>Every fact carries the date it was checked.</p><p>No ads, no referrals, nothing you type is collected.</p></>}
       <p class="muted">Unofficial and non-commercial. Not affiliated with the Navy, the Marine Corps or DoD.</p>
       <nav>
         <a href="/sources/">Sources</a>

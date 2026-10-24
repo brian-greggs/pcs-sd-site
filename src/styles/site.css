@@ -4,13 +4,17 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
+/* The footer sits at the bottom of a short page on a large screen: body is a column at least the window's height and
+   main takes the room left (not fixed or sticky; on a long page the footer just follows the content). */
 body {
+  display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh;
   margin: 0;
   background: var(--bg);
   color: var(--text);
   font: 400 16px/1.55 var(--font-body);
 }
-main, .bar, .site-footer { max-width: var(--column); margin: 0 auto; padding: 0 16px; }
+main, .bar, .site-footer { width: 100%; max-width: var(--column); margin: 0 auto; padding: 0 16px; }
+main { flex: 1 0 auto; }
 a { color: var(--link); }
 a:focus-visible, summary:focus-visible, select:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 h1, h2, h3 { font-family: var(--font-head); font-weight: 700; line-height: 1.2; }
@@ -32,7 +36,9 @@ strong, b { font-weight: 700; }
   display: inline-flex; align-items: center; min-height: var(--touch);
   font-family: var(--font-head); font-weight: 700; text-decoration: none;
 }
-.site-name { color: var(--text); font-size: 1.05rem; }
+.site-name { flex-direction: column; align-items: flex-start; justify-content: center; color: var(--text); font-size: 1.05rem; line-height: 1.15; }
+.site-sub { font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.02em; color: var(--link); }
+.bar-end { display: flex; align-items: center; gap: 12px; flex: none; }
 .bar-start { display: flex; align-items: center; gap: 4px; min-width: 0; }
 .menu-btn {
   display: inline-flex; align-items: center; gap: 8px; min-width: var(--touch); min-height: var(--touch); margin-left: -10px; padding: 0 10px;
@@ -297,8 +303,14 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outl
 .carded .q.current { display: block; }
 .carded .q:focus { outline: none; }
 .carded .q:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
-.carded .q legend { font-size: 1.25rem; line-height: 1.25; padding: 0; margin-bottom: 4px; }
-.carded .q { padding: 14px 16px 16px; }
+.carded .q legend { font-size: 1.25rem; line-height: 1.25; padding: 0; }
+/* The question sits above its options, never across a border: no box around the fieldset, and the legend floated at
+   full width (a legend that isn't floated is drawn in the fieldset's top border). The fieldset and legend stay, so a
+   screen reader still names the group by its question. */
+.carded .q { padding: 0; border: 0; background: none; }
+.carded .q legend { float: left; width: 100%; margin: 0 0 10px; }
+.carded .q legend + * { clear: both; }
+.carded .opt { background: var(--surface); }
 .carded .opts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
 .carded .opt { min-height: 46px; padding: 0 14px; font-size: 1.02rem; }
 .carded .opt input[type="radio"], .carded .opt input[type="checkbox"] { width: 20px; height: 20px; flex: none; }
@@ -340,16 +352,15 @@ input:focus-visible, button:focus-visible { outline: 2px solid var(--link); outl
 /* --- Home: ask first (v1.0.0) ---------------------------------------------------
    The start screen fills the first screen (header 62 px: the 6 px stripe and the 56 px bar), so the bases, the map and
    the rest begin below the fold; once a question is asked it shrinks to the conversation. */
-.start { display: flex; flex-direction: column; justify-content: center; min-height: calc(100vh - 62px); min-height: calc(100svh - 62px); padding: 8px 0 20px; }
-@media (min-width: 720px) { .start { max-width: 760px; } }
-.start.talking { justify-content: flex-start; min-height: 0; padding-top: 0; }
+.start { padding: 12px 0 0; }
+.start.talking { padding-top: 0; }
+/* One content column for the start screen and the map, the same on every screen size. */
+@media (min-width: 720px) { .start, .home-map { max-width: 680px; } }
+.home-map .map { max-width: none; margin: 16px 0 0; }
 .start-hero h1 { font-size: 2.2rem; margin: 0 0 0.3rem; }
 .start-sub { font-size: 1.05rem; margin: 0 0 1rem; color: var(--muted); }
 .start.talking .start-hero { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .start-plan { margin: 16px 0 0; }
-.start-trust { margin: 14px 0 0; font-size: 0.85rem; line-height: 1.4; color: var(--muted); }
-.below-fold { padding-top: 8px; }
-.below-fold > .section-title:first-child { margin-top: 0.4rem; }
 
 /* The ask box: textarea and send button side by side, the tools under them. */
 .ask-label { display: block; font-weight: 700; margin-bottom: 6px; }
