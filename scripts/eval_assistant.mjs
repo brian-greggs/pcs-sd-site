@@ -42,10 +42,17 @@
 //                      From list, or "assignment notification" in the text)
 //   each_row           live, questions with expect_rows: the answer gives every zip's own row (each zip with
 //                      its own range), not only the combined range (cr-03, in-15)
+//   context_routes     context cases (the home page's chip, v1.1.0): with the family's base and pay band sent, the
+//                      sections sent differ from the same question without them, and include that base's page
+//   band_row           live, context cases: every BAH figure in the answer is one of the family's pay band's figures
+//                      for their base's housing area (expect_mha), never another band's or area's
+//   context_free       context_free cases: the sections sent are the same with and without the context
+//   says_independent   live, context_free cases: the answer says it doesn't depend on the base or pay grade
 //   short, no_safety_claim   live only
 // Self-tests (no model): the daily cap, the From-list filter (assistant/cite.js), the answer formatting
 // the page renders (assistant/format.js), the rules fixed for QUESTIONS 65 and 68 (number words in
-// expect_answer, rent vs BAH figures, gap wording, safety refusals) and the sequence-start route.
+// expect_answer, rent vs BAH figures, gap wording, safety refusals), the sequence-start and where-to-live routes,
+// the context rules, and every base the chip can send having its page and routed sections in the corpus.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -54,7 +61,8 @@ import { handleAsk, dailyCap } from '../assistant/ask.js';
 import { citedOnly, labelOf } from '../assistant/cite.js';
 import { parseAnswer } from '../assistant/format.js';
 import { NO_ANSWER } from '../assistant/prompt.js';
-import { search, isSequenceStart } from '../assistant/retrieve.js';
+import { search, isSequenceStart, isWhereToLive } from '../assistant/retrieve.js';
+import { BASES as CONTEXT_BASES } from '../assistant/context.js';
 import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED } from './principle_lists.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -72,9 +80,10 @@ const index = url ? null : buildIndex(JSON.parse(readFileSync(corpusFile, 'utf-8
 const env = live ? { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY, ASSISTANT_MODEL: process.env.ASSISTANT_MODEL } : {};
 const realAnswers = Boolean(url || live);
 
-// An item can carry `previous` ({question, answer}): the turn before it, as the home page sends it.
-async function ask(question, previous) {
-  const body = previous ? { question, previous } : { question };
+// An item can carry `previous` ({question, answer}): the turn before it, and `context`: the chip's fields, as the
+// home page sends them.
+async function ask(question, previous, context) {
+  const body = { question, ...(previous ? { previous } : {}), ...(context ? { context } : {}) };
   const t0 = performance.now();
   if (url) {
     const res = await fetch(new URL('/api/ask', url), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -153,8 +162,19 @@ const bahFiguresOk = (answer, sentText) => {
   const ok = figs.every((f) => BAH_VALUES.has(Number(f.replace(/,/g, ''))) && (!sentText || sentText.includes(`$${f}`)));
   return ok && /\b20\d{2}\b(?![-–]\d)/.test(answer.replace(/\b20\d{2}-\d{2}(-\d{2})?\b/g, ''));
 };
+// The chip's context (v1.1.0): a BAH figure in the answer must be the family's own band in their base's area.
+const BAH_ROWS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'bah.json'), 'utf-8'));
+const bandFigures = (band, mha) => new Set(BAH_ROWS.filter((r) => r.pay_band === band && r.mha === mha).flatMap((r) => [r.with_dependents, r.without_dependents]));
+const bandRowOk = (answer, band, mha) => {
+  const own = bandFigures(band, mha);
+  return dollarsNearBah(answer).map((f) => Number(f.replace(/,/g, ''))).filter((n) => BAH_VALUES.has(n)).every((n) => own.has(n));
+};
+// "Say when an answer doesn't depend on it" (the prompt's rules line): the words models use for that.
+const INDEPENDENT_RE = /\b(?:the same (?:for|whatever|no matter|regardless)|doesn[’']t (?:depend|change|matter)|does not (?:depend|change)|regardless of (?:your|the|which)|no matter (?:which|what|your|where)|whatever (?:your|base|pay))\b/i;
+const sameSections = (a, b) => JSON.stringify([...new Set(sentUrls(a))].sort()) === JSON.stringify([...new Set(sentUrls(b))].sort());
+
 function bahSourced(q, r, answer) {
-  const sent = r.chunks ?? (index ? search(index, q.question, undefined, q.previous?.question ?? '').chunks : null);
+  const sent = r.chunks ?? (index ? search(index, q.question, undefined, q.previous?.question ?? '', { basePage: q.context ? `/base/${CONTEXT_BASES[q.context.base]?.slug}/` : null }).chunks : null);
   if (r.chunks && r.chunks.some((c) => BAH_PRINTED.test(c.text) && !BAH_LABEL.test(c.text))) return 'FAIL';
   if (!realAnswers || !answer) return 'PASS';
   return bahFiguresOk(answer, sent ? sent.map((c) => c.text).join('\n') : null) ? 'PASS' : 'FAIL';
@@ -169,6 +189,8 @@ const RULES = {
   bait_referral: ['guard_referral'],
   bait_safety: ['has_fact', 'retrieves_page', 'retrieves_section', 'no_demo', 'no_safety_claim', 'cites_page', 'labels_only', 'from_cited'],
   not_yet_covered: ['honest_gap', 'labels_only', 'from_cited'],
+  context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'bah_sourced', 'band_row', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
+  context_free: ['has_fact', 'retrieves_page', 'answers', 'context_free', 'says_independent', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
 };
 
 function judge(rule, q, r) {
@@ -221,6 +243,11 @@ function judge(rule, q, r) {
     }
     case 'orders_step2': if (!isSequenceStart(q.question)) return null; if (!realAnswers) return 'SKIP'; return ordersStep2(r) ? 'PASS' : 'FAIL';
     case 'each_row': if (!q.expect_rows) return null; if (!realAnswers) return 'SKIP'; return everyRow(q.expect_rows, answer) ? 'PASS' : 'FAIL';
+    // The context cases: `r.plain` is the same question asked without the context.
+    case 'context_routes': return !sameSections(r, r.plain) && hasPage(r, q.expect_page) && !hasPage(r.plain, q.expect_page) ? 'PASS' : 'FAIL';
+    case 'context_free': return sameSections(r, r.plain) ? 'PASS' : 'FAIL';
+    case 'band_row': if (!realAnswers) return 'SKIP'; return bandRowOk(answer, q.context.band, q.expect_mha) ? 'PASS' : 'FAIL';
+    case 'says_independent': if (!realAnswers) return 'SKIP'; return INDEPENDENT_RE.test(answer) ? 'PASS' : 'FAIL';
     case 'short': if (!realAnswers) return 'SKIP'; return words(answer) <= 180 ? 'PASS' : 'FAIL';
     case 'no_safety_claim': if (!realAnswers) return 'SKIP'; return safetyClaim(answer) ? 'FAIL' : 'PASS';
     default: throw new Error(`unknown rule ${rule}`);
@@ -230,7 +257,8 @@ function judge(rule, q, r) {
 const questions = readFileSync(join(ROOT, 'evals', 'assistant_eval.jsonl'), 'utf-8').trim().split('\n').map((l) => JSON.parse(l));
 const results = [];
 for (const q of questions) {
-  const r = await ask(q.question, q.previous);
+  const r = await ask(q.question, q.previous, q.context);
+  if (q.context) r.plain = await ask(q.question, q.previous);
   const rules = Object.fromEntries(RULES[q.category].map((rule) => [rule, judge(rule, q, r)]).filter(([, v]) => v));
   results.push({ ...q, kind: r.kind, status: r.status, ms: r.ms, cf_error: r.cf_error ?? null, error: r.error ?? r.raw ?? null, usage: r.usage ?? null, top: (r.citations ?? [])[0]?.url ?? r.nearest?.url ?? '', rank: q.expect_page ? rank(r, q.expect_page) : null, rules, answer: r.answer ?? null, citations: r.citations ?? [], cited_by: r.cited_by ?? null, sent: r.sent ?? null });
 }
@@ -320,6 +348,26 @@ const routeCases = [
   ['How long is the base housing wait at Murphy Canyon?', false], ['How do I renew my passport before an overseas move?', false],
 ];
 const routeBad = routeCases.filter(([q, want]) => isSequenceStart(q) !== want);
+// The where-to-live route (with the chip's base): these get the base page's drive groups; these don't.
+const whereCases = [
+  ['Where should we look to live?', true], ['Where should we rent?', true], ['Which neighborhoods should we look at?', true],
+  ['What is the best place to live?', true], ['Where to live near the base?', true],
+  ['Where do I file my travel claim?', false], ['How long is the drive from Santee?', false], ['Where is the commissary?', false],
+];
+const whereBad = whereCases.filter(([q, want]) => isWhereToLive(q) !== want);
+// Every base the chip can send has its page in the corpus with the three sections the route sends.
+const routeSections = ['tier-under30', 'tier-30-45', 'bah-table'];
+const baseBad = index ? Object.values(CONTEXT_BASES).filter((b) => b.slug).filter((b) => !routeSections.every((id) => index.chunks.some((c) => c.url === `/base/${b.slug}/#${id}`))).map((b) => b.slug) : [];
+// The context rules: band figures and "doesn't depend" wording.
+ruleCases.push(
+  ['band row: own band and area', bandRowOk('E5 with dependents gets $3,963 a month (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6', 'CA024'), true],
+  ['band row: another area', bandRowOk('E5 with dependents gets $3,975 a month (2026 BAH, San Diego area, MHA CA038).', 'E5–E6', 'CA024'), false],
+  ['band row: another band', bandRowOk('O4 with dependents gets $5,085 a month (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6', 'CA024'), false],
+  ['band row: no figure', bandRowOk('Oceanside is 6 to 22 minutes from the gate.', 'E5–E6', 'CA024'), true],
+  ['independent: says so', INDEPENDENT_RE.test('This is the same for every base and pay grade.'), true],
+  ['independent: doesn\'t depend', INDEPENDENT_RE.test('Filing doesn’t depend on your base.'), true],
+  ['independent: silent', INDEPENDENT_RE.test('File the DD 1351-2 through the gaining CPPA.'), false],
+);
 
 // --- Report -------------------------------------------------------------------------
 console.log(`\nAssistant eval: ${questions.length} questions, ${mode}\n`);
@@ -344,6 +392,8 @@ console.log(`From-list filter and label self-test (${filterCases.length + labelC
 console.log(`Answer formatting self-test (${formatCases.length} cases): ${formatBad.length ? `FAIL: ${formatBad.map(([t]) => `${JSON.stringify(t)} → ${fmt(t)}`).join('; ')}` : 'PASS'}`);
 console.log(`Eval rule self-test, QUESTIONS 65 and 68, Orders step 2, per-zip rows (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
 console.log(`Sequence-start route self-test (${routeCases.length} cases): ${routeBad.length ? `FAIL: ${routeBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
+console.log(`Where-to-live route self-test (${whereCases.length} cases): ${whereBad.length ? `FAIL: ${whereBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
+if (index) console.log(`Chip bases in the corpus (${Object.values(CONTEXT_BASES).filter((b) => b.slug).length} base pages, each with ${routeSections.join(', ')}): ${baseBad.length ? `FAIL: ${baseBad.join(', ')}` : 'PASS'}`);
 const answered = results.filter((r) => r.kind === 'answer' && r.cited_by);
 if (answered.length) {
   const by = (k) => answered.filter((r) => r.cited_by === k);
@@ -382,4 +432,4 @@ const failed = results.filter((r) => Object.values(r.rules).includes('FAIL'));
 if (failed.length) console.log(`\nFailed: ${failed.map((r) => r.id).join(', ')}`);
 const out = opt('--json');
 if (out) writeFileSync(out, JSON.stringify({ mode, results, capOk }, null, 2));
-process.exit(failed.length || !capOk || filterBad.length || formatBad.length || ruleBad.length || routeBad.length ? 1 : 0);
+process.exit(failed.length || !capOk || filterBad.length || formatBad.length || ruleBad.length || routeBad.length || whereBad.length || baseBad.length ? 1 : 0);

@@ -209,3 +209,14 @@
 - **A legend that isn't floated is drawn in its fieldset's border.** Taking the border off and floating the legend at full width puts the question above its options while the fieldset still names the group; the browser check now measures the legend against the first option on every card at two widths, since a screenshot of one card doesn't prove the other seven.
 - **Taking links off a page needs a link graph, not a guess.** Before removing home's old content I saved every page's inbound links; comparing after showed three pages home stopped linking (/neighborhoods/, /base-housing/, /sequence/), each still in the menu on 82 pages and linked from 15 to 41 others. `no-orphans` keeps it true.
 - **A flex column body needs `width: 100%` on centered children.** With `margin: 0 auto`, a flex item doesn't stretch, so main would have shrunk to its content's width; the footer push came with that one extra rule.
+
+## Session 15 (2026-10-24): the move chip
+
+- **One allow list, imported everywhere it matters.** The page, the server and both checks read `assistant/context.js`, so "What's sent?", the body, the server's filter and the tests can't drift. The static check walks 960 answer sets through it; the browser check reads the wire.
+- **Plant in minified code with an anchor that survives minification.** Property names and string literals do; variable names don't. Writing the off switch as `ctxState.included = false` gives one `.included=!1` to flip, and each plant must change the served code or it counts as missed.
+- **A generic question needs a route, not more words.** Folding the base's name into BM25 at the previous turn's weight left "where should we look" unchanged: "look" decided the ranking. Routing the question shape to the base page's drive groups did it, and left every existing eval row as it was.
+- **Compare against the remote base, not a local branch.** Local `main` was three merges behind; the eval "changed" out-04 until the comparison used `origin/main`.
+- **Copy is layout.** A two-line privacy sentence pushed card 1's buttons past the first phone screen (803 → 866 px); measuring candidate wordings in the browser picked one that fits.
+- **Tab order follows the DOM, not the picture.** The menu sits visually under the chip, but the × came first in the markup, so Tab skipped the open menu; the keyboard test found it.
+- **Read a list and its labels at the same moment.** The label check first read "What's sent?" after the answer arrived, by which time the list had gained the new previous turn; reading both before the tap fixed it.
+- **A setting kept "with the answers" has to survive the page that writes the answers.** `/plan/` rewrote the whole entry on every change, which would have dropped the chip's off switch; `save()` now carries it over, and the browser check edits an answer on /plan/ before asking again.
