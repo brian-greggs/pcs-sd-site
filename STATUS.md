@@ -1,4 +1,20 @@
-# Site build — status (2026-10-24, session 15b: the move chip on home; v1.1.0)
+# Site build — status (2026-10-24, session 15c: context rules, seq-03, seq-11; v1.1.0)
+
+## Session 15c: three eval fixes after the live run (2026-10-24), branch `claude/eager-tesla-72l4ce`
+
+- **Context rules line** (`assistant/prompt.js`): the household is used only to pick what's relevant; the model never restates it and never says whether the answer depends on it. The old "When the answer doesn't depend on them, say so … ("This is the same for every base and pay grade.")" is gone. The user message's household line is unchanged. `check_frontend` `ask-context` reads the new words and fails if the old "say so" wording comes back.
+- **ctx-05/06:** `says_independent` is replaced by `no_context_mention` (live, `context_free` cases): the answer fails if it restates the household (the base's name, short name or code; the pay band; "your spouse/partner"; a child age group next to kids/children; "no spouse", "no children" for an empty household) or uses the "doesn't depend" words (`INDEPENDENT_RE`). `context_free` is kept. Self-tests: 5 new rule cases (36 in all).
+- **seq-03:** in retrieval mode, the sections sent on main and on 5df2e70 (before PR #7) are identical: the same 11 parts in the same order with the same scores, and the user message is byte-identical (corpus byte-identical too). Only the system prompt differs, by PR #7's household rules line. So the live miss was the model's answer, not retrieval. `has_fact` live now says which: a FAIL is an **answer miss** when `expect_fact` was in the sections sent (read from the local corpus by the URLs sent) and a **retrieval miss** when it wasn't. The row shows `[has_fact: answer miss, the fact was in the sections sent]`; the summary has "Expected fact in the sections sent" (retrieval) and "Expected answer: … (answer misses, the fact was sent: …; retrieval misses: …)". Retrieval-mode output is unchanged. Checked against a local mock model: seq-03 reports an answer miss, in-16 a retrieval miss.
+- **seq-11 `orders_step2`:** not fixed; cause in QUESTIONS 86.
+
+**Runs on 2026-10-24:**
+- Build: 58 PASS lines, no FAIL; corpus byte-identical to 5df2e70's.
+- `check_frontend`: all 11 pass; plants 28 of 28.
+- `check:browser`: all 12 groups pass.
+- Layout: clean on 83 pages at 390/768/1280/1440.
+- Retrieval eval: no row moved. ctx-05 and ctx-06 show `no_context_mention:SKIP` where they showed `says_independent:SKIP`; every other row is identical to main. Expected fact 47 of 48 (in-16 only), page 48 of 48, section 42 of 42; every self-test passes.
+- Live eval not run (no key here).
+
 
 ## Session 15b: Brian's changes to the chip (2026-10-24), same branch
 
