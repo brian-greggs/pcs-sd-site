@@ -1,4 +1,19 @@
-# Site build — status (2026-10-24, session 15c: context rules, seq-03, seq-11; v1.1.0)
+# Site build — status (2026-10-24, session 15d: rules line names the band with a figure; seq-11 narrow fix; v1.1.0)
+
+## Session 15d: Brian's two changes (2026-10-24), same branch
+
+- **Rules line** (`assistant/prompt.js`): don't open with the household or restate it as a preamble, and never say whether the answer depends on it. But when a figure or list depends on the base or pay grade (BAH, drive groups, base housing eligibility), name the base and pay grade it applies to ("For E5–E6 at NBSD, …"). `check_frontend` `ask-context` checks both sentences.
+- **`no_context_mention`** stays on the `context_free` cases only (ctx-05, ctx-06).
+- **New rule `band_named`** (live, the `context` cases ctx-01 to ctx-04, which all get the base's BAH table): when the answer gives a BAH figure, every sentence with one names the family's pay band or one of its grades ("E5–E6", "E5", "E-5"). It doesn't apply when the answer gives no figure. Self-tests: 4 new rule cases (40 in all). Checked against a local mock model: a figure with no grade fails.
+- **seq-11 (QUESTIONS 86, narrow fix):** on a sequence-start question, "start" and "begin" don't score in BM25 (`START_WORDS` in `assistant/retrieve.js`). All 59 rows compared, with and without their context, including the nearest page: only seq-11's sections changed. Its BM25 picks after Orders steps 1–3 are now Orders step 4 (medical screening, unchanged), applying for base housing, the DPS address, the housing control date, Orders child care and the effective date. Gone: the PRR step, the housing queue, the PPM closeout and the PPM paperwork. Its message is now 14.0k characters (was 31.6k). Its retrieval rules still all pass. **Live result pending:** whether seq-11 now passes `orders_step2` needs a live run.
+
+**Runs on 2026-10-24:**
+- Build: 58 PASS lines, no FAIL.
+- `check_frontend`: all 11 pass; plants 28 of 28.
+- `check:browser`: all 12 groups pass.
+- Layout: clean on 83 pages at 390/768/1280/1440.
+- Retrieval eval: no row changed its result. ctx-01 to ctx-04 add `band_named:SKIP`. seq-11's line is unchanged (same top section, all PASS); only its sections behind the top changed. Expected fact 47 of 48 (in-16 only), page 48 of 48, section 42 of 42; every self-test passes.
+- Live eval not run (no key here).
 
 ## Session 15c: three eval fixes after the live run (2026-10-24), branch `claude/eager-tesla-72l4ce`
 

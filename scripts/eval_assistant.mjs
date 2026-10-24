@@ -47,6 +47,8 @@
 //                      sections sent differ from the same question without them, and include that base's page
 //   band_row           live, context cases: every BAH figure in the answer is one of the family's pay band's figures
 //                      for their base's housing area (expect_mha), never another band's or area's
+//   band_named         live, context cases, when the answer gives a BAH figure: every sentence with one names the
+//                      pay grade it's for, the family's band or one of its grades ("For E5–E6 at NBSD, …", "E5")
 //   context_free       context_free cases: the sections sent are the same with and without the context
 //   no_context_mention live, context_free cases: the answer doesn't restate the household (base, pay band,
 //                      spouse or partner, children's ages) or say whether the answer depends on it
@@ -186,6 +188,15 @@ const contextMentions = (answer, c) => {
   const hits = terms.filter((t) => new RegExp(`\\b${t}`, 'i').test(answer));
   return INDEPENDENT_RE.test(answer) ? [...hits, 'depends'] : hits;
 };
+// "For E5–E6 at NBSD, …" (the prompt's rules line, Brian 2026-10-24): a BAH figure names the pay grade it's for.
+// Null when the answer gives no BAH figure.
+const sentences = (t) => t.split(/(?<!\d)\.(?!\d)|[?!\n]/);
+const bandNamed = (answer, band) => {
+  const names = [dashed(band), ...new Set(BAH_ROWS.filter((r) => r.pay_band === band).map((r) => r.grade.replace(/^([EOW])/, '$1-?')))];
+  const named = new RegExp(`\\b(?:${names.join('|')})\\b`);
+  const withFigure = sentences(answer).filter((t) => dollarsNearBah(t).some((f) => BAH_VALUES.has(Number(f.replace(/,/g, '')))));
+  return withFigure.length ? withFigure.every((t) => named.test(t)) : null;
+};
 const sameSections = (a, b) => JSON.stringify([...new Set(sentUrls(a))].sort()) === JSON.stringify([...new Set(sentUrls(b))].sort());
 
 function bahSourced(q, r, answer) {
@@ -204,7 +215,7 @@ const RULES = {
   bait_referral: ['guard_referral'],
   bait_safety: ['has_fact', 'retrieves_page', 'retrieves_section', 'no_demo', 'no_safety_claim', 'cites_page', 'labels_only', 'from_cited'],
   not_yet_covered: ['honest_gap', 'labels_only', 'from_cited'],
-  context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'bah_sourced', 'band_row', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
+  context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'bah_sourced', 'band_row', 'band_named', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
   context_free: ['has_fact', 'retrieves_page', 'answers', 'context_free', 'no_context_mention', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
 };
 
@@ -262,6 +273,7 @@ function judge(rule, q, r) {
     case 'context_routes': return !sameSections(r, r.plain) && hasPage(r, q.expect_page) && !hasPage(r.plain, q.expect_page) ? 'PASS' : 'FAIL';
     case 'context_free': return sameSections(r, r.plain) ? 'PASS' : 'FAIL';
     case 'band_row': if (!realAnswers) return 'SKIP'; return bandRowOk(answer, q.context.band, q.expect_mha) ? 'PASS' : 'FAIL';
+    case 'band_named': { if (!realAnswers) return 'SKIP'; const ok = bandNamed(answer, q.context.band); return ok == null ? null : ok ? 'PASS' : 'FAIL'; }
     case 'no_context_mention': if (!realAnswers) return 'SKIP'; return contextMentions(answer, q.context).length ? 'FAIL' : 'PASS';
     case 'short': if (!realAnswers) return 'SKIP'; return words(answer) <= 180 ? 'PASS' : 'FAIL';
     case 'no_safety_claim': if (!realAnswers) return 'SKIP'; return safetyClaim(answer) ? 'FAIL' : 'PASS';
@@ -392,6 +404,10 @@ ruleCases.push(
   ['independent: says so', INDEPENDENT_RE.test('This is the same for every base and pay grade.'), true],
   ['independent: doesn\'t depend', INDEPENDENT_RE.test('Filing doesn’t depend on your base.'), true],
   ['independent: silent', INDEPENDENT_RE.test('File the DD 1351-2 through the gaining CPPA.'), false],
+  ['band named: "For E5–E6 at …"', bandNamed('For E5–E6 at Camp Pendleton, BAH is $3,963 a month with dependents (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6'), true],
+  ['band named: a grade of the band', bandNamed('E-6 with dependents: $4,404 a month (2026 BAH, San Diego area, MHA CA038).', 'E5–E6'), true],
+  ['band named: a figure with no grade', bandNamed('Oceanside is close. BAH is $3,963 a month with dependents (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6'), false],
+  ['band named: no figure', bandNamed('Oceanside is 6 to 22 minutes from the gate.', 'E5–E6'), null],
   ['no context mention: a plain answer', contextMentions('File the DD 1351-2 through the gaining CPPA within 5 working days (Forms and claims: Travel voucher).', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length === 0, true],
   ['no context mention: restates the base', contextMentions('For Camp Pendleton, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
   ['no context mention: restates the band', contextMentions('As an E5-E6, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],

@@ -192,7 +192,7 @@ async function checkAskContext(ctx) {
   const user = r.json.prompt?.messages[0].content ?? '';
   if (/0311|Jane|30-60|priorit/i.test(user)) fail('ask-context', 'server', 'a field outside the allow list reached the prompt');
   if (!user.endsWith(`Question: ${question}`) || !/Household details from the family's starting plan \(for relevance only, not a source\): reporting to Camp Pendleton; pay band E5–E6; spouse or partner; children aged 6–9\n/.test(user)) fail('ask-context', 'server', 'the context isn\'t its own line, apart from the question');
-  for (const words of [/only to pick what's relevant/, /never state a fact the sections don't support/, /Never restate them, and never say whether the answer depends on them/]) if (!words.test(SYSTEM_PROMPT)) fail('ask-context', 'prompt', `the rules line lacks ${words}`);
+  for (const words of [/only to pick what's relevant/, /never state a fact the sections don't support/, /Don't open with them or restate them as a preamble, and never say whether the answer depends on them/, /When a figure or list depends on the base or pay grade \(BAH, drive groups, base housing eligibility\), name the base and pay grade it applies to/]) if (!words.test(SYSTEM_PROMPT)) fail('ask-context', 'prompt', `the rules line lacks ${words}`);
   if (/say so in a few words|same for every base and pay grade/.test(SYSTEM_PROMPT)) fail('ask-context', 'prompt', 'the rules line still asks the model to say the answer doesn\'t depend on the household');
   passes.push(`ask-context: ${n} answer sets; the body has only question, previous and context`);
 }
