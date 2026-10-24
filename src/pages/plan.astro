@@ -2,9 +2,11 @@
 // Starting plan (F5 intake v0, PRD §10.1). Eight questions, then a plan built by
 // fixed rules (src/lib/intake/rules.js) over the same data the pages show.
 //
-// Nothing leaves the device: answers live in localStorage (behind try/catch), the
-// rules run in the browser on data embedded below, there is no <form> (so nothing
-// can be submitted or land in a URL), and the page makes no network requests.
+// Answers live in this browser: localStorage (behind try/catch), the rules run in the
+// browser on data embedded below, there is no <form> (so nothing can be submitted or
+// land in a URL), and the page makes no network requests. The one thing that leaves is
+// the home page's chip (v1.1.0): base, pay band and household go with a question asked
+// there, until the reader turns it off (assistant/context.js).
 // scripts/check_intake.mjs checks all of that after the build, and runs the rules
 // over the whole answer space to check every line the plan can print.
 // Without JavaScript the questions stay hidden and the page says why. With it, the questions show as cards, one per
@@ -12,7 +14,7 @@
 import Base from '../layouts/Base.astro';
 import { BASES } from '../lib/bases';
 import { intakeDigest } from '../lib/intake/digest';
-import { RULES_VERSION, KID_GROUPS, TIMELINES, BEDROOM_CHOICES, OPEN_CHOICES } from '../lib/intake/rules.js';
+import { KID_GROUPS, TIMELINES, BEDROOM_CHOICES, OPEN_CHOICES } from '../lib/intake/rules.js';
 import priorities from '../config/intake/priorities.json';
 import tradeoffs from '../config/intake/tradeoffs.json';
 
@@ -28,10 +30,10 @@ const kidLabel = (g: string) => g.replace('-', '–');
   <p class="eyebrow">Starting plan <span class="chip gold v0">v0, rules under test</span></p>
   <h1>Eight questions, one starting plan</h1>
   <p class="intro">About a minute. Your answers pick out what matters most for your household, what you can skip, and where to look first. The same answers always give the same plan.</p>
-  <p class="note">Your answers stay in this browser. Nothing is sent, logged or put in a link. Every line of the plan names the page it came from and that page's dates. Rules {RULES_VERSION}.</p>
+  <p class="note">Your answers stay in this browser. If you ask a question on the home page, your base, pay grade and household go with it. Nothing else is sent, logged or put in a link.</p>
   </div>
 
-  <noscript><p class="gap">The questions need JavaScript, because the plan is worked out in your browser so your answers never reach a server. The rest of the site works without it: <a href="/">start with your base</a>.</p></noscript>
+  <noscript><p class="gap">The questions need JavaScript, because the plan is worked out in your browser and your answers are kept there. The rest of the site works without it: <a href="/">start with your base</a>.</p></noscript>
   <p class="gap" data-storage-note hidden>Your browser is blocking storage, so your answers last only until you leave this page.</p>
 
   <div data-intake hidden>
@@ -165,8 +167,12 @@ const kidLabel = (g: string) => g.replace('-', '–');
   const load = () => {
     try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw).answers : null; } catch { storageOk = false; return null; }
   };
+  // The home page's chip keeps its off switch (× ) in the same entry; saving answers keeps it, clearing them drops it.
   const save = (a: ReturnType<typeof emptyAnswers>) => {
-    try { localStorage.setItem(KEY, JSON.stringify({ rules_version: RULES_VERSION, answers: a })); } catch { storageOk = false; }
+    try {
+      const off = JSON.parse(localStorage.getItem(KEY) ?? 'null')?.chip_off === true;
+      localStorage.setItem(KEY, JSON.stringify({ rules_version: RULES_VERSION, answers: a, ...(off ? { chip_off: true } : {}) }));
+    } catch { storageOk = false; }
     $('[data-storage-note]').hidden = storageOk;
   };
   const forget = () => { try { localStorage.removeItem(KEY); } catch { /* storage blocked */ } };
@@ -433,10 +439,12 @@ const kidLabel = (g: string) => g.replace('-', '–');
 
   write(answers);
   $('[data-storage-note]').hidden = storageOk;
-  if (!missingAnswers(answers).length) { render(answers); planView.hidden = false; show(0, { focus: false }); }
+  // The home page's chip links "Edit answers" here as /plan/#edit: the cards from question 1, answers filled in.
+  const editing = location.hash === '#edit';
+  if (!editing && !missingAnswers(answers).length) { render(answers); planView.hidden = false; show(0, { focus: false }); }
   else {
     intake.hidden = false;
     const started = JSON.stringify(answers) !== JSON.stringify(emptyAnswers());
-    show(started ? cardOf(missingAnswers(answers)[0]) : 0, { focus: false });
+    show(started && !editing ? cardOf(missingAnswers(answers)[0]) : 0, { focus: false });
   }
 </script>

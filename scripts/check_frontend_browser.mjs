@@ -9,8 +9,24 @@
 // (assistant/ask.js) over the built corpus in STUB mode: no model, and the reply has no answer text.
 //
 //   home        at 390×844, 768×1024 and 1280×800: the ask box and the example chips are on the first screen, the
-//               region map starts right under "Not sure what to ask?" (within 24 px) inside the content column, and
-//               the footer is in the page flow (not fixed or sticky) and reaches the bottom of the window
+//               region map starts right under the example chips (within 24 px) inside the content column, and the
+//               footer is in the page flow (not fixed or sticky) and reaches the bottom of the window
+//   chip        the move chip at 390 px: empty it's "+ Add your move" at the bottom left of the box, Ask at the right,
+//               and it opens the plan; set it shows base · pay band · household (cut to fit, nothing past the box),
+//               its button has a name and aria-expanded, Enter opens the menu (See your plan, Edit answers, Clear),
+//               Tab walks it, Escape closes it with focus back on the chip, a click outside closes it; Edit answers
+//               opens card 1; × has a name and turns the chip off; Clear empties it and this browser's answers
+//   ask-body    every network request home makes, across four questions: exactly one POST to /api/ask per question
+//               and nothing else; each body holds only question, previous and the allowed context fields, the
+//               context equal to the chip's answers (none when there are none; none after ×, also after a reload
+//               and after editing the answers on /plan/; back after "Send it with my questions", also after a
+//               reload); "What's sent?" lists exactly the fields that then go, under plain labels, and its JSON is
+//               the body
+//   plan-network /plan/ from load through all eight cards, the plan, Edit and Clear: no request but its own static
+//               files (same origin, GET, no query): no fetch, XHR, beacon, socket or POST
+//   --plant extra-field | context-after-x | off-not-kept | plan-post | all: rewrite the built JavaScript as served (the
+//               fault lands in the page's own code: the chip sends the timeline, × doesn't turn the context off, × isn't
+//               kept over a reload, /plan/ posts to /api/ask); each must fail ask-body or plan-network
 //   footer      on a short page (/browse/ at 1280×1600) the footer is pushed to the bottom of the window
 //   site-name   "San Diego PCS Guide" is in the header, links to /, fits and overlaps nothing at 390 px on home, an
 //               answer, the plan cards and result, a neighborhood, a base, /browse/ and /sources/; "Start over" shows
@@ -28,13 +44,14 @@
 //               priority offered, each card's Back/Next (or Show my plan) is on the first phone screen
 //   ask         a question shows "Checking the sources…", then the reply with its source chip ("N sources ·
 //               verified <date>") and a related-page card; the box becomes "Ask a follow-up"; "What's sent?" shows the
-//               previous turn; "Ask about this plan" arrives with the starting-plan option ticked
+//               previous turn; "Ask about this plan" arrives with the chip set and the box focused
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { handleAsk } from '../assistant/ask.js';
 import { buildIndex } from '../assistant/retrieve.js';
+import { CONTEXT_FIELDS, cleanContext } from '../assistant/context.js';
 
 const require = createRequire(import.meta.url);
 let chromium;
@@ -45,6 +62,7 @@ const index = buildIndex(JSON.parse(readFileSync(join(ROOT, 'dist', 'assistant',
 const failures = [];
 const passes = [];
 const expect = (check, ok, what) => { if (!ok) failures.push(`${check}: ${what}`); };
+const plantArg = process.argv.includes('--plant') ? process.argv[process.argv.indexOf('--plant') + 1] : null;
 
 const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 const context = async (viewport, opts = {}) => {
@@ -61,6 +79,183 @@ const active = (page) => page.evaluate(() => {
   return a ? `${a.tagName.toLowerCase()}${a.dataset.menuClose != null ? '[close]' : ''}${a.dataset.menuBtn != null ? '[menu]' : ''}${a.classList.contains('current') ? '.current' : ''}` : '';
 });
 
+// Starting-plan answers with every kind of field, so a chip that leaked one would show it.
+const ANSWERS = { base: 'NBSD', band: 'E5–E6', timeline: '60-90', partner: true, kids: { '0-2': 0, '3-5': 0, '6-9': 2, '10-13': 1, '14-18': 0 }, bedrooms: '3', separate6: null, cats: 1, dogs: 1, open: ['renting'], priorities: ['where', 'cost'] };
+const SENT = { base: 'NBSD', band: 'E5–E6', partner: true, kids: ['6-9', '10-13'] };
+const setAnswers = (page, answers) => page.evaluate((a) => { localStorage.clear(); if (a) localStorage.setItem('pcs-sd:intake', JSON.stringify({ rules_version: 'v0.9', answers: a })); }, answers);
+
+// A plant rewrites the built JavaScript as the browser gets it, so the fault is in the page's own code. Each edit must
+// change the code it's meant for, or the plant didn't land (and counts as missed).
+const PLANTS = {
+  'extra-field': { group: 'ask-body', what: 'the chip also sends the timeline', edit: (code) => code.replace(/(\b\w+)&&\((\w+)\.context=\1\)/, '$1&&($2.context={...$1,timeline:`60-90`})') },
+  'context-after-x': { group: 'ask-body', what: '× doesn\'t turn the context off', edit: (code) => code.replace('.included=!1', '.included=!0') },
+  'off-not-kept': { group: 'ask-body', what: '× isn\'t stored, so a reload turns the context back on', edit: (code) => code.replace('.chip_off=!0', '.chip_off_unused=!0') },
+  'plan-post': { group: 'plan-network', what: '/plan/ posts its answers to /api/ask', edit: (code, url) => (url.includes('/plan.astro') ? `${code};fetch(\`/api/ask\`,{method:\`POST\`,headers:{"Content-Type":"application/json"},body:JSON.stringify({question:localStorage.getItem("pcs-sd:intake")??"x"})});` : code) },
+};
+const plantRoutes = async (ctx, plant) => {
+  const landed = { n: 0 };
+  if (!plant) return landed;
+  await ctx.route('**/_astro/*.js', async (route) => {
+    const res = await route.fetch();
+    const code = await res.text();
+    const out = plant.edit(code, route.request().url());
+    if (out !== code) landed.n++;
+    await route.fulfill({ response: res, body: out });
+  });
+  return landed;
+};
+// Requests that can carry data: anything but this site's own static files fetched plainly.
+const STATIC_TYPES = ['document', 'stylesheet', 'script', 'font', 'image'];
+const dataRequest = (r) => {
+  const u = new URL(r.url());
+  return r.method() !== 'GET' || u.origin !== new URL(BASE).origin || u.search !== '' || !STATIC_TYPES.includes(r.resourceType());
+};
+const describe = (r) => `${r.method()} ${new URL(r.url()).pathname}${new URL(r.url()).search} (${r.resourceType()})`;
+
+// --- ask-body ---
+const LABELS = { question: 'Your question', previous: 'Previous turn', 'context.base': 'Base', 'context.band': 'Pay grade', 'context.partner': 'Spouse or partner', 'context.kids': 'Children’s age groups' };
+async function checkAskBody(plant) {
+  const ctx = await context({ width: 390, height: 844 });
+  const landed = await plantRoutes(ctx, plant);
+  const page = await ctx.newPage();
+  const reqs = [];
+  page.on('request', (r) => reqs.push(r));
+  await page.goto(`${BASE}/`);
+  let asked = 0;
+  // One question: what "What's sent?" lists just before, then every request from the tap until the answer shows.
+  const ask = async (question) => {
+    await page.locator('[data-q]').fill(question);
+    if (await page.locator('[data-sent-panel]').isHidden()) await page.locator('[data-whats-sent]').click();
+    const listed = await page.locator('[data-sent-fields] li').evaluateAll((lis) => lis.map((li) => li.dataset.field));
+    const labels = await page.locator('[data-sent-fields] li strong').allTextContents();
+    const shown = JSON.parse(await page.locator('[data-context-json]').textContent());
+    const from = reqs.length;
+    await page.locator('[data-send]').click();
+    asked++;
+    await page.waitForFunction((n) => document.querySelectorAll('.ask-answer:not(.ask-waiting)').length === n, asked);
+    await page.waitForTimeout(150);
+    const sent = reqs.slice(from);
+    const posts = sent.filter((r) => r.method() === 'POST' && new URL(r.url()).pathname === '/api/ask');
+    const other = sent.filter((r) => !posts.includes(r) && dataRequest(r));
+    expect('ask-body', posts.length === 1 && !other.length, `"${question}": ${posts.length} POSTs to /api/ask and ${other.length} other requests (${other.map(describe).join(', ')})`);
+    const body = posts[0] ? JSON.parse(posts[0].postData()) : {};
+    const extra = Object.keys(body).filter((k) => !['question', 'previous', 'context'].includes(k));
+    expect('ask-body', !extra.length && body.question === question, `"${question}": body has ${Object.keys(body).join(', ')}`);
+    if (body.previous) expect('ask-body', Object.keys(body.previous).every((k) => ['question', 'answer'].includes(k)), `"${question}": previous has ${Object.keys(body.previous).join(', ')}`);
+    if (body.context) {
+      expect('ask-body', Object.keys(body.context).every((k) => CONTEXT_FIELDS.includes(k)) && JSON.stringify(cleanContext(body.context)) === JSON.stringify(body.context), `"${question}": context ${JSON.stringify(body.context)} has a field or value outside the allow list`);
+    }
+    expect('ask-body', labels.every((l, i) => LABELS[listed[i]] === l), `"${question}": "What's sent?" labels ${labels.join(', ')}`);
+    const want = ['question', ...(body.previous ? ['previous'] : []), ...Object.keys(body.context ?? {}).map((k) => `context.${k}`)];
+    expect('ask-body', listed.join() === want.join(), `"${question}": "What's sent?" listed ${listed.join(', ')}; sent ${want.join(', ')}`);
+    expect('ask-body', JSON.stringify(shown) === JSON.stringify(body), `"${question}": "What's sent?" showed ${JSON.stringify(shown)}, sent ${JSON.stringify(body)}`);
+    return body;
+  };
+  // No answers in this browser: the question alone.
+  await setAnswers(page, null);
+  await page.reload();
+  let b = await ask('How long is the base housing wait at Murphy Canyon?');
+  expect('ask-body', !b.context && !b.previous, `no answers stored: sent ${JSON.stringify(b)}`);
+  // Answers stored: the chip's four fields, nothing else from them.
+  await setAnswers(page, ANSWERS);
+  await page.reload();
+  asked = 0;
+  b = await ask('Where should we look to live?');
+  expect('ask-body', JSON.stringify(b.context) === JSON.stringify(SENT), `chip set: sent context ${JSON.stringify(b.context)}, want ${JSON.stringify(SENT)}`);
+  b = await ask('What about the schools there?');
+  expect('ask-body', b.previous && JSON.stringify(b.context) === JSON.stringify(SENT), `follow-up: sent ${Object.keys(b).join(', ')}`);
+  // × turns it off for the next question (and after).
+  await page.locator('[data-ctx-x]').click();
+  b = await ask('How do I file my PCS travel claim?');
+  expect('ask-body', !('context' in b), `after ×: sent context ${JSON.stringify(b.context)}`);
+  b = await ask('And the deadline for it?');
+  expect('ask-body', !('context' in b), `two questions after ×: sent context ${JSON.stringify(b.context)}`);
+  // Off is kept with the answers: a reload keeps it off, and so does editing the answers on /plan/.
+  await page.reload();
+  asked = 0;
+  expect('ask-body', (await page.locator('[data-ctx-text]').textContent()) === 'Your move: off', `after × and a reload the chip reads "${await page.locator('[data-ctx-text]').textContent()}"`);
+  b = await ask('How long is the base housing wait at Murphy Canyon?');
+  expect('ask-body', !('context' in b), `after × and a reload: sent context ${JSON.stringify(b.context)}`);
+  await page.goto(`${BASE}/plan/#edit`);
+  await page.locator('#main label.opt', { hasText: 'MCAS Miramar' }).click();
+  await page.waitForTimeout(400);
+  await page.goto(`${BASE}/`);
+  asked = 0;
+  b = await ask('Where should we look to live?');
+  expect('ask-body', !('context' in b), `after × and an edit on /plan/: sent context ${JSON.stringify(b.context)}`);
+  await setAnswers(page, ANSWERS);
+  await page.reload();
+  asked = 0;
+  // Back on from the chip's menu.
+  await page.locator('[data-ctx-x]').click();
+  await page.locator('[data-ctx-btn]').click();
+  const on = page.locator('[data-ctx-on]');
+  expect('ask-body', await on.isVisible(), 'after ×, the chip\'s menu has no "Send it with my questions"');
+  if (await on.isVisible()) await on.click();
+  else await page.keyboard.press('Escape');
+  b = await ask('Which neighborhoods are closest to Camp Pendleton?');
+  expect('ask-body', JSON.stringify(b.context) === JSON.stringify(SENT), `turned back on: sent context ${JSON.stringify(b.context)}`);
+  await page.reload();
+  asked = 0;
+  b = await ask('What schools serve Santee?');
+  expect('ask-body', JSON.stringify(b.context) === JSON.stringify(SENT), `turned back on, after a reload: sent context ${JSON.stringify(b.context)}`);
+  if (plant && !landed.n) failures.push(`plant: ${plantArg} didn't land`);
+  await ctx.close();
+}
+
+// --- plan-network ---
+async function checkPlanNetwork(plant) {
+  const ctx = await context({ width: 390, height: 844 });
+  const landed = await plantRoutes(ctx, plant);
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/plan/`);
+  await setAnswers(page, null);
+  const reqs = [];
+  page.on('request', (r) => reqs.push(r));
+  await page.reload();
+  await page.waitForLoadState('load');
+  const atLoad = reqs.length;
+  const progress = () => page.locator('[data-progress]').textContent();
+  for (let i = 0; i < 8; i++) {
+    const at = await progress();
+    const opt = page.locator('fieldset.q.current label.opt');
+    if (i === 7) { await page.locator('[data-pick-list] button').nth(0).click(); await page.locator('[data-pick-list] button').nth(1).click(); break; }
+    if (await opt.count()) await opt.first().click();
+    await page.waitForTimeout(350);
+    if ((await progress()) === at) await page.locator('[data-card-next]').click();
+  }
+  await page.locator('[data-show-plan]').click();
+  expect('plan-network', await page.locator('[data-plan-out] h2', { hasText: 'Your starting plan' }).isVisible(), 'the walk-through didn\'t reach the plan');
+  await page.locator('[data-edit]').click();
+  for (let i = 0; i < 7; i++) await page.locator('[data-card-next]').click();
+  await page.locator('[data-show-plan]').click();
+  await page.locator('[data-plan-view] [data-clear]').click();
+  await page.waitForTimeout(300);
+  const bad = reqs.filter(dataRequest);
+  expect('plan-network', !bad.length, `/plan/ made ${bad.length} data requests: ${bad.map(describe).join(', ')}`);
+  const after = reqs.slice(atLoad);
+  expect('plan-network', after.every((r) => !dataRequest(r)), `after load: ${after.map(describe).join(', ')}`);
+  if (plant && !landed.n) failures.push(`plant: ${plantArg} didn't land`);
+  await ctx.close();
+  return { atLoad, after: after.length };
+}
+
+if (plantArg) {
+  const names = plantArg === 'all' ? Object.keys(PLANTS) : [plantArg];
+  let caught = 0;
+  for (const name of names) {
+    const plant = PLANTS[name];
+    failures.length = 0;
+    await (plant.group === 'ask-body' ? checkAskBody(plant) : checkPlanNetwork(plant));
+    const hit = failures.some((f) => f.startsWith(`${plant.group}:`)) && !failures.some((f) => f.startsWith('plant:'));
+    caught += hit;
+    console.log(`  ${hit ? 'CAUGHT' : 'MISSED'}  ${plant.group}: ${name} (${plant.what})${hit ? `\n          ${failures.find((f) => f.startsWith(plant.group))}` : failures.length ? `\n          ${failures.join('; ')}` : ''}`);
+  }
+  await browser.close();
+  console.log(`\nBrowser plants: ${caught} of ${names.length} caught\n`);
+  process.exit(caught === names.length ? 0 : 1);
+}
+
 // --- home ---
 for (const [w, h] of [[390, 844], [768, 1024], [1280, 800]]) {
   const ctx = await context({ width: w, height: h });
@@ -70,7 +265,7 @@ for (const [w, h] of [[390, 844], [768, 1024], [1280, 800]]) {
     const r = (sel) => document.querySelector(sel).getBoundingClientRect();
     const f = document.querySelector('.site-footer');
     return {
-      box: r('[data-box]').bottom, chips: r('[data-examples]').bottom, card: r('[data-plan-cta]').bottom,
+      box: r('[data-box]').bottom, chips: r('[data-examples]').bottom,
       map: r('[data-home-map] svg').top, mapL: r('[data-home-map] svg').left, mapR: r('[data-home-map] svg').right,
       colL: r('[data-start]').left, colR: r('[data-start]').right,
       footer: f.getBoundingClientRect().bottom + scrollY, footerPos: getComputedStyle(f).position, vh: innerHeight,
@@ -79,12 +274,97 @@ for (const [w, h] of [[390, 844], [768, 1024], [1280, 800]]) {
   if (w === 390) {
     expect('home', m.box <= m.vh && m.chips <= m.vh, `390: the ask box (${Math.round(m.box)}) or chips (${Math.round(m.chips)}) end past the first screen`);
   }
-  expect('home', m.map >= m.card && m.map - m.card <= 24, `${w}×${h}: the map starts ${Math.round(m.map - m.card)} px under the plan card`);
+  expect('home', m.map >= m.chips && m.map - m.chips <= 24, `${w}×${h}: the map starts ${Math.round(m.map - m.chips)} px under the example chips`);
   expect('home', Math.abs(m.mapL - m.colL) <= 1 && Math.abs(m.mapR - m.colR) <= 1, `${w}×${h}: the map (${Math.round(m.mapL)}–${Math.round(m.mapR)}) isn't the content column's width (${Math.round(m.colL)}–${Math.round(m.colR)})`);
   expect('home', m.footerPos === 'static' && m.footer >= m.vh - 1, `${w}×${h}: footer ${m.footerPos}, ends at ${Math.round(m.footer)} px`);
   await ctx.close();
 }
 passes.push('home: 390×844, 768×1024, 1280×800');
+
+// --- chip ---
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/`);
+  const geom = () => page.evaluate(() => {
+    const r = (sel) => { const e = document.querySelector(sel); return e && e.offsetParent ? e.getBoundingClientRect() : null; };
+    const field = document.querySelector('.ask-field').getBoundingClientRect();
+    const chip = r('[data-ctx-add]') ?? r('[data-ctx-set]');
+    const send = r('[data-send]');
+    const text = document.querySelector('[data-ctx-text]');
+    return { field: [field.left, field.right, field.bottom], chip: chip && [chip.left, chip.right, chip.top, chip.bottom], send: [send.left, send.right, send.top, send.bottom],
+      ta: document.querySelector('[data-q]').getBoundingClientRect().bottom, sideways: document.documentElement.scrollWidth > innerWidth, cut: text.scrollWidth > text.clientWidth };
+  });
+  const placed = (g, where) => {
+    expect('chip', g.chip && g.chip[0] - g.field[0] <= 12 && g.chip[1] <= g.send[0] && g.send[1] <= g.field[1] && g.send[1] >= g.field[1] - 12, `${where}: chip ${g.chip?.map(Math.round)} and Ask ${g.send.map(Math.round)} aren't left and right in the box ${g.field.map(Math.round)}`);
+    expect('chip', g.chip && g.chip[2] >= g.ta && g.chip[3] <= g.field[2] && Math.abs((g.chip[2] + g.chip[3]) / 2 - (g.send[2] + g.send[3]) / 2) <= 2, `${where}: the chip isn't at the bottom of the box, on Ask's row`);
+    expect('chip', !g.sideways, `${where}: the page scrolls sideways`);
+  };
+  // Empty.
+  await setAnswers(page, null);
+  await page.reload();
+  const add = page.locator('[data-ctx-add]');
+  expect('chip', (await add.isVisible()) && (await add.textContent()) === '+ Add your move' && !(await page.locator('[data-ctx-set]').isVisible()), 'empty: no "+ Add your move"');
+  placed(await geom(), 'empty');
+  await add.click();
+  await page.waitForURL('**/plan/');
+  // Set.
+  await page.goto(`${BASE}/`);
+  await setAnswers(page, ANSWERS);
+  await page.reload();
+  const btn = page.locator('[data-ctx-btn]');
+  expect('chip', (await page.locator('[data-ctx-text]').textContent()) === 'NBSD · E5–E6 · spouse, kids 6–9, 10–13', `set: chip reads "${await page.locator('[data-ctx-text]').textContent()}"`);
+  placed(await geom(), 'set');
+  const name = await btn.evaluate((e) => e.textContent.trim());
+  expect('chip', name.startsWith('Your move, sent with your questions:') && (await btn.getAttribute('aria-expanded')) === 'false', `set: the chip button is named "${name}"`);
+  expect('chip', /\S/.test((await page.locator('[data-ctx-x]').getAttribute('aria-label')) ?? ''), 'the × has no name');
+  // Keyboard: Enter opens the menu, Tab walks it, Escape closes it with focus back on the chip.
+  await btn.focus();
+  await page.keyboard.press('Enter');
+  expect('chip', (await page.locator('[data-ctx-menu]').isVisible()) && (await btn.getAttribute('aria-expanded')) === 'true', 'Enter didn\'t open the menu');
+  const items = await page.locator('[data-ctx-menu] li:visible').allTextContents();
+  expect('chip', items.join('|') === 'See your plan|Edit answers|Clear', `menu items: ${items.join(', ')}`);
+  const tabbed = [];
+  for (let i = 0; i < 3; i++) { await page.keyboard.press('Tab'); tabbed.push(await page.evaluate(() => document.activeElement.textContent.trim())); }
+  expect('chip', tabbed.join('|') === 'See your plan|Edit answers|Clear', `Tab from the chip went to ${tabbed.join(', ')}`);
+  await page.keyboard.press('Escape');
+  expect('chip', !(await page.locator('[data-ctx-menu]').isVisible()) && (await page.evaluate(() => document.activeElement.hasAttribute('data-ctx-btn'))), 'Escape didn\'t close the menu and return focus to the chip');
+  await btn.click();
+  await page.locator('h1, .start-sub').first().click({ force: true });
+  expect('chip', !(await page.locator('[data-ctx-menu]').isVisible()), 'a click outside didn\'t close the menu');
+  // The menu in a conversation opens upward and stays on the screen.
+  await page.locator('[data-example]').first().click();
+  await page.waitForSelector('.ask-answer:not(.ask-waiting)');
+  await btn.click();
+  const menu = await page.locator('[data-ctx-menu]').boundingBox();
+  expect('chip', menu && menu.y >= 0 && menu.y + menu.height <= 844 && menu.x >= 0 && menu.x + menu.width <= 390, `in a conversation the menu is at ${JSON.stringify(menu)}`);
+  await page.keyboard.press('Escape');
+  // Edit answers: card 1, answers kept.
+  await btn.click();
+  await page.locator('[data-ctx-menu] a', { hasText: 'Edit answers' }).click();
+  await page.waitForURL('**/plan/#edit');
+  expect('chip', (await page.locator('[data-progress]').textContent()) === 'Question 1 of 8' && (await page.locator('input[name="base"][value="NBSD"]').isChecked()), `Edit answers opened "${await page.locator('[data-progress]').textContent()}"`);
+  // ×, then Clear.
+  await page.goto(`${BASE}/`);
+  await page.locator('[data-ctx-x]').click();
+  expect('chip', (await page.locator('[data-ctx-text]').textContent()) === 'Your move: off' && !(await page.locator('[data-ctx-x]').isVisible()) && (await page.evaluate(() => document.activeElement.hasAttribute('data-ctx-btn'))), '× didn\'t turn the chip off with focus on it');
+  await btn.click();
+  await page.locator('[data-ctx-clear]').click();
+  expect('chip', (await add.isVisible()) && (await page.evaluate(() => localStorage.getItem('pcs-sd:intake'))) === null && (await page.evaluate(() => document.activeElement.hasAttribute('data-ctx-add'))), 'Clear didn\'t empty the chip and this browser\'s answers (and its off switch)');
+  // The longest summary cuts with an ellipsis inside the box.
+  await setAnswers(page, { ...ANSWERS, base: 'NAB', band: 'O1–O3E', kids: { '0-2': 1, '3-5': 1, '6-9': 1, '10-13': 1, '14-18': 1 } });
+  await page.reload();
+  const g = await geom();
+  placed(g, 'longest summary');
+  expect('chip', g.cut, 'longest summary: not cut to fit (or it fit, so this case tests nothing)');
+  await ctx.close();
+}
+passes.push('chip: empty and set at 390 px, bottom left of the box with Ask at the right; name, menu by keyboard, Escape, outside click, Edit answers, ×, Clear, longest summary');
+
+await checkAskBody(null);
+passes.push('ask-body: one POST per question, only question, previous and the chip\'s four fields; none after ×, also after a reload and a /plan/ edit; "What\'s sent?" matches the body');
+const planReqs = await checkPlanNetwork(null);
+passes.push(`plan-network: /plan/ load (${planReqs.atLoad} static files) through the plan, Edit and Clear: ${planReqs.after} requests after load, no data request`);
 
 // --- footer ---
 {
@@ -290,7 +570,8 @@ passes.push('redirect: /ask/ → /');
   expect('cards', await page.locator('[data-plan-out] h2', { hasText: 'Your starting plan' }).isVisible(), 'no plan after the last card');
   await page.locator('[data-ask-plan]').click();
   await page.waitForURL(`${BASE}/#ask-with-plan`);
-  expect('ask', await page.locator('[data-context]').isChecked(), '"Ask about this plan" arrived with the starting-plan option off');
+  expect('ask', await page.locator('[data-ctx-btn]').isVisible() && (await page.locator('[data-ctx-text]').textContent()) === 'NBSD · E5–E6 · spouse, kids 0–2, 6–9', `"Ask about this plan" arrived with the chip reading "${await page.locator('[data-ctx-text]').textContent()}"`);
+  expect('ask', (await page.evaluate(() => document.activeElement?.id)) === 'ask-q', '"Ask about this plan" didn\'t focus the box');
   await ctx.close();
 }
 passes.push('cards: progress, tap / Space / Enter move on, arrows don\'t, Back, focus, every card\'s buttons on the first screen, plan, "Ask about this plan"');

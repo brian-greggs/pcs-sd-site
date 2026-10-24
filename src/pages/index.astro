@@ -1,13 +1,14 @@
 ---
 // Home: ask first (v1.0.0). The same page on a phone and a desktop: the headline and sub line, the ask box, example
-// questions, a way into the starting plan, the region map, and the footer line on where answers come from. The
-// conversation happens here (it replaced /ask/). Everything else is in the menu (src/lib/menu.ts) and on /browse/.
+// questions, the region map, and the footer line on where answers come from. The conversation happens here (it
+// replaced /ask/). Everything else is in the menu (src/lib/menu.ts) and on /browse/.
 //
 // Questions go to /api/ask on this site (functions/api/ask.js), which answers only from this site's pages. The
-// conversation lives in this page's memory: no localStorage, no cookies; reload and it's gone. With each question
-// go the previous turn (last question and answer, nothing older) and, only if the reader turns it on, four
-// starting-plan fields; "What's sent?" shows exactly that before it's sent. scripts/check_intake.mjs allows this
-// page one network call, that POST, and nothing else (intake-network).
+// conversation lives in this page's memory: no cookies; reload and it's gone. With each question go the previous
+// turn (last question and answer, nothing older) and, while the chip at the bottom left of the box is on, the
+// reader's move from their starting-plan answers: base, pay band and household only (assistant/context.js, v1.1.0).
+// "What's sent?" lists exactly that before it's sent. The × on the chip leaves it off. scripts/check_intake.mjs
+// allows this page one network call, that POST, and nothing else (intake-network).
 import Base from '../layouts/Base.astro';
 import SiteMap from '../components/SiteMap.astro';
 import { EXAMPLE_QUESTIONS } from '../lib/examples';
@@ -32,25 +33,37 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
         <label class="ask-label" for="ask-q" data-ask-label>Ask a question</label>
         <div class="ask-field">
           <textarea id="ask-q" rows="2" maxlength="500" data-q aria-describedby="ask-hint"></textarea>
-          <button type="button" class="ask-send" data-send>Ask</button>
+          <div class="ask-bar">
+            <div class="ctx" data-ctx>
+              <a class="ctx-chip ctx-add" href="/plan/" data-ctx-add>+ Add your move</a>
+              <div class="ctx-set" data-ctx-set hidden>
+                <button type="button" class="ctx-chip" data-ctx-btn aria-expanded="false" aria-controls="ctx-menu"><span class="vh" data-ctx-state></span><span class="ctx-text" data-ctx-text></span></button>
+                <div class="ctx-menu" id="ctx-menu" data-ctx-menu hidden>
+                  <p class="ctx-menu-head" data-ctx-full></p>
+                  <ul>
+                    <li data-ctx-on-item hidden><button type="button" data-ctx-on>Send it with my questions</button></li>
+                    <li><a href="/plan/">See your plan</a></li>
+                    <li><a href="/plan/#edit">Edit answers</a></li>
+                    <li><button type="button" data-ctx-clear>Clear</button></li>
+                  </ul>
+                </div>
+                <button type="button" class="ctx-x" data-ctx-x aria-label="Don’t send your move with the next question"><span aria-hidden="true">×</span></button>
+              </div>
+            </div>
+            <button type="button" class="ask-send" data-send>Ask</button>
+          </div>
         </div>
         <p class="vh" id="ask-hint">Enter sends; Shift and Enter starts a new line.</p>
         <div class="ask-tools">
-          <label class="ask-context" data-context-wrap hidden>
-            <input type="checkbox" data-context /> Include my starting-plan answers
-          </label>
           <button type="button" class="ask-link" data-whats-sent aria-expanded="false" aria-controls="ask-sent">What’s sent?</button>
           <button type="button" class="ask-link" data-clear-log hidden>New conversation</button>
         </div>
         <div class="ask-sent" id="ask-sent" data-sent-panel hidden>
           <p>Your question goes to an AI model, which answers only from this guide’s pages. This site doesn’t store it. Don’t type names, addresses or anything personal.</p>
-          <p data-sent-none>Nothing else goes with your next question.</p>
-          <div data-sent-some hidden>
-            <p>Besides your question, this is exactly what goes with it:</p>
-            <pre class="ask-pre" data-context-json></pre>
-          </div>
-          <p data-previous-note hidden>Your last question and the answer you saw go along so a follow-up makes sense. Nothing older is sent. Start a new conversation to send none.</p>
-          <p data-context-none hidden>No starting-plan answers on this device. <a href="/plan/">Answer the eight questions</a> if you want answers fitted to your household.</p>
+          <p>With your next question, exactly these fields go:</p>
+          <ul class="ask-sent-fields" data-sent-fields></ul>
+          <p data-sent-move></p>
+          <pre class="ask-pre" data-context-json></pre>
         </div>
         <p class="gap" data-error role="alert" hidden></p>
       </div>
@@ -62,12 +75,6 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
         </ul>
       </div>
     </div>
-
-    <a class="card start-plan" href="/plan/" data-plan-cta>
-      <span><span class="card-name">Not sure what to ask?</span><span class="card-sub">A few quick questions about your household give you a starting plan: what matters, what to skip, where to look first.</span></span>
-      <span class="arrow" aria-hidden="true">›</span>
-    </a>
-
   </section>
 
   <div class="home-map" data-home-map>
@@ -78,6 +85,7 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
 <script>
   import { parseAnswer } from '../../assistant/format.js';
   import { latestDate, relatedPage, followUps } from '../lib/askView.js';
+  import { contextFromAnswers, chipSummary, contextLines, requestBody } from '../../assistant/context.js';
 
   const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
   const start = $('[data-start]');
@@ -86,8 +94,6 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
   const status = $('[data-status]');
   const q = $<HTMLTextAreaElement>('[data-q]');
   const sendBtn = $<HTMLButtonElement>('[data-send]');
-  const toggle = $<HTMLInputElement>('[data-context]');
-  const contextWrap = $('[data-context-wrap]');
   const sentBtn = $<HTMLButtonElement>('[data-whats-sent]');
   const sentPanel = $('[data-sent-panel]');
   const clearBtn = $<HTMLButtonElement>('[data-clear-log]');
@@ -95,57 +101,126 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
   const label = $('[data-ask-label]');
   root.hidden = false;
 
-  // Starting-plan answers: read only when the reader turns this on; only these four fields go out.
-  type Ctx = { base?: string; band?: string; kids?: string[]; priorities?: string[] };
-  const readContext = (): Ctx | null => {
-    try {
-      const a = JSON.parse(localStorage.getItem('pcs-sd:intake') ?? 'null')?.answers;
-      if (!a) return null;
-      const c: Ctx = {};
-      if (a.base) c.base = a.base;
-      if (a.band) c.band = a.band;
-      if (a.kids) c.kids = Object.keys(a.kids).filter((g) => a.kids[g] > 0);
-      if (Array.isArray(a.priorities)) c.priorities = a.priorities.slice(0, 2);
-      return Object.keys(c).length ? c : null;
-    } catch { return null; }
+  // The chip: the reader's move from their starting-plan answers in this browser (assistant/context.js). Empty, it's
+  // "+ Add your move", a link into the plan. Set, it shows base · pay band · household and goes with every question
+  // until the × turns it off. The off switch is kept with the answers (`chip_off` in the same entry), so a reload
+  // keeps it off; clearing the answers drops it.
+  const KEY = 'pcs-sd:intake';
+  const stored = () => { try { return JSON.parse(localStorage.getItem(KEY) ?? 'null'); } catch { return null; } };
+  const readContext = () => contextFromAnswers(stored()?.answers);
+  const storeOff = (off: boolean) => {
+    const entry = stored();
+    if (!entry) return;
+    if (off) entry.chip_off = true;
+    else delete entry.chip_off;
+    try { localStorage.setItem(KEY, JSON.stringify(entry)); } catch { /* storage blocked: off for this visit only */ }
   };
-  // The option shows only when this device has starting-plan answers, or when the plan's "Ask about this plan"
-  // brought the reader here (it arrives already ticked).
+  const ctxState = { included: stored()?.chip_off !== true };
+  const ctxAdd = $('[data-ctx-add]');
+  const ctxSet = $('[data-ctx-set]');
+  const ctxBtn = $<HTMLButtonElement>('[data-ctx-btn]');
+  const ctxX = $<HTMLButtonElement>('[data-ctx-x]');
+  const ctxMenu = $('[data-ctx-menu]');
+  const sentContext = () => (ctxState.included ? readContext() : null);
+  const renderChip = () => {
+    const c = readContext();
+    const sum = chipSummary(c);
+    ctxAdd.hidden = !!c;
+    ctxSet.hidden = !c;
+    if (sum) {
+      const on = ctxState.included;
+      $('[data-ctx-text]').textContent = on ? sum.short : 'Your move: off';
+      $('[data-ctx-state]').textContent = on ? 'Your move, sent with your questions: ' : '';
+      $('[data-ctx-full]').textContent = on ? `Sent with your questions: ${sum.full}.` : `Not sent with your questions: ${sum.full}.`;
+      ctxSet.classList.toggle('off', !on);
+      ctxX.hidden = !on;
+      $('[data-ctx-on-item]').hidden = on;
+    }
+    if (!sentPanel.hidden) showOutgoing();
+  };
+  const setMenu = (open: boolean, focusBtn = false) => {
+    ctxMenu.hidden = !open;
+    ctxBtn.setAttribute('aria-expanded', String(open));
+    if (focusBtn) ctxBtn.focus();
+  };
+  ctxBtn.addEventListener('click', () => setMenu(ctxMenu.hidden));
+  ctxSet.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ctxMenu.hidden) { e.preventDefault(); setMenu(false, true); } });
+  ctxSet.addEventListener('focusout', (e) => { if (!ctxSet.contains(e.relatedTarget as Node)) setMenu(false); });
+  document.addEventListener('click', (e) => { if (!ctxSet.contains(e.target as Node)) setMenu(false); });
+  ctxX.addEventListener('click', () => {
+    ctxState.included = false;
+    storeOff(true);
+    renderChip();
+    ctxBtn.focus();
+    status.textContent = 'Your move won’t go with your next question.';
+  });
+  $('[data-ctx-on]').addEventListener('click', () => {
+    ctxState.included = true;
+    storeOff(false);
+    setMenu(false);
+    renderChip();
+    ctxBtn.focus();
+    status.textContent = 'Your move goes with your questions again.';
+  });
+  $('[data-ctx-clear]').addEventListener('click', () => {
+    try { localStorage.removeItem(KEY); } catch { /* storage blocked */ }
+    ctxState.included = true;
+    setMenu(false);
+    renderChip();
+    ctxAdd.focus();
+    status.textContent = 'Your starting-plan answers are cleared from this browser.';
+  });
+  // Another tab may change or clear the answers, or switch the chip off or on.
+  addEventListener('storage', (e) => {
+    if (e.key !== KEY && e.key !== null) return;
+    ctxState.included = stored()?.chip_off !== true;
+    renderChip();
+  });
+  // The plan's "Ask about this plan" lands here with the box focused.
   const fromPlan = location.hash === '#ask-with-plan';
-  contextWrap.hidden = !(readContext() || fromPlan);
-  if (fromPlan) toggle.checked = true;
 
   // The conversation: this page's memory only.
   type Reply = Record<string, any>;
   const history: { question: string; reply: Reply }[] = [];
 
-  // What goes with the next question besides the question itself: the previous turn (last question and the answer
-  // shown, nothing older) and, only if ticked, the four starting-plan fields. "What's sent?" shows this same object,
-  // and send() sends it.
-  const extras = () => {
-    const out: { previous?: { question: string; answer?: string }; context?: Ctx } = {};
+  // What goes with a question: the previous turn (last question and the answer shown, nothing older) and, while the
+  // chip is on, its context. "What's sent?" lists this same body, and send() sends it.
+  const previousTurn = () => {
     const last = history.at(-1);
-    if (last) out.previous = last.reply.answer ? { question: last.question, answer: last.reply.answer } : { question: last.question };
-    const c = toggle.checked ? readContext() : null;
-    if (c) out.context = c;
-    return out;
+    if (!last) return null;
+    return last.reply.answer ? { question: last.question, answer: last.reply.answer } : { question: last.question };
   };
   const showOutgoing = () => {
-    const x = extras();
-    const some = Object.keys(x).length > 0;
-    $('[data-sent-none]').hidden = some;
-    $('[data-sent-some]').hidden = !some;
-    $('[data-previous-note]').hidden = !x.previous;
-    $('[data-context-none]').hidden = !(toggle.checked && !x.context);
-    $('[data-context-json]').textContent = JSON.stringify(x, null, 2);
+    const prev = previousTurn();
+    const c = sentContext();
+    const ul = $('[data-sent-fields]');
+    ul.replaceChildren();
+    // Plain labels; data-field names the field each line stands for (scripts/check_frontend_browser.mjs reads it).
+    const item = (field: string, label: string, value?: string, note?: string) => {
+      const li = el('li');
+      li.dataset.field = field;
+      li.append(el('strong', undefined, label));
+      if (value) li.append(`: ${value}`);
+      if (note) li.append(el('span', 'muted', ` (${note})`));
+      ul.append(li);
+    };
+    item('question', 'Your question');
+    if (prev) item('previous', 'Previous turn', 'your last question and the answer you saw', 'nothing older; start a new conversation to send none');
+    for (const [field, lbl, value] of contextLines(c)) item(`context.${field}`, lbl, value);
+    const have = readContext();
+    $('[data-sent-move]').textContent = !have
+      ? 'No starting-plan answers in this browser, so none go. Add your move to get answers fitted to your base, pay grade and household.'
+      : c ? 'From your starting-plan answers, only these go: the summary on the chip. Your timeline, bedrooms, pets and priorities stay in this browser. Tap × on the chip to leave it off.'
+      : 'Your move is off, so none of your starting-plan answers go with your questions. Tap the chip to send it again.';
+    $('[data-context-json]').textContent = JSON.stringify(requestBody(q.value.trim() || '…', prev, c), null, 2);
   };
-  toggle.addEventListener('change', showOutgoing);
   sentBtn.addEventListener('click', () => {
     const open = sentPanel.hidden;
     sentPanel.hidden = !open;
     sentBtn.setAttribute('aria-expanded', String(open));
     if (open) showOutgoing();
   });
+  q.addEventListener('input', () => { if (!sentPanel.hidden) showOutgoing(); });
 
   const el = (tag: string, cls?: string, text?: string) => {
     const e = document.createElement(tag);
@@ -243,7 +318,6 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
   const setTalking = (on: boolean) => {
     start.classList.toggle('talking', on);
     $('[data-examples]').hidden = on;
-    $('[data-plan-cta]').hidden = on;
     clearBtn.hidden = !on;
     // The site name goes home, which ends the conversation: say so while there is one.
     $('[data-site-sub]').hidden = !on;
@@ -257,7 +331,7 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     busy = true;
     errorBox.hidden = true;
     sendBtn.disabled = true;
-    const outgoing = { question, ...extras() };
+    const outgoing = requestBody(question, previousTurn(), sentContext());
     setTalking(true);
     const li = el('li', 'ask-turn');
     li.append(el('p', 'ask-you', question));
@@ -302,5 +376,6 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     status.textContent = 'New conversation.';
     q.focus();
   });
+  renderChip();
   if (fromPlan) q.focus();
 </script>

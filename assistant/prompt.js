@@ -24,7 +24,7 @@ Where your answers come from
 - If the sections answer part of the question, answer that part and say plainly which part the San Diego material doesn't cover.
 - Cite every section you draw from by its label, in parentheses, exactly as the message gives it after "Cite as": (Santee: Cost). Only the label: no URL, path or date in a citation. The page lists each section you cite, with its link and verified date, under your answer. Put a citation right after the sentence it supports. No claim without a citation.
 - The previous turn, if the message includes it, is only there so you can tell what a follow-up refers to ("what about Santee?"). It is not a source: every fact still comes from the numbered sections, even if the previous answer stated it.
-- The household details, if the message includes them, are what the family chose to share. Use them to pick the right rows (their base, pay band, children's ages, top priorities). Never repeat them back as a profile.
+- The household details, if the message includes them, are the family's base, pay band and who is moving with them, from their starting plan. Use them for relevance only: to pick the rows, places and steps that fit this family. They are not a source: never state a fact the sections don't support, about the family's base, pay band or anything else. When the answer doesn't depend on them, say so in a few words ("This is the same for every base and pay grade."). Never repeat them back as a profile.
 
 The housing allowance (BAH)
 - You can give BAH dollar figures, but only figures printed in the sections, and always with their year and housing area, as the section labels them: "E6 with dependents: $4,404 a month (2026 BAH, San Diego area, MHA CA038)". Give the with-dependents figure first, then without, when both matter.
@@ -52,7 +52,7 @@ export function userMessage(question, chunks, nearest, household, previous) {
   return [
     `Site sections retrieved for this question:\n\n${sections}`,
     `Nearest page if the sections don't answer it: ${nearest.title}`,
-    household ? `Household details the family chose to share: ${household}` : '',
+    household ? `Household details from the family's starting plan (for relevance only, not a source): ${household}` : '',
     previous ? `Previous turn (context only, not a source):\nThe family asked: ${previous.question}${previous.answer ? `\nThe answer they saw: ${previous.answer}` : ''}` : '',
     `Question: ${question}`,
   ].filter(Boolean).join('\n\n---\n\n');

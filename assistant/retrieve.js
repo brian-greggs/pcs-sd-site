@@ -119,7 +119,21 @@ export const isSequenceStart = (q) => SEQUENCE_START.some((re) => re.test(q));
 const START_PAGE = '/sequence/orders/';
 const START_STEPS = /^[123]\.\s/;
 
-export function search(index, question, settings = SETTINGS, context = '') {
+// Where to live, for a reader whose base is known (the home page's chip, v1.1.0): "where should we look?" names no
+// page and no base, so BM25 sends whatever mentions "look". With the base from the chip, these questions get that
+// base page's two closest drive groups and its BAH table (the reader's pay band picks the row) ahead of what BM25
+// picks. Not when the question names a page (a neighborhood or another base): that page decides.
+const WHERE_TO_LIVE = [
+  /\bwhere (?:should|do|can|could|would) (?:i|we) (?:look|live|rent|buy|settle|search)\b/i,
+  /\bwhere to (?:look|live|rent|buy|settle)\b/i,
+  /\b(?:which|what) (?:neighborhoods|areas|towns) should (?:i|we) (?:look at|consider)\b/i,
+  /\bbest (?:place|area|neighborhood)s? (?:for us )?to (?:live|rent)\b/i,
+];
+export const isWhereToLive = (q) => WHERE_TO_LIVE.some((re) => re.test(q));
+const BASE_ROUTE_SECTIONS = ['tier-under30', 'tier-30-45', 'bah-table'];
+
+// `route.basePage` is the reader's base page from the context (assistant/context.js basePage), or nothing.
+export function search(index, question, settings = SETTINGS, context = '', route = {}) {
   const { typed, terms } = queryTerms(question, context);
   const content = new Set(typed.filter((t) => !GENERIC.has(t)));
   const named = new Set(index.pages.filter((p) => p.titleTokens.size && [...p.titleTokens].filter((t) => !['base', 'housing'].includes(t)).every((t) => typed.includes(t)) && [...p.titleTokens].some((t) => !GENERIC.has(t) && t !== 'housing')).map((p) => p.url));
@@ -145,7 +159,8 @@ export function search(index, question, settings = SETTINGS, context = '') {
   });
   scored.sort((x, y) => y.s - x.s || x.d.chunk.id.localeCompare(y.d.chunk.id));
   const top = scored[0];
-  const routed = isSequenceStart(question) ? 'sequence-start' : null;
+  const routed = isSequenceStart(question) ? 'sequence-start'
+    : route.basePage && !named.size && isWhereToLive(question) ? 'where-to-live' : null;
   const relevant = !!routed || (!!top && top.s >= settings.minScore && top.contentHits > 0);
   // Pick sections, not chunks: k sections (at most perPage from one page), each sent whole, so a
   // table split across parts for ranking never reaches the model with half its rows.
@@ -153,10 +168,13 @@ export function search(index, question, settings = SETTINGS, context = '') {
   const picked = new Set();
   const chunks = [];
   if (routed) {
-    // Orders steps 1-3 first, by step number; BM25 still picks its k sections after them (no duplicates).
+    // Orders steps 1-3 first, by step number, or the base page's drive groups and BAH table; BM25 still picks its
+    // k sections after them (no duplicates).
+    const take = routed === 'sequence-start'
+      ? (c) => c.url.split('#')[0] === START_PAGE && START_STEPS.test(c.section_heading)
+      : (c) => c.url.split('#')[0] === route.basePage && BASE_ROUTE_SECTIONS.includes(c.url.split('#')[1]);
     for (const [group, parts] of index.groups) {
-      const c = index.chunks[parts[0]];
-      if (c.url.split('#')[0] !== START_PAGE || !START_STEPS.test(c.section_heading)) continue;
+      if (!take(index.chunks[parts[0]])) continue;
       picked.add(group);
       for (const j of parts) chunks.push({ ...index.chunks[j], score: null, routed });
     }
@@ -173,7 +191,8 @@ export function search(index, question, settings = SETTINGS, context = '') {
     for (const j of index.groups.get(group) ?? [x.i]) chunks.push({ ...index.chunks[j], score: Math.round(x.s * 100) / 100 });
   }
   // Nearest page: the best-scoring page even when nothing clears the bar; the home page if nothing matched at all.
-  const nearest = routed ? { url: START_PAGE, title: chunks[0]?.page_title ?? 'Move sequence: Orders in hand' }
+  const nearest = routed === 'sequence-start' ? { url: START_PAGE, title: chunks[0]?.page_title ?? 'Move sequence: Orders in hand' }
+    : routed ? { url: route.basePage, title: chunks[0]?.page_title ?? 'Your base' }
     : top ? { url: top.d.chunk.url.split('#')[0], title: top.d.chunk.page_title } : { url: '/', title: 'Home: start with your base' };
   return { relevant, chunks: relevant ? chunks : [], nearest, routed, top_score: top ? Math.round(top.s * 100) / 100 : 0, terms: [...terms.keys()] };
 }

@@ -106,8 +106,8 @@ function scriptFile(src, seen) {
   return files;
 }
 // Home is where the assistant is (it replaced /ask/ in v1.0.0): one POST to /api/ask on this site, with the question,
-// the previous turn and, only if the reader ticks it, four starting-plan fields ("What's sent?" shows the object). Its
-// scripts may hold that one call and nothing else on the list above.
+// the previous turn and, while the move chip is on, its base, pay band and household (v1.1.0; "What's sent?" lists
+// them). Its scripts may hold that one call and nothing else on the list above.
 const ALLOWED_CALL = { 'index.html': /\bfetch\s*\(\s*(["'`])\/api\/ask\1\s*,\s*\{\s*method\s*:\s*(["'`])POST\2/g };
 function checkNetwork(plant = null) {
   for (const page of INTAKE_PAGES) {
