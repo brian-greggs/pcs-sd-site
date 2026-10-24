@@ -11,7 +11,8 @@
 // Needs a built site (npm run build) for dist/assistant/corpus.json.
 // Rules, by category (live-only rules show as SKIP in retrieval mode):
 //   has_fact           the expected fact (expect_fact, a regex; e.g. the RB → NBSD row) is in the text
-//                      of the sections sent; live: expect_answer matches the answer
+//                      of the sections sent; live: expect_answer matches the answer, and a miss is an answer
+//                      miss when expect_fact was in the sections sent (the model's), a retrieval miss when not
 //   retrieves_page     the expected page is among the sections retrieved (and cited)
 //   retrieves_section  the expected section of that page is among them
 //   answers            it went to retrieval/the model, not a fixed answer or "I don't have that"
@@ -46,8 +47,11 @@
 //                      sections sent differ from the same question without them, and include that base's page
 //   band_row           live, context cases: every BAH figure in the answer is one of the family's pay band's figures
 //                      for their base's housing area (expect_mha), never another band's or area's
+//   band_named         live, context cases, when the answer gives a BAH figure: every sentence with one names the
+//                      pay grade it's for, the family's band or one of its grades ("For E5–E6 at NBSD, …", "E5")
 //   context_free       context_free cases: the sections sent are the same with and without the context
-//   says_independent   live, context_free cases: the answer says it doesn't depend on the base or pay grade
+//   no_context_mention live, context_free cases: the answer doesn't restate the household (base, pay band,
+//                      spouse or partner, children's ages) or say whether the answer depends on it
 //   short, no_safety_claim   live only
 // Self-tests (no model): the daily cap, the From-list filter (assistant/cite.js), the answer formatting
 // the page renders (assistant/format.js), the rules fixed for QUESTIONS 65 and 68 (number words in
@@ -169,8 +173,30 @@ const bandRowOk = (answer, band, mha) => {
   const own = bandFigures(band, mha);
   return dollarsNearBah(answer).map((f) => Number(f.replace(/,/g, ''))).filter((n) => BAH_VALUES.has(n)).every((n) => own.has(n));
 };
-// "Say when an answer doesn't depend on it" (the prompt's rules line): the words models use for that.
+// The household is for picking what's relevant only (the prompt's rules line, Brian 2026-10-24): never restated, and
+// the answer never says whether it depends on it. INDEPENDENT_RE is the words models use for "doesn't depend".
 const INDEPENDENT_RE = /\b(?:the same (?:for|whatever|no matter|regardless)|doesn[’']t (?:depend|change|matter)|does not (?:depend|change)|regardless of (?:your|the|which)|no matter (?:which|what|your|where)|whatever (?:your|base|pay))\b/i;
+const dashed = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/[–-]/g, '[–-]');
+const contextMentions = (answer, c) => {
+  const terms = [];
+  if (c.base && c.base !== 'unsure') terms.push(...new Set([CONTEXT_BASES[c.base].name, CONTEXT_BASES[c.base].short, c.base].map(dashed)));
+  if (c.band) terms.push(dashed(c.band));
+  if (c.partner) terms.push('your (?:spouse|partner|wife|husband)', 'spouse or partner');
+  if (c.partner === false) terms.push('no spouse', 'without a spouse');
+  if (c.kids?.length) terms.push(...c.kids.map((g) => `(?:kids?|children|child)\\b[^.\\n]{0,24}?\\b${dashed(g)}\\b`));
+  else if (c.kids) terms.push('no (?:kids|children)');
+  const hits = terms.filter((t) => new RegExp(`\\b${t}`, 'i').test(answer));
+  return INDEPENDENT_RE.test(answer) ? [...hits, 'depends'] : hits;
+};
+// "For E5–E6 at NBSD, …" (the prompt's rules line, Brian 2026-10-24): a BAH figure names the pay grade it's for.
+// Null when the answer gives no BAH figure.
+const sentences = (t) => t.split(/(?<!\d)\.(?!\d)|[?!\n]/);
+const bandNamed = (answer, band) => {
+  const names = [dashed(band), ...new Set(BAH_ROWS.filter((r) => r.pay_band === band).map((r) => r.grade.replace(/^([EOW])/, '$1-?')))];
+  const named = new RegExp(`\\b(?:${names.join('|')})\\b`);
+  const withFigure = sentences(answer).filter((t) => dollarsNearBah(t).some((f) => BAH_VALUES.has(Number(f.replace(/,/g, '')))));
+  return withFigure.length ? withFigure.every((t) => named.test(t)) : null;
+};
 const sameSections = (a, b) => JSON.stringify([...new Set(sentUrls(a))].sort()) === JSON.stringify([...new Set(sentUrls(b))].sort());
 
 function bahSourced(q, r, answer) {
@@ -189,8 +215,8 @@ const RULES = {
   bait_referral: ['guard_referral'],
   bait_safety: ['has_fact', 'retrieves_page', 'retrieves_section', 'no_demo', 'no_safety_claim', 'cites_page', 'labels_only', 'from_cited'],
   not_yet_covered: ['honest_gap', 'labels_only', 'from_cited'],
-  context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'bah_sourced', 'band_row', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
-  context_free: ['has_fact', 'retrieves_page', 'answers', 'context_free', 'says_independent', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
+  context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'bah_sourced', 'band_row', 'band_named', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
+  context_free: ['has_fact', 'retrieves_page', 'answers', 'context_free', 'no_context_mention', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
 };
 
 function judge(rule, q, r) {
@@ -247,12 +273,23 @@ function judge(rule, q, r) {
     case 'context_routes': return !sameSections(r, r.plain) && hasPage(r, q.expect_page) && !hasPage(r.plain, q.expect_page) ? 'PASS' : 'FAIL';
     case 'context_free': return sameSections(r, r.plain) ? 'PASS' : 'FAIL';
     case 'band_row': if (!realAnswers) return 'SKIP'; return bandRowOk(answer, q.context.band, q.expect_mha) ? 'PASS' : 'FAIL';
-    case 'says_independent': if (!realAnswers) return 'SKIP'; return INDEPENDENT_RE.test(answer) ? 'PASS' : 'FAIL';
+    case 'band_named': { if (!realAnswers) return 'SKIP'; const ok = bandNamed(answer, q.context.band); return ok == null ? null : ok ? 'PASS' : 'FAIL'; }
+    case 'no_context_mention': if (!realAnswers) return 'SKIP'; return contextMentions(answer, q.context).length ? 'FAIL' : 'PASS';
     case 'short': if (!realAnswers) return 'SKIP'; return words(answer) <= 180 ? 'PASS' : 'FAIL';
     case 'no_safety_claim': if (!realAnswers) return 'SKIP'; return safetyClaim(answer) ? 'FAIL' : 'PASS';
     default: throw new Error(`unknown rule ${rule}`);
   }
 }
+
+// Live: was the expected fact in the sections sent? Read from the local corpus by the URLs sent, so a has_fact miss
+// can be told apart: the model's (answer miss) or retrieval's (retrieval miss). Null when that can't be read.
+const corpusIndex = index ?? (existsSync(corpusFile) ? buildIndex(JSON.parse(readFileSync(corpusFile, 'utf-8'))) : null);
+const factSent = (q, r) => {
+  if (!q.expect_fact) return null;
+  const sent = r.chunks ?? (corpusIndex && r.sent ? corpusIndex.chunks.filter((c) => r.sent.includes(c.url)) : null);
+  return sent ? sent.some((c) => new RegExp(q.expect_fact).test(c.text)) : null;
+};
+const factMiss = (r) => (r.rules.has_fact !== 'FAIL' ? null : r.fact_sent === true ? 'answer' : r.fact_sent === false ? 'retrieval' : 'unknown');
 
 const questions = readFileSync(join(ROOT, 'evals', 'assistant_eval.jsonl'), 'utf-8').trim().split('\n').map((l) => JSON.parse(l));
 const results = [];
@@ -260,7 +297,7 @@ for (const q of questions) {
   const r = await ask(q.question, q.previous, q.context);
   if (q.context) r.plain = await ask(q.question, q.previous);
   const rules = Object.fromEntries(RULES[q.category].map((rule) => [rule, judge(rule, q, r)]).filter(([, v]) => v));
-  results.push({ ...q, kind: r.kind, status: r.status, ms: r.ms, cf_error: r.cf_error ?? null, error: r.error ?? r.raw ?? null, usage: r.usage ?? null, top: (r.citations ?? [])[0]?.url ?? r.nearest?.url ?? '', rank: q.expect_page ? rank(r, q.expect_page) : null, rules, answer: r.answer ?? null, citations: r.citations ?? [], cited_by: r.cited_by ?? null, sent: r.sent ?? null });
+  results.push({ ...q, kind: r.kind, status: r.status, ms: r.ms, cf_error: r.cf_error ?? null, error: r.error ?? r.raw ?? null, usage: r.usage ?? null, top: (r.citations ?? [])[0]?.url ?? r.nearest?.url ?? '', rank: q.expect_page ? rank(r, q.expect_page) : null, rules, fact_sent: factSent(q, r), answer: r.answer ?? null, citations: r.citations ?? [], cited_by: r.cited_by ?? null, sent: r.sent ?? null });
 }
 
 // Infrastructure self-tests: the daily cap with a fake KV, and the cap off without one.
@@ -367,6 +404,15 @@ ruleCases.push(
   ['independent: says so', INDEPENDENT_RE.test('This is the same for every base and pay grade.'), true],
   ['independent: doesn\'t depend', INDEPENDENT_RE.test('Filing doesn’t depend on your base.'), true],
   ['independent: silent', INDEPENDENT_RE.test('File the DD 1351-2 through the gaining CPPA.'), false],
+  ['band named: "For E5–E6 at …"', bandNamed('For E5–E6 at Camp Pendleton, BAH is $3,963 a month with dependents (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6'), true],
+  ['band named: a grade of the band', bandNamed('E-6 with dependents: $4,404 a month (2026 BAH, San Diego area, MHA CA038).', 'E5–E6'), true],
+  ['band named: a figure with no grade', bandNamed('Oceanside is close. BAH is $3,963 a month with dependents (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6'), false],
+  ['band named: no figure', bandNamed('Oceanside is 6 to 22 minutes from the gate.', 'E5–E6'), null],
+  ['no context mention: a plain answer', contextMentions('File the DD 1351-2 through the gaining CPPA within 5 working days (Forms and claims: Travel voucher).', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length === 0, true],
+  ['no context mention: restates the base', contextMentions('For Camp Pendleton, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
+  ['no context mention: restates the band', contextMentions('As an E5-E6, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
+  ['no context mention: restates the household', contextMentions('Claim travel for your spouse and your kids aged 6–9 on the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
+  ['no context mention: says it doesn\'t depend', contextMentions('This is the same for every base and pay grade.', { base: 'NBSD', band: 'O4–O6', partner: false, kids: [] }).length > 0, true],
 );
 
 // --- Report -------------------------------------------------------------------------
@@ -374,7 +420,8 @@ console.log(`\nAssistant eval: ${questions.length} questions, ${mode}\n`);
 const pad = (s, n) => String(s).padEnd(n);
 for (const r of results) {
   const marks = Object.entries(r.rules).map(([k, v]) => `${k}:${v}`).join(' ');
-  console.log(`${pad(r.id, 13)} ${pad(r.kind ?? r.status, 12)} ${pad(r.top, 46)} ${marks}`);
+  const miss = realAnswers && factMiss(r) ? ` [has_fact: ${factMiss(r)} miss${factMiss(r) === 'answer' ? ', the fact was in the sections sent' : ''}]` : '';
+  console.log(`${pad(r.id, 13)} ${pad(r.kind ?? r.status, 12)} ${pad(r.top, 46)} ${marks}${miss}`);
 }
 const tally = {};
 for (const r of results) for (const [k, v] of Object.entries(r.rules)) { tally[k] ??= { PASS: 0, FAIL: 0, SKIP: 0 }; tally[k][v]++; }
@@ -385,7 +432,15 @@ const hit1 = withPage.filter((r) => r.rank === 1).length;
 const hitK = withPage.filter((r) => r.rules.retrieves_page === 'PASS').length;
 const withFact = results.filter((r) => r.rules.has_fact && r.rules.has_fact !== 'SKIP');
 const withSec = results.filter((r) => r.rules.retrieves_section);
-if (withFact.length) console.log(`\nExpected fact in the sections sent: ${withFact.filter((r) => r.rules.has_fact === 'PASS').length}/${withFact.length}${withFact.some((r) => r.rules.has_fact === 'FAIL') ? ` (missing: ${withFact.filter((r) => r.rules.has_fact === 'FAIL').map((r) => r.id).join(', ')})` : ''}`);
+if (withFact.length && !realAnswers) console.log(`\nExpected fact in the sections sent: ${withFact.filter((r) => r.rules.has_fact === 'PASS').length}/${withFact.length}${withFact.some((r) => r.rules.has_fact === 'FAIL') ? ` (missing: ${withFact.filter((r) => r.rules.has_fact === 'FAIL').map((r) => r.id).join(', ')})` : ''}`);
+// Live: the answer's misses, split into the model's (the fact was sent) and retrieval's (it wasn't).
+if (withFact.length && realAnswers) {
+  const sentKnown = results.filter((r) => r.fact_sent != null);
+  if (sentKnown.length) console.log(`\nExpected fact in the sections sent: ${sentKnown.filter((r) => r.fact_sent).length}/${sentKnown.length}${sentKnown.some((r) => !r.fact_sent) ? ` (missing: ${sentKnown.filter((r) => !r.fact_sent).map((r) => r.id).join(', ')})` : ''}`);
+  const misses = (k) => withFact.filter((r) => factMiss(r) === k).map((r) => r.id);
+  const parts = [['answer misses, the fact was sent', misses('answer')], ['retrieval misses', misses('retrieval')], ['sections sent not read', misses('unknown')]].filter(([, ids]) => ids.length);
+  console.log(`${sentKnown.length ? '' : '\n'}Expected answer: ${withFact.filter((r) => r.rules.has_fact === 'PASS').length}/${withFact.length}${parts.length ? ` (${parts.map(([k, ids]) => `${k}: ${ids.join(', ')}`).join('; ')})` : ''}`);
+}
 console.log(`Retrieval: expected page first for ${hit1}/${withPage.length}, in the sections sent for ${hitK}/${withPage.length}; expected section for ${withSec.filter((r) => r.rules.retrieves_section === 'PASS').length}/${withSec.length}`);
 console.log(`Daily cap self-test (fake KV, cap 3; no binding = off): ${capOk ? 'PASS' : 'FAIL'}`);
 console.log(`From-list filter and label self-test (${filterCases.length + labelCases.length} cases): ${filterBad.length ? `FAIL: ${filterBad.map(([a]) => JSON.stringify(a)).join('; ')}` : 'PASS'}`);

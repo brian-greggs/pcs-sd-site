@@ -116,6 +116,9 @@ const SEQUENCE_START = [
   /\bwhat comes first\b/i,
 ];
 export const isSequenceStart = (q) => SEQUENCE_START.some((re) => re.test(q));
+// On a sequence-start question, "start" and "begin" don't score: they say where the move begins, not which later
+// steps fit, and alone they picked BM25's sections for seq-11 (QUESTIONS 86, Brian 2026-10-24).
+const START_WORDS = ['start', 'begin'];
 const START_PAGE = '/sequence/orders/';
 const START_STEPS = /^[123]\.\s/;
 
@@ -135,6 +138,7 @@ const BASE_ROUTE_SECTIONS = ['tier-under30', 'tier-30-45', 'bah-table'];
 // `route.basePage` is the reader's base page from the context (assistant/context.js basePage), or nothing.
 export function search(index, question, settings = SETTINGS, context = '', route = {}) {
   const { typed, terms } = queryTerms(question, context);
+  if (isSequenceStart(question)) for (const w of START_WORDS) terms.delete(w);
   const content = new Set(typed.filter((t) => !GENERIC.has(t)));
   const named = new Set(index.pages.filter((p) => p.titleTokens.size && [...p.titleTokens].filter((t) => !['base', 'housing'].includes(t)).every((t) => typed.includes(t)) && [...p.titleTokens].some((t) => !GENERIC.has(t) && t !== 'housing')).map((p) => p.url));
   const acc = new Map(); // chunk number -> { s, contentHits }
