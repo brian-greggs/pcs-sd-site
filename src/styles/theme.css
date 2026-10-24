@@ -54,6 +54,10 @@
   --map-shield: #E4E9F3;
   --map-shield-text: #0B1328;
 
+  /* Behind the menu drawer on a phone: the page background, mostly opaque. Not a text color. */
+  --scrim: #0B1328D9;
+  --sidebar: 264px;
+
   /* Print only (the starting plan prints on white paper). */
   --paper: #FFFFFF;
   --ink: #111111;

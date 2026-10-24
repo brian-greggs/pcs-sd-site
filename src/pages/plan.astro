@@ -7,7 +7,8 @@
 // can be submitted or land in a URL), and the page makes no network requests.
 // scripts/check_intake.mjs checks all of that after the build, and runs the rules
 // over the whole answer space to check every line the plan can print.
-// Without JavaScript the questions stay hidden and the page says why.
+// Without JavaScript the questions stay hidden and the page says why. With it, the questions show as cards, one per
+// screen (v1.0.0): the same fieldsets and inputs, so the same answers, storage and plan.
 import Base from '../layouts/Base.astro';
 import { BASES } from '../lib/bases';
 import { intakeDigest } from '../lib/intake/digest';
@@ -22,7 +23,7 @@ const embedded = JSON.stringify({ data, config }).replace(/</g, '\\u003c');
 const kidLabel = (g: string) => g.replace('-', '–');
 ---
 
-<Base title="Starting plan" back={{ href: '/', label: 'Home' }} description="Eight questions, about a minute: a starting plan for your move to San Diego, built from this site's dated facts.">
+<Base title="Starting plan" back={{ href: '/', label: 'Home' }} startOver description="Eight questions, about a minute: a starting plan for your move to San Diego, built from this site's dated facts.">
   <div data-print-hide>
   <p class="eyebrow">Starting plan <span class="chip gold v0">v0, rules under test</span></p>
   <h1>Eight questions, one starting plan</h1>
@@ -34,6 +35,11 @@ const kidLabel = (g: string) => g.replace('-', '–');
   <p class="gap" data-storage-note hidden>Your browser is blocking storage, so your answers last only until you leave this page.</p>
 
   <div data-intake hidden>
+    <div class="card-top" data-card-top hidden>
+      <p class="card-progress" data-progress aria-live="polite"></p>
+      <div class="progress-track" aria-hidden="true"><span class="progress-fill" data-progress-fill></span></div>
+    </div>
+
     <fieldset class="q" data-q="1">
       <legend>1. Where are you reporting?</legend>
       <div class="opts">
@@ -103,6 +109,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
     <fieldset class="q" data-q="8">
       <legend>8. What matters most?</legend>
       <p class="hint">Pick your top 2, in order. Some choices appear only when your answers make them matter.</p>
+      <div class="pick-list" data-pick-list hidden></div>
       <div class="pick-row">
         <label class="pick">Most important
           <select name="priority-1">
@@ -120,7 +127,11 @@ const kidLabel = (g: string) => g.replace('-', '–');
     </fieldset>
 
     <p class="gap" data-missing hidden></p>
-    <div class="actions">
+    <div class="card-nav" data-card-nav hidden>
+      <button type="button" class="btn" data-card-back>Back</button>
+      <button type="button" class="btn primary" data-card-next>Next</button>
+    </div>
+    <div class="actions" data-form-actions>
       <button type="button" class="btn primary" data-show-plan>Show my plan</button>
       <button type="button" class="btn" data-clear>Clear my answers</button>
     </div>
@@ -129,7 +140,8 @@ const kidLabel = (g: string) => g.replace('-', '–');
   <div data-plan-view hidden>
     <div data-plan-out></div>
     <div class="actions" data-print-hide>
-      <button type="button" class="btn primary" data-print>Print or save as PDF</button>
+      <a class="btn primary" href="/#ask-with-plan" data-ask-plan>Ask about this plan</a>
+      <button type="button" class="btn" data-print>Print or save as PDF</button>
       <button type="button" class="btn" data-edit>Change my answers</button>
       <button type="button" class="btn" data-clear>Clear my answers</button>
     </div>
@@ -228,6 +240,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
     refresh(read());
     answers = read();
     save(answers);
+    advanceOnTap(changed);
   });
 
   // --- The plan ---
@@ -306,7 +319,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
     if (missing.length) {
       note.textContent = `Still to answer: ${missing.map((n) => `${n} (${QUESTION[n]})`).join(', ')}.`;
       note.hidden = false;
-      $(`[data-q="${missing[0]}"]`).scrollIntoView({ block: 'start' });
+      show(cardOf(missing[0]), { keepNote: true });
       return;
     }
     note.hidden = true;
@@ -317,7 +330,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
     window.scrollTo(0, 0);
   };
   $('[data-show-plan]').addEventListener('click', showPlan);
-  $('[data-edit]').addEventListener('click', () => { planView.hidden = true; intake.hidden = false; window.scrollTo(0, 0); });
+  $('[data-edit]').addEventListener('click', () => { planView.hidden = true; intake.hidden = false; show(0); });
   $('[data-print]').addEventListener('click', () => window.print());
   $$<HTMLButtonElement>('[data-clear]').forEach((b) => b.addEventListener('click', () => {
     forget();
@@ -326,10 +339,104 @@ const kidLabel = (g: string) => g.replace('-', '–');
     $('[data-missing]').hidden = true;
     planView.hidden = true;
     intake.hidden = false;
-    window.scrollTo(0, 0);
+    show(0);
   }));
+
+  // --- Cards: one question per screen ---
+  // Progress, Back and Next; on the last card, "Show my plan". Tapping an option on a single-choice question moves
+  // on; arrow keys only select (a radio group changes on every arrow press), so keyboard users move on with Next or
+  // Enter. The card's fieldset takes focus, so a screen reader reads its question; the progress line is announced.
+  const cards = $$<HTMLFieldSetElement>('fieldset.q', intake);
+  const cardOf = (n: number) => Math.max(0, cards.findIndex((c) => c.dataset.q === String(n)));
+  const SINGLE = new Set(['base', 'band', 'timeline', 'bedrooms', 'separate6']);
+  let current = 0;
+  intake.classList.add('carded');
+  document.body.classList.add('plan-cards');
+  $('[data-card-top]').hidden = false;
+  $('[data-card-nav]').hidden = false;
+  for (const c of cards) c.tabIndex = -1;
+  function show(i: number, { focus = true, keepNote = false } = {}) {
+    current = Math.max(0, Math.min(cards.length - 1, i));
+    cards.forEach((c, k) => c.classList.toggle('current', k === current));
+    $('[data-progress]').textContent = `Question ${current + 1} of ${cards.length}`;
+    $('[data-progress-fill]').style.width = `${((current + 1) / cards.length) * 100}%`;
+    const last = current === cards.length - 1;
+    $('[data-card-back]').hidden = current === 0;
+    $('[data-card-next]').hidden = last;
+    $('[data-form-actions]').hidden = !last;
+    if (!keepNote) $('[data-missing]').hidden = true;
+    if (cards[current].dataset.q === '8') renderPicks();
+    if (focus) {
+      window.scrollTo(0, 0);
+      cards[current].focus({ preventScroll: true });
+    }
+  }
+  const next = () => (current === cards.length - 1 ? showPlan() : show(current + 1));
+  $('[data-card-next]').addEventListener('click', next);
+  $('[data-card-back]').addEventListener('click', () => show(current - 1));
+  // The option the reader last tapped (or pressed Space on), so a change from an arrow key never counts as a tap.
+  let tapped: { on: Element | null; at: number } = { on: null, at: 0 };
+  intake.addEventListener('pointerdown', (e) => { tapped = { on: (e.target as Element).closest('label.opt'), at: Date.now() }; });
+  intake.addEventListener('keydown', (e) => {
+    const t = e.target as HTMLInputElement;
+    tapped = { on: e.key === ' ' && t.type === 'radio' ? t.closest('label.opt') : null, at: Date.now() };
+    if (e.key === 'Enter' && t.tagName === 'INPUT') { e.preventDefault(); next(); }
+  });
+  function advanceOnTap(input: HTMLInputElement) {
+    if (input.type !== 'radio' || !SINGLE.has(input.name) || !tapped.on?.contains(input) || Date.now() - tapped.at > 1500) return;
+    // "Help me figure it out" opens the bedroom helper on the same card.
+    if (input.name === 'bedrooms' && input.value === 'help') return;
+    const card = current;
+    setTimeout(() => { if (card === current) next(); }, 220);
+  }
+
+  // Question 8 as a tap list: first tap is "Most important", the next is "Second", tapping one again takes it off.
+  // The two selects stay the answer (hidden in card view), so read() and the plan don't change.
+  const pickList = $('[data-pick-list]');
+  const first = $<HTMLSelectElement>('select[name="priority-1"]');
+  const second = $<HTMLSelectElement>('select[name="priority-2"]');
+  pickList.hidden = false;
+  pickList.setAttribute('role', 'group');
+  pickList.setAttribute('aria-label', 'Your top 2, in order');
+  const pickState = () => {
+    for (const b of $$<HTMLButtonElement>('button[data-value]', pickList)) {
+      const n = first.value === b.dataset.value ? 1 : second.value === b.dataset.value ? 2 : 0;
+      b.setAttribute('aria-pressed', String(n > 0));
+      $('.pick-rank', b).textContent = n === 1 ? '1st' : n === 2 ? '2nd' : '';
+    }
+  };
+  function renderPicks() {
+    pickList.replaceChildren();
+    for (const o of [...first.options].filter((o) => o.value && !o.disabled)) {
+      const b = el('button', 'opt pick-opt') as HTMLButtonElement;
+      b.type = 'button';
+      b.dataset.value = o.value;
+      b.append(el('span', 'pick-label', o.textContent ?? ''), el('span', 'pick-rank'));
+      pickList.append(b);
+    }
+    pickState();
+  }
+  pickList.addEventListener('click', (e) => {
+    const v = (e.target as Element).closest<HTMLButtonElement>('button[data-value]')?.dataset.value;
+    if (!v) return;
+    let [p1, p2] = [first.value, second.value];
+    if (p1 === v) [p1, p2] = [p2, ''];
+    else if (p2 === v) p2 = '';
+    else if (!p1) p1 = v;
+    else p2 = v;
+    first.value = p1;
+    refresh(read());
+    second.value = p2;
+    second.dispatchEvent(new Event('change', { bubbles: true }));
+    pickState();
+  });
 
   write(answers);
   $('[data-storage-note]').hidden = storageOk;
-  if (!missingAnswers(answers).length) { render(answers); planView.hidden = false; } else intake.hidden = false;
+  if (!missingAnswers(answers).length) { render(answers); planView.hidden = false; show(0, { focus: false }); }
+  else {
+    intake.hidden = false;
+    const started = JSON.stringify(answers) !== JSON.stringify(emptyAnswers());
+    show(started ? cardOf(missingAnswers(answers)[0]) : 0, { focus: false });
+  }
 </script>

@@ -1,5 +1,14 @@
 # Questions — site build
 
+## Session 14 (2026-10-24): ask-first front end
+
+**Brian's answers, 2026-10-24:** 73 accept as built. 74 approved: one POST to /api/ask, from home only. 75 accept "This site stores nothing you type." 76 accept, no counts. The plan result's length is fine.
+
+73. ~~**Follow-up suggestions.**~~ *Answered: accept as built.* Built without a model call from the cited page, not the cited headings' text: when the top cited section is on a neighborhood, base housing or base page, up to three of that page's other sections the answer didn't cite, as questions about that page ("Which schools serve Santee?"). None for sequence or forms answers, where a step heading doesn't make a good question. Keep, widen to the sequence, or drop?
+74. ~~**`intake-network` now allows one call on home.**~~ *Answered: approved, one POST to /api/ask from home only.* You asked for every existing check unchanged, and for the conversation on home; home was on `intake-network`'s list of pages that may make no network request, so both couldn't hold. I allowed exactly one `fetch('/api/ask', { method: 'POST' })` on home and nothing else (4 plants prove a second call, another URL, a beacon, or the call on `/plan/` still fail). The other choice is to keep the check word for word and take home off its list, which is looser. OK as built?
+75. ~~**"This site stores nothing you type."**~~ *Answered: accept.* Your line was "nothing you type is stored". The site stores nothing, but each question goes to the model provider's API to be answered, and the provider's own retention applies there, so I scoped the line to this site and kept "Your question goes to an AI model … This site doesn't store it" under "What's sent?". Keep that wording?
+76. ~~**Small calls I made.**~~ *Answered: accept, no counts.* (a) Menu labels have no counts ("Neighborhoods", not "Neighborhoods (40)"), so the 1024 px sidebar adds no figures to home's first screen. (b) On the cards, the plan page hides its intro paragraph and eyebrow (the plan result's own head still says "v0, rules under test") so question 1 fits one phone screen. (c) Question 8 is a tap list ("1st", "2nd") instead of two dropdowns; the dropdowns still hold the answer. (d) Without JavaScript `/plan/` is as before: a notice, no form (the questions never worked without it). Change any?
+
 ## Session 13 (2026-10-23): lean pages
 
 **Brian's answers, 2026-10-24:** 69 keep as built. 70 keep both lines visible. 71 move the one-line footnote to the top, small and muted (done, STATUS session 13b). 72 accept the time/times change.

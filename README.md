@@ -2,9 +2,10 @@
 
 The public site for an unofficial, non-commercial San Diego PCS guide. Static pages built with
 [Astro](https://astro.build); nothing runs on a server. No analytics, no cookies, no third-party
-requests: the fonts (Bricolage Grotesque, DM Sans) are self-hosted from `@fontsource` packages. The page
-scripts send nothing anywhere: the neighborhood pages' pay band and `?base=` only show or hide text already on
-the page, and the starting plan (`/plan/`) works out its plan in the browser from data embedded in the page.
+requests: the fonts (Bricolage Grotesque, DM Sans) are self-hosted from `@fontsource` packages. One page script
+sends anything: the home page's ask box posts the question (with the previous turn, and the starting-plan fields only
+if ticked) to this site's own `/api/ask`. The neighborhood pages' pay band and `?base=` only show or hide text already
+on the page, and the starting plan (`/plan/`) works out its plan in the browser from data embedded in the page.
 Every page is `noindex` until week 5.
 
 ## The three commands
@@ -61,8 +62,10 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/lib/sequence.js`, `src/lib/sequenceData.ts`, `src/components/sequence/` | Phases, anchors, the disclaimer and Navy-rules lines, the Q3 → phase map (shared with the plan rules and the checks); the steps and forms in order; the step card, the quotes and the two top lines |
 | `scripts/check_sequence.mjs` | Postbuild: every step and form on a page is an exported row with its deadline word for word, a date line, every quote and its "Not yet confirmed" line; the disclaimer and Navy-rules lines are where they must be; USMC rows never render. `--plant all` proves each rule fails |
 | `src/content/changelog/*.md` | The "What changed" page (F11), one file per entry |
-| `src/pages/index.astro` | Home: the eight bases, the starting plan, then "Or just browse" |
-| `src/pages/plan.astro` | Starting plan (F5 intake v0): the eight questions and the printable plan, worked out in the browser; answers in localStorage only |
+| `src/pages/index.astro` | Home, the same at every width: the ask box (example questions in `src/lib/examples.ts`), the conversation (it replaced `/ask/`), "Not sure what to ask?", then the region map; everything else is in the menu |
+| `src/lib/askView.js` | What the conversation shows around an answer: the source chip's date, the related-page card, the follow-ups (no model call) |
+| `src/lib/menu.ts`, `src/components/MenuLinks.astro`, `src/pages/browse/` | The menu: one list, in the drawer / sidebar on every page and on `/browse/` (where the button goes without JavaScript) |
+| `src/pages/plan.astro` | Starting plan (F5 intake v0): the eight questions, one card per screen, and the printable plan, worked out in the browser; answers in localStorage only |
 | `src/lib/intake/rules.js` | The intake rules (pure JavaScript, shared by the page and the build check); `RULES_VERSION` and the list of rules with nothing to point at yet (`GAPS`) |
 | `src/lib/intake/digest.ts` | The data the rules run on, built from the collections and embedded in `/plan/` (ratios, plus the BAH table from `bah.json`) |
 | `src/config/intake/priorities.json` | The Q8 priority list (edit after the screener) |
@@ -79,12 +82,14 @@ To refresh the data: re-run the pulls you need in `pcs-sd-data`, run the export,
 | `src/components/ExtLink.astro` | Every outbound link, with its incentive label |
 | `scripts/check_principles.mjs` | The build-time principle checks |
 | `scripts/principle_lists.mjs` | The word lists every check uses (demographic terms, score words, placeholder patterns) |
-| `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes, and every line the rules can print (built across the answer space) has a source and a date, every dollar figure is a BAH line from `bah.json` with its year, MHA and BAH date, and passes the word lists; with no base chosen, the housing allowance section is the one "Pick a base" line, no figures; `page-ratios` recomputes every rent-to-BAH ratio (rent ÷ the duty station's BAH) and checks the export, the pages and the plan against it |
+| `scripts/check_intake.mjs` | Starting plan checks (postbuild): no network requests or URL writes (home: only its one POST to `/api/ask`), and every line the rules can print (built across the answer space) has a source and a date, every dollar figure is a BAH line from `bah.json` with its year, MHA and BAH date, and passes the word lists; with no base chosen, the housing allowance section is the one "Pick a base" line, no figures; `page-ratios` recomputes every rent-to-BAH ratio (rent ÷ the duty station's BAH) and checks the export, the pages and the plan against it |
 | `scripts/check_functions.mjs` | Postbuild: the code `functions/` reaches uses no syntax Cloudflare's wrangler 3 can't parse, no JSON or Node built-in imports, no `process.env`; the bundled Function fits the free-plan size limit |
 | `scripts/build_corpus.mjs` | Postbuild: chunks every published page by dated section into `dist/assistant/corpus.json` with BM25 postings (the assistant's only knowledge) |
 | `assistant/` | The assistant (F6 groundwork): `retrieve.js` (BM25), `prompt.js` (system prompt, known data holes), `guards.js` (fixed answers, the BAH dollar filter), `ask.js` (request handling, STUB/live, intake context, daily cap) |
 | `functions/api/ask.js` | Cloudflare Pages Function at `/api/ask` (same origin). Env: `ANTHROPIC_API_KEY`, `ASSISTANT_MODEL`, optional KV `ASK_LIMITS` and `ASK_DAILY_CAP` |
-| `src/pages/ask.astro` | `/ask/`: the assistant page; not linked anywhere; conversation in page memory only |
+| `src/pages/ask.astro`, `public/_redirects` | `/ask/` now redirects to `/` (301 on Cloudflare; a meta refresh elsewhere) |
+| `scripts/check_frontend.mjs` | Postbuild: the start screen has one ask box and no data, then the map and nothing else; the example questions retrieve; every menu link resolves and matches `/browse/`; the site name links home on every page; no page is reachable only from home; the `/ask/` redirect; the plan cards cover every answer field and choice. `--plant all` proves each |
+| `scripts/check_frontend_browser.mjs` | By hand (`npm run check:browser`, Playwright): the fold, the menu's focus and Escape, JavaScript off, the redirect, the cards' keyboard and tap behavior, the conversation |
 | `evals/assistant_eval.jsonl`, `scripts/eval_assistant.mjs` | 46 test questions and the runner: `npm run eval:assistant` (retrieval only), `-- --live`, or `-- --url <deployed site>` |
 | `scripts/check_layout.mjs` | Layout check, run by hand: every page at 390/768/1280/1440 px, no sideways scroll (needs Chrome; usage at the top) |
 | `scripts/bah_check_allow.json` | Reviewed coincidences where a HUD rent equals a BAH figure (two, each for one page) |

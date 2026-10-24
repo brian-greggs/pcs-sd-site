@@ -1,7 +1,7 @@
 {
   "name": "pcs-sd-site",
   "type": "module",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -9,11 +9,12 @@
     "dev": "astro dev",
     "prebuild": "node scripts/check_principles.mjs source",
     "build": "astro build",
-    "postbuild": "node scripts/check_principles.mjs dist && node scripts/check_intake.mjs && node scripts/check_maps.mjs && node scripts/check_sequence.mjs && node scripts/check_functions.mjs && node scripts/build_corpus.mjs",
+    "postbuild": "node scripts/check_principles.mjs dist && node scripts/check_intake.mjs && node scripts/check_maps.mjs && node scripts/check_sequence.mjs && node scripts/check_functions.mjs && node scripts/build_corpus.mjs && node scripts/check_frontend.mjs",
     "check": "node scripts/check_principles.mjs source && node scripts/check_principles.mjs dist && node scripts/check_intake.mjs && node scripts/check_maps.mjs && node scripts/check_sequence.mjs && node scripts/check_functions.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "eval:assistant": "node scripts/eval_assistant.mjs"
+    "eval:assistant": "node scripts/eval_assistant.mjs",
+    "check:browser": "node scripts/check_frontend_browser.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",

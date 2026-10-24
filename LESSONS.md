@@ -194,3 +194,18 @@
 - **A closed `<details>` can still be as wide as its hidden content.** The step footer's toggle and chip wouldn't share a row until the toggle got a max width; measure widths in the browser when a flex row wraps unexpectedly.
 - **Keep the old date line inside the new chip, word for word.** Every check that already read `data-asof` (BAH dates, sequence retrieval dates, the corpus's `dates`) kept working without a change; only the checks that parsed moved markup needed updating.
 
+
+## Session 14 (2026-10-24): ask-first front end
+
+- **"Every existing check unchanged" and a new feature can collide.** The ask box moved onto a page a privacy check had listed as network-free. Allowing the one call, by its exact shape and on that page only, with plants for its neighbours (a second call, another URL, the same call elsewhere), keeps the check's intent; saying so plainly beats bending the code until a regex misses it.
+- **Enhance the form, don't replace it.** The plan cards are the same fieldsets shown one at a time, so storage, `cleanAnswers`, the rules and the printed plan didn't need a single change, and `plan-cards` can check coverage against `emptyAnswers()` directly.
+- **A selector that worked on one page can hit the layout.** `$('[data-back]')` on /plan/ found the header's back link before the card's Back button and hid it. Name page-local hooks so they can't collide with the layout's (`data-card-back`).
+- **"Tap advances" has to know what was tapped.** A recent pointer event isn't enough: a tap on Back followed by an arrow key looked like a tap on the option. Recording the tapped label and requiring the changed input to be inside it fixed it; the browser check found it, the static check couldn't.
+- **Measure the worst case, not the screenshot's case.** Card 8 fit the screenshot (six priorities) and ran 90 px past the screen with all nine. The browser check now loads the household that unlocks every priority.
+- **Playwright's `getByText` doesn't look inside `<noscript>`.** With JavaScript off the notice was there; the test was wrong. Locate it with `noscript p`.
+
+## Session 14b (2026-10-24): layout fixes
+
+- **A legend that isn't floated is drawn in its fieldset's border.** Taking the border off and floating the legend at full width puts the question above its options while the fieldset still names the group; the browser check now measures the legend against the first option on every card at two widths, since a screenshot of one card doesn't prove the other seven.
+- **Taking links off a page needs a link graph, not a guess.** Before removing home's old content I saved every page's inbound links; comparing after showed three pages home stopped linking (/neighborhoods/, /base-housing/, /sequence/), each still in the menu on 82 pages and linked from 15 to 41 others. `no-orphans` keeps it true.
+- **A flex column body needs `width: 100%` on centered children.** With `margin: 0 auto`, a flex item doesn't stretch, so main would have shrunk to its content's width; the footer push came with that one extra rule.
