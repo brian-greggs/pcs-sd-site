@@ -1,7 +1,7 @@
 ---
 // One phase of the move sequence (F2): a compact timeline of its steps (title and deadline, each linking to its
-// card), then the step cards in order (title, deadline and form chips; the rest behind one tap), and the one-line
-// footnote linking to the disclaimer on /sequence/ (Brian 2026-10-23).
+// card), then the step cards in order (title, deadline and form chips; the rest behind one tap). The one-line
+// footnote linking to the disclaimer on /sequence/ sits at the top, small and muted (Brian 2026-10-24).
 import Base from '../../layouts/Base.astro';
 import SourceChip from '../../components/SourceChip.astro';
 import SequenceFootnote from '../../components/sequence/SequenceFootnote.astro';
@@ -29,6 +29,7 @@ const keys = steps.map((s) => `seq:${s.id}`);
   <p class="eyebrow">Move sequence · phase {i + 1} of {PHASES.length}</p>
   <h1>{phase.label}</h1>
   <p class="kicker">{phase.blurb}. {steps.length} steps.</p>
+  <SequenceFootnote />
 
   <section class="timeline" id={TIMELINE_ID} data-fact={TIMELINE_ID}>
     <h2 class="vh">Steps in this phase</h2>
@@ -45,7 +46,6 @@ const keys = steps.map((s) => `seq:${s.id}`);
 
   {steps.map((s) => <StepCard step={s} data={data} />)}
 
-  <SequenceFootnote />
   <nav class="seq-nav" aria-label="Other phases">
     {prev ? <a href={`/sequence/${prev.slug}/`}>‹ {prev.label}</a> : <span></span>}
     {next ? <a href={`/sequence/${next.slug}/`}>{next.label} ›</a> : <a href="/sequence/forms/">Forms and claims ›</a>}

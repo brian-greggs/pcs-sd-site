@@ -1,6 +1,8 @@
 ---
 // "Sources and dates" footer, generated from provenance: the page-level table of every source, with its dates
-// and license. `extra` rows carry their own source key (areas:<id> for the base housing grouping).
+// and license. `extra` rows carry their own source key (areas:<id> for the base housing grouping). It has no
+// SourceChip (Brian 2026-10-24): each row is a receipt, and the `dated` check compares each row's Verified
+// cell with its source's own date.
 import FactBlock from '../FactBlock.astro';
 import { provenance } from '../../lib/prov';
 
@@ -17,12 +19,12 @@ const latest = days.at(-1)!;
 const keys = rows.map((r) => r.key);
 ---
 
-<FactBlock id="sources" title="Sources and dates" summary={`${rows.length} sources, each with its date · last checked ${latest}`} summarySrc={keys.join(' ')} srcs={keys} asOf={`Verified ${days.join(', ')}; most recent verification: ${latest}`} source="the provenance record for each dataset (full list on the Sources page)">
-  <div class="table-wrap" data-src={keys.join(' ')}>
+<FactBlock id="sources" title="Sources and dates" summary={`${rows.length} sources, each with its date · last checked ${latest}`} summarySrc={keys.join(' ')} srcs={keys} noChip asOf={`Verified ${days.join(', ')}; most recent verification: ${latest}`} source="the provenance record for each dataset (full list on the Sources page)">
+  <div class="table-wrap">
     <table>
       <thead><tr><th>What</th><th>Source</th><th>Vintage</th><th>Verified</th><th>License</th></tr></thead>
       <tbody>
-        {rows.map((r) => <tr><td>{r.title}</td><td>{r.source}</td><td>{r.vintage}</td><td>{r.verified}</td><td>{r.license}</td></tr>)}
+        {rows.map((r) => <tr data-src={r.key}><td>{r.title}</td><td>{r.source}</td><td>{r.vintage}</td><td data-verified>{r.verified}</td><td>{r.license}</td></tr>)}
       </tbody>
     </table>
   </div>

@@ -118,10 +118,6 @@ const sections = [
   <div class="page-main" data-default-base={defaultBase}>
   <h1>{community.name}</h1>
   <p class="kicker">{community.corridor} · {zips.join(', ')}</p>
-  <SiteMap kind="locator" community={slug} />
-
-  <Notes notes={notes} part="lead" />
-
   <section class="glance" id="glance" data-fact="glance">
     <div class="glance-head">
       <h2>At a glance</h2>
@@ -170,6 +166,11 @@ const sections = [
     </dl>
     <SourceChip srcs={['prov:commute', 'prov:rent_to_bah', 'prov:schools', ...(fireValue ? fireKeys : ['prov:hazards'])]} asOf={`Commute: ${asOf('commute')}. Rent ratio: ${asOf('rent_to_bah')}. Schools: ${asOf('schools')}. Fire: ${fireDate ? `CAL FIRE maps, downloaded ${fireDate}` : asOf('hazards')}`} source="Google Maps predicted drive times; HUD Small Area Fair Market Rents and DTMO BAH; California Department of Education; CAL FIRE Fire Hazard Severity Zones" />
   </section>
+
+  {/* The tiles first, so they're on the first phone screen; the locator map right after (Brian 2026-10-24). */}
+  <SiteMap kind="locator" community={slug} />
+
+  <Notes notes={notes} part="lead" />
 
   <FactBlock id="cost" title="Cost" summary={costSummary} summarySrc="prov:rent prov:ownership" srcs={['prov:rent', 'prov:bah', 'prov:rent_to_bah', 'prov:ownership', 'link:per-parcel-lookup']} asOf={`Rent: ${asOf('rent')}. BAH: ${asOf('bah')}. Ratio: ${asOf('rent_to_bah')}. Mello-Roos: ${asOf('ownership')}`} source={`HUD Small Area Fair Market Rents FY2027; US Census ACS 5-year 2020–2024; ${bah.areas[0].source_name}; SD County Auditor & Controller, Active Mello-Roos Districts FY2025-26`}>
     {/* Your pay band first (Brian 2026-10-23): the BAH lines, the ratio row and the 3-bed rent for the band picked

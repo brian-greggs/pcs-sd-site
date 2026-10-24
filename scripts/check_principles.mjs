@@ -9,7 +9,9 @@
 //                2026-10-23): every fact names its source (data-src), the chip lists exactly the sources its
 //                section uses (data-chip-src), and each source's own date (provenance.json, links.json, the
 //                sequence export, …: sourceDates below) is in the chip's date lines; a line that states no fact
-//                (data-nofact) has no digit. Tables and fact lists sit inside a section.
+//                (data-nofact) has no digit. Tables and fact lists sit inside a section. A collapsed section's
+//                chip sits inside it (shown when opened); the page-level "Sources and dates" table has none, and
+//                each of its rows must give its source's own verified date (Brian 2026-10-24).
 //                `node scripts/check_principles.mjs dist --plant all` plants each kind of fault and must catch it
 //   bah-figures  every BAH dollar figure comes from src/data/bah.json and carries its year, MHA and a
 //                source/date line; no other dollar figure sits next to "BAH" or equals a BAH figure
@@ -159,11 +161,45 @@ function dropElements(html, open) {
 }
 const attrRe = (name) => new RegExp(`<(\\w+)\\b[^>]*\\s${name}(?:="[^"]*")?(?=[\\s/>])[^>]*>`);
 // One section's `dated` faults: one chip, its keys both ways, every key's dates in its date lines, every fact tagged.
+// The page-level "Sources and dates" table (Brian 2026-10-24) has no SourceChip: each row is a receipt. Every row
+// names its source key, and its Verified cell is that source's own date; the summary's "last checked" is the latest.
+function sourcesTableFaults(body, reg) {
+  const out = [];
+  if (elementsWith(body, 'data-source-chip').length) out.push('the Sources and dates table carries a SourceChip (its rows are the receipts)');
+  const rows = [...body.matchAll(/<tr\b[^>]*\sdata-src="([^"]*)"[^>]*>([\s\S]*?)<\/tr>/g)];
+  if (!rows.length) return [...out, 'no source rows'];
+  const days = [];
+  for (const [, key, row] of rows) {
+    const want = keyDates(reg, key);
+    const cell = row.match(/<td[^>]*\sdata-verified[^>]*>([\s\S]*?)<\/td>/);
+    const got = cell ? visibleText(cell[1]).trim() : '';
+    days.push(got);
+    if (!want) out.push(`unknown source key "${key}"`);
+    else if (!want.includes(got)) out.push(`row "${key}" says verified "${got}", its source says ${want.join(' / ')}`);
+  }
+  const latest = days.sort().at(-1);
+  const summary = (body.match(/<span class="summary-line"[^>]*>([\s\S]*?)<\/span>/) ?? [, ''])[1];
+  if (!visibleText(summary).includes(`last checked ${latest}`)) out.push(`summary doesn't say "last checked ${latest}"`);
+  // Every other line is a heading, the header row, the summary or a no-fact link.
+  let rest = dropElements(body, attrRe('data-src'));
+  rest = dropElements(rest, attrRe('data-nofact'));
+  rest = dropElements(rest, /<(h[1-6]|thead)\b[^>]*>/);
+  const loose = visibleText(rest).replace(/[\s·.,;:()–—-]+/g, ' ').trim();
+  if (loose) out.push(`text that names no source: "${loose.slice(0, 100)}"`);
+  return out;
+}
 function datedFaults(body, reg) {
   const out = [];
   const chips = elementsWith(body, 'data-source-chip');
   if (chips.length !== 1) return [`${chips.length} SourceChips (want 1)`];
   const chip = chips[0];
+  // A collapsed section keeps its chip inside, as the body's last part, so it shows when the section is opened
+  // (Brian 2026-10-24); a section that is always open (a sequence step, the timeline, At a glance) has it at the end.
+  const lid = body.match(/^\s*<details(?![^>]*\bsrc-chip\b)[^>]*>/);
+  if (lid) {
+    const d = elementsWith(body.replace(/^(\s*<details)/, '$1 data-lid'), 'data-lid')[0];
+    if (!d || chip.start < d.start || chip.end > d.end) out.push('collapsed section with its SourceChip outside (it belongs inside, shown when opened)');
+  }
   const listed = (body.slice(chip.start, chip.end).match(/data-chip-src="([^"]*)"/) ?? [, ''])[1].split(' ').filter(Boolean);
   const asof = chip.inner.match(/<p[^>]*\sdata-asof(?=[\s>])[^>]*>([\s\S]*?)<\/p>/);
   if (!asof) return ['no date line in its SourceChip'];
@@ -339,7 +375,7 @@ function checkDist(plant = null) {
     const blocks = [...html.matchAll(/<section[^>]*data-fact="([^"]+)"[^>]*>([\s\S]*?)<\/section>/g)];
     for (const [, id, body] of blocks) {
       factBlocks++;
-      for (const f of datedFaults(body, reg)) { fail('dated', page, `section "${id}": ${f}`); }
+      for (const f of (id === 'sources' && page !== 'sources/index.html' ? sourcesTableFaults : datedFaults)(body, reg)) { fail('dated', page, `section "${id}": ${f}`); }
       chipKeys += (body.match(/data-chip-src="([^"]*)"/) ?? [, ''])[1].split(' ').filter(Boolean).length;
     }
     // Tables and fact lists must sit inside a dated block.
@@ -458,6 +494,10 @@ const PLANTS = {
   'two chips in a section': { page: NBHD, edit: (h) => { const c = h.match(/<details class="src-chip" data-source-chip[\s\S]*?<\/details>/)[0]; return h.replace(/(<section[^>]*data-fact="climate"[^>]*>)/, `$1${c}`); } },
   'figure in a no-fact line': { page: NBHD, edit: (h) => h.replace('your street can change them.', 'your street can change them by 10 minutes.') },
   'unknown source key': { page: NBHD, edit: (h) => h.replace(/data-fact="climate"([\s\S]*?)prov:climate([\s\S]*?)data-chip-src="prov:climate"/, 'data-fact="climate"$1prov:weather$2data-chip-src="prov:weather"') },
+  'chip outside a collapsed section': { page: NBHD, edit: (h) => h.replace(/(<section[^>]*data-fact="climate"[^>]*>)([\s\S]*?)(<details class="src-chip"[\s\S]*?<\/details>)(\s*<\/div>\s*<\/details>)/, '$1$2$4$3') },
+  'Sources table row with a wrong date': { page: NBHD, edit: (h) => h.replace(/(<tr data-src="prov:schools">(?:<td>[^<]*<\/td>){3}<td data-verified>)[^<]*/, '$12026-09-01') },
+  'Sources table row with no source': { page: NBHD, edit: (h) => h.replace('<tr data-src="prov:climate">', '<tr>') },
+  'chip on the Sources table': { page: NBHD, edit: (h) => { const c = h.match(/<details class="src-chip" data-source-chip[\s\S]*?<\/details>/)[0]; return h.replace(/(<section[^>]*data-fact="sources"[\s\S]*?)(<\/section>)/, `$1${c}$2`); } },
   'sequence step figure untagged': { page: 'sequence/arrival/index.html', edit: (h) => h.replace(/(<section[^>]*data-fact="arrival-travel-claim"[^>]*>)/, '$1<p>Due in 5 days.</p>') },
 };
 

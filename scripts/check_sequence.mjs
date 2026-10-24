@@ -15,8 +15,8 @@
 //   seq-unconfirmed  a row with "Not yet confirmed" lines (partial, confirm with the HSC) shows each, in order,
 //                    naming who to ask (CPPA, PPPO, HSC, Navy Household Goods); no other row shows one
 //   seq-notes        /sequence/ opens with the disclaimer and the Navy-rules note (before its first block); every
-//                    phase page and the forms page carries the one-line footnote, as written, linking to them
-//                    (Brian 2026-10-23); the Camp Pendleton, MCAS Miramar and MCRD San Diego base pages carry the
+//                    phase page and the forms page carries the one-line footnote, as written, linking to them,
+//                    before its first block (Brian 2026-10-23, at the top since 2026-10-24); the Camp Pendleton, MCAS Miramar and MCRD San Diego base pages carry the
 //                    Navy-rules note; the sequence page links Plan My Move as "build your personal checklist"
 //   seq-dla          DTMO's primary DLA rates: the DLA step shows one line per grade for every pay band, the DLA
 //                    form shows the whole table in order, every data-dla line and row equals
@@ -96,6 +96,9 @@ function check({ pages, steps, forms, weights, dla, effective }) {
       const text = foot && foot[1].match(/<span data-footnote-text>([\s\S]*?)<\/span>/);
       if (!foot || !text || decode(text[1]) !== SEQUENCE_FOOTNOTE) fail('seq-notes', k, 'no footnote line, or its wording changed');
       else if (!foot[1].includes(`<a href="${DISCLAIMER_HREF}"`)) fail('seq-notes', k, `footnote doesn't link to the disclaimer (${DISCLAIMER_HREF})`);
+      // At the top (Brian 2026-10-24): before the first block.
+      const first = html.search(/data-fact="/);
+      if (first >= 0 && html.indexOf('data-seq-footnote') > first) fail('seq-notes', k, 'footnote comes after the first block');
     }
   }
   for (const code of MARINE_BASES) {
@@ -301,6 +304,7 @@ const PLANTS = {
   'no Navy note on a Marine base': (s) => { const k = 'base/miramar/index.html'; s.pages[k] = s.pages[k].replace(/data-navy-note/g, 'data-x'); },
   'no disclaimer on /sequence/': (s) => { const k = 'sequence/index.html'; s.pages[k] = s.pages[k].replace('data-seq-disclaimer', 'data-x'); },
   'no footnote on a phase page': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace('data-seq-footnote', 'data-x'); },
+  'footnote moved to the foot': (s) => { const k = 'sequence/orders/index.html'; const m = s.pages[k].match(/<p[^>]*data-seq-footnote[\s\S]*?<\/p>/); s.pages[k] = s.pages[k].replace(m[0], '').replace('</main>', m[0] + '</main>'); },
   'footnote reworded on the forms page': (s) => { const k = 'sequence/forms/index.html'; s.pages[k] = s.pages[k].replace('your command has the final word', 'you decide'); },
   'timeline step dropped': (s) => { const k = 'sequence/orders/index.html'; s.pages[k] = s.pages[k].replace(/<li[^>]*data-timeline-step="orders-sponsor"[\s\S]*?<\/li>/, ''); },
   'timeline deadline reworded': (s) => { const k = 'sequence/arrival/index.html'; s.pages[k] = s.pages[k].replace(/(<li[^>]*data-timeline-step="arrival-travel-claim"[\s\S]*?data-due-short>)[^<]*/, '$1Within 10 days.'); },

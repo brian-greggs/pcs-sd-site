@@ -23,6 +23,7 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
 <Base title="Forms and claims" back={{ href: '/sequence/', label: 'Move sequence' }} description="Every PCS form and claim in the move sequence: deadline, where to file, what to attach, with official sources.">
   <p class="eyebrow">Move sequence</p>
   <h1>Forms and claims</h1>
+  <SequenceFootnote />
   <p class="intro">{data.forms.length} forms and claims. Tap one for what to attach, the steps it belongs to and the official wording.</p>
 
   {data.forms.map((f) => {
@@ -53,9 +54,9 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
             {noteParas(f.note).map((n) => <p class="note">{n}</p>)}
             {f.unconfirmed.map((u) => <p class="gap" data-unconfirmed={u.ask}>{unconfirmedLine(u)}</p>)}
             <Cites sources={f.sources} superseded={f.superseded} src={src} />
+            <SourceChip srcs={[src]} asOf={citeDates(f)} source={citeNames(f)} more={older.length ? [`Older guidance (not used) retrieved ${older.join(' and ')}`] : []} />
           </div>
         </details>
-        <SourceChip srcs={[src]} asOf={citeDates(f)} source={citeNames(f)} more={older.length ? [`Older guidance (not used) retrieved ${older.join(' and ')}`] : []} />
       </section>
       {f.id === WEIGHTS_AFTER && w && (
         <FactBlock id={w.id} title={w.title} summary={`${w.paragraph}, Table 5-37: pounds by pay grade, with and without dependents`} summarySrc={`seq:${w.id}`} srcs={[`seq:${w.id}`]} asOf={citeDates(w)} source={citeNames(w)}>
@@ -79,7 +80,6 @@ if (w && !data.formById.has(WEIGHTS_AFTER)) throw new Error(`weight table: form 
     </>);
   })}
 
-  <SequenceFootnote />
 </Base>
 
 <script>

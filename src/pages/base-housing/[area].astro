@@ -119,10 +119,6 @@ const sections = [
   <p class="eyebrow">Base housing</p>
   <h1>{area.name}</h1>
   <p class="kicker">{memberWord} · {zips.join(', ')}{area.base_tie_note ? ` · ${area.base_tie_note}` : ''}</p>
-  {area.facts_note && <p class="note">{area.facts_note}</p>}
-
-  <Notes notes={notes} part="lead" />
-
   <section class="glance" id="glance" data-fact="glance">
     <div class="glance-head">
       <h2>At a glance</h2>
@@ -156,6 +152,11 @@ const sections = [
     </dl>
     <SourceChip srcs={['prov:base_housing_waits', 'prov:base_housing', 'prov:commute']} asOf={`Wait and pets: ${estimate} · verified ${verifiedOn}. Bedrooms and pets: LMH pages ${asOf('base_housing')}. Commute: ${asOf('commute')}`} source="Navy Housing Service Center / LMH wait-time lists; Liberty Military Housing community pages; Google Maps predicted drive times" />
   </section>
+
+  {/* The tiles first, so they're on the first phone screen (Brian 2026-10-24). */}
+  {area.facts_note && <p class="note">{area.facts_note}</p>}
+
+  <Notes notes={notes} part="lead" />
 
   <FactBlock id="communities" title="Communities" summary={`${memberWord} · ${bedroomText} bedrooms · pets: ${petText.toLowerCase()}`} summarySrc="prov:base_housing prov:base_housing_waits" srcs={['prov:base_housing', 'prov:base_housing_waits']} asOf={`LMH pages ${asOf('base_housing')}; grades and pets from the ${estimate} · verified ${verifiedOn}`} source="Liberty Military Housing community pages; Navy Housing Service Center / LMH wait-time lists">
     <div class="table-wrap" data-src="prov:base_housing prov:base_housing_waits">

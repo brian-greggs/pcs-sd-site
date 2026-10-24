@@ -1,4 +1,26 @@
-# Site build — status (2026-10-23, session 13: lean pages, receipts one tap away; v0.9.0)
+# Site build — status (2026-10-24, session 13b: review notes on the lean pages; v0.9.0)
+
+## Session 13b: Brian's review notes (2026-10-24), same branch, not merged
+
+- **At a glance first.** Neighborhood pages: name and kicker, then the four tiles and their SourceChip, then the locator map, then the lead (when written). Base housing pages: the tiles, then the area's facts note and lead. On every one of the 60 pages the tiles end by 525 px at 390 × 844, on the first screen.
+- **Chips inside collapsed sections.** A collapsed section's SourceChip is now the last thing in its body (FactBlock, the forms index rows, the weight table), so it shows when the section is opened; At a glance, the phase timeline, step cards and the `/sources/` and `/sequence/` blocks (always open) keep theirs at the end. The page-level "Sources and dates" section has no chip: its rows are the receipts.
+- **`dated` adjusted to match:** a section whose body is a collapsed `<details>` must hold its chip inside it; the "Sources and dates" table must have no chip, every row names its source key (`data-src`) and its Verified cell must equal that source's own date (from its data file), and the summary's "last checked" must be the latest row date. New plants: chip outside a collapsed section, a Sources-table row with a wrong date, a row with no source, a chip on the Sources table; `--plant all` 16 of 16.
+- **QUESTIONS 69–72 answered** (69 keep, 70 keep both lines, 72 accepted). **71:** the one-line footnote is now at the top of every phase page and the forms page, small and muted (0.8 rem); `seq-notes` now also requires it before the first block (new plant "footnote moved to the foot"; sequence plants 31 of 31).
+- **Runs on 2026-10-24:** full build, every check (47 PASS lines, no FAIL; 781 sections, the extra one is this release's changelog entry); map plants 22 of 22; corpus caption plant caught; layout check on 82 pages at 390/768/1280/1440 running when this was committed (result in the next commit); retrieval eval identical to session 13's (expected fact 41 of 42, in-16 only; expected page in the sections sent 42 of 42; section 38 of 38; go-live gate: out-01 and out-04 declined by retrieval; every self-test passes). Live eval still not run: pages.dev is blocked from this environment.
+
+**Phone lengths** (390 × 844 px screens, Chromium, JavaScript on, every section closed):
+
+| Page | Before (3a06c28) | Session 13 | Now | Target |
+|---|---|---|---|---|
+| Home | 2.6 | 2.6 | 2.6 | — |
+| Neighborhood (Santee) | 6.6 | 2.2 | 2.0 | ≤ 2.5 |
+| All 40 neighborhoods | 6.5–9.5 | 2.2–2.4 | 2.0–2.2 | ≤ 2.5 |
+| Base housing (Murphy Canyon) | 5.9 | 2.3 | 1.9 | ≤ 2.5 |
+| All 20 base housing areas | 3.8–5.9 | 2.3–2.5 | 1.9–2.2 | ≤ 2.5 |
+| Base page (Naval Base San Diego) | 2.7 | 2.6 | 2.4 | — |
+| Phase (90, 60 and 30 days out, the longest) | 10.3 | 3.9 | 3.9 | ≤ 4 |
+| All 5 phases | 3.6–10.3 | 1.6–3.9 | 1.6–3.9 | ≤ 4 |
+| Forms and claims | 23.5 | 4.1 | 3.7 | ≤ 5 |
 
 ## Session 13: lean pages, receipts one tap away (v0.9.0)
 
@@ -41,7 +63,7 @@ Brian's brief (2026-10-23): presentation only (no data, wording of facts or dead
 | All 5 phases | 3.6–10.3 | 1.6–3.9 | ≤ 4 |
 | Forms and claims | 23.5 | 4.1 | ≤ 5 |
 
-**Open:** QUESTIONS 69–72. Camp Pendleton's base housing page is 8 px under the 2.5-screen target; a longer facts note or summary would push it over.
+**Open:** none from this session; QUESTIONS 69–72 answered 2026-10-24 (session 13b).
 
 
 ## Session 12: static maps (v0.8.0)

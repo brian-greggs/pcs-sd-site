@@ -1,8 +1,9 @@
 ---
 // The receipts for one section (Brian 2026-10-23): a small muted chip that opens to the source, the dates and
-// the license. Every dated section has exactly one, as its last element. Inside, the date line (data-asof) is
-// the section's old date line word for word, so every check that reads it (the BAH date, the sequence's
-// retrieval dates, the assistant corpus's dates) reads the same text.
+// the license. Every dated section has exactly one: inside a collapsed section's body (shown when it's opened)
+// or at the end of an always-open one; the page-level Sources and dates table has none, its rows carry their
+// dates (Brian 2026-10-24). Inside, the date line (data-asof) is the section's old date line word for word, so
+// every check that reads it (the BAH date, the sequence's retrieval dates, the corpus's dates) reads the same text.
 //
 // `srcs` are the source keys this section's facts carry (data-src on each fact; see FactBlock). The `dated`
 // check (scripts/check_principles.mjs) requires every key used in the section to be listed here, every key

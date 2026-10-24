@@ -92,7 +92,7 @@ blockquote.quote p, blockquote.quote ul { margin: 0.3rem 0; }
 .src-chip-body { margin: 6px 0 4px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow-wrap: anywhere; }
 .src-chip-body .asof { margin: 0 0 4px; font-size: 13px; }
 .src-chip-body .asof:last-child { margin-bottom: 0; }
-.fact > .src-chip { margin-left: 8px; }
+.fact .body > .src-chip { margin-top: 10px; }
 .map .src-chip { margin-top: 8px; }
 
 /* Small tags: form chips on step cards, deadlines in the timeline and the forms index, who a step is for. */
@@ -327,7 +327,7 @@ ol.tl .due-tag { display: block; max-width: calc(100% - 20px); margin-left: 20px
 .form-line { display: block; margin-top: 4px; font-size: 0.9rem; line-height: 1.4; }
 .form-line:nth-child(2) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .form-line .muted { font-size: 0.85rem; }
-.seq-footnote { margin-top: 1.2rem; }
+.seq-footnote { margin: 0 0 0.8rem; font-size: 0.8rem; line-height: 1.4; color: var(--muted); }
 .quotes { list-style: none; margin: 0.2rem 0 0; padding: 0; }
 .quotes li { margin: 0 0 12px; font-size: 0.9rem; }
 .quotes blockquote { margin: 0 0 4px; padding-left: 10px; border-left: 2px solid var(--border); color: var(--text); overflow-wrap: anywhere; }
