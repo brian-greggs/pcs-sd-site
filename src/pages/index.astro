@@ -27,7 +27,7 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
 
     <div class="ask" data-ask hidden>
       <ol class="ask-log" data-log aria-label="Conversation"></ol>
-      <p class="vh" role="status" data-status></p>
+      <p class="vh" role="status" aria-live="polite" data-status></p>
 
       <div class="ask-box" data-box>
         <label class="ask-label" for="ask-q" data-ask-label>Ask a question</label>
@@ -387,7 +387,10 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
   // that arrives late for a cleared conversation is dropped, never shown and never sent as the previous turn.
   let convo = 0;
   let pending: AbortController | null = null;
-  const ask = async (text?: string) => {
+  // The answer's first sentence, for the status region.
+  const firstSentence = (t: string) => (t.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? t).trim();
+  // `fromExample`: asked by an example button, which hides as the conversation starts.
+  const ask = async (text?: string, { fromExample = false } = {}) => {
     if (busy) return;
     const question = (text ?? q.value).trim();
     if (!question) { showError('empty', 'Type a question.'); q.focus(); return; }
@@ -436,10 +439,17 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
       const block = answerBlock(question, reply);
       block.tabIndex = -1;
       waiting.replaceWith(block);
-      // Focus moves to the answer, and the status region reads it.
-      block.focus({ preventScroll: true });
-      const said = (block.querySelector('.ask-text')?.textContent ?? reply.note ?? '').replace(/\s+/g, ' ').trim();
-      status.textContent = said ? `Answer: ${said}` : 'Answer ready.';
+      // Asked by an example: its button is gone, so focus moves to the answer, which a screen reader then reads.
+      // Typed (or a follow-up chip): focus stays put, back in the box if sending dropped it, and the polite status
+      // region reads "Answer ready." and the answer's first sentence.
+      if (fromExample) {
+        block.focus({ preventScroll: true });
+        status.textContent = 'Answer ready.';
+      } else {
+        if (!document.activeElement || document.activeElement === document.body || document.activeElement === sendBtn) q.focus({ preventScroll: true });
+        const said = (block.querySelector('.ask-text')?.textContent ?? reply.note ?? '').replace(/\s+/g, ' ').trim();
+        status.textContent = said ? `Answer ready. ${firstSentence(said)}` : 'Answer ready.';
+      }
     } catch {
       if (gen !== convo) return;
       failed(timedOut ? 'timeout' : 'network', [timedOut
@@ -457,7 +467,7 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
   };
   sendBtn.addEventListener('click', () => ask());
   q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask(); } });
-  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-example]')) b.addEventListener('click', () => ask(b.textContent ?? ''));
+  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-example]')) b.addEventListener('click', () => ask(b.textContent ?? '', { fromExample: true }));
   clearBtn.addEventListener('click', () => {
     convo++;
     pending?.abort();

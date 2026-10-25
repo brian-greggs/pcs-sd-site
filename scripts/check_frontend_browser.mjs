@@ -56,7 +56,9 @@
 //   ask         a question shows "Checking the sources…", then the reply with its source chip ("N sources ·
 //               verified <date>") and a related-page card; the box becomes "Ask a follow-up"; "What's sent?" shows the
 //               previous turn; "Ask about this plan" arrives with the chip set and the box focused; source links and
-//               the related card open in a new tab (noopener); focus moves to the answer and the status reads it
+//               the related card open in a new tab (noopener); asked by an example (which hides), focus moves to the
+//               answer; typed and sent (Enter or Ask), focus stays in the box and the polite status region says
+//               "Answer ready." and the answer's first sentence
 //   ask-panel   at 390×844 with "What's sent?" open after an answer: the panel isn't inside the sticky box, its height
 //               is capped, the previous answer shows cut to about 200 characters with "(full text sent, N characters)",
 //               and the answer's source link and related card are each the top element at their own position
@@ -619,9 +621,9 @@ passes.push('cards: progress, tap / Space / arrows select without moving on, Nex
   // Links out of the conversation open in a new tab, so Back can't lose it.
   const tabs = await page.locator('.ask-src-list a, a.ask-related').evaluateAll((as) => as.map((a) => `${a.target}|${a.rel}`));
   expect('ask', tabs.length > 1 && tabs.every((t) => t === '_blank|noopener'), `source links and the related card: ${tabs.join(', ')}`);
-  // Focus is on the new answer, and the status region reads it.
-  expect('ask', await page.evaluate(() => document.activeElement?.classList.contains('ask-answer') && !document.activeElement.classList.contains('ask-waiting')), `focus after the answer: ${await active(page)}`);
-  expect('ask', /^Answer/.test(await page.locator('[data-status]').textContent()), `status after the answer: "${await page.locator('[data-status]').textContent()}"`);
+  // Typed and sent with Ask: focus stays in the box; the status region says the answer is ready.
+  expect('ask', (await page.evaluate(() => document.activeElement?.id)) === 'ask-q', `typed question: focus after the answer is on ${await active(page)}, not the box`);
+  expect('ask', /^Answer ready\./.test(await page.locator('[data-status]').textContent()), `status after the answer: "${await page.locator('[data-status]').textContent()}"`);
   expect('ask', (await page.locator('[data-ask-label]').textContent()) === 'Ask a follow-up', 'the box didn\'t become the follow-up box');
   expect('ask', !(await page.locator('[data-examples]').isVisible()), 'the example questions still show in the conversation');
   await page.locator('[data-whats-sent]').click();
@@ -648,7 +650,7 @@ passes.push('cards: progress, tap / Space / arrows select without moving on, Nex
   expect('ask', await page.evaluate(() => document.activeElement?.classList.contains('ask-answer')), `after an example by keyboard, focus is on ${await active(page)}`);
   await ctx.close();
 }
-passes.push('ask: waiting state, source chip, related card, new tab, focus and status on the answer, follow-up box, "What\'s sent?", "I don\'t have that" with its nearest page, new conversation');
+passes.push('ask: waiting state, source chip, related card, new tab, focus by path (example → answer, typed → box), follow-up box, "What\'s sent?", "I don\'t have that" with its nearest page, new conversation');
 
 // A reply with answer text (the stub has none), from the real handler's retrieval and citations.
 const ANSWER = 'Murphy Canyon is one of the base housing areas tied to Naval Base San Diego. The latest wait list gives a range of months for each pay band and bedroom count, and the area page lists each community with its pet policy. Liberty Military Housing runs the list; apply through the Housing Service Center once you have orders, and check the page for the date of the estimate.';
@@ -663,6 +665,29 @@ const askIn = async (page, question) => {
   await page.locator('[data-send]').click();
   await page.waitForFunction((k) => document.querySelectorAll('.ask-answer:not(.ask-waiting)').length > k || !document.querySelector('[data-error]').hidden, n, { timeout: 10_000 }).catch(() => {});
 };
+
+// The announcement for a typed question: polite, "Answer ready." and exactly the answer's first sentence, focus in
+// the box, by Enter and by the Ask button.
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.route('**/api/ask', answered());
+  await page.goto(`${BASE}/`);
+  const live = await page.locator('[data-status]').evaluate((e) => `${e.getAttribute('role')}|${e.getAttribute('aria-live')}`);
+  expect('ask', live === 'status|polite', `the status region is ${live}, not a polite live region`);
+  const want = `Answer ready. ${ANSWER.match(/^.+?[.!?](?=\s|$)/)[0]}`;
+  for (const how of ['Enter', 'Ask']) {
+    const n = await page.locator('.ask-answer:not(.ask-waiting)').count();
+    await page.locator('[data-q]').fill(`How long is the wait at Murphy Canyon (${how})?`);
+    if (how === 'Enter') await page.locator('[data-q]').press('Enter');
+    else await page.locator('[data-send]').click();
+    await page.waitForFunction((k) => document.querySelectorAll('.ask-answer:not(.ask-waiting)').length > k, n);
+    const said = await page.locator('[data-status]').textContent();
+    expect('ask', said === want, `typed (${how}): status "${said}", want "${want}"`);
+    expect('ask', (await page.evaluate(() => document.activeElement?.id)) === 'ask-q', `typed (${how}): focus on ${await active(page)}, not the box`);
+  }
+  await ctx.close();
+}
 
 // --- ask-panel ---
 {
