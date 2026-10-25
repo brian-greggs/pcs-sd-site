@@ -94,13 +94,13 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
 // One Messages API call. The model comes from ASSISTANT_MODEL (no default in code), so the
 // request uses only parameters every current model accepts; thinking and effort stay at the
 // model's defaults. A refusal comes back as stop_reason "refusal" and is answered with a pointer.
-// max_tokens 800 (QA L2): an answer runs under 150 words, so this caps a runaway or injected one. Current models think
-// by default and thinking counts against max_tokens, so a long think can cut an answer short: stop_reason goes back
-// in `usage` ("max_tokens" when that happens) and the eval reports it.
+// max_tokens 1500 (QA L2, Brian 2026-10-25): an answer runs under 150 words, so this caps a runaway or injected one
+// while leaving room for thinking, which current models do by default and which counts against max_tokens. A stop at
+// the cap still cuts an answer short: stop_reason goes back in `usage` ("max_tokens" then) and the eval reports it.
 // Token counts go back with the answer (no text), so the eval can report what a run cost.
 export async function callClaude({ apiKey, model, system, messages }) {
   const client = new Anthropic({ apiKey, maxRetries: 1, timeout: 60_000 });
-  const res = await client.messages.create({ model, max_tokens: 800, system, messages });
+  const res = await client.messages.create({ model, max_tokens: 1500, system, messages });
   const u = res.usage ?? {};
   const usage = { model: res.model, input_tokens: u.input_tokens ?? 0, output_tokens: u.output_tokens ?? 0, cache_read_input_tokens: u.cache_read_input_tokens ?? 0, cache_creation_input_tokens: u.cache_creation_input_tokens ?? 0, stop_reason: res.stop_reason ?? null };
   if (res.stop_reason === 'refusal') return { refused: true, text: '', usage };

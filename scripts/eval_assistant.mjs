@@ -463,6 +463,17 @@ reviewCases.push(
   ['variants: band only, the base run keeps page order', variantsFirst(vchunk, { band: 'E1–E4' }, mhaOf).text, 'head\nto A: 1\nto B: 2\nE1: x\nE5: y\nO4: z\ntail'],
   ['variants: no context, as built', variantsFirst(vchunk, {}, mhaOf).text, vchunk.text],
 );
+// The family's BAH line from the shared table goes ahead of the page's default; none when it's the same or no context.
+const bchunk = { text: 'rent\nBAH E5–E6 SD\nmore', variants: [{ from: 1, to: 2, band: 'E5–E6', mha: 'CA038', default: true, bah: true }] };
+const bahLines = new Map([['CA038|O4–O6', 'BAH O4–O6 SD'], ['CA024|E5–E6', 'BAH E5–E6 CP']]);
+const bmha = new Map([['b', 'CA038'], ['p', 'CA024']]);
+reviewCases.push(
+  ['BAH: the family\'s band ahead of the default', variantsFirst(bchunk, { band: 'O4–O6' }, bmha, bahLines).text, 'rent\nBAH O4–O6 SD\nBAH E5–E6 SD\nmore'],
+  ['BAH: the family\'s area ahead of the default', variantsFirst(bchunk, { base: 'p' }, bmha, bahLines).text, 'rent\nBAH E5–E6 CP\nBAH E5–E6 SD\nmore'],
+  ['BAH: the family\'s line is the default', variantsFirst(bchunk, { base: 'b', band: 'E5–E6' }, bmha, bahLines).text, bchunk.text],
+  ['BAH: no context', variantsFirst(bchunk, {}, bmha, bahLines).text, bchunk.text],
+);
+if (index) reviewCases.push(['BAH: the corpus has every band in both areas, once', index.bahLines.size, 14]);
 const reviewBad = reviewCases.filter(([, got, want]) => got !== want);
 // Judged after every push above (before 2026-10-25 this ran before the context rule cases were added, so those never
 // counted).
@@ -524,6 +535,9 @@ if (withUsage.length) {
   const [pi, po] = PRICE[model] ?? [];
   console.log(`Tokens (${withUsage.length} model calls, ${model}): ${tin} in, ${tout} out${pi != null ? `; cost $${((tin * pi + tout * po) / 1e6).toFixed(4)}` : ''}`);
 }
+// Answers cut off at max_tokens (assistant/ask.js callClaude: 1500, thinking included).
+const capped = results.filter((r) => r.usage?.stop_reason === 'max_tokens');
+console.log(`max_tokens stops: ${!withUsage.length ? 'none (no model calls)' : capped.length ? `${capped.length} of ${withUsage.length} model calls (${capped.map((r) => r.id).join(', ')})` : `none in ${withUsage.length} model calls`}`);
 const httpErrors = results.filter((r) => r.status >= 400 || r.cf_error);
 if (httpErrors.length) console.log(`HTTP errors: ${httpErrors.map((r) => `${r.id} ${r.status}${r.cf_error ? ` (Cloudflare ${r.cf_error})` : ''}`).join(', ')}`);
 else console.log('HTTP errors: none (no Cloudflare 1102)');

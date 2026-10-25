@@ -1,4 +1,25 @@
-# Site build — status (2026-10-25, session 16: assistant fixes before Monday's user sessions; v1.1.0)
+# Site build — status (2026-10-25, session 16b: max_tokens 1500, BAH lines once; session 16: assistant fixes before Monday's user sessions; v1.1.0)
+
+## Session 16b: Brian's two changes (2026-10-25), same branch
+
+- **`max_tokens` 1500** (was 800 in session 16): room for the thinking current models do by default. `usage.stop_reason` is still recorded. The eval prints `max_tokens stops:` with the rows whose answers hit the cap ("none (no model calls)" in retrieval mode).
+- **BAH lines once (QUESTIONS 89/90).** A Cost section carries only the page's default BAH line again, as on main. Every band × area line (7 × 2) is in the corpus once, as `bah_lines`. The build fails if two pages print different lines for the same band and area. With context, `variantsFirst` puts the family's line just ahead of the default, when theirs differs. Base page BAH tables, the rent-ratio lines and tables, and At a glance keep every band.
+- **Two more cuts toward the old size:** the Commute section's summary keeps only its default line. Its table, sent with it, already has the drive to every base; `corpus-variants` checks the table names each base. And `rank_text` isn't shipped: it only builds the postings, which the Function reads prebuilt.
+- Self-tests: 5 new cases (14 in the code-review and variant group): the family's band, the family's area, the default when it's theirs, no context, and 14 shared lines in the corpus.
+
+**Numbers (this container):**
+- Corpus: 1,716 KB (main 1,558 KB; session 16 2,091 KB). Same 950 chunk ids, and postings byte-identical to main's.
+- `JSON.parse`, 60 interleaved runs after warm-up: median 4.4 ms (main's corpus 4.6 ms in the same run; it has `rank_text`). Cold first parse in a fresh process, median of 7: about 12.8 ms for both main's corpus and this one (session 16's: about 14.4 ms). Session 16's "4.8 → 6.8 ms" was a 5-run median without warm-up.
+- in-09's prompt: 5,504 characters (main 5,456; session 16 23,792). Largest prompt unchanged: seq-08 27,203. All 53 rows that reach the model: 577,976 (main) → 607,062 characters (+5.0%; session 16 656,994). ctx-08 went from 14,930 to 12,102.
+
+**Rows:** against main, only in-16 changed (FAIL → PASS), and no row's sections changed. Against session 16, nothing changed: rules, top section and sections sent are all identical. ctx-07, ctx-08 and ctx-09 pass every retrieval rule. The boost still moves only ctx-09.
+
+**Runs on 2026-10-25 (16b):**
+- Build: 59 PASS lines, no FAIL.
+- Plants: dated 16/16, sequence 34/34, front end 28/28, maps 22/22, intake-network 4/4, corpus caption caught, corpus variants caught (181 sections), browser 4/4.
+- `check:browser`: all 12 groups pass.
+- Retrieval eval: exit 0. Expected fact 51/51, page 51/51, section 45/45, every self-test passes.
+- Live eval still not run (no key here).
 
 ## Session 16: assistant fixes from QA_REVIEW.md (2026-10-25), branch `claude/assistant-monday-launch-fixes-mhbk5t`
 
@@ -8,7 +29,7 @@ Scope: `assistant/`, `functions/` (no change needed), `scripts/build_corpus.mjs`
 - **Ranking is unchanged.** Only the default variant is ranked (`rank_text`), and hidden variant lines weigh nothing when a long section is split into parts, so the corpus has the same 950 chunks with the same ids and byte-identical BM25 postings as before. The other variants ride along in the part that holds their default.
 - **Context puts the reader's lines first** (`variantsFirst` in `assistant/retrieve.js`): within each run of one kind of variant (the drives, the rents, the BAH lines, the area tables), the ones that fit the family's band and base come first, then the page's default, then the rest. Nothing is dropped. No context: page order, everything kept.
 - **Base boost (narrow).** With a base in the context, a question that names no place (no word of a neighborhood, base housing or base page title) and takes no route gets sections on the pages tied to that base ×1.25. Tied: a base housing page LMH ties to the base (its base page's "Tied to" section); a neighborhood page that leads with the base (its nearest) and that the base page lists under 30 min. Relevance and the nearest page are decided before the boost. NBSD's tied pages: North Park and Paradise Hills base housing, Bonita, National City, Southeastern / Paradise Hills.
-- **Code review:** S2 (`Object.hasOwn` for SYNONYMS and the postings, null-prototype postings while building: "constructor", "__proto__", "toString" are words); L5 (`base` must be a string); `max_tokens` 800 (stop_reason now rides in `usage`); 502/503 replies carry no citations (S4's server half; the page half is in `src/pages`, not touched).
+- **Code review:** S2 (`Object.hasOwn` for SYNONYMS and the postings, null-prototype postings while building: "constructor", "__proto__", "toString" are words); L5 (`base` must be a string); `max_tokens` 800 (1500 since 16b; stop_reason now rides in `usage`); 502/503 replies carry no citations (S4's server half; the page half is in `src/pages`, not touched).
 - **Prompt:** the rules line now says to name the base and pay grade "inside the sentence that gives it …, never as a sentence of its own" (the words `check_frontend` reads are kept). One new line: some sections give one value per band, area or base on labeled lines; use the family's, never give another's as theirs, and say which one a figure is for when they haven't said.
 - **Eval:** `short` counts the words a reader sees (`parseAnswer`: no `**`, list markers or link targets). `no_context_mention` flags the pay band and its grades, spouse/partner, the kids' age groups and "since you're …", not the base's name. in-16's `expect_fact` is the wording sent. New category `context_variant` (rules as `context` minus `context_routes`, plus `no_other_variant`: live, `reject_answer` must not match) and three rows: ctx-07 (O1–O3 at Miramar, Pacific Beach drive and 2-bed), ctx-08 (O4–O6, Carlsbad 3-bed), ctx-09 (E5–E6 at NBSD, infant care near 32nd Street). `expect_page` may be a list. New self-tests: S2 (three bodies), S4, L5, variant order (9 cases). Fixed a self-test bug: the 15 context rule cases were pushed after `ruleBad` was computed, so they never counted; they all pass now (44 cases).
 - **New build check `corpus-variants`:** every variant a section renders reaches a chunk; `--plant variants` (the old stripping) must fail it: 181 sections caught.

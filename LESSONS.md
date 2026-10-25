@@ -229,4 +229,7 @@
 - **A check that reads a list before it's finished checks less than it says.** `ruleBad` was computed before 15 cases were pushed, so the "40 cases" self-test judged 25. Compute verdicts after every case is added.
 - **"Nearest" isn't "near".** Tying neighborhoods to their nearest base put Alpine (50 min) first for an NBSD question. The base page's own under-30 list, intersected with nearest, matched what a family would expect.
 - **A partial place name is still a place.** "Pacific Beach" doesn't name the page "Pacific Beach / La Jolla", so a boost meant for questions with no place lifted other places over it. Checking for any word of a place's title fixed it.
+- **State a shared fact once and join it at request time.** The 14 BAH lines were the same on 60 pages. One copy in the corpus, plus the family's line added when the request knows their band, gives the model the figure it needs; in-09 went from 23.8k characters back to 5.5k.
+- **Time a parse the way the platform does.** A 5-run median without warm-up said 4.8 → 6.8 ms. Interleaved warm runs and cold fresh-process runs agree with each other and show the real gap. Both numbers are in STATUS, labeled.
+- **`pkill -f` matches its own shell.** The command line that ran `pkill -f "astro preview"` contained the pattern, so it killed itself mid-run. Stop servers by PID.
 

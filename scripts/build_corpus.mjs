@@ -95,11 +95,14 @@ const stripHidden = (html) => dropElements(html, /<(\w+)\b[^>]*\shidden(?:="")?(
 // Per-base and per-band variants (2026-10-25). A page renders one variant per pay band (data-band-show), per BAH
 // area (data-mha-bases) and per base (data-base); its script shows the reader's and hides the rest. Every variant
 // goes in the corpus as its own line (or block, for a table), labeled with what it's for: "3-bed rent vs. BAH,
-// O1–O3, San Diego area: 99–114% (HUD rent / BAH)", "Commute at 0700 to MCAS Miramar: 16–18 min". Each is
+// O1–O3, San Diego area: 99–114% (HUD rent / BAH)", "Commute at 0700 to MCAS Miramar: 16–18 min". Two kinds a page
+// repeats from elsewhere go in once, not per section: the BAH lines (BAH_LINES) and the Commute summary per base (the
+// section's table has every base). Each is
 // wrapped in marker lines (VARIANT_OPEN/VARIANT_CLOSE) that unmark() turns into the chunk's `variants` ranges, so
 // the Function can put the reader's band and base first (assistant/retrieve.js variantsFirst). Only the variant
 // the page shows by default is ranked (rank_text): ranking stays what it was, and the other variants are sent with it.
 const VARIANT = [];
+const BAH_LINES = new Map(); // "CA038|O1–O3" → its line, the same on every page that prints it
 const VARIANT_OPEN = /^⟦v(\d+)⟧$/;
 const VARIANT_CLOSE = '⟦/v⟧';
 const attr = (tag, name) => tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1] ?? null;
@@ -134,13 +137,21 @@ function labelVariants(html, areas) {
     if (!areas.has(bases)) throw new Error(`build_corpus: no BAH block on the page for data-mha-bases="${bases}"`);
     return areas.get(bases);
   };
-  // A BAH area block: one line per band, under the block's own label.
+  // A BAH area block (the BAH lines a neighborhood or base housing Cost section repeats from the base page's table):
+  // one line per band, under the block's own label. Only the page's default goes in the section; every band × area
+  // line goes in BAH_LINES once for the corpus (QUESTIONS 89), and the Function adds the family's next to it.
   out = replaceElements(out, /<(div)\b(?=[^>]*\sdata-mha-bases=")[^>]*\sdata-bah-block="[^"]*"[^>]*>/, (tag, inner) => {
     const label = text((inner.match(/<p[^>]*data-bah-label[^>]*>([\s\S]*?)<\/p>/) ?? [, ''])[1]);
     const { mha } = areaOf(attr(tag, 'data-mha-bases'));
     return replaceElements(inner.replace(/<p[^>]*data-bah-label[^>]*>[\s\S]*?<\/p>/, ''), /<(ul)\b[^>]*\sdata-band-show="[^"]*"[^>]*>/, (ul, items) => {
       const band = attr(ul, 'data-band-show');
-      return variantHtml({ band, mha, shown: !isHidden(tag) && !isHidden(ul) }, `<p>${label}, ${band} — ${bandItems(items)}</p>`);
+      const line = `${label}, ${band} — ${bandItems(items)}`;
+      const key = `${mha}|${band}`;
+      if (BAH_LINES.has(key) && BAH_LINES.get(key) !== line) throw new Error(`build_corpus: two BAH lines for ${key}:\n  ${BAH_LINES.get(key)}\n  ${line}`);
+      BAH_LINES.set(key, line);
+      const shown = !isHidden(tag) && !isHidden(ul);
+      if (!shown) { VARIANT.push({ band, mha, shared: true, id: VARIANT.length }); return ''; }
+      return variantHtml({ band, mha, bah: true, shown }, `<p>${line}</p>`);
     });
   });
   // Any other per-band list (the DLA rates, under their own label line): every band's items, one per line as the
@@ -168,8 +179,12 @@ function labelVariants(html, areas) {
   });
   // A wrapper per BAH area (the full ratio tables): kept whole; its captions name the area.
   out = replaceElements(out, /<(\w+)\b[^>]*\sdata-mha-bases="[^"]*"[^>]*>/, (tag, inner) => variantHtml({ mha: areaOf(attr(tag, 'data-mha-bases')).mha, shown: !isHidden(tag) }, inner));
-  // A summary line per base: each on its own line; it starts with the base's name.
-  out = replaceElements(out, /<(\w+)\b[^>]*\sdata-base="[^"]*"[^>]*>/, (tag, inner) => variantHtml({ base: attr(tag, 'data-base'), shown: !isHidden(tag) }, `<p>${inner}</p>`));
+  // A summary line per base (the Commute section's): only the default goes in, since the section's own table, sent
+  // with it, has the drive to every base (QUESTIONS 89/90); corpus-variants checks that table names the base.
+  out = replaceElements(out, /<(\w+)\b[^>]*\sdata-base="[^"]*"[^>]*>/, (tag, inner) => {
+    if (isHidden(tag)) { VARIANT.push({ base: attr(tag, 'data-base'), inTable: true, id: VARIANT.length }); return ''; }
+    return variantHtml({ base: attr(tag, 'data-base'), shown: true }, `<p>${inner}</p>`);
+  });
   return out;
 }
 // "E5: $3,975 with dependents, …; E6: …" from a band's <li> items.
@@ -341,14 +356,16 @@ for (const file of walk(DIST)) {
           group: `${url}#${id}${parts.length > 1 ? `-${pi}` : ''}`, // all parts of one (sub)section; retrieval sends them together
           text: w.text,
           ...(ranked.length < lines.length ? { rank_text: ranked.join('\n') } : {}), // ranking only; `text` is what's sent
-          ...(w.variants.length ? { variants: w.variants.map(({ from, to, band, mha, base, shown }) => ({ from, to, ...(band ? { band } : {}), ...(mha ? { mha } : {}), ...(base ? { base } : {}), ...(shown ? { default: true } : {}) })) } : {}),
+          ...(w.variants.length ? { variants: w.variants.map(({ from, to, band, mha, base, shown, bah }) => ({ from, to, ...(band ? { band } : {}), ...(mha ? { mha } : {}), ...(base ? { base } : {}), ...(shown ? { default: true } : {}), ...(bah ? { bah: true } : {}) })) } : {}),
           verified_on: verified,
           dates,
         });
       });
     });
     // corpus-variants: every variant the section renders is in a chunk, labeled.
-    const reached = VARIANT.slice(seen).filter((v) => sent.has(v.id)).length;
+    const sectionRows = chunks.filter((c) => c.url === `${url}#${id}`).flatMap((c) => c.text.split('\n')).filter(isRow);
+    const reached = VARIANT.slice(seen).filter((v) => sent.has(v.id) || (v.shared && BAH_LINES.has(`${v.mha}|${v.band}`))
+      || (v.inTable && sectionRows.some((r) => r.startsWith(BASE_NAME[v.base])))).length;
     if (reached !== expected) unlabeled.push(`${url}#${id}: ${expected} variants on the page, ${reached} in the corpus`);
   }
 }
@@ -377,6 +394,8 @@ if (!existsSync(dirname(OUT))) mkdirSync(dirname(OUT), { recursive: true });
 // The Q8 priority labels ride along for /api/ask's intake context (the Function can't import JSON
 // in a way both Node and Cloudflare's wrangler 3 accept). They're public: /plan/ shows them.
 const intakePriorities = JSON.parse(readFileSync(join(ROOT, 'src', 'config', 'intake', 'priorities.json'), 'utf-8')).priorities.map(({ id, label }) => ({ id, label }));
-const json = JSON.stringify({ built_from: 'dist/ pages after the principle checks', chunks, index: indexChunks(chunks), intake_priorities: intakePriorities, base_ties: baseTies, mha_bases: mhaBases });
+// rank_text only builds the postings: the Function reads the postings, so it isn't shipped (QUESTIONS 90).
+const index = indexChunks(chunks);
+const json = JSON.stringify({ built_from: 'dist/ pages after the principle checks', chunks: chunks.map(({ rank_text, ...c }) => c), index, intake_priorities: intakePriorities, base_ties: baseTies, mha_bases: mhaBases, bah_lines: Object.fromEntries(BAH_LINES) });
 writeFileSync(OUT, json);
 console.log(`\nAssistant corpus\n  ${chunks.length} chunks from ${pages} pages → dist/assistant/corpus.json (${Math.round(json.length / 1024)} KB); ${Math.round(undatedChars / 1024)} KB of undated text outside fact blocks left out\n`);

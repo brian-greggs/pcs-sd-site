@@ -86,7 +86,8 @@ export function buildIndex(corpus) {
   // Pages tied to each base (scripts/build_corpus.mjs), and each base's BAH area, from the corpus.
   const ties = new Map(Object.entries(corpus.base_ties ?? {}).map(([slug, urls]) => [slug, new Set(urls)]));
   const mhaOf = new Map(Object.entries(corpus.mha_bases ?? {}).flatMap(([mha, slugs]) => slugs.map((slug) => [slug, mha])));
-  return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [], ties, mhaOf };
+  const bahLines = new Map(Object.entries(corpus.bah_lines ?? {})); // "CA038|O1–O3" → that band's 2026 BAH line, once
+  return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [], ties, mhaOf, bahLines };
 }
 
 // Expanded query terms, each with a weight (the words the family typed count fully). `context` is the
@@ -148,7 +149,9 @@ const BASE_ROUTE_SECTIONS = ['tier-under30', 'tier-30-45', 'bah-table'];
 // to each base, the rent per band and area, …). Within each run, the ones that fit the reader (every tag they carry
 // that the context can check agrees with it, and at least one can be checked) move to the front; then the one the
 // page shows by default; then the rest, each group in page order. Nothing is dropped. No band or base: as built.
-export function variantsFirst(chunk, { band = null, base = null } = {}, mhaOf = new Map()) {
+// A Cost section carries only the page's default BAH line (the corpus keeps every band × area line once, in
+// `bahLines`, QUESTIONS 89): when the family's band or area differs, their line goes in just ahead of it.
+export function variantsFirst(chunk, { band = null, base = null } = {}, mhaOf = new Map(), bahLines = new Map()) {
   if (!chunk.variants?.length || (!band && !base)) return chunk;
   const mha = base ? mhaOf.get(base) ?? null : null;
   const fits = (v) => {
@@ -165,7 +168,11 @@ export function variantsFirst(chunk, { band = null, base = null } = {}, mhaOf = 
     out.push(...lines.slice(i, vs[k].from));
     const run = [vs[k++]];
     while (k < vs.length && vs[k].from === run.at(-1).to && kind(vs[k]) === kind(run[0])) run.push(vs[k++]);
-    for (const v of [0, 1, 2].flatMap((r) => run.filter((v) => rank(v) === r))) out.push(...lines.slice(v.from, v.to));
+    for (const v of [0, 1, 2].flatMap((r) => run.filter((v) => rank(v) === r))) {
+      const own = v.bah && v.default ? `${mha ?? v.mha}|${band ?? v.band}` : null;
+      if (own && own !== `${v.mha}|${v.band}` && bahLines.has(own)) out.push(bahLines.get(own));
+      out.push(...lines.slice(v.from, v.to));
+    }
     i = run.at(-1).to;
   }
   out.push(...lines.slice(i));
@@ -248,6 +255,6 @@ export function search(index, question, settings = SETTINGS, context = '', route
   const nearest = routed === 'sequence-start' ? { url: START_PAGE, title: chunks[0]?.page_title ?? 'Move sequence: Orders in hand' }
     : routed ? { url: route.basePage, title: chunks[0]?.page_title ?? 'Your base' }
     : top ? { url: top.d.chunk.url.split('#')[0], title: top.d.chunk.page_title } : { url: '/', title: 'Home: start with your base' };
-  const sent = relevant ? chunks.map((c) => variantsFirst(c, route, index.mhaOf)) : [];
+  const sent = relevant ? chunks.map((c) => variantsFirst(c, route, index.mhaOf, index.bahLines)) : [];
   return { relevant, chunks: sent, nearest, routed, base_boost: !!tied, top_score: top ? Math.round(top.s * 100) / 100 : 0, terms: [...terms.keys()] };
 }
