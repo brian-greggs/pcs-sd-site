@@ -285,7 +285,7 @@ const unlabeled = [];
 const baseTies = {};
 const tie = (slug, page) => { (baseTies[slug] ??= []).includes(page) || baseTies[slug].push(page); };
 const nearestBase = new Map(); // neighborhood page → its default base
-const under30 = new Map(); // base slug → the neighborhood pages its page lists under 30 min
+const under30 = new Map(); // base slug → the neighborhood pages its page lists under 30 min, in the page's (drive-time) order
 const mhaBases = {}; // MHA → the bases whose BAH it is, for matching a reader's base to a BAH area variant
 let pages = 0, undatedChars = 0;
 for (const file of walk(DIST)) {
@@ -395,7 +395,9 @@ if (!existsSync(dirname(OUT))) mkdirSync(dirname(OUT), { recursive: true });
 // in a way both Node and Cloudflare's wrangler 3 accept). They're public: /plan/ shows them.
 const intakePriorities = JSON.parse(readFileSync(join(ROOT, 'src', 'config', 'intake', 'priorities.json'), 'utf-8')).priorities.map(({ id, label }) => ({ id, label }));
 // rank_text only builds the postings: the Function reads the postings, so it isn't shipped (QUESTIONS 90).
+// base_under30: each base page's under-30 neighborhoods in drive-time order, for the where-to-live route's At a glance
+// sections (assistant/retrieve.js).
 const index = indexChunks(chunks);
-const json = JSON.stringify({ built_from: 'dist/ pages after the principle checks', chunks: chunks.map(({ rank_text, ...c }) => c), index, intake_priorities: intakePriorities, base_ties: baseTies, mha_bases: mhaBases, bah_lines: Object.fromEntries(BAH_LINES) });
+const json = JSON.stringify({ built_from: 'dist/ pages after the principle checks', chunks: chunks.map(({ rank_text, ...c }) => c), index, intake_priorities: intakePriorities, base_ties: baseTies, mha_bases: mhaBases, bah_lines: Object.fromEntries(BAH_LINES), base_under30: Object.fromEntries([...under30].map(([slug, pages]) => [slug, [...pages]])) });
 writeFileSync(OUT, json);
 console.log(`\nAssistant corpus\n  ${chunks.length} chunks from ${pages} pages → dist/assistant/corpus.json (${Math.round(json.length / 1024)} KB); ${Math.round(undatedChars / 1024)} KB of undated text outside fact blocks left out\n`);

@@ -46,6 +46,7 @@ ${KNOWN_GAPS.map((g) => `- ${g}`).join('\n')}
 Shape of an answer
 - Short: usually 3 to 6 sentences, under 150 words. Plain text: no headings, tables, italics or links. You may put the recommendation in **bold**, and use a short list (lines starting "- ") only when comparing two or three places.
 - Lead with one recommendation for this family, then the tradeoff that comes with it, named plainly ("the closest neighborhoods run highest against the allowance").
+- When you give a neighborhood, give its drive time and its rent vs. BAH for the family's pay band, if both were sent.
 - No list of sources at the end: the citations stay next to their sentences.`;
 
 export function userMessage(question, chunks, nearest, household, previous) {
