@@ -11,7 +11,7 @@ import { search } from './retrieve.js';
 import { SYSTEM_PROMPT, NO_ANSWER, userMessage } from './prompt.js';
 import { isReferral, isDemographic, GUARD_TEXT } from './guards.js';
 import { sectionOf, labelOf, citedOnly } from './cite.js';
-import { cleanContext, householdLine, basePage } from './context.js';
+import { cleanContext, householdLine, routeOf } from './context.js';
 
 export const MAX_QUESTION = 500;
 
@@ -46,9 +46,10 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
   const previous = cleanPrevious(body.previous);
   // Retrieve for the new question, with the previous question's topic words at a low weight (a follow-up
   // such as "what about Santee?" names a place but not the topic). The answer text isn't used for retrieval.
-  // The reader's base, when the chip sends it, routes a where-to-live question to that base page; it is never
-  // added to the question's words.
-  const r = search(index, question, undefined, previous?.question ?? '', { basePage: basePage(context) });
+  // The reader's base, when the chip sends it, routes a where-to-live question to that base page and lifts the pages
+  // tied to it a little; the base and band put their own rows and drive times first in each section. Neither is
+  // ever added to the question's words.
+  const r = search(index, question, undefined, previous?.question ?? '', routeOf(context));
   const pointer = r.relevant
     ? { url: nearestChunk(r).url, title: nearestChunk(r).page_title, verified_on: nearestChunk(r).verified_on }
     : { url: r.nearest.url, title: r.nearest.title };
@@ -81,7 +82,8 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
     const status = e instanceof Anthropic.APIError ? e.status : undefined;
     console.error('ask: model call failed', e?.constructor?.name ?? 'Error', status ?? '');
     const busy = e instanceof Anthropic.RateLimitError || (status ?? 0) >= 500 || e instanceof Anthropic.APIConnectionError;
-    return { status: busy ? 503 : 502, json: { error: busy ? 'The assistant is busy. Try again in a minute.' : 'The assistant isn’t working right now.', citations } };
+    // No citations: nothing was answered, so there's nothing to source (QA S4).
+    return { status: busy ? 503 : 502, json: { error: busy ? 'The assistant is busy. Try again in a minute.' : 'The assistant isn’t working right now.' } };
   }
   if (out.refused || !out.text) {
     return { status: 200, json: { mode, kind: 'declined', answer: `I can’t answer that one here. ${pointTo}`, citations, usage: out.usage } };
@@ -92,12 +94,15 @@ export async function handleAsk({ body, env, index, callModel = callClaude }) {
 // One Messages API call. The model comes from ASSISTANT_MODEL (no default in code), so the
 // request uses only parameters every current model accepts; thinking and effort stay at the
 // model's defaults. A refusal comes back as stop_reason "refusal" and is answered with a pointer.
+// max_tokens 1500 (QA L2, Brian 2026-10-25): an answer runs under 150 words, so this caps a runaway or injected one
+// while leaving room for thinking, which current models do by default and which counts against max_tokens. A stop at
+// the cap still cuts an answer short: stop_reason goes back in `usage` ("max_tokens" then) and the eval reports it.
 // Token counts go back with the answer (no text), so the eval can report what a run cost.
 export async function callClaude({ apiKey, model, system, messages }) {
   const client = new Anthropic({ apiKey, maxRetries: 1, timeout: 60_000 });
-  const res = await client.messages.create({ model, max_tokens: 4096, system, messages });
+  const res = await client.messages.create({ model, max_tokens: 1500, system, messages });
   const u = res.usage ?? {};
-  const usage = { model: res.model, input_tokens: u.input_tokens ?? 0, output_tokens: u.output_tokens ?? 0, cache_read_input_tokens: u.cache_read_input_tokens ?? 0, cache_creation_input_tokens: u.cache_creation_input_tokens ?? 0 };
+  const usage = { model: res.model, input_tokens: u.input_tokens ?? 0, output_tokens: u.output_tokens ?? 0, cache_read_input_tokens: u.cache_read_input_tokens ?? 0, cache_creation_input_tokens: u.cache_creation_input_tokens ?? 0, stop_reason: res.stop_reason ?? null };
   if (res.stop_reason === 'refusal') return { refused: true, text: '', usage };
   const text = res.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n').trim();
   return { refused: false, text, usage };
