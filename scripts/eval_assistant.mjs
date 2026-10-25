@@ -50,9 +50,16 @@
 //   band_named         live, context cases, when the answer gives a BAH figure: every sentence with one names the
 //                      pay grade it's for, the family's band or one of its grades ("For E5–E6 at NBSD, …", "E5")
 //   context_free       context_free cases: the sections sent are the same with and without the context
-//   no_context_mention live, context_free cases: the answer doesn't restate the household (base, pay band,
-//                      spouse or partner, children's ages) or say whether the answer depends on it
-//   short, no_safety_claim   live only
+//   no_context_mention live, context_free cases: the answer doesn't restate the household (pay band or one of its
+//                      grades, spouse or partner, children's ages, "since you're …") or say whether the answer
+//                      depends on it. The base's name is allowed (2026-10-25): it's often the subject ("NBSD's CPPA")
+//   no_other_variant   live, context_variant cases: the answer doesn't give another band's or base's figure
+//                      (reject_answer, a regex: e.g. Carlsbad's E5–E6 row when the family is O4–O6)
+//   short              live: at most 180 words a reader sees (parseAnswer: no ** or list markers, link text only)
+//   no_safety_claim    live only
+// context_variant cases (2026-10-25): the family's band or base picks a variant the page hides by default (another
+// band's row, the drive to another base) or lifts the pages tied to their base. expect_fact then checks the order:
+// their line comes first in its section. expect_page may be a list (any of them).
 // Self-tests (no model): the daily cap, the From-list filter (assistant/cite.js), the answer formatting
 // the page renders (assistant/format.js), the rules fixed for QUESTIONS 65 and 68 (number words in
 // expect_answer, rent vs BAH figures, gap wording, safety refusals), the sequence-start and where-to-live routes,
@@ -65,8 +72,8 @@ import { handleAsk, dailyCap } from '../assistant/ask.js';
 import { citedOnly, labelOf } from '../assistant/cite.js';
 import { parseAnswer } from '../assistant/format.js';
 import { NO_ANSWER } from '../assistant/prompt.js';
-import { search, isSequenceStart, isWhereToLive } from '../assistant/retrieve.js';
-import { BASES as CONTEXT_BASES } from '../assistant/context.js';
+import { search, isSequenceStart, isWhereToLive, variantsFirst } from '../assistant/retrieve.js';
+import { BASES as CONTEXT_BASES, cleanContext, routeOf } from '../assistant/context.js';
 import { DEMOGRAPHIC_TERMS, DEMOGRAPHIC_ALLOWED } from './principle_lists.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -139,13 +146,16 @@ const demoHits = (t) => {
   for (const re of DEMOGRAPHIC_ALLOWED) s = s.replace(re, ' ');
   return DEMOGRAPHIC_TERMS.filter((term) => new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(s));
 };
-const words = (t) => t.split(/\s+/).filter(Boolean).length;
+// Words a reader sees: the answer as the home page renders it (assistant/format.js), so ** and "- " don't count.
+const visibleText = (t) => parseAnswer(t).flatMap((b) => (b.type === 'p' ? [b.inline] : b.items)).map((xs) => xs.map((x) => x.text).join('')).join(' ');
+const words = (t) => visibleText(t).split(/\s+/).filter(Boolean).length;
 // Retrieval checks read what was sent: the chunks (STUB), the `sent` list (live), else the citations.
 const sentUrls = (r) => r.sent ?? (r.chunks ? r.chunks.map((c) => c.url) : (r.citations ?? []).map((c) => c.url));
 const pages = (r) => [...sentUrls(r), ...(r.citations ?? []).map((c) => c.url)];
-const hasPage = (r, p) => pages(r).some((u) => u.startsWith(p));
-const hasSection = (r, p, s) => pages(r).some((u) => u.startsWith(p) && u.includes(`#${s}`));
-const rank = (r, p) => { const i = [...new Set(sentUrls(r))].findIndex((u) => u.startsWith(p)); return i < 0 ? null : i + 1; };
+const any = (p) => [].concat(p); // expect_page: one page, or a list (any of them)
+const hasPage = (r, p) => pages(r).some((u) => any(p).some((x) => u.startsWith(x)));
+const hasSection = (r, p, s) => pages(r).some((u) => any(p).some((x) => u.startsWith(x)) && u.includes(`#${s}`));
+const rank = (r, p) => { const i = [...new Set(sentUrls(r))].findIndex((u) => any(p).some((x) => u.startsWith(x))); return i < 0 ? null : i + 1; };
 const norm = (s) => s.toLowerCase().replace(/[‘’]/g, "'").replace(/[–—]/g, '-').replace(/\s+/g, ' ');
 const RAW_CITE = /https?:\/\/|(?:^|[\s(;,])\/(?:[\w-]+\/)+(?:#[\w-]+)?|#[a-z][\w-]*\b|verified \d{4}-\d{2}-\d{2}/i;
 // BAH figures (Brian 2026-10-20): allowed when they come from the sections sent, with their year.
@@ -177,10 +187,10 @@ const bandRowOk = (answer, band, mha) => {
 // the answer never says whether it depends on it. INDEPENDENT_RE is the words models use for "doesn't depend".
 const INDEPENDENT_RE = /\b(?:the same (?:for|whatever|no matter|regardless)|doesn[’']t (?:depend|change|matter)|does not (?:depend|change)|regardless of (?:your|the|which)|no matter (?:which|what|your|where)|whatever (?:your|base|pay))\b/i;
 const dashed = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/[–-]/g, '[–-]');
+// Not the base's name (2026-10-25): an answer often has to name it ("NBSD's CPPA", "the Pendleton PPPO").
 const contextMentions = (answer, c) => {
-  const terms = [];
-  if (c.base && c.base !== 'unsure') terms.push(...new Set([CONTEXT_BASES[c.base].name, CONTEXT_BASES[c.base].short, c.base].map(dashed)));
-  if (c.band) terms.push(dashed(c.band));
+  const terms = ['since you[’\']re', 'since you are'];
+  if (c.band) terms.push(dashed(c.band), ...new Set(BAH_ROWS.filter((r) => r.pay_band === c.band).map((r) => `${r.grade.replace(/^([EOW])/, '$1-?')}\\b`)));
   if (c.partner) terms.push('your (?:spouse|partner|wife|husband)', 'spouse or partner');
   if (c.partner === false) terms.push('no spouse', 'without a spouse');
   if (c.kids?.length) terms.push(...c.kids.map((g) => `(?:kids?|children|child)\\b[^.\\n]{0,24}?\\b${dashed(g)}\\b`));
@@ -200,7 +210,7 @@ const bandNamed = (answer, band) => {
 const sameSections = (a, b) => JSON.stringify([...new Set(sentUrls(a))].sort()) === JSON.stringify([...new Set(sentUrls(b))].sort());
 
 function bahSourced(q, r, answer) {
-  const sent = r.chunks ?? (index ? search(index, q.question, undefined, q.previous?.question ?? '', { basePage: q.context ? `/base/${CONTEXT_BASES[q.context.base]?.slug}/` : null }).chunks : null);
+  const sent = r.chunks ?? (index ? search(index, q.question, undefined, q.previous?.question ?? '', routeOf(cleanContext(q.context))).chunks : null);
   if (r.chunks && r.chunks.some((c) => BAH_PRINTED.test(c.text) && !BAH_LABEL.test(c.text))) return 'FAIL';
   if (!realAnswers || !answer) return 'PASS';
   return bahFiguresOk(answer, sent ? sent.map((c) => c.text).join('\n') : null) ? 'PASS' : 'FAIL';
@@ -217,6 +227,7 @@ const RULES = {
   not_yet_covered: ['honest_gap', 'labels_only', 'from_cited'],
   context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'bah_sourced', 'band_row', 'band_named', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
   context_free: ['has_fact', 'retrieves_page', 'answers', 'context_free', 'no_context_mention', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
+  context_variant: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'bah_sourced', 'band_row', 'band_named', 'no_other_variant', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
 };
 
 function judge(rule, q, r) {
@@ -251,7 +262,7 @@ function judge(rule, q, r) {
     case 'cites_page':
       if (!realAnswers) return 'SKIP';
       if (r.cited_by !== 'label') return 'FAIL';
-      return !q.expect_page || r.citations.some((c) => c.url.startsWith(q.expect_page)) ? 'PASS' : 'FAIL';
+      return !q.expect_page || r.citations.some((c) => any(q.expect_page).some((p) => c.url.startsWith(p))) ? 'PASS' : 'FAIL';
     case 'dated': if (!realAnswers) return 'SKIP'; return r.citations?.length && r.citations.every((c) => /^20\d{2}-\d{2}-\d{2}$/.test(c.verified_on ?? '')) ? 'PASS' : 'FAIL';
     // (b) Short labels in the text; the links and dates are in the From list.
     case 'labels_only': if (!realAnswers) return 'SKIP'; if (r.kind !== 'answer') return null; return RAW_CITE.test(answer) ? 'FAIL' : 'PASS';
@@ -272,7 +283,8 @@ function judge(rule, q, r) {
     // The context cases: `r.plain` is the same question asked without the context.
     case 'context_routes': return !sameSections(r, r.plain) && hasPage(r, q.expect_page) && !hasPage(r.plain, q.expect_page) ? 'PASS' : 'FAIL';
     case 'context_free': return sameSections(r, r.plain) ? 'PASS' : 'FAIL';
-    case 'band_row': if (!realAnswers) return 'SKIP'; return bandRowOk(answer, q.context.band, q.expect_mha) ? 'PASS' : 'FAIL';
+    case 'band_row': if (!q.expect_mha) return null; if (!realAnswers) return 'SKIP'; return bandRowOk(answer, q.context.band, q.expect_mha) ? 'PASS' : 'FAIL';
+    case 'no_other_variant': if (!q.reject_answer) return null; if (!realAnswers) return 'SKIP'; return answerMatches(q.reject_answer, answer) ? 'FAIL' : 'PASS';
     case 'band_named': { if (!realAnswers) return 'SKIP'; const ok = bandNamed(answer, q.context.band); return ok == null ? null : ok ? 'PASS' : 'FAIL'; }
     case 'no_context_mention': if (!realAnswers) return 'SKIP'; return contextMentions(answer, q.context).length ? 'FAIL' : 'PASS';
     case 'short': if (!realAnswers) return 'SKIP'; return words(answer) <= 180 ? 'PASS' : 'FAIL';
@@ -375,7 +387,6 @@ const ruleCases = [
   ['rows: list form', everyRow([['92025', 73, 77]], '- 92025: $3,430, about 73–77% (Escondido: Cost)'), true],
   ['rows: combined range only', everyRow([['91910', 78, 86], ['91911', 80, 89]], 'About 78% to 89% of the allowance; zip 91911 runs higher, at 80% to 89%.'), false],
 ];
-const ruleBad = ruleCases.filter(([, got, want]) => got !== want);
 // The sequence-start route (assistant/retrieve.js): these always get Orders steps 1-3; these don't.
 const routeCases = [
   ['What should I do first after I get orders to San Diego?', true], ['We just got orders. Where do we start?', true],
@@ -409,11 +420,53 @@ ruleCases.push(
   ['band named: a figure with no grade', bandNamed('Oceanside is close. BAH is $3,963 a month with dependents (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6'), false],
   ['band named: no figure', bandNamed('Oceanside is 6 to 22 minutes from the gate.', 'E5–E6'), null],
   ['no context mention: a plain answer', contextMentions('File the DD 1351-2 through the gaining CPPA within 5 working days (Forms and claims: Travel voucher).', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length === 0, true],
-  ['no context mention: restates the base', contextMentions('For Camp Pendleton, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
+  ['no context mention: the base\'s name is allowed', contextMentions('File the DD 1351-2 with the Camp Pendleton IPAC.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, false],
+  ['no context mention: "since you\'re …"', contextMentions('Since you’re moving with family, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
+  ['no context mention: a grade of the band', contextMentions('An O-4 files the DD 1351-2 like anyone else.', { base: 'NBSD', band: 'O4–O6', partner: false, kids: [] }).length > 0, true],
   ['no context mention: restates the band', contextMentions('As an E5-E6, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
   ['no context mention: restates the household', contextMentions('Claim travel for your spouse and your kids aged 6–9 on the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
   ['no context mention: says it doesn\'t depend', contextMentions('This is the same for every base and pay grade.', { base: 'NBSD', band: 'O4–O6', partner: false, kids: [] }).length > 0, true],
 );
+
+// Reader-visible words (short): markdown markers and link targets don't count.
+ruleCases.push(
+  ['short: ** and list markers aren\'t words', words('**Live in Santee.**\n- Santee: 18 min\n- La Mesa: 22 min'), 10],
+  ['short: a link counts its text only', words('See [the Santee page](/communities/santee/#cost) now.'), 5],
+);
+
+// Code-review fixes (QA_REVIEW.md, 2026-10-25), against the built corpus: S2 "constructor" and other Object keys in a
+// question or the previous one; L5 a non-string base; S4 an error reply carries no citations.
+const reviewCases = [];
+if (index) {
+  for (const body of [{ question: 'Is there a constructor fee for base housing?' }, { question: 'What about Santee?', previous: { question: 'constructor' } }, { question: 'toString __proto__ hasOwnProperty valueOf' }]) {
+    let ok;
+    try { ok = (await handleAsk({ body, env: {}, index })).status === 200; } catch { ok = false; }
+    reviewCases.push([`S2: ${JSON.stringify(body)}`, ok, true]);
+  }
+  const fail = async () => { throw new Error('upstream'); };
+  const logError = console.error;
+  console.error = () => {}; // the handler logs the failure by type; expected here
+  const err = await handleAsk({ body: { question: 'How long is the base housing wait at Murphy Canyon?' }, env: { ANTHROPIC_API_KEY: 'x', ASSISTANT_MODEL: 'm' }, index, callModel: fail });
+  console.error = logError;
+  reviewCases.push(['S4: an error reply carries no citations', err.status >= 500 && !('citations' in err.json), true]);
+}
+reviewCases.push(
+  ['L5: base as an array is dropped', cleanContext({ base: ['PENDLETON'], band: 'E5–E6' })?.base, undefined],
+  ['L5: base as a string is kept', cleanContext({ base: 'PENDLETON' })?.base, 'PENDLETON'],
+);
+// Variants first (assistant/retrieve.js): the reader's band and base lead their run; the page default leads when the
+// context can't decide; no context, as built.
+const vchunk = { text: 'head\nto A: 1\nto B: 2\nE1: x\nE5: y\nO4: z\ntail', variants: [{ from: 1, to: 2, base: 'a', default: true }, { from: 2, to: 3, base: 'b' }, { from: 3, to: 4, band: 'E1–E4', mha: 'CA038' }, { from: 4, to: 5, band: 'E5–E6', mha: 'CA038', default: true }, { from: 5, to: 6, band: 'O4–O6', mha: 'CA038' }] };
+const mhaOf = new Map([['b', 'CA038']]);
+reviewCases.push(
+  ['variants: base and band first, each in its own run', variantsFirst(vchunk, { base: 'b', band: 'O4–O6' }, mhaOf).text, 'head\nto B: 2\nto A: 1\nO4: z\nE5: y\nE1: x\ntail'],
+  ['variants: band only, the base run keeps page order', variantsFirst(vchunk, { band: 'E1–E4' }, mhaOf).text, 'head\nto A: 1\nto B: 2\nE1: x\nE5: y\nO4: z\ntail'],
+  ['variants: no context, as built', variantsFirst(vchunk, {}, mhaOf).text, vchunk.text],
+);
+const reviewBad = reviewCases.filter(([, got, want]) => got !== want);
+// Judged after every push above (before 2026-10-25 this ran before the context rule cases were added, so those never
+// counted).
+const ruleBad = ruleCases.filter(([, got, want]) => got !== want);
 
 // --- Report -------------------------------------------------------------------------
 console.log(`\nAssistant eval: ${questions.length} questions, ${mode}\n`);
@@ -446,6 +499,7 @@ console.log(`Daily cap self-test (fake KV, cap 3; no binding = off): ${capOk ? '
 console.log(`From-list filter and label self-test (${filterCases.length + labelCases.length} cases): ${filterBad.length ? `FAIL: ${filterBad.map(([a]) => JSON.stringify(a)).join('; ')}` : 'PASS'}`);
 console.log(`Answer formatting self-test (${formatCases.length} cases): ${formatBad.length ? `FAIL: ${formatBad.map(([t]) => `${JSON.stringify(t)} → ${fmt(t)}`).join('; ')}` : 'PASS'}`);
 console.log(`Eval rule self-test, QUESTIONS 65 and 68, Orders step 2, per-zip rows (${ruleCases.length} cases): ${ruleBad.length ? `FAIL: ${ruleBad.map(([n]) => n).join('; ')}` : 'PASS'}`);
+console.log(`Code-review fixes and variant order self-test (${reviewCases.length} cases): ${reviewBad.length ? `FAIL: ${reviewBad.map(([n, got]) => `${n} (got ${JSON.stringify(got)})`).join('; ')}` : 'PASS'}`);
 console.log(`Sequence-start route self-test (${routeCases.length} cases): ${routeBad.length ? `FAIL: ${routeBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
 console.log(`Where-to-live route self-test (${whereCases.length} cases): ${whereBad.length ? `FAIL: ${whereBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
 if (index) console.log(`Chip bases in the corpus (${Object.values(CONTEXT_BASES).filter((b) => b.slug).length} base pages, each with ${routeSections.join(', ')}): ${baseBad.length ? `FAIL: ${baseBad.join(', ')}` : 'PASS'}`);
@@ -487,4 +541,4 @@ const failed = results.filter((r) => Object.values(r.rules).includes('FAIL'));
 if (failed.length) console.log(`\nFailed: ${failed.map((r) => r.id).join(', ')}`);
 const out = opt('--json');
 if (out) writeFileSync(out, JSON.stringify({ mode, results, capOk }, null, 2));
-process.exit(failed.length || !capOk || filterBad.length || formatBad.length || ruleBad.length || routeBad.length || whereBad.length || baseBad.length ? 1 : 0);
+process.exit(failed.length || !capOk || filterBad.length || formatBad.length || ruleBad.length || reviewBad.length || routeBad.length || whereBad.length || baseBad.length ? 1 : 0);

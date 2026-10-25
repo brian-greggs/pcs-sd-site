@@ -36,6 +36,10 @@ const SYNONYMS = {
   safe: ['hazard', 'fire', 'flood', 'noise'], safety: ['hazard', 'fire', 'flood', 'noise'], crime: ['hazard'], dangerous: ['hazard', 'fire', 'flood'],
 };
 
+// User words index plain objects here (SYNONYMS, the corpus postings): read only their own keys, so "constructor" or
+// "__proto__" in a question is a word like any other, not Object's (QA S2, 2026-10-25).
+const own = (o, k) => (Object.hasOwn(o, k) ? o[k] : undefined);
+
 const fold = (s) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase();
 const stem = (w) => {
   if (w.length > 4 && w.endsWith('ies')) return `${w.slice(0, -3)}y`;
@@ -55,7 +59,7 @@ const TITLE_WEIGHT = 3; // page title and section heading count three times
 // with the corpus, so a cold Pages Function only parses JSON and reads the query's terms.
 // postings[term] is a flat list: chunk number, count, chunk number, count, ...
 export function indexChunks(chunks) {
-  const postings = {};
+  const postings = Object.create(null); // no inherited keys while building; JSON.parse gives a plain object back
   const lens = chunks.map((c, i) => {
     const head = tokens(`${c.page_title} ${c.section_heading}`);
     // Not the date/source line: every Cost section's names "DTMO BAH", which swamps BAH questions. A chunk's
@@ -63,7 +67,7 @@ export function indexChunks(chunks) {
     const all = [...Array(TITLE_WEIGHT).fill(head).flat(), ...tokens(c.rank_text ?? c.text)];
     const tf = new Map();
     for (const t of all) tf.set(t, (tf.get(t) ?? 0) + 1);
-    for (const [t, f] of tf) (postings[t] ??= []).push(i, f);
+    for (const [t, f] of tf) (Object.hasOwn(postings, t) ? postings[t] : (postings[t] = [])).push(i, f);
     return all.length;
   });
   return { postings, lens };
@@ -79,7 +83,10 @@ export function buildIndex(corpus) {
   // Parts of one split section, in order: when one part ranks, all of them are sent.
   const groups = new Map();
   corpus.chunks.forEach((c, i) => { const g = c.group ?? c.id; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(i); });
-  return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [] };
+  // Pages tied to each base (scripts/build_corpus.mjs), and each base's BAH area, from the corpus.
+  const ties = new Map(Object.entries(corpus.base_ties ?? {}).map(([slug, urls]) => [slug, new Set(urls)]));
+  const mhaOf = new Map(Object.entries(corpus.mha_bases ?? {}).flatMap(([mha, slugs]) => slugs.map((slug) => [slug, mha])));
+  return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [], ties, mhaOf };
 }
 
 // Expanded query terms, each with a weight (the words the family typed count fully). `context` is the
@@ -90,7 +97,7 @@ function queryTerms(q, context = '') {
   const typed = tokens(q);
   const terms = new Map();
   for (const t of typed) terms.set(t, 1);
-  for (const t of typed) for (const s of SYNONYMS[t] ?? []) if (!terms.has(stem(s))) terms.set(stem(s), 0.5);
+  for (const t of typed) for (const s of own(SYNONYMS, t) ?? []) if (!terms.has(stem(s))) terms.set(stem(s), 0.5);
   for (const t of tokens(context)) if (!GENERIC.has(t) && !terms.has(t)) terms.set(t, CONTEXT_WEIGHT);
   return { typed, terms };
 }
@@ -100,6 +107,7 @@ export const SETTINGS = {
   k: 6, perPage: 3, // sections sent (every part of each), and at most this many from one page
   minScore: 4.0, // below this, the top chunk isn't about the question
   pageBoost: 1.6, // a chunk on a page the question names (all of the page title's words in the question)
+  baseBoost: 1.25, // with the reader's base, a chunk on a page tied to it, when the question names no page (below)
 };
 
 // Where the move starts ("what do I do first?", "we just got orders"): BM25 alone sends later steps
@@ -135,7 +143,42 @@ const WHERE_TO_LIVE = [
 export const isWhereToLive = (q) => WHERE_TO_LIVE.some((re) => re.test(q));
 const BASE_ROUTE_SECTIONS = ['tier-under30', 'tier-30-45', 'bah-table'];
 
-// `route.basePage` is the reader's base page from the context (assistant/context.js basePage), or nothing.
+// The reader's base and band put their own variants first (2026-10-25). A chunk's `variants` are line ranges, each
+// for one pay band, BAH area or base (scripts/build_corpus.mjs). A run is adjacent variants of one kind (the drive
+// to each base, the rent per band and area, …). Within each run, the ones that fit the reader (every tag they carry
+// that the context can check agrees with it, and at least one can be checked) move to the front; then the one the
+// page shows by default; then the rest, each group in page order. Nothing is dropped. No band or base: as built.
+export function variantsFirst(chunk, { band = null, base = null } = {}, mhaOf = new Map()) {
+  if (!chunk.variants?.length || (!band && !base)) return chunk;
+  const mha = base ? mhaOf.get(base) ?? null : null;
+  const fits = (v) => {
+    const checks = [v.band && band ? v.band === band : null, v.base && base ? v.base === base : null, v.mha && mha ? v.mha === mha : null].filter((x) => x != null);
+    return checks.length > 0 && checks.every(Boolean);
+  };
+  const lines = chunk.text.split('\n');
+  const out = [];
+  let i = 0;
+  const vs = [...chunk.variants].sort((a, b) => a.from - b.from);
+  const kind = (v) => ['band', 'mha', 'base'].filter((t) => v[t]).join();
+  const rank = (v) => (fits(v) ? 0 : v.default ? 1 : 2);
+  for (let k = 0; k < vs.length;) {
+    out.push(...lines.slice(i, vs[k].from));
+    const run = [vs[k++]];
+    while (k < vs.length && vs[k].from === run.at(-1).to && kind(vs[k]) === kind(run[0])) run.push(vs[k++]);
+    for (const v of [0, 1, 2].flatMap((r) => run.filter((v) => rank(v) === r))) out.push(...lines.slice(v.from, v.to));
+    i = run.at(-1).to;
+  }
+  out.push(...lines.slice(i));
+  return { ...chunk, text: out.join('\n') };
+}
+
+// A word of a place page's title in the question ("Pacific Beach" of "Pacific Beach / La Jolla"): the question is
+// about that place, even when it doesn't name the whole title, so the reader's base doesn't lift other places.
+const PLACE = /^\/(?:communities|base-housing|base)\/./;
+const placeWord = (index, content) => index.pages.some((p) => PLACE.test(p.url) && [...p.titleTokens].some((t) => content.has(t) && !['base', 'housing'].includes(t)));
+
+// `route.basePage` is the reader's base page from the context (assistant/context.js basePage), or nothing;
+// `route.base` and `route.band` are the reader's base slug and pay band (assistant/context.js routeOf).
 export function search(index, question, settings = SETTINGS, context = '', route = {}) {
   const { typed, terms } = queryTerms(question, context);
   if (isSequenceStart(question)) for (const w of START_WORDS) terms.delete(w);
@@ -143,7 +186,7 @@ export function search(index, question, settings = SETTINGS, context = '', route
   const named = new Set(index.pages.filter((p) => p.titleTokens.size && [...p.titleTokens].filter((t) => !['base', 'housing'].includes(t)).every((t) => typed.includes(t)) && [...p.titleTokens].some((t) => !GENERIC.has(t) && t !== 'housing')).map((p) => p.url));
   const acc = new Map(); // chunk number -> { s, contentHits }
   for (const [t, w] of terms) {
-    const post = index.postings[t];
+    const post = own(index.postings, t);
     if (!post) continue;
     const df = post.length / 2;
     const idf = Math.log(1 + (index.n - df + 0.5) / (df + 0.5));
@@ -161,11 +204,18 @@ export function search(index, question, settings = SETTINGS, context = '', route
     const s = named.has(chunk.url.split('#')[0]) ? a.s * settings.pageBoost : a.s;
     return { i, d: { chunk }, s, contentHits: a.contentHits };
   });
-  scored.sort((x, y) => y.s - x.s || x.d.chunk.id.localeCompare(y.d.chunk.id));
+  const order = (xs) => xs.sort((x, y) => y.s - x.s || x.d.chunk.id.localeCompare(y.d.chunk.id));
+  order(scored);
   const top = scored[0];
   const routed = isSequenceStart(question) ? 'sequence-start'
     : route.basePage && !named.size && isWhereToLive(question) ? 'where-to-live' : null;
   const relevant = !!routed || (!!top && top.s >= settings.minScore && top.contentHits > 0);
+  // The reader's base (2026-10-25, narrow): when the question names no place and takes no route, sections on the pages
+  // tied to that base (its neighborhoods and base housing) rank a little higher: "infant care near 32nd Street" from
+  // NBSD gets North Park and Paradise Hills, not the first child care sections A to Z. Only the order of what's
+  // picked changes: whether anything is relevant, and the nearest page, are decided before the boost.
+  const tied = !routed && !named.size && route.base && !placeWord(index, content) ? index.ties?.get(route.base) : null;
+  const picks = tied ? order(scored.map((x) => (tied.has(x.d.chunk.url.split('#')[0]) ? { ...x, s: x.s * settings.baseBoost } : x))) : scored;
   // Pick sections, not chunks: k sections (at most perPage from one page), each sent whole, so a
   // table split across parts for ranking never reaches the model with half its rows.
   const perPage = new Map();
@@ -184,7 +234,7 @@ export function search(index, question, settings = SETTINGS, context = '', route
     }
   }
   const forced = picked.size;
-  for (const x of scored) {
+  for (const x of picks) {
     if (picked.size - forced >= settings.k) break;
     const group = x.d.chunk.group ?? x.d.chunk.id;
     if (picked.has(group)) continue;
@@ -198,5 +248,6 @@ export function search(index, question, settings = SETTINGS, context = '', route
   const nearest = routed === 'sequence-start' ? { url: START_PAGE, title: chunks[0]?.page_title ?? 'Move sequence: Orders in hand' }
     : routed ? { url: route.basePage, title: chunks[0]?.page_title ?? 'Your base' }
     : top ? { url: top.d.chunk.url.split('#')[0], title: top.d.chunk.page_title } : { url: '/', title: 'Home: start with your base' };
-  return { relevant, chunks: relevant ? chunks : [], nearest, routed, top_score: top ? Math.round(top.s * 100) / 100 : 0, terms: [...terms.keys()] };
+  const sent = relevant ? chunks.map((c) => variantsFirst(c, route, index.mhaOf)) : [];
+  return { relevant, chunks: sent, nearest, routed, base_boost: !!tied, top_score: top ? Math.round(top.s * 100) / 100 : 0, terms: [...terms.keys()] };
 }

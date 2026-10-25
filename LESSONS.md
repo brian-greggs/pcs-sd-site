@@ -220,3 +220,13 @@
 - **Tab order follows the DOM, not the picture.** The menu sits visually under the chip, but the × came first in the markup, so Tab skipped the open menu; the keyboard test found it.
 - **Read a list and its labels at the same moment.** The label check first read "What's sent?" after the answer arrived, by which time the list had gained the new previous turn; reading both before the tap fixed it.
 - **A setting kept "with the answers" has to survive the page that writes the answers.** `/plan/` rewrote the whole entry on every change, which would have dropped the chip's off switch; `save()` now carries it over, and the browser check edits an answer on /plan/ before asking again.
+
+## Session 16 (2026-10-25): variants in the corpus
+
+- **"Keep the visible default" is a choice about what the reader sees, not what the assistant knows.** The page script picks one variant per reader; the corpus has no reader, so it needs every variant, each labeled with who it's for, and the request picks.
+- **Change what's sent without changing what's ranked.** Giving hidden lines zero weight when splitting and leaving them out of the ranking text kept the 950 chunks and their postings byte-identical. Then every existing eval row could be compared exactly: same sections, same order. Comparing the postings, not the eval output, is what proved it.
+- **Labels can keep the ranking words.** The first label ("…, San Diego area (MHA CA038): 99–114% (HUD rent)") changed three tokens on 41 sections. Rewording it to "(HUD rent / BAH)" kept the same words. A token-bag diff of every chunk found it.
+- **A check that reads a list before it's finished checks less than it says.** `ruleBad` was computed before 15 cases were pushed, so the "40 cases" self-test judged 25. Compute verdicts after every case is added.
+- **"Nearest" isn't "near".** Tying neighborhoods to their nearest base put Alpine (50 min) first for an NBSD question. The base page's own under-30 list, intersected with nearest, matched what a family would expect.
+- **A partial place name is still a place.** "Pacific Beach" doesn't name the page "Pacific Beach / La Jolla", so a boost meant for questions with no place lifted other places over it. Checking for any word of a place's title fixed it.
+

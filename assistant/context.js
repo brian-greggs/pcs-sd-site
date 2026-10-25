@@ -32,7 +32,7 @@ const ages = (kids) => kids.map((g) => g.replace('-', '–')).join(', ');
 export function cleanContext(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const c = {};
-  if (Object.hasOwn(BASES, raw.base)) c.base = raw.base;
+  if (typeof raw.base === 'string' && Object.hasOwn(BASES, raw.base)) c.base = raw.base; // a string: ["NBSD"] isn't a base (QA L5)
   if (BANDS.includes(raw.band)) c.band = raw.band;
   // Household: partner and kids come together, from question 4, or not at all.
   if (typeof raw.partner === 'boolean' && Array.isArray(raw.kids)) {
@@ -103,3 +103,7 @@ export function householdLine(c) {
 
 // The base page to route a where-to-live question to (assistant/retrieve.js), when the reader's base is known.
 export const basePage = (c) => (c?.base && BASES[c.base]?.slug ? `/base/${BASES[c.base].slug}/` : null);
+
+// What retrieval reads from the context (assistant/retrieve.js search): the base page for the where-to-live route,
+// the base's slug for the tied-pages boost and its variants, and the pay band for its variants. Never words.
+export const routeOf = (c) => ({ basePage: basePage(c), base: (c?.base && BASES[c.base]?.slug) || null, band: c?.band ?? null });

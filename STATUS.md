@@ -1,4 +1,34 @@
-# Site build — status (2026-10-24, session 15d: rules line names the band with a figure; seq-11 narrow fix; v1.1.0)
+# Site build — status (2026-10-25, session 16: assistant fixes before Monday's user sessions; v1.1.0)
+
+## Session 16: assistant fixes from QA_REVIEW.md (2026-10-25), branch `claude/assistant-monday-launch-fixes-mhbk5t`
+
+Scope: `assistant/`, `functions/` (no change needed), `scripts/build_corpus.mjs`, `scripts/eval_assistant.mjs`, `evals/`. No page or CSS change.
+
+- **Variants in the corpus (the main fix).** `build_corpus.mjs` used to drop every hidden element, so of the per-band and per-base variants a page renders it kept only the visible default: the model never saw another pay band's rent ratio or BAH line, another BAH area's ratio tables, or the drive to any base but the nearest. Now `labelVariants` turns each variant into an explicitly labeled line ("3-bed rent vs. BAH, O1–O3, San Diego area: 99–114% (HUD rent / BAH)", "Commute at 0700 to MCAS Miramar: 16–18 min", "2026 BAH, Camp Pendleton area (MHA CA024), O4–O6 — O4: $5,085 with dependents, …"), or keeps it whole when it's a captioned table (the ratio tables per area). The commute summary keeps one line per base; the DLA rates keep one line per grade, every band. Each chunk carries `variants` (line ranges tagged with band, MHA, base, and whether it's the page's default).
+- **Ranking is unchanged.** Only the default variant is ranked (`rank_text`), and hidden variant lines weigh nothing when a long section is split into parts, so the corpus has the same 950 chunks with the same ids and byte-identical BM25 postings as before. The other variants ride along in the part that holds their default.
+- **Context puts the reader's lines first** (`variantsFirst` in `assistant/retrieve.js`): within each run of one kind of variant (the drives, the rents, the BAH lines, the area tables), the ones that fit the family's band and base come first, then the page's default, then the rest. Nothing is dropped. No context: page order, everything kept.
+- **Base boost (narrow).** With a base in the context, a question that names no place (no word of a neighborhood, base housing or base page title) and takes no route gets sections on the pages tied to that base ×1.25. Tied: a base housing page LMH ties to the base (its base page's "Tied to" section); a neighborhood page that leads with the base (its nearest) and that the base page lists under 30 min. Relevance and the nearest page are decided before the boost. NBSD's tied pages: North Park and Paradise Hills base housing, Bonita, National City, Southeastern / Paradise Hills.
+- **Code review:** S2 (`Object.hasOwn` for SYNONYMS and the postings, null-prototype postings while building: "constructor", "__proto__", "toString" are words); L5 (`base` must be a string); `max_tokens` 800 (stop_reason now rides in `usage`); 502/503 replies carry no citations (S4's server half; the page half is in `src/pages`, not touched).
+- **Prompt:** the rules line now says to name the base and pay grade "inside the sentence that gives it …, never as a sentence of its own" (the words `check_frontend` reads are kept). One new line: some sections give one value per band, area or base on labeled lines; use the family's, never give another's as theirs, and say which one a figure is for when they haven't said.
+- **Eval:** `short` counts the words a reader sees (`parseAnswer`: no `**`, list markers or link targets). `no_context_mention` flags the pay band and its grades, spouse/partner, the kids' age groups and "since you're …", not the base's name. in-16's `expect_fact` is the wording sent. New category `context_variant` (rules as `context` minus `context_routes`, plus `no_other_variant`: live, `reject_answer` must not match) and three rows: ctx-07 (O1–O3 at Miramar, Pacific Beach drive and 2-bed), ctx-08 (O4–O6, Carlsbad 3-bed), ctx-09 (E5–E6 at NBSD, infant care near 32nd Street). `expect_page` may be a list. New self-tests: S2 (three bodies), S4, L5, variant order (9 cases). Fixed a self-test bug: the 15 context rule cases were pushed after `ruleBad` was computed, so they never counted; they all pass now (44 cases).
+- **New build check `corpus-variants`:** every variant a section renders reaches a chunk; `--plant variants` (the old stripping) must fail it: 181 sections caught.
+
+**Eval rows that changed (retrieval mode, against main):**
+- in-16: `has_fact` FAIL → PASS (the row's wording, not retrieval).
+- ctx-07, ctx-08, ctx-09: new, all retrieval rules PASS.
+- Every other row: identical rule results and top section, and all 59 existing rows send exactly the same sections in the same order. The boost fires on ctx-05 and ctx-06 (base set, no place named) and changes neither; it moves no existing row (compared with and without each row's context, boost on and off).
+- Expected fact 51 of 51, page 51 of 51, section 45 of 45; every self-test passes and the eval exits 0 (main exits 1 on in-16).
+
+**Prompt size** (user message, characters; the system prompt goes from 6,255 to 6,738 characters, the same for every row). The largest prompts don't change: seq-08 27,203, ctx-05/06 26,078, seq-10 24,484 → 25,768 (every band's DLA rates). 22 of the 53 rows that reach the model grow; all of them together 577,976 → 656,994 (+14%). The biggest jump is in-09, 5,456 → 23,792: it sends six base housing Cost sections, each now with 14 BAH lines (QUESTIONS 89). Others: in-03 5.3k → 11.4k, cr-04 5.3k → 14.0k, bait-bah-02 6.5k → 11.5k, in-15 7.1k → 12.1k, bait-safe-01 9.7k → 14.1k. New rows: ctx-07 12.4k, ctx-08 14.9k, ctx-09 6.2k.
+
+**Corpus:** 1,558 KB → 2,091 KB; `JSON.parse` 4.8 → 6.8 ms on this container (QUESTIONS 90).
+
+**Runs on 2026-10-25:**
+- Build: 59 PASS lines (the new corpus-variants), no FAIL.
+- Plants: principles (dated) 16/16, sequence 34/34, front end 28/28, maps 22/22, intake-network 4/4, corpus caption 4 runs caught (as before), corpus variants 181 sections caught, browser 4/4.
+- `check:browser`: all 12 groups pass.
+- Retrieval eval: exit 0 (above).
+- Live eval not run (no key here). Before Monday, worth one live run of the context rows and in-09: the new prompt line and the extra lines reach the model on every answer.
 
 ## Session 15d: Brian's two changes (2026-10-24), same branch
 
