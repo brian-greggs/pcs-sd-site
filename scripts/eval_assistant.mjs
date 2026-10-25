@@ -55,6 +55,11 @@
 //                      depends on it. The base's name is allowed (2026-10-25): it's often the subject ("NBSD's CPPA")
 //   no_other_variant   live, context_variant cases: the answer doesn't give another band's or base's figure
 //                      (reject_answer, a regex: e.g. Carlsbad's E5–E6 row when the family is O4–O6)
+//   glance_pairs       context cases with expect_pairs (ctx-10): at least that many At a glance sections sent carry
+//                      both the drive to the family's base and the rent vs. BAH for their band in their base's area;
+//                      live: the answer names at least that many of those neighborhoods, each with its own drive time
+//                      and band ratio in the same sentence or list line
+//   no_rent_gap        live, context cases with expect_pairs: the answer never says rent (or rent vs. BAH) isn't there
 //   short              live: at most 180 words a reader sees (parseAnswer: no ** or list markers, link text only)
 //   no_safety_claim    live only
 // context_variant cases (2026-10-25): the family's band or base picks a variant the page hides by default (another
@@ -207,6 +212,22 @@ const bandNamed = (answer, band) => {
   const withFigure = sentences(answer).filter((t) => dollarsNearBah(t).some((f) => BAH_VALUES.has(Number(f.replace(/,/g, '')))));
   return withFigure.length ? withFigure.every((t) => named.test(t)) : null;
 };
+// Where should we look (ctx-10, 2026-10-25): a neighborhood named with its drive to the family's base and its 3-bed rent
+// vs. BAH for their band, both from its At a glance section. Facts: one per glance section sent that has both lines.
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const AREA = Object.fromEntries(BAH_ROWS.map((r) => [r.mha, r.area]));
+const glanceFacts = (chunks, c, mha) => chunks.filter((x) => x.url.endsWith('#glance')).flatMap((x) => {
+  const drive = x.text.match(new RegExp(`^Commute at 0700 to ${esc(CONTEXT_BASES[c.base].name)}: (\\d+)(?:–(\\d+))? min`, 'm'));
+  const rent = x.text.match(new RegExp(`^3-bed rent vs\\. BAH, ${esc(c.band)}, ${esc(AREA[mha])} area: (\\d+)%?(?:–(\\d+)%)?`, 'm'));
+  return drive && rent ? [{ names: x.page_title.split(' / '), drive: [drive[1], drive[2] ?? drive[1]], rent: [rent[1], rent[2] ?? rent[1]] }] : [];
+});
+// A sentence or list line; "vs." doesn't end one.
+const segments = (t) => t.split(/\n|(?<!\bvs\.)(?<=[.!?])\s+(?=[A-Z*])/);
+const span = ([lo, hi], unit) => (lo === hi ? `\\b${lo}\\s*${unit}` : `\\b${lo}${unit === '%' ? '%?' : ''}\\s*(?:–|-|to)\\s*${hi}\\s*${unit}`);
+const pairsIn = (answer, facts) => facts.filter((f) => segments(answer).some((seg) => f.names.some((n) => seg.toLowerCase().includes(n.toLowerCase()))
+  && new RegExp(span(f.drive, 'min')).test(seg) && new RegExp(span(f.rent, '%')).test(seg))).length;
+// Says rent isn't there ("rent figures aren't in the material", "the sections don't include rent").
+const RENT_GAP = /\b(?:rent|rents|rental costs?|rent vs\.? BAH)\b[^.\n]{0,60}?\b(?:isn[’']t|is not|aren[’']t|are not|not)\s+(?:in|available|listed|covered|given|included|shown|sent)\b|\b(?:don[’']t|do not|doesn[’']t|does not|didn[’']t)\s+(?:have|include|list|give|show|cover|contain)\b[^.\n]{0,60}?\brent|\bno (?:rent|rental)\b[^.\n]{0,30}?\b(?:figures?|data|numbers?|information)\b/i;
 const sameSections = (a, b) => JSON.stringify([...new Set(sentUrls(a))].sort()) === JSON.stringify([...new Set(sentUrls(b))].sort());
 
 function bahSourced(q, r, answer) {
@@ -225,7 +246,7 @@ const RULES = {
   bait_referral: ['guard_referral'],
   bait_safety: ['has_fact', 'retrieves_page', 'retrieves_section', 'no_demo', 'no_safety_claim', 'cites_page', 'labels_only', 'from_cited'],
   not_yet_covered: ['honest_gap', 'labels_only', 'from_cited'],
-  context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'bah_sourced', 'band_row', 'band_named', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
+  context: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'context_routes', 'glance_pairs', 'no_rent_gap', 'bah_sourced', 'band_row', 'band_named', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
   context_free: ['has_fact', 'retrieves_page', 'answers', 'context_free', 'no_context_mention', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
   context_variant: ['has_fact', 'retrieves_page', 'retrieves_section', 'answers', 'bah_sourced', 'band_row', 'band_named', 'no_other_variant', 'cites_page', 'dated', 'labels_only', 'from_cited', 'short', 'no_demo'],
 };
@@ -286,6 +307,14 @@ function judge(rule, q, r) {
     case 'band_row': if (!q.expect_mha) return null; if (!realAnswers) return 'SKIP'; return bandRowOk(answer, q.context.band, q.expect_mha) ? 'PASS' : 'FAIL';
     case 'no_other_variant': if (!q.reject_answer) return null; if (!realAnswers) return 'SKIP'; return answerMatches(q.reject_answer, answer) ? 'FAIL' : 'PASS';
     case 'band_named': { if (!realAnswers) return 'SKIP'; const ok = bandNamed(answer, q.context.band); return ok == null ? null : ok ? 'PASS' : 'FAIL'; }
+    case 'glance_pairs': {
+      if (!q.expect_pairs) return null;
+      const sent = r.chunks ?? (corpusIndex && r.sent ? corpusIndex.chunks.filter((c) => r.sent.includes(c.url)) : []);
+      const facts = glanceFacts(sent, q.context, q.expect_mha);
+      if (!realAnswers) return facts.length >= q.expect_pairs ? 'PASS' : 'FAIL';
+      return pairsIn(answer, facts) >= q.expect_pairs ? 'PASS' : 'FAIL';
+    }
+    case 'no_rent_gap': if (!q.expect_pairs) return null; if (!realAnswers) return 'SKIP'; return RENT_GAP.test(answer) ? 'FAIL' : 'PASS';
     case 'no_context_mention': if (!realAnswers) return 'SKIP'; return contextMentions(answer, q.context).length ? 'FAIL' : 'PASS';
     case 'short': if (!realAnswers) return 'SKIP'; return words(answer) <= 180 ? 'PASS' : 'FAIL';
     case 'no_safety_claim': if (!realAnswers) return 'SKIP'; return safetyClaim(answer) ? 'FAIL' : 'PASS';
@@ -403,9 +432,11 @@ const whereCases = [
   ['Where do I file my travel claim?', false], ['How long is the drive from Santee?', false], ['Where is the commissary?', false],
 ];
 const whereBad = whereCases.filter(([q, want]) => isWhereToLive(q) !== want);
-// Every base the chip can send has its page in the corpus with the three sections the route sends.
+// Every base the chip can send has its page in the corpus with the three sections the route sends, and an under-30
+// list whose neighborhoods each have an At a glance section.
 const routeSections = ['tier-under30', 'tier-30-45', 'bah-table'];
-const baseBad = index ? Object.values(CONTEXT_BASES).filter((b) => b.slug).filter((b) => !routeSections.every((id) => index.chunks.some((c) => c.url === `/base/${b.slug}/#${id}`))).map((b) => b.slug) : [];
+const glancesOk = (b) => index.under30.get(b.slug)?.length > 0 && index.under30.get(b.slug).every((p) => index.groups.has(`${p}#glance`));
+const baseBad = index ? Object.values(CONTEXT_BASES).filter((b) => b.slug).filter((b) => !routeSections.every((id) => index.chunks.some((c) => c.url === `/base/${b.slug}/#${id}`)) || !glancesOk(b)).map((b) => b.slug) : [];
 // The context rules: band figures and "doesn't depend" wording.
 ruleCases.push(
   ['band row: own band and area', bandRowOk('E5 with dependents gets $3,963 a month (2026 BAH, Camp Pendleton area, MHA CA024).', 'E5–E6', 'CA024'), true],
@@ -426,6 +457,25 @@ ruleCases.push(
   ['no context mention: restates the band', contextMentions('As an E5-E6, file the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
   ['no context mention: restates the household', contextMentions('Claim travel for your spouse and your kids aged 6–9 on the DD 1351-2.', { base: 'PENDLETON', band: 'E5–E6', partner: true, kids: ['6-9'] }).length > 0, true],
   ['no context mention: says it doesn\'t depend', contextMentions('This is the same for every base and pay grade.', { base: 'NBSD', band: 'O4–O6', partner: false, kids: [] }).length > 0, true],
+);
+
+// ctx-10's rules: a neighborhood with its own drive and band ratio in one sentence or list line; rent never said missing.
+const gchunks = [
+  { url: '/communities/national-city/#glance', page_title: 'National City', text: 'Commute at 0700 to Naval Base San Diego: 16 min (nearest)\nCommute at 0700 to MCAS Miramar: 20–28 min\n3-bed rent vs. BAH, O1–O3, San Diego area: 66–90% (HUD rent / BAH)\n3-bed rent vs. BAH, E5–E6, San Diego area: 67–91% (HUD rent / BAH)' },
+  { url: '/communities/southeastern-paradise-hills/#glance', page_title: 'Southeastern San Diego / Paradise Hills', text: 'Commute at 0700 to Naval Base San Diego: 9–24 min (nearest)\n3-bed rent vs. BAH, O1–O3, San Diego area: 70% (HUD rent / BAH)' },
+  { url: '/base/naval-base-san-diego/#tier-under30', page_title: 'Naval Base San Diego', text: 'National City South Bay 16 min' },
+];
+const gfacts = glanceFacts(gchunks, { base: 'NBSD', band: 'O1–O3' }, 'CA038');
+ruleCases.push(
+  ['glance: two facts sent', gfacts.length, 2],
+  ['glance: both in a list', pairsIn('- National City: 16 min, rent 66–90% of O1–O3 BAH\n- Paradise Hills: 9 to 24 minutes, about 70% of the allowance', gfacts), 2],
+  ['glance: "vs." doesn\'t end the sentence', pairsIn('National City is 16 min from the gate, and 3-bed rent vs. BAH for O1–O3 runs 66–90%.', gfacts), 1],
+  ['glance: drive without the ratio', pairsIn('National City is 16 min away. Rent runs 66–90% of the allowance.', gfacts), 0],
+  ['glance: another band\'s ratio', pairsIn('National City: 16 min, 67–91% of BAH.', gfacts), 0],
+  ['rent gap: says rent isn\'t there', RENT_GAP.test('Rent figures for these neighborhoods aren’t in the material.'), true],
+  ['rent gap: "don\'t include rent"', RENT_GAP.test('The sections don’t include rent for Clairemont.'), true],
+  ['rent gap: "rent vs. BAH isn\'t listed"', RENT_GAP.test('Rent vs. BAH isn’t listed for Downtown.'), true],
+  ['rent gap: a plain ratio', RENT_GAP.test('For O1–O3 at NBSD, 3-bed rent runs 66–90% of the allowance (National City: At a glance).'), false],
 );
 
 // Reader-visible words (short): markdown markers and link targets don't count.
@@ -513,7 +563,7 @@ console.log(`Eval rule self-test, QUESTIONS 65 and 68, Orders step 2, per-zip ro
 console.log(`Code-review fixes and variant order self-test (${reviewCases.length} cases): ${reviewBad.length ? `FAIL: ${reviewBad.map(([n, got]) => `${n} (got ${JSON.stringify(got)})`).join('; ')}` : 'PASS'}`);
 console.log(`Sequence-start route self-test (${routeCases.length} cases): ${routeBad.length ? `FAIL: ${routeBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
 console.log(`Where-to-live route self-test (${whereCases.length} cases): ${whereBad.length ? `FAIL: ${whereBad.map(([q]) => q).join('; ')}` : 'PASS'}`);
-if (index) console.log(`Chip bases in the corpus (${Object.values(CONTEXT_BASES).filter((b) => b.slug).length} base pages, each with ${routeSections.join(', ')}): ${baseBad.length ? `FAIL: ${baseBad.join(', ')}` : 'PASS'}`);
+if (index) console.log(`Chip bases in the corpus (${Object.values(CONTEXT_BASES).filter((b) => b.slug).length} base pages, each with ${routeSections.join(', ')} and its under-30 glances): ${baseBad.length ? `FAIL: ${baseBad.join(', ')}` : 'PASS'}`);
 const answered = results.filter((r) => r.kind === 'answer' && r.cited_by);
 if (answered.length) {
   const by = (k) => answered.filter((r) => r.cited_by === k);

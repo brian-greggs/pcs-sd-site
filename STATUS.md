@@ -1,4 +1,23 @@
-# Site build — status (2026-10-25, session 16b: max_tokens 1500, BAH lines once; session 16: assistant fixes before Monday's user sessions; v1.1.0)
+# Site build — status (2026-10-25, session 16c: where to live with drive and rent together; session 16b: max_tokens 1500, BAH lines once; session 16: assistant fixes before Monday's user sessions; v1.1.0)
+
+## Session 16c: where should we look, with drive and rent together (2026-10-25), branch `claude/serene-cori-vrb7l7`
+
+One narrow retrieval fix. The where-to-live route sent the base page's drive groups and BAH table only. The groups list names and minutes, so an answer could give a drive time but not the rent against BAH.
+
+- **Route** (`assistant/retrieve.js`): when a "where should we look" question takes the route (a base in the context, no page named), it also sends the At a glance section of each neighborhood in that base's under-30 group: at most 6 (`GLANCE_MAX`), in drive-time order, after the base page's three sections and ahead of BM25's picks. `variantsFirst` puts the family's lines first: the drive to their base, then their band's rent vs. BAH in their base's area. The corpus carries each base page's under-30 list in page order (`base_under30`, from `build_corpus.mjs`'s existing `under30` map; corpus 1,716 → 1,720 KB).
+- **Prompt:** one rule line under "Shape of an answer": when you give a neighborhood, give its drive time and its rent vs. BAH for the family's pay band, if both were sent. System prompt 6,738 → 6,857 characters.
+- **Eval:** new row ctx-10 (O1–O3 at NBSD with a spouse and kids, "Where should we look near NBSD?"). It is a `context` row with `expect_pairs: 2`. Two new rules apply only to rows with `expect_pairs`. `glance_pairs`: in retrieval, at least 2 glance sections sent carry both the drive to NBSD and the O1–O3 San Diego-area ratio. Live, the answer names at least 2 of those neighborhoods, each with its own drive time and O1–O3 ratio in the same sentence or list line. `no_rent_gap` (live): the answer never says rent isn't there. 9 new rule self-tests (53 in all). The chip-bases self-test also checks that every base's under-30 neighborhoods have an At a glance section. With `GLANCE_MAX` at 0, ctx-10 fails `has_fact` and `glance_pairs`.
+
+**Rows:** every row was compared with and without its context: sections sent, their text, the nearest page and the prompt. Only the four "where should we look" rows changed: ctx-01 to ctx-04 each gain six glance sections. Nothing was removed and nothing else moved. NBSD: Southeastern / Paradise Hills, National City, North Park / Normal Heights, Downtown / Uptown, Clairemont, Serra Mesa / Kearny Mesa. Pendleton: Oceanside, Carlsbad, Encinitas, Del Mar / Solana Beach, San Marcos, Carmel Valley. Rule results are unchanged on every existing row.
+
+**Prompt size** (user message, characters): ctx-01 and ctx-03 9,928 → 21,902; ctx-02 and ctx-04 9,401 → 21,443; ctx-10 (new) 17,359. Every other row unchanged.
+
+**Runs on 2026-10-25 (16c):**
+- Build: 61 PASS lines, no FAIL; `npm run check` exit 0.
+- Plants: dated 16/16, sequence 34/34, front end 39/39, maps 22/22, intake-network 4/4, corpus caption caught (4 runs), corpus variants caught (181 sections), browser 4/4.
+- `check:browser`: all pass.
+- Retrieval eval: exit 0. Expected fact 52/52, page 52/52, section 46/46, every self-test passes.
+- Live eval not run (no key here). ctx-10's `glance_pairs` and `no_rent_gap`, and the new rule line, need one.
 
 ## Session 16b: Brian's two changes (2026-10-25), same branch
 

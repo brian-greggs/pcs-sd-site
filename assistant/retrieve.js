@@ -87,7 +87,8 @@ export function buildIndex(corpus) {
   const ties = new Map(Object.entries(corpus.base_ties ?? {}).map(([slug, urls]) => [slug, new Set(urls)]));
   const mhaOf = new Map(Object.entries(corpus.mha_bases ?? {}).flatMap(([mha, slugs]) => slugs.map((slug) => [slug, mha])));
   const bahLines = new Map(Object.entries(corpus.bah_lines ?? {})); // "CA038|O1–O3" → that band's 2026 BAH line, once
-  return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [], ties, mhaOf, bahLines };
+  const under30 = new Map(Object.entries(corpus.base_under30 ?? {})); // base slug → its under-30 neighborhood pages, by drive
+  return { chunks: corpus.chunks, groups, postings, lens, avg: lens.reduce((n, l) => n + l, 0) / lens.length, n: lens.length, pages: [...pages.values()], priorities: corpus.intake_priorities ?? [], ties, mhaOf, bahLines, under30 };
 }
 
 // Expanded query terms, each with a weight (the words the family typed count fully). `context` is the
@@ -135,6 +136,10 @@ const START_STEPS = /^[123]\.\s/;
 // page and no base, so BM25 sends whatever mentions "look". With the base from the chip, these questions get that
 // base page's two closest drive groups and its BAH table (the reader's pay band picks the row) ahead of what BM25
 // picks. Not when the question names a page (a neighborhood or another base): that page decides.
+// The drive groups list names and minutes only, so the answer could give a drive time but not the rent against BAH
+// (2026-10-25): the route also sends the At a glance section of the first GLANCE_MAX neighborhoods in the base's
+// under-30 group, in drive-time order. Each has the drive to every base and the rent vs. BAH for every band; the
+// family's lines go first (variantsFirst).
 const WHERE_TO_LIVE = [
   /\bwhere (?:should|do|can|could|would) (?:i|we) (?:look|live|rent|buy|settle|search)\b/i,
   /\bwhere to (?:look|live|rent|buy|settle)\b/i,
@@ -143,6 +148,7 @@ const WHERE_TO_LIVE = [
 ];
 export const isWhereToLive = (q) => WHERE_TO_LIVE.some((re) => re.test(q));
 const BASE_ROUTE_SECTIONS = ['tier-under30', 'tier-30-45', 'bah-table'];
+const GLANCE_MAX = 6;
 
 // The reader's base and band put their own variants first (2026-10-25). A chunk's `variants` are line ranges, each
 // for one pay band, BAH area or base (scripts/build_corpus.mjs). A run is adjacent variants of one kind (the drive
@@ -229,8 +235,8 @@ export function search(index, question, settings = SETTINGS, context = '', route
   const picked = new Set();
   const chunks = [];
   if (routed) {
-    // Orders steps 1-3 first, by step number, or the base page's drive groups and BAH table; BM25 still picks its
-    // k sections after them (no duplicates).
+    // Orders steps 1-3 first, by step number, or the base page's drive groups and BAH table, then the At a glance of
+    // its closest neighborhoods; BM25 still picks its k sections after them (no duplicates).
     const take = routed === 'sequence-start'
       ? (c) => c.url.split('#')[0] === START_PAGE && START_STEPS.test(c.section_heading)
       : (c) => c.url.split('#')[0] === route.basePage && BASE_ROUTE_SECTIONS.includes(c.url.split('#')[1]);
@@ -238,6 +244,12 @@ export function search(index, question, settings = SETTINGS, context = '', route
       if (!take(index.chunks[parts[0]])) continue;
       picked.add(group);
       for (const j of parts) chunks.push({ ...index.chunks[j], score: null, routed });
+    }
+    const glances = routed === 'where-to-live' ? (index.under30?.get(route.base) ?? []).slice(0, GLANCE_MAX).map((page) => `${page}#glance`) : [];
+    for (const group of glances) {
+      if (picked.has(group) || !index.groups.has(group)) continue;
+      picked.add(group);
+      for (const j of index.groups.get(group)) chunks.push({ ...index.chunks[j], score: null, routed });
     }
   }
   const forced = picked.size;
