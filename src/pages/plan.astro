@@ -66,27 +66,27 @@ const kidLabel = (g: string) => g.replace('-', '–');
 
     <fieldset class="q" data-q="4">
       <legend>4. Who's moving with you?</legend>
-      <p class="hint">Spouse or partner</p>
-      <div class="opts">
-        <label class="opt"><input type="radio" name="partner" value="yes" />Yes</label>
-        <label class="opt"><input type="radio" name="partner" value="no" />No</label>
+      <p class="hint" id="q-partner">Spouse or partner</p>
+      <div class="opts" role="radiogroup" aria-labelledby="q-partner">
+        <label class="opt"><input type="radio" name="partner" value="yes" aria-label="Yes, a spouse or partner is moving with me" />Yes</label>
+        <label class="opt"><input type="radio" name="partner" value="no" aria-label="No spouse or partner moving with me" />No</label>
       </div>
-      <p class="hint">Children, by age</p>
-      <div class="count-row">
-        {KID_GROUPS.map((g) => <label class="count"><input type="number" name={`kids-${g}`} min="0" max="9" step="1" value="0" inputmode="numeric" />aged {kidLabel(g)}</label>)}
+      <p class="hint" id="q-kids">Children, by age</p>
+      <div class="count-row" role="group" aria-labelledby="q-kids">
+        {KID_GROUPS.map((g) => <label class="count"><input type="number" name={`kids-${g}`} min="0" max="9" step="1" value="0" inputmode="numeric" aria-label={`Number of children aged ${kidLabel(g)}`} />aged {kidLabel(g)}</label>)}
       </div>
     </fieldset>
 
     <fieldset class="q" data-q="5">
       <legend>5. How many bedrooms do you need?</legend>
       <div class="opts">
-        {BEDROOM_CHOICES.map((b) => <label class="opt"><input type="radio" name="bedrooms" value={b.id} />{b.label}</label>)}
+        {BEDROOM_CHOICES.map((b) => <label class="opt"><input type="radio" name="bedrooms" value={b.id} aria-label={b.id === 'help' ? undefined : `${b.label} bedrooms`} />{b.label}</label>)}
       </div>
       <div data-separate hidden>
-        <p class="hint">Do any children 6 or older need separate rooms?</p>
-        <div class="opts">
-          <label class="opt"><input type="radio" name="separate6" value="yes" />Yes</label>
-          <label class="opt"><input type="radio" name="separate6" value="no" />No</label>
+        <p class="hint" id="q-separate">Do any children 6 or older need separate rooms?</p>
+        <div class="opts" role="radiogroup" aria-labelledby="q-separate">
+          <label class="opt"><input type="radio" name="separate6" value="yes" aria-label="Yes, separate rooms" />Yes</label>
+          <label class="opt"><input type="radio" name="separate6" value="no" aria-label="No separate rooms needed" />No</label>
         </div>
       </div>
       <p class="hint" data-helper-out hidden></p>
@@ -95,8 +95,8 @@ const kidLabel = (g: string) => g.replace('-', '–');
     <fieldset class="q" data-q="6">
       <legend>6. Pets?</legend>
       <div class="count-row">
-        <label class="count"><input type="number" name="cats" min="0" max="9" step="1" value="0" inputmode="numeric" />cats</label>
-        <label class="count"><input type="number" name="dogs" min="0" max="9" step="1" value="0" inputmode="numeric" />dogs</label>
+        <label class="count"><input type="number" name="cats" min="0" max="9" step="1" value="0" inputmode="numeric" aria-label="Number of cats" />cats</label>
+        <label class="count"><input type="number" name="dogs" min="0" max="9" step="1" value="0" inputmode="numeric" aria-label="Number of dogs" />dogs</label>
       </div>
     </fieldset>
 
@@ -131,12 +131,13 @@ const kidLabel = (g: string) => g.replace('-', '–');
     <p class="gap" data-missing hidden></p>
     <div class="card-nav" data-card-nav hidden>
       <button type="button" class="btn" data-card-back>Back</button>
-      <button type="button" class="btn primary" data-card-next>Next</button>
+      <button type="button" class="btn primary" data-card-next aria-describedby="card-wait">Next</button>
     </div>
     <div class="actions" data-form-actions>
-      <button type="button" class="btn primary" data-show-plan>Show my plan</button>
+      <button type="button" class="btn primary" data-show-plan aria-describedby="card-wait">Show my plan</button>
       <button type="button" class="btn" data-clear>Clear my answers</button>
     </div>
+    <p class="hint card-wait" id="card-wait" data-card-wait hidden>Answer this question to go on.</p>
   </div>
 
   <div data-plan-view hidden>
@@ -147,13 +148,14 @@ const kidLabel = (g: string) => g.replace('-', '–');
       <button type="button" class="btn" data-edit>Change my answers</button>
       <button type="button" class="btn" data-clear>Clear my answers</button>
     </div>
+    <p class="hint card-wait" id="card-wait" data-card-wait hidden>Answer this question to go on.</p>
   </div>
 
   <script type="application/json" id="plan-data" is:inline set:html={embedded}></script>
 </Base>
 
 <script>
-  import { buildPlan, cleanAnswers, emptyAnswers, availablePriorities, missingAnswers, needsSeparateQuestion, bedroomHelper, KID_GROUPS, TIMELINES, BEDROOM_CHOICES, OPEN_CHOICES, RULES_VERSION } from '../lib/intake/rules.js';
+  import { buildPlan, cleanAnswers, emptyAnswers, availablePriorities, missingAnswers, needsSeparateQuestion, bedroomHelper, bedroomHelperText, KID_GROUPS, TIMELINES, BEDROOM_CHOICES, OPEN_CHOICES, RULES_VERSION } from '../lib/intake/rules.js';
 
   const KEY = 'pcs-sd:intake';
   const { data, config } = JSON.parse(document.getElementById('plan-data')!.textContent!);
@@ -163,15 +165,26 @@ const kidLabel = (g: string) => g.replace('-', '–');
   const planView = $('[data-plan-view]');
 
   // --- Storage: this device only, and the page still works when it's blocked. ---
+  // A stored value that isn't an answers entry (bad JSON, null, a hand edit) is reset, so it can't block later saves.
   let storageOk = true;
+  const entry = () => {
+    const raw = localStorage.getItem(KEY);
+    if (raw == null) return null;
+    let v: unknown = null;
+    try { v = JSON.parse(raw); } catch { /* reset below */ }
+    if (v && typeof v === 'object' && !Array.isArray(v)) return v as { answers?: unknown; chip_off?: boolean };
+    localStorage.removeItem(KEY);
+    return null;
+  };
   const load = () => {
-    try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw).answers : null; } catch { storageOk = false; return null; }
+    try { return entry()?.answers ?? null; } catch { storageOk = false; return null; }
   };
   // The home page's chip keeps its off switch (× ) in the same entry; saving answers keeps it, clearing them drops it.
   const save = (a: ReturnType<typeof emptyAnswers>) => {
     try {
-      const off = JSON.parse(localStorage.getItem(KEY) ?? 'null')?.chip_off === true;
+      const off = entry()?.chip_off === true;
       localStorage.setItem(KEY, JSON.stringify({ rules_version: RULES_VERSION, answers: a, ...(off ? { chip_off: true } : {}) }));
+      storageOk = true;
     } catch { storageOk = false; }
     $('[data-storage-note]').hidden = storageOk;
   };
@@ -229,10 +242,8 @@ const kidLabel = (g: string) => g.replace('-', '–');
     $('[data-separate]').hidden = !(helping && needsSeparateQuestion(a));
     const out = $('[data-helper-out]');
     out.hidden = !helping;
-    if (helping) {
-      const h = bedroomHelper(a);
-      out.textContent = `Navy Housing's enlisted guidelines give ${h.computed} ${h.computed === 1 ? 'bedroom' : 'bedrooms'} for your household; the plan uses the ${h.row}-bedroom rows.`;
-    }
+    if (helping) out.textContent = bedroomHelperText(a);
+    gate(a);
   };
   intake.addEventListener('change', (e) => {
     // "Not sure yet" in Q7 clears the other choices, and picking one clears "Not sure yet".
@@ -246,8 +257,8 @@ const kidLabel = (g: string) => g.replace('-', '–');
     refresh(read());
     answers = read();
     save(answers);
-    advanceOnTap(changed);
   });
+  intake.addEventListener('input', () => gate(read()));
 
   // --- The plan ---
   const QUESTION = ['', 'where you’re reporting', 'pay grade', 'when you report', 'who’s moving with you', 'bedrooms', '', 'what you’re open to', 'what matters most'];
@@ -271,6 +282,18 @@ const kidLabel = (g: string) => g.replace('-', '–');
     else { const a = el('a', undefined, s.title) as HTMLAnchorElement; a.href = s.url; span.append(a); }
     span.append(` · ${s.dates}`);
     return span;
+  };
+  // Beside a ratio note for a member moving alone: the band's without-dependents rate from the embedded BAH table
+  // (src/lib/intake/rules.js, singleRatio), with its year, MHA and date, linking the base page's table.
+  type Without = { band: string; base: string; year: number; area: string; mha: string; lo: number; hi: number; source: { url: string; dates: string } };
+  const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+  const withoutLine = (w: Without) => {
+    const p = el('p', 'note plan-without', `Your rate without dependents: ${w.band} at ${w.base}, ${w.lo === w.hi ? usd(w.lo) : `${usd(w.lo)}–${usd(w.hi)}`} a month (${w.year} BAH, ${w.area} area, MHA ${w.mha}). `);
+    p.dataset.without = `${w.mha}|${w.band}|${w.lo}|${w.hi}`;
+    const a = el('a', undefined, 'BAH table') as HTMLAnchorElement;
+    a.href = w.source.url;
+    p.append(a, ` · ${w.source.dates}`);
+    return p;
   };
   const answerSummary = (a: typeof answers) => {
     const base = a.base === 'unsure' ? 'Not sure yet' : data.bases.find((b: { code: string }) => b.code === a.base).short;
@@ -303,6 +326,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
       sec.dataset.planSection = s.id;
       sec.append(el('h3', undefined, s.heading));
       if (s.note) sec.append(el('p', 'note', s.note));
+      if (s.without) sec.append(withoutLine(s.without));
       const ul = el('ul', 'plan-lines');
       for (const line of s.lines) {
         const li = el('li');
@@ -339,6 +363,7 @@ const kidLabel = (g: string) => g.replace('-', '–');
   $('[data-edit]').addEventListener('click', () => { planView.hidden = true; intake.hidden = false; show(0); });
   $('[data-print]').addEventListener('click', () => window.print());
   $$<HTMLButtonElement>('[data-clear]').forEach((b) => b.addEventListener('click', () => {
+    if (!confirm('Clear your starting-plan answers from this browser?')) return;
     forget();
     answers = emptyAnswers();
     write(answers);
@@ -349,13 +374,23 @@ const kidLabel = (g: string) => g.replace('-', '–');
   }));
 
   // --- Cards: one question per screen ---
-  // Progress, Back and Next; on the last card, "Show my plan". Tapping an option on a single-choice question moves
-  // on; arrow keys only select (a radio group changes on every arrow press), so keyboard users move on with Next or
-  // Enter. The card's fieldset takes focus, so a screen reader reads its question; the progress line is announced.
+  // Progress, Back and Next; on the last card, "Show my plan". Choosing an option never moves on by itself: Next (or
+  // Enter) does, and stays disabled until the card's question is answered (missingAnswers, so "Not sure yet" counts
+  // as an answer). Pets (question 6) start at none, so their Next is never held. The card's fieldset takes focus, so
+  // a screen reader reads its question; the progress line is announced. showPlan still checks every answer.
   const cards = $$<HTMLFieldSetElement>('fieldset.q', intake);
   const cardOf = (n: number) => Math.max(0, cards.findIndex((c) => c.dataset.q === String(n)));
-  const SINGLE = new Set(['base', 'band', 'timeline', 'bedrooms', 'separate6']);
+  const nextBtn = $<HTMLButtonElement>('[data-card-next]');
+  const planBtn = $<HTMLButtonElement>('[data-show-plan]');
   let current = 0;
+  const unanswered = (a: typeof answers) => !!cards.length && missingAnswers(a).includes(Number(cards[current].dataset.q));
+  function gate(a: typeof answers) {
+    if (!cards.length) return;
+    const held = unanswered(a);
+    nextBtn.disabled = held;
+    planBtn.disabled = held;
+    $('[data-card-wait]').hidden = !held;
+  }
   intake.classList.add('carded');
   document.body.classList.add('plan-cards');
   $('[data-card-top]').hidden = false;
@@ -372,29 +407,23 @@ const kidLabel = (g: string) => g.replace('-', '–');
     $('[data-form-actions]').hidden = !last;
     if (!keepNote) $('[data-missing]').hidden = true;
     if (cards[current].dataset.q === '8') renderPicks();
+    gate(read());
     if (focus) {
       window.scrollTo(0, 0);
       cards[current].focus({ preventScroll: true });
     }
   }
-  const next = () => (current === cards.length - 1 ? showPlan() : show(current + 1));
-  $('[data-card-next]').addEventListener('click', next);
+  const next = () => {
+    if (unanswered(read())) return;
+    if (current === cards.length - 1) showPlan();
+    else show(current + 1);
+  };
+  nextBtn.addEventListener('click', next);
   $('[data-card-back]').addEventListener('click', () => show(current - 1));
-  // The option the reader last tapped (or pressed Space on), so a change from an arrow key never counts as a tap.
-  let tapped: { on: Element | null; at: number } = { on: null, at: 0 };
-  intake.addEventListener('pointerdown', (e) => { tapped = { on: (e.target as Element).closest('label.opt'), at: Date.now() }; });
   intake.addEventListener('keydown', (e) => {
     const t = e.target as HTMLInputElement;
-    tapped = { on: e.key === ' ' && t.type === 'radio' ? t.closest('label.opt') : null, at: Date.now() };
     if (e.key === 'Enter' && t.tagName === 'INPUT') { e.preventDefault(); next(); }
   });
-  function advanceOnTap(input: HTMLInputElement) {
-    if (input.type !== 'radio' || !SINGLE.has(input.name) || !tapped.on?.contains(input) || Date.now() - tapped.at > 1500) return;
-    // "Help me figure it out" opens the bedroom helper on the same card.
-    if (input.name === 'bedrooms' && input.value === 'help') return;
-    const card = current;
-    setTimeout(() => { if (card === current) next(); }, 220);
-  }
 
   // Question 8 as a tap list: first tap is "Most important", the next is "Second", tapping one again takes it off.
   // The two selects stay the answer (hidden in card view), so read() and the plan don't change.

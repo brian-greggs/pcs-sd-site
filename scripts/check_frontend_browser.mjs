@@ -15,7 +15,8 @@
 //               and it opens the plan; set it shows base · pay band · household (cut to fit, nothing past the box),
 //               its button has a name and aria-expanded, Enter opens the menu (See your plan, Edit answers, Clear),
 //               Tab walks it, Escape closes it with focus back on the chip, a click outside closes it; Edit answers
-//               opens card 1; × has a name and turns the chip off; Clear empties it and this browser's answers
+//               opens card 1; × has a name and turns the chip off; Clear asks first (Cancel keeps the answers), then
+//               empties it and this browser's answers
 //   ask-body    every network request home makes, across four questions: exactly one POST to /api/ask per question
 //               and nothing else; each body holds only question, previous and the allowed context fields, the
 //               context equal to the chip's answers (none when there are none; none after ×, also after a reload
@@ -39,12 +40,33 @@
 //   no-js       with JavaScript off the menu button goes to /browse/; home shows no ask box and says why; /plan/ shows
 //               its notice, as before
 //   redirect    /ask/ ends on /
-//   cards       one card at a time with "Question n of 8"; arrow keys select without moving on, Enter moves on, a tap
-//               on a single-choice option moves on, Back goes back; the new card's fieldset has focus; with every
-//               priority offered, each card's Back/Next (or Show my plan) is on the first phone screen
+//   cards       one card at a time with "Question n of 8"; a tap, Space or an arrow key selects without moving on;
+//               Next is disabled until the card is answered ("Not sure yet" counts; pets never wait), then Next or
+//               Enter moves on; Back goes back; the new card's fieldset has focus; with every priority offered, each
+//               card's Back/Next (or Show my plan) is on the first phone screen
+//   plan-gate   the plan can't be reached with a required answer missing: from empty answers every required card
+//               holds Next (and Enter) until answered, "Show my plan" waits for question 8, and stored answers with a
+//               gap open on the first unanswered card, never the plan; a click on a held button does nothing
+//   plan-misc   a corrupt or null pcs-sd:intake on /plan/ is reset (no "storage blocked" note, the next answer saves);
+//               Clear asks first; the BAH lines cite /base/<slug>/#bah-table; question inputs have names that say what
+//               they are; the bedroom helper says CNIC lists no standard for officers and senior enlisted, and the
+//               enlisted guidelines for E1–E6; for a member moving alone the ratio sections say they use the
+//               with-dependents rate and show the band's without-dependents rate from bah.json beside it (none with
+//               "Not sure yet"); a household with a partner gets neither
 //   ask         a question shows "Checking the sources…", then the reply with its source chip ("N sources ·
 //               verified <date>") and a related-page card; the box becomes "Ask a follow-up"; "What's sent?" shows the
-//               previous turn; "Ask about this plan" arrives with the chip set and the box focused
+//               previous turn; "Ask about this plan" arrives with the chip set and the box focused; source links and
+//               the related card open in a new tab (noopener); asked by an example (which hides), focus moves to the
+//               answer; typed and sent (Enter or Ask), focus stays in the box and the polite status region says
+//               "Answer ready." and the answer's first sentence
+//   ask-panel   at 390×844 with "What's sent?" open after an answer: the panel isn't inside the sticky box, its height
+//               is capped, the previous answer shows cut to about 200 characters with "(full text sent, N characters)",
+//               and the answer's source link and related card are each the top element at their own position
+//   ask-errors  /api/ask answers 429, 502, 503 and a non-JSON 500: no turn, nothing kept as the previous turn, the
+//               question back in the box, no source chip or related card; the daily cap and 502 link "browse the
+//               pages"; New conversation while an answer is pending drops it (never shown, never sent as previous);
+//               no reply in 45 s stops with a try-again message; a javascript: source URL isn't a link; an empty Ask
+//               says "Type a question"; the counter shows from 400 characters
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -315,8 +337,8 @@ passes.push('home: 390×844, 768×1024, 1280×800');
   const btn = page.locator('[data-ctx-btn]');
   expect('chip', (await page.locator('[data-ctx-text]').textContent()) === 'NBSD · E5–E6 · spouse, kids 6–9, 10–13', `set: chip reads "${await page.locator('[data-ctx-text]').textContent()}"`);
   placed(await geom(), 'set');
-  const name = await btn.evaluate((e) => e.textContent.trim());
-  expect('chip', name.startsWith('Your move, sent with your questions:') && (await btn.getAttribute('aria-expanded')) === 'false', `set: the chip button is named "${name}"`);
+  const name = (await btn.getAttribute('aria-label')) ?? '';
+  expect('chip', name === 'Your move, sent with your questions: NBSD · E5–E6 · spouse, kids 6–9, 10–13' && (await btn.getAttribute('aria-expanded')) === 'false', `set: the chip button is named "${name}"`);
   expect('chip', /\S/.test((await page.locator('[data-ctx-x]').getAttribute('aria-label')) ?? ''), 'the × has no name');
   // Keyboard: Enter opens the menu, Tab walks it, Escape closes it with focus back on the chip.
   await btn.focus();
@@ -348,7 +370,15 @@ passes.push('home: 390×844, 768×1024, 1280×800');
   await page.goto(`${BASE}/`);
   await page.locator('[data-ctx-x]').click();
   expect('chip', (await page.locator('[data-ctx-text]').textContent()) === 'Your move: off' && !(await page.locator('[data-ctx-x]').isVisible()) && (await page.evaluate(() => document.activeElement.hasAttribute('data-ctx-btn'))), '× didn\'t turn the chip off with focus on it');
+  expect('chip', ((await btn.getAttribute('aria-label')) ?? '').startsWith('Your move: off.'), `off: the chip button is named "${await btn.getAttribute('aria-label')}"`);
+  // Clear asks first: Cancel keeps the answers, OK clears them.
+  let asked = '';
+  page.once('dialog', (d) => { asked = d.message(); d.dismiss(); });
   await btn.click();
+  await page.locator('[data-ctx-clear]').click();
+  expect('chip', /clear/i.test(asked) && (await page.evaluate(() => localStorage.getItem('pcs-sd:intake'))) !== null && (await btn.isVisible()), `Clear didn't ask first, or Cancel cleared anyway ("${asked}")`);
+  page.once('dialog', (d) => d.accept());
+  if (!(await page.locator('[data-ctx-menu]').isVisible())) await btn.click();
   await page.locator('[data-ctx-clear]').click();
   expect('chip', (await add.isVisible()) && (await page.evaluate(() => localStorage.getItem('pcs-sd:intake'))) === null && (await page.evaluate(() => document.activeElement.hasAttribute('data-ctx-add'))), 'Clear didn\'t empty the chip and this browser\'s answers (and its off switch)');
   // The longest summary cuts with an ellipsis inside the box.
@@ -417,7 +447,8 @@ for (const w of [390, 1280]) {
   const ctx = await context({ width: w, height: 900 });
   const page = await ctx.newPage();
   await page.goto(`${BASE}/plan/`);
-  await page.evaluate(() => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: { partner: true, kids: { '0-2': 1, '3-5': 0, '6-9': 2, '10-13': 0, '14-18': 0 }, dogs: 1, bedrooms: 'help' } })));
+  await page.evaluate(() => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: { base: 'NBSD', band: 'E5–E6', timeline: '60-90', partner: true, kids: { '0-2': 1, '3-5': 0, '6-9': 2, '10-13': 0, '14-18': 0 }, dogs: 1, bedrooms: 'help', separate6: false, open: ['renting'], priorities: ['where'] } })));
+  await page.goto(`${BASE}/plan/#edit`);
   await page.reload();
   for (let i = 0; i < 8; i++) {
     const m = await page.evaluate(() => {
@@ -521,12 +552,13 @@ passes.push('redirect: /ask/ → /');
   const progress = () => page.locator('[data-progress]').textContent();
   expect('cards', (await progress()) === 'Question 1 of 8', `start: "${await progress()}"`);
   expect('cards', (await page.locator('fieldset.q:visible').count()) === 1, 'more than one card showing');
+  const next = page.locator('[data-card-next]');
+  expect('cards', await next.isDisabled(), 'Next is enabled on an unanswered card 1');
   await page.locator('input[name="base"]').first().focus();
   await page.keyboard.press('Space');
   await page.waitForTimeout(400);
-  expect('cards', (await progress()) === 'Question 2 of 8', `Space on an option didn't move on: "${await progress()}"`);
-  await page.locator('[data-card-back]').click();
-  await page.locator('input[name="base"]').first().focus();
+  expect('cards', (await progress()) === 'Question 1 of 8' && await page.locator('input[name="base"]').first().isChecked(), `Space on an option didn't just select it: "${await progress()}"`);
+  expect('cards', await next.isEnabled(), 'Next stayed disabled after an answer');
   await page.keyboard.press('ArrowDown');
   await page.waitForTimeout(400);
   expect('cards', (await progress()) === 'Question 1 of 8', 'an arrow key moved on');
@@ -536,7 +568,9 @@ passes.push('redirect: /ask/ → /');
   expect('cards', (await active(page)) === 'fieldset.current', `focus after moving on: ${await active(page)}`);
   await page.locator('#main label.opt', { hasText: 'E5–E6' }).tap();
   await page.waitForTimeout(400);
-  expect('cards', (await progress()) === 'Question 3 of 8', 'a tap didn\'t move on');
+  expect('cards', (await progress()) === 'Question 2 of 8', 'a tap moved on by itself');
+  await next.click();
+  expect('cards', (await progress()) === 'Question 3 of 8', 'Next didn\'t move on after a tap');
   await page.locator('[data-card-back]').click();
   expect('cards', (await progress()) === 'Question 2 of 8', 'Back didn\'t go back');
   // Every priority offered (partner, a baby, a school-age child, a dog), then each card's buttons on the first screen.
@@ -544,6 +578,8 @@ passes.push('redirect: /ask/ → /');
   await page.reload();
   expect('cards', (await progress()) === 'Question 5 of 8', `with 1–4 answered it opened on "${await progress()}"`);
   while ((await progress()) !== 'Question 1 of 8') await page.locator('[data-card-back]').click();
+  // Each card's buttons (and the "Answer this question" line under them) on the first screen; questions 5 and 7
+  // answered on their cards on the way.
   for (let i = 0; i < 8; i++) {
     const m = await page.evaluate(() => {
       const btns = [...document.querySelectorAll('[data-card-nav] .btn, [data-form-actions] .btn')].filter((e) => e.offsetParent);
@@ -551,17 +587,11 @@ passes.push('redirect: /ask/ → /');
     });
     expect('cards', m.bottom <= 844, `card ${m.q}: its buttons end at ${Math.round(m.bottom)} px, below the first screen`);
     if (m.q === '8') expect('cards', m.picks === 9, `card 8 offers ${m.picks} priorities, not all 9`);
+    if (m.q === '5') await page.locator('#main label.opt', { hasText: /^3$/ }).click();
+    if (m.q === '7') await page.locator('#main label.opt', { hasText: 'Renting' }).click();
     if (i < 7) await page.locator('[data-card-next]').click();
   }
   // Question 8 by taps, then the plan, then "Ask about this plan".
-  // Questions 5 and 7, answered on their cards.
-  await page.locator('[data-card-back]').click();
-  await page.locator('#main label.opt', { hasText: 'Renting' }).click();
-  for (let i = 0; i < 2; i++) await page.locator('[data-card-back]').click();
-  await page.locator('#main label.opt', { hasText: /^3$/ }).click();
-  await page.waitForTimeout(400);
-  await page.locator('[data-card-next]').click();
-  await page.locator('[data-card-next]').click();
   await page.locator('[data-pick-list] button').nth(1).click();
   await page.locator('[data-pick-list] button').nth(0).click();
   const picked = await page.evaluate(() => [document.querySelector('select[name="priority-1"]').value, document.querySelector('select[name="priority-2"]').value]);
@@ -574,7 +604,7 @@ passes.push('redirect: /ask/ → /');
   expect('ask', (await page.evaluate(() => document.activeElement?.id)) === 'ask-q', '"Ask about this plan" didn\'t focus the box');
   await ctx.close();
 }
-passes.push('cards: progress, tap / Space / Enter move on, arrows don\'t, Back, focus, every card\'s buttons on the first screen, plan, "Ask about this plan"');
+passes.push('cards: progress, tap / Space / arrows select without moving on, Next held until answered, Next / Enter move on, Back, focus, every card\'s buttons on the first screen, plan, "Ask about this plan"');
 
 // --- ask ---
 {
@@ -588,6 +618,12 @@ passes.push('cards: progress, tap / Space / Enter move on, arrows don\'t, Back, 
   const chip = (await page.locator('.ask-src > summary').first().textContent()).trim();
   expect('ask', /^\d+ sources? · verified \d{4}-\d{2}(-\d{2})?$/.test(chip), `source chip reads "${chip}"`);
   expect('ask', (await page.locator('.ask-related').count()) === 1, 'no related-page card');
+  // Links out of the conversation open in a new tab, so Back can't lose it.
+  const tabs = await page.locator('.ask-src-list a, a.ask-related').evaluateAll((as) => as.map((a) => `${a.target}|${a.rel}`));
+  expect('ask', tabs.length > 1 && tabs.every((t) => t === '_blank|noopener'), `source links and the related card: ${tabs.join(', ')}`);
+  // Typed and sent with Ask: focus stays in the box; the status region says the answer is ready.
+  expect('ask', (await page.evaluate(() => document.activeElement?.id)) === 'ask-q', `typed question: focus after the answer is on ${await active(page)}, not the box`);
+  expect('ask', /^Answer ready\./.test(await page.locator('[data-status]').textContent()), `status after the answer: "${await page.locator('[data-status]').textContent()}"`);
   expect('ask', (await page.locator('[data-ask-label]').textContent()) === 'Ask a follow-up', 'the box didn\'t become the follow-up box');
   expect('ask', !(await page.locator('[data-examples]').isVisible()), 'the example questions still show in the conversation');
   await page.locator('[data-whats-sent]').click();
@@ -603,7 +639,293 @@ passes.push('cards: progress, tap / Space / Enter move on, arrows don\'t, Back, 
   expect('ask', (await page.locator('.ask-turn').count()) === 0 && await page.locator('[data-examples]').isVisible(), '"New conversation" didn\'t reset');
   await ctx.close();
 }
-passes.push('ask: waiting state, source chip, related card, follow-up box, "What\'s sent?", "I don\'t have that" with its nearest page, new conversation');
+// An example tapped by keyboard: focus lands on the answer, not lost on the hidden example.
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/`);
+  await page.locator('[data-example]').first().focus();
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('.ask-answer:not(.ask-waiting)');
+  expect('ask', await page.evaluate(() => document.activeElement?.classList.contains('ask-answer')), `after an example by keyboard, focus is on ${await active(page)}`);
+  await ctx.close();
+}
+passes.push('ask: waiting state, source chip, related card, new tab, focus by path (example → answer, typed → box), follow-up box, "What\'s sent?", "I don\'t have that" with its nearest page, new conversation');
+
+// A reply with answer text (the stub has none), from the real handler's retrieval and citations.
+const ANSWER = 'Murphy Canyon is one of the base housing areas tied to Naval Base San Diego. The latest wait list gives a range of months for each pay band and bedroom count, and the area page lists each community with its pet policy. Liberty Military Housing runs the list; apply through the Housing Service Center once you have orders, and check the page for the date of the estimate.';
+const answered = (extra = {}) => async (route) => {
+  const r = await handleAsk({ body: JSON.parse(route.request().postData()), env: {}, index });
+  const { note, prompt, chunks, ...rest } = r.json;
+  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ...rest, kind: 'answer', answer: ANSWER, ...extra }) });
+};
+const askIn = async (page, question) => {
+  const n = await page.locator('.ask-answer:not(.ask-waiting)').count();
+  await page.locator('[data-q]').fill(question);
+  await page.locator('[data-send]').click();
+  await page.waitForFunction((k) => document.querySelectorAll('.ask-answer:not(.ask-waiting)').length > k || !document.querySelector('[data-error]').hidden, n, { timeout: 10_000 }).catch(() => {});
+};
+
+// The announcement for a typed question: polite, "Answer ready." and exactly the answer's first sentence, focus in
+// the box, by Enter and by the Ask button.
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.route('**/api/ask', answered());
+  await page.goto(`${BASE}/`);
+  const live = await page.locator('[data-status]').evaluate((e) => `${e.getAttribute('role')}|${e.getAttribute('aria-live')}`);
+  expect('ask', live === 'status|polite', `the status region is ${live}, not a polite live region`);
+  const want = `Answer ready. ${ANSWER.match(/^.+?[.!?](?=\s|$)/)[0]}`;
+  for (const how of ['Enter', 'Ask']) {
+    const n = await page.locator('.ask-answer:not(.ask-waiting)').count();
+    await page.locator('[data-q]').fill(`How long is the wait at Murphy Canyon (${how})?`);
+    if (how === 'Enter') await page.locator('[data-q]').press('Enter');
+    else await page.locator('[data-send]').click();
+    await page.waitForFunction((k) => document.querySelectorAll('.ask-answer:not(.ask-waiting)').length > k, n);
+    const said = await page.locator('[data-status]').textContent();
+    expect('ask', said === want, `typed (${how}): status "${said}", want "${want}"`);
+    expect('ask', (await page.evaluate(() => document.activeElement?.id)) === 'ask-q', `typed (${how}): focus on ${await active(page)}, not the box`);
+  }
+  await ctx.close();
+}
+
+// --- ask-panel ---
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.route('**/api/ask', answered());
+  await page.goto(`${BASE}/`);
+  await askIn(page, 'How long is the base housing wait at Murphy Canyon?');
+  await page.locator('[data-whats-sent]').click();
+  await page.waitForTimeout(500);
+  const m = await page.evaluate(() => {
+    const panel = document.querySelector('[data-sent-panel]');
+    return { inBox: !!panel.closest('[data-box]'), sticky: [...document.querySelectorAll('*')].some((e) => getComputedStyle(e).position === 'sticky' && e.contains(panel)), h: panel.getBoundingClientRect().height, scrollH: panel.scrollHeight, shown: JSON.parse(document.querySelector('[data-context-json]').textContent) };
+  });
+  expect('ask-panel', !m.inBox && !m.sticky, `"What's sent?" is inside the sticky box (in box ${m.inBox}, in a sticky element ${m.sticky})`);
+  expect('ask-panel', m.h <= 844 * 0.5 + 1, `"What's sent?" is ${Math.round(m.h)} px tall (cap: half the screen)`);
+  const prev = m.shown.previous?.answer ?? '';
+  const cut = prev.match(/^([\s\S]*)… \(full text sent, (\d+) characters\)$/);
+  expect('ask-panel', cut && cut[1].length >= 150 && cut[1].length <= 200 && ANSWER.startsWith(cut[1]) && Number(cut[2]) === ANSWER.length, `previous answer shown as "${prev.slice(0, 60)}…${prev.slice(-40)}"`);
+  // The answer's source link and related card: each the top element at its own position, panel open.
+  await page.locator('.ask-src').first().evaluate((d) => { d.open = true; });
+  for (const sel of ['.ask-src-list a', 'a.ask-related']) {
+    const hit = await page.locator(sel).first().evaluate((a) => {
+      a.scrollIntoView({ block: 'center' });
+      const r = a.getBoundingClientRect();
+      const top = document.elementFromPoint(r.left + Math.min(r.width / 2, 40), r.top + r.height / 2);
+      return { ok: !!top && a.contains(top), top: top ? `${top.tagName.toLowerCase()}.${top.className}` : null };
+    });
+    expect('ask-panel', hit.ok, `with "What's sent?" open, ${sel} is covered by ${hit.top}`);
+  }
+  await ctx.close();
+}
+passes.push('ask-panel: 390×844, "What\'s sent?" under the sticky box, capped, previous answer cut with its length; source link and related card uncovered');
+
+// --- ask-errors ---
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  const bodies = [];
+  const replies = [
+    { status: 429, json: { error: 'The assistant has answered all it can today. Try again tomorrow, or browse the pages.' }, browse: true },
+    { status: 502, json: { error: 'The assistant isn’t working right now.', citations: [{ url: '/base/miramar/#bah-table', title: 'MCAS Miramar', section: 'BAH', label: 'MCAS Miramar: BAH', verified_on: '2026-10-20' }] }, browse: true },
+    { status: 503, json: { error: 'The assistant is busy. Try again in a minute.', citations: [{ url: '/sources/', title: 'Sources', section: 'x', label: 'Sources: x', verified_on: '2026-10-20' }] }, browse: false },
+    { status: 500, html: '<html><body>Error 1101</body></html>', browse: true },
+  ];
+  let k = 0;
+  await page.route('**/api/ask', async (route) => {
+    bodies.push(JSON.parse(route.request().postData()));
+    const r = replies[k++];
+    if (!r) return answered()(route);
+    await route.fulfill(r.html ? { status: r.status, contentType: 'text/html', body: r.html } : { status: r.status, contentType: 'application/json', body: JSON.stringify(r.json) });
+  });
+  await page.goto(`${BASE}/`);
+  for (const [i, r] of replies.entries()) {
+    const question = `Question ${i + 1} about BAH at Miramar`;
+    await askIn(page, question);
+    const m = await page.evaluate(() => ({ turns: document.querySelectorAll('.ask-turn').length, box: document.querySelector('[data-q]').value, chips: document.querySelectorAll('.ask-src, .ask-related').length,
+      error: document.querySelector('[data-error]').textContent, browse: !!document.querySelector('[data-error] a[href="/browse/"]') }));
+    expect('ask-errors', m.turns === 0 && m.chips === 0, `${r.status}: ${m.turns} turns and ${m.chips} source chips or cards shown`);
+    expect('ask-errors', m.box === question, `${r.status}: the box holds "${m.box}", not the question`);
+    expect('ask-errors', m.browse === r.browse && /\w/.test(m.error), `${r.status}: error "${m.error}" ${m.browse ? 'links' : 'doesn\'t link'} "browse the pages"`);
+  }
+  await askIn(page, 'How long is the base housing wait at Murphy Canyon?');
+  expect('ask-errors', bodies.every((b) => !b.previous), `an error went as the previous turn: ${JSON.stringify(bodies.map((b) => b.previous ?? null))}`);
+  await ctx.close();
+}
+{
+  // New conversation while an answer is pending.
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  const bodies = [];
+  await page.route('**/api/ask', async (route) => {
+    bodies.push(JSON.parse(route.request().postData()));
+    await new Promise((res) => setTimeout(res, 1500));
+    await answered()(route).catch(() => {});
+  });
+  await page.goto(`${BASE}/`);
+  await page.locator('[data-q]').fill('FIRST private question about BAH');
+  await page.locator('[data-send]').click();
+  await page.waitForTimeout(200);
+  await page.locator('[data-clear-log]').click();
+  await page.waitForTimeout(2000);
+  await page.locator('[data-whats-sent]').click();
+  const listed = await page.locator('[data-sent-fields] li').evaluateAll((lis) => lis.map((li) => li.dataset.field));
+  expect('ask-errors', (await page.locator('.ask-turn').count()) === 0 && !listed.includes('previous'), `after New conversation mid-answer: ${await page.locator('.ask-turn').count()} turns, "What's sent?" lists ${listed.join(', ')}`);
+  await askIn(page, 'SECOND question about schools');
+  expect('ask-errors', bodies.length === 2 && !bodies[1].previous, `the cleared turn went with the next question: ${JSON.stringify(bodies[1]?.previous)}`);
+  await ctx.close();
+}
+{
+  // No reply in 45 s; a javascript: source URL; an empty Ask; the counter.
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.clock.install();
+  let hold = true;
+  await page.route('**/api/ask', async (route) => {
+    if (hold) return; // never answered
+    await answered({ citations: [{ url: 'javascript:alert(8)', title: 'Bad', section: 'x', label: 'Bad: x', verified_on: '2026-10-20' }] })(route);
+  });
+  await page.goto(`${BASE}/`);
+  await page.locator('[data-q]').fill('Slow question about BAH');
+  await page.locator('[data-send]').click();
+  await page.clock.fastForward(46_000);
+  await page.waitForFunction(() => !document.querySelector('[data-error]').hidden, null, { timeout: 5_000 }).catch(() => {});
+  const m = await page.evaluate(() => ({ error: document.querySelector('[data-error]').textContent, box: document.querySelector('[data-q]').value, turns: document.querySelectorAll('.ask-turn').length, send: document.querySelector('[data-send]').disabled }));
+  expect('ask-errors', /too long/.test(m.error) && /try again/i.test(m.error) && m.box === 'Slow question about BAH' && !m.turns && !m.send, `after 45 s: ${JSON.stringify(m)}`);
+  hold = false;
+  await askIn(page, 'How long is the base housing wait at Murphy Canyon?');
+  const bad = await page.evaluate(() => ({ js: document.querySelectorAll('a[href^="javascript"]').length, text: document.querySelector('.ask-src-list')?.textContent ?? '', related: document.querySelectorAll('.ask-related').length }));
+  expect('ask-errors', !bad.js && bad.text.includes('Bad: x') && !bad.related, `a javascript: citation URL: ${JSON.stringify(bad)}`);
+  await page.locator('[data-q]').fill('');
+  await page.locator('[data-send]').click();
+  expect('ask-errors', (await page.locator('[data-error]').textContent()) === 'Type a question.' && await page.locator('[data-error]').isVisible(), `empty Ask: "${await page.locator('[data-error]').textContent()}"`);
+  await page.locator('[data-q]').fill('x'.repeat(399));
+  const c399 = await page.locator('[data-count]').isVisible();
+  await page.locator('[data-q]').fill('x'.repeat(420));
+  expect('ask-errors', !c399 && (await page.locator('[data-count]').textContent()) === '420/500 characters' && await page.locator('[data-count]').isVisible() && !(await page.locator('[data-error]').isVisible()), `counter: at 399 ${c399 ? 'shown' : 'hidden'}, at 420 "${await page.locator('[data-count]').textContent()}"`);
+  await ctx.close();
+}
+passes.push('ask-errors: 429, 502, 503 and HTML 500 kept out of the conversation with the question back in the box; New conversation drops a pending answer; 45 s timeout; javascript: URL not a link; empty Ask; counter');
+
+// --- plan-gate ---
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/plan/`);
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  const progress = () => page.locator('[data-progress]').textContent();
+  const held = () => page.evaluate(() => {
+    const b = [...document.querySelectorAll('[data-card-next], [data-show-plan]')].find((e) => e.offsetParent);
+    return b.disabled;
+  });
+  // Pressing a held button (by script, and Enter in an input) must not move on or show the plan.
+  const tryPast = async () => {
+    await page.evaluate(() => { for (const b of document.querySelectorAll('[data-card-next], [data-show-plan]')) b.click(); });
+    const input = page.locator('fieldset.q.current input').first();
+    if (await input.count()) { await input.focus(); await page.keyboard.press('Enter'); }
+  };
+  const answer = { 1: () => page.locator('#main label.opt', { hasText: 'Not sure yet' }).first().click(), 2: () => page.locator('#main label.opt', { hasText: 'E1–E4' }).click(),
+    3: () => page.locator('#main label.opt', { hasText: '60–90 days' }).click(), 4: () => page.locator('input[name="partner"][value="no"]').check(), 5: () => page.locator('#main label.opt', { hasText: 'Help me figure it out' }).click(),
+    7: () => page.locator('fieldset.q.current label.opt', { hasText: 'Not sure yet' }).click(), 8: () => page.locator('[data-pick-list] button').first().click() };
+  for (let n = 1; n <= 8; n++) {
+    const at = await progress();
+    expect('plan-gate', at === `Question ${n} of 8`, `walking the cards reached "${at}", not question ${n}`);
+    if (n === 6) { expect('plan-gate', !(await held()), 'pets (question 6) hold Next'); await page.locator('[data-card-next]').click(); continue; }
+    expect('plan-gate', await held(), `question ${n}: Next isn't held before an answer`);
+    if (n === 4) await page.locator('input[name="kids-0-2"]').fill('1');
+    await tryPast();
+    expect('plan-gate', (await progress()) === at && !(await page.locator('[data-plan-view]').isVisible()), `question ${n}: got past without an answer`);
+    if (n === 4) { expect('plan-gate', await held(), 'question 4: a child count alone let Next through'); await page.locator('input[name="kids-0-2"]').fill('0'); }
+    await answer[n]();
+    expect('plan-gate', !(await held()), `question ${n}: still held after an answer`);
+    if (n < 8) await page.locator('[data-card-next]').click();
+  }
+  await page.locator('[data-show-plan]').click();
+  expect('plan-gate', await page.locator('[data-plan-out] h2', { hasText: 'Your starting plan' }).isVisible(), 'all answered, but no plan');
+  // The bedroom follow-up holds question 5 when it matters.
+  await page.evaluate(() => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: { base: 'NBSD', band: 'E5–E6', timeline: '60-90', partner: true, kids: { '0-2': 1, '3-5': 0, '6-9': 1, '10-13': 0, '14-18': 0 }, bedrooms: 'help', separate6: null, open: ['renting'], priorities: ['where'] } })));
+  await page.goto(`${BASE}/plan/`);
+  expect('plan-gate', (await progress()) === 'Question 5 of 8' && !(await page.locator('[data-plan-view]').isVisible()), `bedroom follow-up unanswered: opened on "${await progress()}"`);
+  expect('plan-gate', await held(), 'question 5: Next isn\'t held with the separate-rooms question unanswered');
+  await page.locator('input[name="separate6"][value="no"]').check();
+  expect('plan-gate', !(await held()), 'question 5: still held after the separate-rooms answer');
+  // Stored answers with a gap open on the gap, never the plan.
+  await page.evaluate(() => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: { base: 'NBSD', band: 'E5–E6', timeline: null, partner: false, kids: {}, bedrooms: '2', open: ['renting'], priorities: ['where'] } })));
+  await page.goto(`${BASE}/plan/`);
+  expect('plan-gate', (await progress()) === 'Question 3 of 8' && !(await page.locator('[data-plan-view]').isVisible()), `question 3 missing: opened on "${await progress()}", plan ${await page.locator('[data-plan-view]').isVisible() ? 'shown' : 'hidden'}`);
+  await tryPast();
+  expect('plan-gate', !(await page.locator('[data-plan-view]').isVisible()), 'question 3 missing: a held button showed the plan');
+  await ctx.close();
+}
+passes.push('plan-gate: Next held on every required card until answered (also against a script click and Enter), pets never held, the bedroom follow-up, a stored gap opens on the gap');
+
+// --- plan-misc ---
+{
+  const ctx = await context({ width: 390, height: 844 });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/plan/`);
+  for (const bad of ['{', 'null', '[]', '"x"']) {
+    await page.evaluate((v) => localStorage.setItem('pcs-sd:intake', v), bad);
+    await page.reload();
+    const note = await page.locator('[data-storage-note]').isVisible();
+    await page.locator('#main label.opt', { hasText: 'MCAS Miramar' }).click();
+    const kept = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('pcs-sd:intake')).answers.base; } catch { return null; } });
+    expect('plan-misc', !note && kept === 'MIRAMAR', `stored ${bad}: "storage blocked" ${note ? 'shown' : 'hidden'}, next answer saved as ${kept}`);
+  }
+  // Names that say what each input is.
+  const names = await page.locator('fieldset.q input').evaluateAll((xs) => xs.map((x) => (x.getAttribute('aria-label') ?? x.labels?.[0]?.textContent ?? '').trim()));
+  const vague = names.filter((n) => /^(yes|no|\d+|cats|dogs|aged .*|)$/i.test(n));
+  expect('plan-misc', !vague.length, `inputs named only ${[...new Set(vague)].join(', ')}`);
+  const role = (r, name) => page.getByRole(r, { name, exact: true, includeHidden: true }).count(); // cards other than the current one are hidden
+  expect('plan-misc', (await role('radio', 'Yes, a spouse or partner is moving with me')) === 1 && (await role('spinbutton', 'Number of children aged 0–2')) === 1 && (await role('spinbutton', 'Number of cats')) === 1 && (await role('radio', '3 bedrooms')) === 1, 'radio and count inputs have no names that say what they are');
+  // The bedroom helper's wording by pay grade.
+  const helper = async (band) => {
+    await page.evaluate((b) => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: { base: 'NBSD', band: b, timeline: '60-90', partner: true, kids: { '0-2': 0, '3-5': 0, '6-9': 0, '10-13': 1, '14-18': 0 }, bedrooms: 'help', open: ['renting'], priorities: ['where'] } })), band);
+    await page.goto(`${BASE}/plan/#edit`);
+    await page.reload();
+    return page.locator('[data-helper-out]').textContent();
+  };
+  const senior = await helper('O4–O6');
+  expect('plan-misc', senior.includes('CNIC lists no bedroom standard for officers and senior enlisted') && !/enlisted guidelines/.test(senior), `O4–O6 helper: "${senior}"`);
+  const junior = await helper('E5–E6');
+  expect('plan-misc', /enlisted guidelines/.test(junior), `E5–E6 helper: "${junior}"`);
+  // A member moving alone: the ratio sections say they use the with-dependents rate, with the band's rate without.
+  const bah = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'bah.json'), 'utf-8'));
+  const plan = async (answers) => {
+    await page.evaluate((a) => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: a })), answers);
+    await page.goto(`${BASE}/plan/`);
+    await page.reload();
+    return page.evaluate(() => ({ notes: [...document.querySelectorAll('[data-plan-section] .note')].map((n) => n.textContent).join(' '), without: [...document.querySelectorAll('[data-without]')].map((p) => ({ key: p.dataset.without, text: p.textContent, href: p.querySelector('a')?.getAttribute('href') })),
+      text: document.querySelector('[data-plan-out]').textContent, bahLinks: [...document.querySelectorAll('.line-source a')].map((a) => a.getAttribute('href')).filter((h) => h.includes('#bah')), mha: JSON.parse(document.getElementById('plan-data').textContent).data.bases.find((b) => b.code === 'NBSD').mha }));
+  };
+  const single = { base: 'NBSD', band: 'E1–E4', timeline: '60-90', partner: false, kids: {}, bedrooms: 'help', open: ['renting'], priorities: ['cost', 'where'] };
+  let got = await plan(single);
+  const rows = bah.filter((r) => r.pay_band === 'E1–E4' && r.mha === got.mha).map((r) => r.without_dependents);
+  const want = `${got.mha}|E1–E4|${Math.min(...rows)}|${Math.max(...rows)}`;
+  expect('plan-misc', got.notes.includes('with-dependents allowance') && got.without.length >= 1 && got.without.every((w) => w.key === want && w.text.includes(`$${Math.min(...rows).toLocaleString('en-US')}`) && w.href === '/base/naval-base-san-diego/#bah-table'), `alone at NBSD: ${JSON.stringify(got.without)} (want ${want})`);
+  expect('plan-misc', !/smallest row/.test(got.text) && /studio and 1-bedroom rents/.test(got.text), 'alone: the plan still says "the smallest row we have" or doesn\'t point to the studio and 1-bedroom rents');
+  expect('plan-misc', got.bahLinks.length > 0 && got.bahLinks.every((h) => h.endsWith('/#bah-table')), `BAH lines cite ${[...new Set(got.bahLinks)].join(', ')}`);
+  got = await plan({ ...single, base: 'unsure' });
+  expect('plan-misc', got.notes.includes('with-dependents allowance') && !got.without.length, `alone, base not sure: ${got.without.length} without-dependents lines`);
+  got = await plan({ ...single, partner: true });
+  expect('plan-misc', !got.notes.includes('moving on your own') && !got.without.length, 'with a partner, the plan still says "moving on your own"');
+  await page.goto(`${BASE}/base/naval-base-san-diego/`);
+  expect('plan-misc', (await page.locator('#bah-table').count()) === 1, 'the base page has no #bah-table');
+  // Clear asks first, here too.
+  await page.evaluate((a) => localStorage.setItem('pcs-sd:intake', JSON.stringify({ answers: a })), single);
+  await page.goto(`${BASE}/plan/`);
+  page.once('dialog', (d) => d.dismiss());
+  await page.locator('[data-plan-view] [data-clear]').click();
+  const keptAfterCancel = (await page.locator('[data-plan-view]').isVisible()) && (await page.evaluate(() => localStorage.getItem('pcs-sd:intake'))) !== null;
+  page.once('dialog', (d) => d.accept());
+  await page.locator('[data-plan-view] [data-clear]').click();
+  expect('plan-misc', keptAfterCancel && (await page.evaluate(() => localStorage.getItem('pcs-sd:intake'))) === null && !(await page.locator('[data-plan-view]').isVisible()), `Clear on the plan: Cancel ${keptAfterCancel ? 'kept' : 'didn\'t keep'} the answers, OK didn't clear`);
+  await ctx.close();
+}
+passes.push('plan-misc: corrupt storage reset, input names, the bedroom helper by pay grade, a member alone (with-dependents note, rate without from bah.json), #bah-table, Clear asks first');
 
 await browser.close();
 console.log('\nFront end checks (browser)');

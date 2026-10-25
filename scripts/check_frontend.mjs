@@ -12,7 +12,9 @@
 //   home-chip       the ask box's bottom bar holds the move chip at the left and Ask at the right; empty, the chip is
 //                   "+ Add your move", a link to /plan/; set, a menu button (aria-expanded, aria-controls its menu)
 //                   whose menu has See your plan (/plan/), Edit answers (/plan/#edit) and Clear, and a labeled × button;
-//                   the old "Include my starting-plan answers" checkbox is gone
+//                   the chip button has a name of its own (aria-label) before the script fills it; the old "Include my
+//                   starting-plan answers" checkbox is gone; "What's sent?" is under the box, not inside it (the box is
+//                   sticky in a conversation, so a panel in it covers the answer)
 //   ask-context     what the chip sends (assistant/context.js): from every kind of stored answer, only base, band,
 //                   partner and the children's age groups, each a value the intake offers, never a count, a timeline,
 //                   pets, priorities or anything else; the request body has only question, previous and context; the
@@ -28,7 +30,17 @@
 //   ask-redirect    /ask/ redirects to /: a 301 in _redirects (Cloudflare) and, in dist/ask/, a meta refresh and a
 //                   link to /, with no ask box left there
 //   plan-cards      /plan/ has one card (fieldset) per question, numbered 1 to 8 in order, covering every answer
-//                   field the rules define (emptyAnswers) and every choice the rules and config offer
+//                   field the rules define (emptyAnswers) and every choice the rules and config offer; each yes/no radio,
+//                   bedroom count and count input has a name that says what it is (aria-label), and the yes/no and
+//                   count groups are labeled by their question
+//   plan-singles    over every base (and "not sure") × pay band × bedroom choice, for a member moving alone: every
+//                   section showing a rent-to-allowance ratio says it uses the with-dependents rate; with a base, it
+//                   carries the band's without-dependents rate (lo–hi) exactly as bah.json has it for the base's MHA,
+//                   citing /base/<slug>/#bah-table with the BAH date; with "not sure", none. A household with a partner
+//                   or children gets neither. No plan says "the smallest row we have"; every BAH line cites #bah-table.
+//                   The bedroom helper says CNIC lists no standard for officers and senior enlisted, and only E1–E6 hear
+//                   "enlisted guidelines"
+//   no-notes-refs   no built page shows "QUESTIONS.md" (the /sources/ table said "see QUESTIONS.md")
 //   ask-view        the source chip's date, the related-page card and the follow-ups (src/lib/askView.js) on fixed
 //                   replies
 //
@@ -148,6 +160,10 @@ function checkHomeChip(files) {
   const want = [['See your plan', 'a', '/plan/'], ['Edit answers', 'a', '/plan/#edit'], ['Clear', 'button']];
   for (const [text, tag, href] of want) if (!items.some((i) => i.text === text && i.tag === tag && (!href || i.href === href))) fail('home-chip', 'index.html', `the menu has no "${text}"${href ? ` linking to ${href}` : ''}`);
   if (!/<button\b[^>]*\sdata-ctx-x\b[^>]*\saria-label="[^"]+"[^>]*>/.test(bar)) fail('home-chip', 'index.html', 'no labeled × button on the chip');
+  if (!/\saria-label="[^"]*\w[^"]*"/.test(btn)) fail('home-chip', 'index.html', 'the chip button has no name of its own (aria-label)');
+  const panel = elementWith(html, 'data-sent-panel');
+  if (!panel) fail('home-chip', 'index.html', 'no "What\'s sent?" panel');
+  else if (box.includes(' data-sent-panel')) fail('home-chip', 'index.html', '"What\'s sent?" is inside the ask box, which sticks to the bottom of the screen in a conversation');
   if (/\sdata-context(?=[\s=>])|Include my starting-plan answers/.test(html)) fail('home-chip', 'index.html', 'the old starting-plan checkbox is still there');
 }
 
@@ -316,7 +332,71 @@ function checkPlanCards(files) {
     if (!new RegExp(`\\s${attr}(?=[\\s=>])`).test(html)) fail('plan-cards', 'plan/index.html', `no ${attr}`);
   }
   if (!/<a\b[^>]*\shref="\/#ask-with-plan"[^>]*>Ask about this plan<\/a>/.test(html)) fail('plan-cards', 'plan/index.html', 'no "Ask about this plan" link to /#ask-with-plan');
+  // Names: an input whose visible label is only "Yes", "2" or "cats" says what it is, and its group is labeled.
+  for (const m of html.matchAll(/<input\b[^>]*\sname="(partner|separate6|bedrooms|kids-[^"]+|cats|dogs)"[^>]*>/g)) {
+    const value = m[0].match(/\svalue="([^"]*)"/)?.[1];
+    if (m[1] === 'bedrooms' && value === 'help') continue; // "Help me figure it out" says it
+    if (!/\saria-label="[^"]*\w[^"]*"/.test(m[0])) fail('plan-cards', 'plan/index.html', `input "${m[1]}"${value ? ` = "${value}"` : ''} has no name that says what it is`);
+  }
+  for (const name of ['partner', 'separate6', 'kids-0-2']) {
+    const at = html.search(new RegExp(`<input\\b[^>]*\\sname="${name}"`));
+    const group = at < 0 ? '' : html.slice(html.lastIndexOf('<div', html.lastIndexOf('<label', at)), at);
+    const id = group.match(/\saria-labelledby="([^"]+)"/)?.[1];
+    if (!id || !/\srole="(radiogroup|group)"/.test(group) || !new RegExp(`\\sid="${id}"`).test(html)) fail('plan-cards', 'plan/index.html', `the "${name}" inputs aren't in a group labeled by their question`);
+  }
   passes.push(`plan-cards: ${cards.length} cards cover ${fields.length} answer fields and ${choices} choices`);
+}
+
+// --- plan-singles -------------------------------------------------------------------------
+const BAH_ROWS = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'bah.json'), 'utf-8'));
+const RATIO = /\d+(?:–\d+)?% of the [^;]*allowance/;
+function checkPlanSingles(files, r = rules) {
+  const html = files['plan/index.html'];
+  if (!html) return;
+  const { data, config } = JSON.parse(html.match(/<script type="application\/json" id="plan-data">([\s\S]*?)<\/script>/)[1]);
+  const kids0 = Object.fromEntries(r.KID_GROUPS.map((g) => [g, 0]));
+  const HOUSEHOLDS = [['alone', { partner: false, kids: kids0 }], ['partner', { partner: true, kids: kids0 }], ['child', { partner: false, kids: { ...kids0, '6-9': 1 } }]];
+  let plans = 0;
+  let sections = 0;
+  for (const base of [...data.bases.map((b) => b.code), 'unsure']) for (const band of data.bands) for (const bedrooms of ['2', '3', '4plus', 'help']) for (const [who, h] of HOUSEHOLDS) for (const first of ['where', 'cost']) {
+    const a = { ...r.emptyAnswers(), ...h, base, band, bedrooms, timeline: '60-90', open: ['renting'], priorities: [first] };
+    const where = `${base} ${band} ${bedrooms} ${who} ${first}`;
+    const plan = r.buildPlan(a, data, config);
+    plans++;
+    const b = data.bases.find((x) => x.code === base);
+    for (const s of plan.sections) {
+      const ratio = s.lines.some((l) => RATIO.test(l.text));
+      const said = (s.note ?? '').includes(r.SINGLE_RATIO_NOTE);
+      if (who !== 'alone' || !ratio) {
+        if (said || s.without) fail('plan-singles', `${where} § ${s.id}`, `says the with-dependents note or carries a rate without dependents (${who}, ${ratio ? 'ratios' : 'no ratios'})`);
+        continue;
+      }
+      sections++;
+      if (!said) fail('plan-singles', `${where} § ${s.id}`, 'a ratio section for a member alone doesn\'t say it uses the with-dependents rate');
+      if (!b) { if (s.without) fail('plan-singles', `${where} § ${s.id}`, 'base not sure, but a rate without dependents is shown'); continue; }
+      const rows = BAH_ROWS.filter((x) => x.pay_band === band && x.mha === b.mha);
+      const w = s.without;
+      const want = rows.length && { lo: Math.min(...rows.map((x) => x.without_dependents)), hi: Math.max(...rows.map((x) => x.without_dependents)), year: rows[0].year, mha: b.mha, area: rows[0].area };
+      if (!w || !want || w.lo !== want.lo || w.hi !== want.hi || w.year !== want.year || w.mha !== want.mha || w.area !== want.area || w.band !== band) fail('plan-singles', `${where} § ${s.id}`, `rate without dependents ${JSON.stringify(w && { lo: w.lo, hi: w.hi, year: w.year, mha: w.mha })}, bah.json has ${JSON.stringify(want)}`);
+      else if (w.source?.url !== `/base/${b.slug}/#bah-table` || !w.source.dates?.includes(`BAH ${want.year} · verified ${rows[0].verified_on}`)) fail('plan-singles', `${where} § ${s.id}`, `rate without dependents cites ${JSON.stringify(w.source)}`);
+    }
+    for (const s of plan.sections) for (const l of s.lines) {
+      if (/smallest row/i.test(l.text)) fail('plan-singles', `${where} § ${s.id}`, `"${l.text.slice(0, 80)}"`);
+      if (s.id === 'bah' && /\$/.test(l.text) && !l.sources.every((x) => x.url.endsWith('/#bah-table'))) fail('plan-singles', `${where} § bah`, `BAH line cites ${l.sources.map((x) => x.url).join(', ')}`);
+    }
+  }
+  for (const band of data.bands) {
+    const text = r.bedroomHelperText({ ...r.emptyAnswers(), partner: true, kids: { ...kids0, '10-13': 1 }, band, bedrooms: 'help' });
+    const senior = !['E1–E4', 'E5–E6'].includes(band);
+    if (senior ? !/CNIC lists no bedroom standard for officers and senior enlisted/.test(text) || /enlisted guidelines/.test(text) : !/enlisted guidelines/.test(text)) fail('plan-singles', `bedroom helper ${band}`, `"${text}"`);
+  }
+  if (!sections) fail('plan-singles', 'plan', 'no ratio section for a member alone, so nothing was tested');
+  passes.push(`plan-singles: ${plans} plans, ${sections} ratio sections for a member alone`);
+}
+
+// --- no-notes-refs ----------------------------------------------------------------------
+function checkNotesRefs(files) {
+  for (const [page, html] of Object.entries(files)) if (/QUESTIONS\.md/.test(visible(html))) fail('no-notes-refs', page, 'shows "QUESTIONS.md"');
 }
 
 // --- ask-view -------------------------------------------------------------------------
@@ -344,9 +424,9 @@ function load() {
   const files = Object.fromEntries(walk(DIST).map((f) => [relative(DIST, f), readFileSync(f, 'utf-8')]));
   const redirects = existsSync(join(DIST, '_redirects')) ? read('_redirects') : null;
   const index = buildIndex(JSON.parse(read('assistant/corpus.json')));
-  return { files, redirects, index, ctx: askContext };
+  return { files, redirects, index, ctx: askContext, rules };
 }
-async function run({ files, redirects, index, ctx }) {
+async function run({ files, redirects, index, ctx, rules: r }) {
   const examples = checkHome(files);
   checkHomeLayout(files);
   checkHomeChip(files);
@@ -357,9 +437,11 @@ async function run({ files, redirects, index, ctx }) {
   checkOrphans(files);
   checkRedirect(files, redirects);
   checkPlanCards(files);
+  checkPlanSingles(files, r);
+  checkNotesRefs(files);
   checkAskView();
 }
-const CHECKS = ['home-start', 'home-layout', 'home-chip', 'ask-context', 'home-examples', 'menu-links', 'site-name', 'no-orphans', 'ask-redirect', 'plan-cards', 'ask-view'];
+const CHECKS = ['home-start', 'home-layout', 'home-chip', 'ask-context', 'home-examples', 'menu-links', 'site-name', 'no-orphans', 'ask-redirect', 'plan-cards', 'plan-singles', 'no-notes-refs', 'ask-view'];
 
 // One fault of each kind, planted in memory (nothing on disk changes); each must fail the check named.
 const edit = (page, fn) => (s) => ({ ...s, files: { ...s.files, [page]: fn(s.files[page]) } });
@@ -392,6 +474,20 @@ const PLANTS = {
   'a card missing (pets)': ['plan-cards', edit('plan/index.html', (h) => h.replace(/<fieldset class="q" data-q="6"[\s\S]*?<\/fieldset>/, ''))],
   'a choice missing (Camp Pendleton)': ['plan-cards', edit('plan/index.html', (h) => h.replace(/<label class="opt"><input type="radio" name="base" value="PENDLETON"[^>]*>[^<]*<\/label>/, ''))],
   'no "Ask about this plan"': ['plan-cards', edit('plan/index.html', (h) => h.replace('href="/#ask-with-plan"', 'href="/"'))],
+  'a count input named only "cats"': ['plan-cards', edit('plan/index.html', (h) => h.replace(/(name="cats"[^>]*?) aria-label="[^"]*"/, '$1'))],
+  'the partner radios in no labeled group': ['plan-cards', edit('plan/index.html', (h) => h.replace('role="radiogroup" aria-labelledby="q-partner"', ''))],
+  'chip button without a name': ['home-chip', edit('index.html', (h) => h.replace(/(data-ctx-btn) aria-label="[^"]*"/, '$1'))],
+  '"What\'s sent?" back in the sticky box': ['home-chip', edit('index.html', (h) => {
+    const panel = elementWith(h, 'data-sent-panel');
+    return h.replace(panel, '').replace('<p class="gap" data-error', `${panel}<p class="gap" data-error`);
+  })],
+  'alone: no with-dependents note': ['plan-singles', (s) => ({ ...s, rules: { ...rules, buildPlan: (...xs) => { const p = rules.buildPlan(...xs); return { ...p, sections: p.sections.map((x) => ({ ...x, note: x.note?.replace(rules.SINGLE_RATIO_NOTE, '') })) }; } } })],
+  'alone: rate without dependents off by a dollar': ['plan-singles', (s) => ({ ...s, rules: { ...rules, buildPlan: (...xs) => { const p = rules.buildPlan(...xs); return { ...p, sections: p.sections.map((x) => (x.without ? { ...x, without: { ...x.without, hi: x.without.hi + 1 } } : x)) }; } } })],
+  'a partner gets the alone note': ['plan-singles', (s) => ({ ...s, rules: { ...rules, buildPlan: (a, ...xs) => rules.buildPlan(a.partner ? { ...a, partner: false } : a, ...xs) } })],
+  '"smallest row" back': ['plan-singles', (s) => ({ ...s, rules: { ...rules, buildPlan: (...xs) => { const p = rules.buildPlan(...xs); return { ...p, sections: p.sections.map((x) => (x.id === 'bedrooms' ? { ...x, lines: x.lines.map((l) => ({ ...l, text: l.text.replace('The rent-to-allowance ratios start', 'The smallest row we have is 2 bedrooms. The ratios start') })) } : x)) }; } } })],
+  'BAH line cites #bah': ['plan-singles', (s) => ({ ...s, rules: { ...rules, buildPlan: (...xs) => { const p = rules.buildPlan(...xs); return { ...p, sections: p.sections.map((x) => (x.id === 'bah' ? { ...x, lines: x.lines.map((l) => ({ ...l, sources: l.sources.map((y) => ({ ...y, url: y.url.replace('#bah-table', '#bah') })) })) } : x)) }; } } })],
+  'senior helper says enlisted guidelines': ['plan-singles', (s) => ({ ...s, rules: { ...rules, bedroomHelperText: (a) => `Navy Housing's enlisted guidelines give 2 bedrooms (${a.band}).` } })],
+  '"see QUESTIONS.md" back on /sources/': ['no-notes-refs', edit('sources/index.html', (h) => h.replace('<td>Link only.</td>', '<td>Link only (see QUESTIONS.md).</td>'))],
 };
 
 const loaded = load();
