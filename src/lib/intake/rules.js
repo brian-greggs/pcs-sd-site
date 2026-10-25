@@ -19,7 +19,7 @@ import { MARINE_BASES, NAVY_RULES_NOTE, SEQUENCE_DISCLAIMER, TIMELINE_PHASE, pha
 
 // A place's tier comes from the top of its drive range (src/lib/tiers.js, shared with the base pages):
 // "under 30 minutes" means every zip in it is under 30, so Vista at 14–35 is a 30–44 place.
-export const RULES_VERSION = 'v0.9';
+export const RULES_VERSION = 'v0.10';
 
 // Rules in §10.1 that have nothing to point at yet. Shown in STATUS.md, not on the page.
 export const GAPS = [
@@ -130,6 +130,21 @@ export const needsSeparateQuestion = (a) => bedroomsFor(a, true) !== bedroomsFor
 export function bedroomHelper(a) {
   const n = bedroomsFor(a, needsSeparateQuestion(a) ? a.separate6 === true : false);
   return { computed: n, row: n <= 2 ? 2 : n === 3 ? 3 : 4 };
+}
+
+// The household is the member alone: no spouse or partner, no children.
+export const isSingle = (a) => a.partner === false && !hasKids(a);
+// CNIC's bedroom guidelines are for junior enlisted; it lists none for officers and senior enlisted.
+export const isSenior = (band) => !['E1–E4', 'E5–E6'].includes(band);
+export const SENIOR_BEDROOM_NOTE = 'CNIC lists no bedroom standard for officers and senior enlisted, so this is only a starting point; ask the Housing Service Center.';
+
+// The bedroom helper's answer on question 5 (the plan's Bedrooms section says the same, with its source).
+export function bedroomHelperText(a) {
+  const h = bedroomHelper(a);
+  const n = `${h.computed} ${h.computed === 1 ? 'bedroom' : 'bedrooms'}`;
+  return a.band && isSenior(a.band)
+    ? `CNIC lists no bedroom standard for officers and senior enlisted, so this is only a starting point: ${n} for your household, and the plan uses the ${h.row}-bedroom rows. Ask the Housing Service Center.`
+    : `Navy Housing's enlisted guidelines give ${n} for your household; the plan uses the ${h.row}-bedroom rows.`;
 }
 
 export function bedroomRow(a) {
@@ -494,15 +509,20 @@ function modifiers(c) {
 function bedroomSection(c) {
   if (c.a.bedrooms !== 'help') return [];
   const h = bedroomHelper(c.a);
-  const senior = !['E1–E4', 'E5–E6'].includes(c.a.band);
-  const used = h.computed === h.row ? `The plan uses the ${h.row}-bedroom rows.` : h.computed < h.row ? `The smallest row we have is ${h.row} bedrooms, so the plan uses that.` : `The largest row we have is ${h.row} bedrooms, so the plan uses that.`;
+  const senior = isSenior(c.a.band);
+  // Under 2: the neighborhood pages' HUD rent tables have studio and 1-bedroom rents, but the rent-to-allowance
+  // ratios (rent_to_bah.json) start at 2 bedrooms, so the plan's rows are the 2-bedroom ones.
+  const used = h.computed === h.row ? `The plan uses the ${h.row}-bedroom rows.`
+    : h.computed < h.row ? `The rent-to-allowance ratios start at ${h.row} bedrooms, so the plan uses the ${h.row}-bedroom rows; each neighborhood page’s rent table also lists studio and 1-bedroom rents.`
+    : `The largest row we have is ${h.row} bedrooms, so the plan uses that.`;
   const area = c.areas[0]?.ar ?? c.data.areas[0];
   return [{
     id: 'bedrooms',
     heading: 'Bedrooms',
     note: '',
     lines: [{
-      text: `${h.computed} ${h.computed === 1 ? 'bedroom' : 'bedrooms'} under Navy Housing’s guidelines for enlisted families, applied to your household. ${used}${senior ? ' CNIC lists no bedroom standard for officers and senior enlisted, so this is only a starting point; ask the Housing Service Center.' : ''}`,
+      text: `${h.computed} ${h.computed === 1 ? 'bedroom' : 'bedrooms'} under Navy Housing’s guidelines for enlisted families, applied to your household. ${used}${senior ? ` ${SENIOR_BEDROOM_NOTE}` : ''}`,
+      ...(h.computed < h.row ? { links: [{ url: '/neighborhoods/', text: 'Neighborhoods' }] } : {}),
       ext: [c.ext(c.data.bedroomRule.link_id, 'CNIC, Applying for Housing')],
       sources: [{ url: `/base-housing/${area.id}/`, title: `Bedroom guidelines (${area.name} base housing page)`, dates: `${DATE_LABEL.bedroomRule}: ${c.data.dates.bedroomRule}` }],
     }],
@@ -532,7 +552,7 @@ function bahSection(c) {
   }
   const t = c.data.bah[c.base.mha];
   if (!t) return [];
-  const source = { url: `/base/${c.base.slug}/#bah`, title: `${c.base.short} (base page, Housing allowance)`, dates: `${DATE_LABEL.bah}: ${c.data.dates.bah}` };
+  const source = { url: `/base/${c.base.slug}/#bah-table`, title: `${c.base.short} (base page, Housing allowance)`, dates: `${DATE_LABEL.bah}: ${c.data.dates.bah}` };
   return [{
     id: 'bah',
     heading: `Your housing allowance at ${c.base.short}`,
@@ -584,6 +604,23 @@ function lead(c) {
   return [{ id: 'lead-missing', heading: 'No lead yet', note: `${reason}, so this plan has no lead yet.`, lines: [], notice: true }];
 }
 
+// A member moving alone (rules v0.10): every rent-to-allowance ratio divides by the with-dependents rate, the only
+// one the ratio tables use, so a section with ratios says so in its note. With a base chosen it also carries the
+// band's without-dependents rate there (`without`, from the embedded BAH table), which the page shows beside the
+// note. Numbers only: the plan's text holds no dollar figure outside the BAH lines.
+export const SINGLE_RATIO_NOTE = 'You’re moving on your own, but these ratios divide by the with-dependents allowance, the only rate the ratio tables use.';
+const RATIO_TEXT = /\d+(?:–\d+)?% of the [^;]*allowance/;
+function singleRatio(c, s) {
+  if (!isSingle(c.a) || !s.lines.some((l) => RATIO_TEXT.test(l.text))) return s;
+  const t = c.base && c.data.bah[c.base.mha];
+  const rates = t ? t.grades.filter((g) => g.band === c.a.band).map((g) => g.without) : [];
+  return {
+    ...s,
+    note: s.note ? `${s.note} ${SINGLE_RATIO_NOTE}` : SINGLE_RATIO_NOTE,
+    ...(rates.length ? { without: { band: c.a.band, base: c.base.short, year: t.year, area: t.area, mha: c.base.mha, lo: Math.min(...rates), hi: Math.max(...rates), source: { url: `/base/${c.base.slug}/#bah-table`, dates: `${DATE_LABEL.bah}: ${c.data.dates.bah}` } } } : {}),
+  };
+}
+
 export function buildPlan(answers, data, config) {
   const missing = missingAnswers(answers);
   if (missing.length) throw new Error(`buildPlan: unanswered questions ${missing.join(', ')}`);
@@ -597,6 +634,6 @@ export function buildPlan(answers, data, config) {
       ...modifiers(c),
       ...tradeoff(c),
       ...skipList(c),
-    ].filter((s) => s.lines.length || s.notice),
+    ].filter((s) => s.lines.length || s.notice).map((s) => singleRatio(c, s)),
   };
 }

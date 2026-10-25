@@ -40,7 +40,7 @@ const methodSrcs = [...new Set(topics.map((t) => t.src))];
         <thead><tr><th>Layer</th><th>Source</th><th>Vintage</th><th>Retrieved</th><th>License</th><th>On this site</th></tr></thead>
         <tbody>
           {sources.map((s) => (
-            <tr><td>{s.layer}</td><td>{s.source}</td><td>{s.vintage}</td><td>{s.retrieved}</td><td>{s.license}</td><td>{s.published_as}</td></tr>
+            <tr><td>{s.layer}</td><td>{s.source}</td><td>{s.vintage}</td><td>{s.retrieved}</td><td>{s.license}</td><td>{s.published_as.replace(/\s*\(see QUESTIONS\.md\)/, '')}</td></tr>
           ))}
         </tbody>
       </table>

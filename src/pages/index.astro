@@ -32,12 +32,12 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
       <div class="ask-box" data-box>
         <label class="ask-label" for="ask-q" data-ask-label>Ask a question</label>
         <div class="ask-field">
-          <textarea id="ask-q" rows="2" maxlength="500" data-q aria-describedby="ask-hint"></textarea>
+          <textarea id="ask-q" rows="2" maxlength="500" data-q aria-describedby="ask-hint ask-count"></textarea>
           <div class="ask-bar">
             <div class="ctx" data-ctx>
               <a class="ctx-chip ctx-add" href="/plan/" data-ctx-add>+ Add your move</a>
               <div class="ctx-set" data-ctx-set hidden>
-                <button type="button" class="ctx-chip" data-ctx-btn aria-expanded="false" aria-controls="ctx-menu"><span class="vh" data-ctx-state></span><span class="ctx-text" data-ctx-text></span></button>
+                <button type="button" class="ctx-chip" data-ctx-btn aria-label="Your move" aria-expanded="false" aria-controls="ctx-menu"><span class="ctx-text" data-ctx-text></span></button>
                 <div class="ctx-menu" id="ctx-menu" data-ctx-menu hidden>
                   <p class="ctx-menu-head" data-ctx-full></p>
                   <ul>
@@ -55,17 +55,21 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
         </div>
         <p class="vh" id="ask-hint">Enter sends; Shift and Enter starts a new line.</p>
         <div class="ask-tools">
+          <span class="ask-count" id="ask-count" data-count hidden></span>
           <button type="button" class="ask-link" data-whats-sent aria-expanded="false" aria-controls="ask-sent">What’s sent?</button>
           <button type="button" class="ask-link" data-clear-log hidden>New conversation</button>
         </div>
-        <div class="ask-sent" id="ask-sent" data-sent-panel hidden>
-          <p>Your question goes to an AI model, which answers only from this guide’s pages. This site doesn’t store it. Don’t type names, addresses or anything personal.</p>
-          <p>With your next question, exactly these fields go:</p>
-          <ul class="ask-sent-fields" data-sent-fields></ul>
-          <p data-sent-move></p>
-          <pre class="ask-pre" data-context-json></pre>
-        </div>
         <p class="gap" data-error role="alert" hidden></p>
+      </div>
+
+      {/* Under the box, not in it: the box sticks to the bottom of the screen in a conversation, so the panel scrolls
+          with the page instead of covering the answer. */}
+      <div class="ask-sent" id="ask-sent" data-sent-panel hidden>
+        <p>Your question goes to an AI model, which answers only from this guide’s pages. This site doesn’t store it. Don’t type names, addresses or anything personal.</p>
+        <p>With your next question, exactly these fields go:</p>
+        <ul class="ask-sent-fields" data-sent-fields></ul>
+        <p data-sent-move></p>
+        <pre class="ask-pre" data-context-json></pre>
       </div>
 
       <div class="ask-examples" data-examples>
@@ -130,7 +134,7 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     if (sum) {
       const on = ctxState.included;
       $('[data-ctx-text]').textContent = on ? sum.short : 'Your move: off';
-      $('[data-ctx-state]').textContent = on ? 'Your move, sent with your questions: ' : '';
+      ctxBtn.setAttribute('aria-label', on ? `Your move, sent with your questions: ${sum.short}` : `Your move: off. Not sent with your questions: ${sum.short}`);
       $('[data-ctx-full]').textContent = on ? `Sent with your questions: ${sum.full}.` : `Not sent with your questions: ${sum.full}.`;
       ctxSet.classList.toggle('off', !on);
       ctxX.hidden = !on;
@@ -163,6 +167,7 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     status.textContent = 'Your move goes with your questions again.';
   });
   $('[data-ctx-clear]').addEventListener('click', () => {
+    if (!confirm('Clear your starting-plan answers from this browser?')) return;
     try { localStorage.removeItem(KEY); } catch { /* storage blocked */ }
     ctxState.included = true;
     setMenu(false);
@@ -212,15 +217,30 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
       ? 'No starting-plan answers in this browser, so none go. Add your move to get answers fitted to your base, pay grade and household.'
       : c ? 'From your starting-plan answers, only these go: the summary on the chip. Your timeline, bedrooms, pets and priorities stay in this browser. Tap × on the chip to leave it off.'
       : 'Your move is off, so none of your starting-plan answers go with your questions. Tap the chip to send it again.';
-    $('[data-context-json]').textContent = JSON.stringify(requestBody(q.value.trim() || '…', prev, c), null, 2);
+    // The previous answer is shown cut to about 200 characters; all of it goes.
+    const shownPrev = prev?.answer && prev.answer.length > PREVIEW ? { ...prev, answer: `${clip(prev.answer)} (full text sent, ${prev.answer.length} characters)` } : prev;
+    $('[data-context-json]').textContent = JSON.stringify(requestBody(q.value.trim() || '…', shownPrev, c), null, 2);
   };
+  const PREVIEW = 200;
+  const clip = (t: string) => `${t.slice(0, PREVIEW).replace(/\s+\S*$/, '')}…`;
   sentBtn.addEventListener('click', () => {
     const open = sentPanel.hidden;
     sentPanel.hidden = !open;
     sentBtn.setAttribute('aria-expanded', String(open));
-    if (open) showOutgoing();
+    if (open) { showOutgoing(); sentPanel.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); }
   });
-  q.addEventListener('input', () => { if (!sentPanel.hidden) showOutgoing(); });
+  // From 400 of the 500 characters the box allows, a counter shows (and the box's description reads it).
+  const counter = $('[data-count]');
+  const count = () => {
+    const n = q.value.length;
+    counter.hidden = n < 400;
+    counter.replaceChildren(...(n < 400 ? [] : [`${n}/500`, el('span', 'vh', ' characters')]));
+  };
+  q.addEventListener('input', () => {
+    count();
+    if (q.value.trim() && errorBox.dataset.kind === 'empty') errorBox.hidden = true;
+    if (!sentPanel.hidden) showOutgoing();
+  });
 
   const el = (tag: string, cls?: string, text?: string) => {
     const e = document.createElement(tag);
@@ -233,11 +253,26 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     a.href = href;
     return a;
   };
+  // Links out of the conversation open in a new tab, so Back never loses it (the conversation is in this page only).
+  const newTab = (a: HTMLAnchorElement) => {
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.append(el('span', 'vh', ' (opens in a new tab)'));
+    return a;
+  };
+  // A server-sent URL becomes a link only if it is this site's own path or http(s); anything else stays text.
+  const safeHref = (href: unknown) => {
+    if (typeof href !== 'string') return null;
+    try {
+      const u = new URL(href, location.href);
+      return u.protocol === 'https:' || u.protocol === 'http:' ? href : null;
+    } catch { return null; }
+  };
   // An answer's bold, lists and site links (assistant/format.js); everything else stays text.
   const fill = (parent: HTMLElement, tokens: { type: string; text: string; href?: string }[]) => {
     for (const t of tokens) {
       if (t.type === 'strong') parent.append(el('strong', undefined, t.text));
-      else if (t.type === 'link') parent.append(link(t.href!, t.text));
+      else if (t.type === 'link') parent.append(newTab(link(t.href!, t.text)));
       else parent.append(t.text);
     }
   };
@@ -261,7 +296,9 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     const ul = el('ul', 'ask-src-list');
     for (const c of citations) {
       const li = el('li');
-      li.append(link(c.url, c.label ?? `${c.title}: ${c.section}`));
+      const href = safeHref(c.url);
+      const label = c.label ?? `${c.title}: ${c.section}`;
+      li.append(href ? newTab(link(href, label)) : el('span', undefined, label));
       if (c.verified_on) li.append(el('span', 'muted', ` · verified ${c.verified_on}`));
       ul.append(li);
     }
@@ -270,24 +307,26 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     return d;
   };
   const relatedCard = (r: { url: string; title: string; sub?: string }) => {
-    const a = link(r.url, '', 'card ask-related');
+    const href = safeHref(r.url);
+    if (!href) return null;
+    const a = link(href, '', 'card ask-related');
     const words = el('span');
     words.append(el('span', 'card-eyebrow', 'Related page'), el('span', 'card-name', r.title));
     if (r.sub) words.append(el('span', 'card-sub', r.sub));
     const arrow = el('span', 'arrow', '›');
     arrow.setAttribute('aria-hidden', 'true');
     a.append(words, arrow);
-    return a;
+    return newTab(a);
   };
   const answerBlock = (question: string, reply: Reply) => {
     const a = el('div', 'ask-answer');
-    if (reply.error) a.append(el('p', 'gap', reply.error));
     if (reply.answer) a.append(answerText(reply.answer));
     if (reply.note) a.append(el('p', 'note', reply.note));
     // Only the sections the answer cites, under the label it cites them by (assistant/cite.js).
     if (reply.citations?.length) a.append(sourceChip(reply.citations));
     const related = relatedPage(reply);
-    if (related) a.append(relatedCard(related));
+    const card = related && relatedCard(related);
+    if (card) a.append(card);
     if (reply.prompt) {
       const d = el('details', 'ask-stub');
       d.append(el('summary', undefined, 'The prompt that would go to the model'));
@@ -324,11 +363,40 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     label.textContent = on ? 'Ask a follow-up' : 'Ask a question';
   };
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // An error under the box. `kind` says which ("empty" goes away as soon as there's text).
+  const showError = (kind: string, ...parts: (string | Node)[]) => {
+    errorBox.replaceChildren(...parts);
+    errorBox.dataset.kind = kind;
+    errorBox.hidden = false;
+  };
+  const browse = () => link('/browse/', 'browse the pages');
+  // What the reader sees when /api/ask answers with an error (assistant/ask.js, functions/api/ask.js). The daily cap
+  // (429) and "isn't working" (502: the model provider refused the call, which is what a spend limit or billing stop
+  // looks like) last, so they point to the pages, which hold everything the assistant knows.
+  const serverError = (status: number, reply: Reply) => {
+    const text: string = typeof reply.error === 'string' && reply.error ? reply.error
+      : status === 503 ? 'The assistant is busy. Try again in a minute.' : 'The assistant isn’t working right now.';
+    const at = text.indexOf('browse the pages');
+    if (at >= 0) return [text.slice(0, at), browse(), text.slice(at + 'browse the pages'.length)];
+    if (status === 503) return [text];
+    return [`${text} Everything it knows is on the guide’s pages: `, browse(), '.'];
+  };
+  const TIMEOUT_MS = 45_000;
   let busy = false;
+  // Each conversation has a number; "New conversation" moves to the next and cancels what's pending, so a reply
+  // that arrives late for a cleared conversation is dropped, never shown and never sent as the previous turn.
+  let convo = 0;
+  let pending: AbortController | null = null;
   const ask = async (text?: string) => {
+    if (busy) return;
     const question = (text ?? q.value).trim();
-    if (!question || busy) return;
+    if (!question) { showError('empty', 'Type a question.'); q.focus(); return; }
     busy = true;
+    const gen = convo;
+    const ctrl = new AbortController();
+    pending = ctrl;
+    let timedOut = false;
+    const timer = setTimeout(() => { timedOut = true; ctrl.abort(); }, TIMEOUT_MS);
     errorBox.hidden = true;
     sendBtn.disabled = true;
     const outgoing = requestBody(question, previousTurn(), sentContext());
@@ -341,36 +409,64 @@ const HOME_FOOTER = 'Every answer cites its official source and date. No ads, no
     log.append(li);
     status.textContent = 'Checking the sources…';
     q.value = '';
+    count();
     li.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
+    // No answer: the turn goes, the question goes back in the box (unless something new was typed there), the error
+    // shows under the box, and nothing is kept as the previous turn.
+    const failed = (kind: string, parts: (string | Node)[]) => {
+      li.remove();
+      if (!log.children.length) setTalking(false);
+      if (!q.value.trim()) q.value = question;
+      count();
+      showError(kind, ...parts);
+      status.textContent = '';
+      q.focus();
+    };
     try {
       const res = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(outgoing),
+        signal: ctrl.signal,
       });
-      const reply = await res.json().catch(() => ({ error: 'The assistant isn’t working right now.' }));
+      const reply: Reply = await res.json().catch(() => ({}));
+      if (gen !== convo) return;
+      if (!res.ok || reply.error || !(reply.answer || reply.note)) { failed('server', serverError(res.status, reply)); return; }
       history.push({ question, reply });
-      waiting.replaceWith(answerBlock(question, reply));
-      status.textContent = reply.error ? reply.error : 'Answer ready.';
+      const block = answerBlock(question, reply);
+      block.tabIndex = -1;
+      waiting.replaceWith(block);
+      // Focus moves to the answer, and the status region reads it.
+      block.focus({ preventScroll: true });
+      const said = (block.querySelector('.ask-text')?.textContent ?? reply.note ?? '').replace(/\s+/g, ' ').trim();
+      status.textContent = said ? `Answer: ${said}` : 'Answer ready.';
     } catch {
-      li.remove();
-      if (!history.length) setTalking(false);
-      q.value = question;
-      errorBox.textContent = 'Couldn’t reach the assistant. Check your connection and try again.';
-      errorBox.hidden = false;
-      status.textContent = '';
+      if (gen !== convo) return;
+      failed(timedOut ? 'timeout' : 'network', [timedOut
+        ? 'The assistant took too long to answer. Your question is still in the box: press Ask to try again.'
+        : 'Couldn’t reach the assistant. Check your connection and try again.']);
     } finally {
-      busy = false;
-      sendBtn.disabled = false;
-      showOutgoing();
+      clearTimeout(timer);
+      if (gen === convo) {
+        busy = false;
+        pending = null;
+        sendBtn.disabled = false;
+        showOutgoing();
+      }
     }
   };
   sendBtn.addEventListener('click', () => ask());
   q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask(); } });
   for (const b of document.querySelectorAll<HTMLButtonElement>('[data-example]')) b.addEventListener('click', () => ask(b.textContent ?? ''));
   clearBtn.addEventListener('click', () => {
+    convo++;
+    pending?.abort();
+    pending = null;
+    busy = false;
+    sendBtn.disabled = false;
     history.length = 0;
     log.replaceChildren();
+    errorBox.hidden = true;
     setTalking(false);
     showOutgoing();
     status.textContent = 'New conversation.';
